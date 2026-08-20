@@ -1,0 +1,32 @@
+# Seed registry. Each series must pass source-license and metadata/comparability checks before production publication.
+indicators:
+  - code: NY.GDP.MKTP.KD
+    slug: real-gdp
+    topic: economy
+  - code: NY.GDP.PCAP.KD
+    slug: real-gdp-per-capita
+    topic: economy
+  - code: SP.POP.TOTL
+    slug: population
+    topic: population
+  - code: SP.DYN.LE00.IN
+    slug: life-expectancy
+    topic: health
+  - code: SP.DYN.IMRT.IN
+    slug: infant-mortality
+    topic: health
+  - code: SE.SEC.ENRR
+    slug: secondary-school-enrollment
+    topic: education
+  - code: EG.ELC.ACCS.ZS
+    slug: electricity-access
+    topic: infrastructure
+  - code: IT.NET.USER.ZS
+    slug: internet-use
+    topic: infrastructure
+  - code: EN.ATM.CO2E.PC
+    slug: co2-per-capita
+    topic: climate
+  - code: EG.FEC.RNEW.ZS
+    slug: renewable-energy-consumption-share
+    topic: energy
