@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "status": "REAL",
+  "indicator": {
+    "code": "SP.POP.TOTL",
+    "name": "Population, total",
+    "unit": "people",
+    "methodologyVersion": "wdi-population-estimates-2024-note-v1"
+  },
+  "entity": {
+    "code": "USA",
+    "name": "United States",
+    "entityType": "country"
+  },
+  "referenceYear": 2023,
+  "first": {
+    "vintage": "2025-01-28",
+    "value": 334914895.0,
+    "sourceUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip"
+  },
+  "latest": {
+    "vintage": "2025-07-02",
+    "value": 336806231.0,
+    "sourceUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip"
+  },
+  "revision": {
+    "absolute": 1891336.0,
+    "relative": 0.005647213749630335
+  },
+  "generatedAt": "2026-08-21T17:22:21.878575+00:00",
+  "methodologyNote": "Same WDI indicator, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.",
+  "license": "CC BY 4.0 (World Bank WDI; preserve attribution)"
+}

@@ -1,0 +1,3 @@
+entity_code,entity,indicator_code,reference_year,vintage,value,unit,source_url
+AUS,Australia,SP.POP.TOTL,2023,2025-01-28,26658948.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip
+AUS,Australia,SP.POP.TOTL,2023,2025-07-02,26652777.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip

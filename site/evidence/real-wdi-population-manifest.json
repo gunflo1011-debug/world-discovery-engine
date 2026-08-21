@@ -1,0 +1,111 @@
+{
+  "generatedAt": "2026-08-21T17:22:21.878575+00:00",
+  "count": 15,
+  "items": [
+    {
+      "code": "DEU",
+      "country": "Germany",
+      "slug": "germany-population-revision-2025",
+      "absolute": 621923.0,
+      "relative": 0.007467855427473583
+    },
+    {
+      "code": "USA",
+      "country": "United States",
+      "slug": "united-states-population-revision-2025",
+      "absolute": 1891336.0,
+      "relative": 0.005647213749630335
+    },
+    {
+      "code": "CHN",
+      "country": "China",
+      "slug": "china-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "IND",
+      "country": "India",
+      "slug": "india-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "JPN",
+      "country": "Japan",
+      "slug": "japan-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "GBR",
+      "country": "United Kingdom",
+      "slug": "united-kingdom-population-revision-2025",
+      "absolute": 142000.0,
+      "relative": 0.002077542062911485
+    },
+    {
+      "code": "FRA",
+      "country": "France",
+      "slug": "france-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "ITA",
+      "country": "Italy",
+      "slug": "italy-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "BRA",
+      "country": "Brazil",
+      "slug": "brazil-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "CAN",
+      "country": "Canada",
+      "slug": "canada-population-revision-2025",
+      "absolute": -14277.0,
+      "relative": -0.00035605479318408825
+    },
+    {
+      "code": "AUS",
+      "country": "Australia",
+      "slug": "australia-population-revision-2025",
+      "absolute": -6171.0,
+      "relative": -0.00023147950174177916
+    },
+    {
+      "code": "ESP",
+      "country": "Spain",
+      "slug": "spain-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "MEX",
+      "country": "Mexico",
+      "slug": "mexico-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "IDN",
+      "country": "Indonesia",
+      "slug": "indonesia-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    },
+    {
+      "code": "KOR",
+      "country": "Korea, Rep.",
+      "slug": "korea-rep-population-revision-2025",
+      "absolute": 0.0,
+      "relative": 0.0
+    }
+  ]
+}

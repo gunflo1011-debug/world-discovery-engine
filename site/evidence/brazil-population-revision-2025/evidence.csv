@@ -1,0 +1,3 @@
+entity_code,entity,indicator_code,reference_year,vintage,value,unit,source_url
+BRA,Brazil,SP.POP.TOTL,2023,2025-01-28,211140729.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip
+BRA,Brazil,SP.POP.TOTL,2023,2025-07-02,211140729.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip
