@@ -2,6 +2,16 @@
 
 Evidence-driven global data discovery and revision-intelligence platform.
 
+## Preview / current MVP
+
+A browseable static MVP now lives in [`site/`](./site). Start with [`site/index.html`](./site/index.html), then open the demo evidence pages and methodology from there.
+
+**Important:** the current visible evidence examples are clearly marked demo fixtures. They exist to validate product UX and navigation while the first real archived WDI-vintage evidence is being completed. No synthetic number is presented as a real-world fact.
+
+The repository also contains a GitHub Pages workflow that publishes the `site/` directory when Pages is enabled for this repository. The intended preview URL is:
+
+`https://gunflo1011-debug.github.io/world-discovery-engine/`
+
 ## Product thesis
 
 Most public-data sites expose values, charts, or dashboards. This project focuses on **reproducible discoveries**: stable, citable answers derived deterministically from authoritative public data, with raw inputs, methodology, provenance, update time, and machine-readable output.
@@ -10,7 +20,7 @@ The initial differentiating layer is **vintage/revision intelligence**: not only
 
 ## MVP
 
-The MVP will ingest a deliberately small registry of World Development Indicators, preserve publication vintage, normalize observations, detect comparable revisions, and generate evidence records such as:
+The MVP ingests a deliberately small registry of World Development Indicators, preserves publication vintage, normalizes observations, detects comparable revisions, and generates evidence records such as:
 
 - first published value vs latest value;
 - absolute and percentage revision;
@@ -47,20 +57,29 @@ Core entities:
 
 ## Search & AI discovery
 
-Public evidence pages are designed for humans first, while remaining easy to retrieve and cite: stable canonical URLs, concise answer blocks, tables, provenance, methodology, update timestamps, structured data, and JSON/CSV representations. Search/AI crawler policy will remain explicit; OAI-SearchBot should not be accidentally blocked when the site becomes public.
+Public evidence pages are designed for humans first, while remaining easy to retrieve and cite: stable canonical URLs, concise answer blocks, tables, provenance, methodology, update timestamps, structured data, and JSON/CSV representations. Search/AI crawler policy remains explicit; OAI-SearchBot should not be accidentally blocked when the site becomes public.
 
-## Initial implementation roadmap
+## Current implementation
 
-1. Define schemas and indicator registry.
-2. Build current World Bank/WDI importer.
-3. Build historical-vintage importer and immutable snapshot storage.
-4. Implement comparability gate and revision calculations.
-5. Add deterministic tests with known fixtures.
-6. Generate the first evidence records.
-7. Build server-rendered evidence pages plus JSON/CSV endpoints.
-8. Add sitemap, robots, canonicals, structured data, analytics and performance checks.
-9. Publish a small high-quality corpus before scaling URL generation.
+Already implemented in the repository:
+
+- World Bank observation normalization;
+- WDI archive and CSV adapters;
+- release manifests and provenance checks;
+- fail-closed comparability gate;
+- deterministic revision engine and history;
+- evidence builder;
+- HTML evidence rendering;
+- JSON/CSV exports;
+- sitemap/robots generation;
+- automated tests and GitHub Actions CI;
+- first responsive static website preview in `site/`;
+- GitHub Pages deployment workflow.
+
+## Next milestone
+
+Run two real, methodologically compatible archived WDI releases through the complete pipeline and replace at least one demo evidence page with fully source-backed real evidence.
 
 ## Status
 
-Phase 3 / build started. Repository scaffold is being created; no production deployment or domain is required yet.
+Phase 3 / active build. A visible MVP now exists; real historical-vintage evidence is the main data milestone before broader public launch.
