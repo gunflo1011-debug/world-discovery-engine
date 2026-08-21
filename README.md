@@ -4,11 +4,11 @@ Evidence-driven global data discovery and revision-intelligence platform.
 
 ## Preview / current MVP
 
-A browseable static MVP now lives in [`site/`](./site). Start with [`site/index.html`](./site/index.html), then open the demo evidence pages and methodology from there.
+A browseable static MVP now lives in [`site/`](./site). Start with [`site/index.html`](./site/index.html), then browse the new [`site/discoveries/`](./site/discoveries/) hub, the evidence library and methodology.
 
 **Important:** the current visible evidence examples are clearly marked demo fixtures. They exist to validate product UX and navigation while the first real archived WDI-vintage evidence is being completed. No synthetic number is presented as a real-world fact.
 
-The repository also contains a GitHub Pages workflow that publishes the `site/` directory when Pages is enabled for this repository. The intended preview URL is:
+The repository is now public and contains a GitHub Pages workflow that publishes the `site/` directory once Pages is enabled with **Settings → Pages → Build and deployment → Source: GitHub Actions**. The intended public preview URL is:
 
 `https://gunflo1011-debug.github.io/world-discovery-engine/`
 
@@ -73,8 +73,8 @@ Already implemented in the repository:
 - JSON/CSV exports;
 - sitemap/robots generation;
 - automated tests and GitHub Actions CI;
-- first responsive static website preview in `site/`;
-- GitHub Pages deployment workflow.
+- responsive home, discovery hub, evidence library and methodology preview in `site/`;
+- GitHub Pages deployment workflow and `.nojekyll` static-serving marker.
 
 ## Next milestone
 
@@ -82,4 +82,4 @@ Run two real, methodologically compatible archived WDI releases through the comp
 
 ## Status
 
-Phase 3 / active build. A visible MVP now exists; real historical-vintage evidence is the main data milestone before broader public launch.
+Phase 3 / active build. A visible MVP now exists; enabling GitHub Pages is the last deployment switch, while real historical-vintage evidence remains the main data milestone before broader public launch.
