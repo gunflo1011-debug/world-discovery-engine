@@ -35,6 +35,8 @@ jobs:
           p='site/evidence/real-wdi-population-revision-2025/evidence.json'
           d=json.load(open(p,encoding='utf-8'))
           assert d['status']=='REAL'
+          assert d['entity']['code']=='DEU'
+          assert d['entity']['entityType']=='country'
           assert d['first']['vintage']=='2025-01-28'
           assert d['latest']['vintage']=='2025-07-02'
           print(json.dumps(d, indent=2))
@@ -47,6 +49,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'No evidence changes to commit.'
           else
-            git commit -m 'Publish first real archived WDI evidence'
+            git commit -m 'Publish validated Germany WDI population evidence'
             git push
           fi
