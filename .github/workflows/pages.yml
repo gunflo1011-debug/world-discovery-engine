@@ -33,11 +33,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Build static site assets
+          node-version: 22
+      - name: Test and build static site
         env:
           SITE_BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine/
-        run: npm run build
+        run: npm run check
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
