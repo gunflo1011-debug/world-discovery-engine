@@ -36,7 +36,7 @@ async function collectEvidence() {
 
 export async function buildSite() {
   const evidence = await collectEvidence();
-  const pagePaths = ['/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/status/', '/evidence/', ...evidence.map((record) => record.url)];
+  const pagePaths = ['/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', ...evidence.map((record) => record.url)];
   const generatedAt = new Date().toISOString();
 
   await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt({ baseUrl }), 'utf8');
