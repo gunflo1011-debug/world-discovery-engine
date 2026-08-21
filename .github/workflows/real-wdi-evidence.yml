@@ -28,27 +28,38 @@ jobs:
         run: python scripts/build-real-wdi-evidence.py
       - name: Verify generated evidence
         run: |
-          test -f site/evidence/real-wdi-population-revision-2025/index.html
-          test -f site/evidence/real-wdi-population-revision-2025/evidence.json
           python - <<'PY'
           import json
-          p='site/evidence/real-wdi-population-revision-2025/evidence.json'
-          d=json.load(open(p,encoding='utf-8'))
-          assert d['status']=='REAL'
-          assert d['entity']['code']=='DEU'
-          assert d['entity']['entityType']=='country'
-          assert d['first']['vintage']=='2025-01-28'
-          assert d['latest']['vintage']=='2025-07-02'
-          print(json.dumps(d, indent=2))
+          from pathlib import Path
+          root=Path('site/evidence')
+          manifest=json.load(open(root/'real-wdi-population-manifest.json',encoding='utf-8'))
+          assert manifest['count']==15, manifest['count']
+          assert len(manifest['items'])==15
+          codes={item['code'] for item in manifest['items']}
+          assert {'DEU','USA','CHN','IND','JPN','GBR','FRA','ITA','BRA','CAN','AUS','ESP','MEX','IDN','KOR'} == codes
+          for item in manifest['items']:
+              page=root/item['slug']
+              assert (page/'index.html').is_file(), item
+              assert (page/'evidence.json').is_file(), item
+              assert (page/'evidence.csv').is_file(), item
+              d=json.load(open(page/'evidence.json',encoding='utf-8'))
+              assert d['status']=='REAL'
+              assert d['entity']['code']==item['code']
+              assert d['entity']['entityType']=='country'
+              assert d['first']['vintage']=='2025-01-28'
+              assert d['latest']['vintage']=='2025-07-02'
+              assert d['indicator']['code']=='SP.POP.TOTL'
+              assert d['referenceYear']==2023
+          print(f"Verified {manifest['count']} REAL sovereign-country evidence pages")
           PY
       - name: Commit generated real evidence
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/evidence/real-wdi-population-revision-2025
+          git add site/evidence
           if git diff --cached --quiet; then
             echo 'No evidence changes to commit.'
           else
-            git commit -m 'Publish validated Germany WDI population evidence'
+            git commit -m 'Publish validated multi-country WDI population evidence'
             git push
           fi
