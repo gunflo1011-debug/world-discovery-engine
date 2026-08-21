@@ -1,3 +1,3 @@
 entity_code,entity,indicator_code,reference_year,vintage,value,unit,source_url
-TMN,"Middle East, North Africa, Afghanistan & Pakistan (IDA & IBRD)",SP.POP.TOTL,2023,2025-01-28,434952414.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip
-TMN,"Middle East, North Africa, Afghanistan & Pakistan (IDA & IBRD)",SP.POP.TOTL,2023,2025-07-02,723911670.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip
+DEU,Germany,SP.POP.TOTL,2023,2025-01-28,83280000.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip
+DEU,Germany,SP.POP.TOTL,2023,2025-07-02,83901923.0,people,https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip

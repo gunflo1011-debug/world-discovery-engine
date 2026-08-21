@@ -8,25 +8,26 @@
     "methodologyVersion": "wdi-population-estimates-2024-note-v1"
   },
   "entity": {
-    "code": "TMN",
-    "name": "Middle East, North Africa, Afghanistan & Pakistan (IDA & IBRD)"
+    "code": "DEU",
+    "name": "Germany",
+    "entityType": "country"
   },
   "referenceYear": 2023,
   "first": {
     "vintage": "2025-01-28",
-    "value": 434952414.0,
+    "value": 83280000.0,
     "sourceUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip"
   },
   "latest": {
     "vintage": "2025-07-02",
-    "value": 723911670.0,
+    "value": 83901923.0,
     "sourceUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip"
   },
   "revision": {
-    "absolute": 288959256.0,
-    "relative": 0.664346826685275
+    "absolute": 621923.0,
+    "relative": 0.007467855427473583
   },
-  "generatedAt": "2026-08-21T13:56:13.464914+00:00",
-  "methodologyNote": "Population, total uses the World Bank population estimates/projections methodology documented in its 2024 technical note. This comparison is limited to two 2025 WDI releases and the same indicator code/name/unit. No causal claim is made.",
+  "generatedAt": "2026-08-21T14:00:14.428573+00:00",
+  "methodologyNote": "Population, total uses the World Bank population estimates/projections framework documented in its 2024 technical note. This evidence is deliberately limited to Germany, the same reference year, the same indicator identity and unit, and two releases within 2025. Regional aggregates are excluded because their membership/definition can change independently of the underlying country estimates.",
   "license": "CC BY 4.0 (World Bank WDI; preserve attribution)"
 }
