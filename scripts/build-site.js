@@ -36,13 +36,13 @@ async function collectEvidence() {
 
 export async function buildSite() {
   const evidence = await collectEvidence();
-  const pagePaths = ['/', '/methodology/', '/evidence/', ...evidence.map((record) => record.url)];
+  const pagePaths = ['/', '/explore/', '/discoveries/', '/methodology/', '/evidence/', ...evidence.map((record) => record.url)];
   const generatedAt = new Date().toISOString();
 
   await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt({ baseUrl }), 'utf8');
   await writeFile(resolve(root, 'sitemap.xml'), renderSitemap({ baseUrl, pages: pagePaths.map((path) => ({ path })) }), 'utf8');
   await writeFile(resolve(root, 'evidence', 'index.json'), `${JSON.stringify({ schemaVersion: '1.0', generatedAt, evidence }, null, 2)}\n`, 'utf8');
-  await writeFile(resolve(root, 'build.json'), `${JSON.stringify({ generatedAt, baseUrl, evidencePages: evidence.length, demoPages: evidence.filter((item) => item.demo).length }, null, 2)}\n`, 'utf8');
+  await writeFile(resolve(root, 'build.json'), `${JSON.stringify({ generatedAt, baseUrl, publicRoutes: pagePaths.length, evidencePages: evidence.length, demoPages: evidence.filter((item) => item.demo).length }, null, 2)}\n`, 'utf8');
 
   return { evidence, pagePaths, generatedAt };
 }
