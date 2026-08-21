@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { buildSite } from '../scripts/build-site.js';
 
-test('static build includes browse hubs, sources, status and evidence routes', async () => {
+test('static build includes browse hubs, sources, archive, status and evidence routes', async () => {
   const result = await buildSite();
 
   assert.ok(result.pagePaths.includes('/'));
@@ -13,6 +13,7 @@ test('static build includes browse hubs, sources, status and evidence routes', a
   assert.ok(result.pagePaths.includes('/evidence/'));
   assert.ok(result.pagePaths.includes('/methodology/'));
   assert.ok(result.pagePaths.includes('/sources/'));
+  assert.ok(result.pagePaths.includes('/archive/'));
   assert.ok(result.pagePaths.includes('/status/'));
   assert.ok(result.pagePaths.some((path) => path.startsWith('/evidence/') && path !== '/evidence/'));
 
@@ -20,6 +21,7 @@ test('static build includes browse hubs, sources, status and evidence routes', a
   assert.match(sitemap, /world-discovery-engine\/explore\//);
   assert.match(sitemap, /world-discovery-engine\/discoveries\//);
   assert.match(sitemap, /world-discovery-engine\/sources\//);
+  assert.match(sitemap, /world-discovery-engine\/archive\//);
   assert.match(sitemap, /world-discovery-engine\/status\//);
 
   const buildMetadata = JSON.parse(await readFile(resolve(process.cwd(), 'site', 'build.json'), 'utf8'));
