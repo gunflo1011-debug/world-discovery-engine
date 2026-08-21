@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { renderRobotsTxt, renderSitemap } from '../src/site-assets.js';
 
 const root = resolve(process.cwd(), 'site');
-const baseUrl = process.env.SITE_BASE_URL || 'https://gunflo1011-debug.github.io/world-discovery-engine';
+const baseUrl = process.env.SITE_BASE_URL || 'https://gunflo1011-debug.github.io/world-discovery-engine/';
 
 function extract(html, pattern) {
   return html.match(pattern)?.[1]?.trim() ?? null;
@@ -40,7 +40,7 @@ export async function buildSite() {
   const generatedAt = new Date().toISOString();
 
   await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt({ baseUrl }), 'utf8');
-  await writeFile(resolve(root, 'sitemap.xml'), renderSitemap(pagePaths.map((path) => ({ path })), { baseUrl }), 'utf8');
+  await writeFile(resolve(root, 'sitemap.xml'), renderSitemap({ baseUrl, pages: pagePaths.map((path) => ({ path })) }), 'utf8');
   await writeFile(resolve(root, 'evidence', 'index.json'), `${JSON.stringify({ schemaVersion: '1.0', generatedAt, evidence }, null, 2)}\n`, 'utf8');
   await writeFile(resolve(root, 'build.json'), `${JSON.stringify({ generatedAt, baseUrl, evidencePages: evidence.length, demoPages: evidence.filter((item) => item.demo).length }, null, 2)}\n`, 'utf8');
 
