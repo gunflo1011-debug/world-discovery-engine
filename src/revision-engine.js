@@ -1,11 +1,12 @@
+import { assessComparability } from './comparability-gate.js';
+
 export function compareObservations(previous, current) {
   if (!previous || !current) throw new Error('Both observations are required');
-  if (previous.indicator !== current.indicator) return { comparable: false, reason: 'indicator_mismatch' };
-  if (previous.entity !== current.entity) return { comparable: false, reason: 'entity_mismatch' };
-  if (previous.period !== current.period) return { comparable: false, reason: 'period_mismatch' };
-  if (previous.unit !== current.unit) return { comparable: false, reason: 'unit_mismatch' };
-  if (previous.methodologyVersion !== current.methodologyVersion) return { comparable: false, reason: 'methodology_mismatch' };
-  if (!Number.isFinite(previous.value) || !Number.isFinite(current.value)) return { comparable: false, reason: 'invalid_value' };
+  const assessment = assessComparability(previous, current);
+  if (!assessment.comparable) {
+    return { comparable: false, reason: assessment.reasons[0], reasons: assessment.reasons };
+  }
+  if (!Number.isFinite(previous.value) || !Number.isFinite(current.value)) return { comparable: false, reason: 'invalid-value' };
 
   const absoluteRevision = current.value - previous.value;
   const percentageRevision = previous.value === 0 ? null : (absoluteRevision / Math.abs(previous.value)) * 100;
