@@ -39,4 +39,11 @@ test('static build includes real public routes and excludes demo, noindex or abs
   assert.equal(buildMetadata.publicRoutes, result.pagePaths.length);
   assert.ok(buildMetadata.demoPagesExcluded >= 1);
   assert.ok(buildMetadata.noindexPagesExcluded >= 2);
+
+  const verifiedPopulationPage = await readFile(resolve(process.cwd(), 'site', 'evidence', 'germany-population-revision-2025', 'index.html'), 'utf8');
+  assert.match(verifiedPopulationPage, /<script type="application\/ld\+json">/);
+  assert.match(verifiedPopulationPage, /"@type":"Dataset"/);
+  assert.match(verifiedPopulationPage, /"propertyID":"SP\.POP\.TOTL"/);
+  assert.match(verifiedPopulationPage, /germany-population-revision-2025\/evidence\.json/);
+  assert.match(verifiedPopulationPage, /germany-population-revision-2025\/evidence\.csv/);
 });
