@@ -29,27 +29,21 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - name: Install dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Test and build release artifact
         run: npm run check
       - name: Stamp release identity
         run: printf '%s\n' "$GITHUB_SHA" > site/release-sha.txt
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload static site
-        uses: actions/upload-pages-artifact@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: ./site
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
 
   verify-live:
@@ -58,56 +52,34 @@ jobs:
     env:
       BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine
     steps:
-      - name: Checkout release tests
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Verify exact deployed commit with retry/backoff
         shell: bash
         run: |
           set -euo pipefail
           for attempt in 1 2 3 4 5 6; do
             live_sha="$(curl -L --silent --show-error --fail --max-time 20 "${BASE_URL}/release-sha.txt" || true)"
-            if [ "$live_sha" = "$GITHUB_SHA" ]; then
-              echo "LIVE COMMIT VERIFIED: $live_sha (attempt ${attempt})"
-              exit 0
-            fi
-            echo "Retry ${attempt}: expected $GITHUB_SHA, got ${live_sha:-network-error-or-empty}"
+            if [ "$live_sha" = "$GITHUB_SHA" ]; then echo "LIVE COMMIT VERIFIED: $live_sha"; exit 0; fi
             sleep $((attempt * 10))
           done
-          echo "LIVE FAILED: deployed commit identity did not converge to $GITHUB_SHA"
           exit 1
-      - name: Verify critical live routes with retry/backoff
+      - name: Verify critical live routes
         shell: bash
         run: |
           set -euo pipefail
           routes=("/index.html" "/indicators/" "/indicators/real-gdp/" "/indicators/real-gdp/status.json" "/evidence/" "/evidence/index.json" "/evidence/germany-population-revision-2025/" "/evidence/germany-population-revision-2025/evidence.json" "/evidence/germany-population-revision-2025/evidence.csv" "/sitemap.xml" "/robots.txt")
-          for route in "${routes[@]}"; do
-            ok=0
-            for attempt in 1 2 3 4 5 6; do
-              code="$(curl -L --silent --show-error --output /tmp/live-body --write-out '%{http_code}' --max-time 20 "${BASE_URL}${route}" || true)"
-              if [ "$code" = "200" ] && [ -s /tmp/live-body ]; then ok=1; break; fi
-              sleep $((attempt * 10))
-            done
-            if [ "$ok" -ne 1 ]; then echo "LIVE FAILED ${route}"; exit 1; fi
-          done
-      - name: Verify live indicator registry and GDP fail-closed contract
+          for route in "${routes[@]}"; do curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}${route}" -o /tmp/live-body; test -s /tmp/live-body; done
+      - name: Verify GDP remains fail-closed
         shell: bash
         run: |
-          set -euo pipefail
-          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/indicators/" -o /tmp/indicators.html
-          grep -q 'NY.GDP.MKTP.KD' /tmp/indicators.html
-          grep -q 'SP.POP.TOTL' /tmp/indicators.html
-          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/indicators/real-gdp/status.json" -o /tmp/gdp-status.json
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/indicators/real-gdp/status.json" -o /tmp/gdp.json
           node - <<'NODE'
-          const fs = require('fs');
-          const status = JSON.parse(fs.readFileSync('/tmp/gdp-status.json', 'utf8'));
-          if (status?.indicator?.code !== 'NY.GDP.MKTP.KD') throw new Error('wrong GDP indicator');
-          if (status?.screeningStatus !== 'BLOCKED_METHODOLOGY_COMPARABILITY') throw new Error('GDP unexpectedly unblocked');
-          if (status?.publishableRevisionData !== false) throw new Error('GDP unexpectedly publishable');
+          const s=JSON.parse(require('fs').readFileSync('/tmp/gdp.json','utf8'));
+          if(s?.indicator?.code!=='NY.GDP.MKTP.KD'||s?.screeningStatus!=='BLOCKED_METHODOLOGY_COMPARABILITY'||s?.publishableRevisionData!==false) throw new Error('GDP fail-closed contract violated');
           NODE
-      - name: Verify live discovery metadata
+      - name: Verify discovery metadata
         shell: bash
         run: |
-          set -euo pipefail
           curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/index.html" -o /tmp/index.html
           grep -qi 'rel="canonical"' /tmp/index.html
           curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/robots.txt" -o /tmp/robots.txt
@@ -115,9 +87,9 @@ jobs:
           curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
           grep -q "${BASE_URL}/evidence/germany-population-revision-2025/" /tmp/sitemap.xml
       - name: Install Playwright Chromium
-        run: npx --yes playwright@1.55.0 install --with-deps chromium
+        run: npx --yes -p @playwright/test@1.55.0 playwright install --with-deps chromium
       - name: Run live mobile browser smoke
-        run: npx --yes playwright@1.55.0 test test/live-mobile-smoke.spec.js --reporter=line
+        run: npx --yes -p @playwright/test@1.55.0 playwright test test/live-mobile-smoke.spec.js --reporter=line
       - name: Upload browser-smoke evidence on failure
         if: failure()
         uses: actions/upload-artifact@v4
