@@ -43,7 +43,7 @@ jobs:
           echo "GDP screener exited non-zero as required (rc=$rc). Validating exact blocker next."
       - name: Validate exact methodology blocker and publish synchronized public artifacts
         run: python scripts/publish-gdp-screening-status.py
-      - name: Verify public outputs leak no screened GDP values and share one run timestamp
+      - name: Verify public outputs leak no screened GDP values and never call row presence comparability
         run: |
           python - <<'PY'
           import json,re
@@ -52,11 +52,12 @@ jobs:
           h=Path('site/indicators/real-gdp/provenance.html')
           i=Path('site/indicators/real-gdp/index.html')
           d=json.loads(p.read_text(encoding='utf-8'))
-          assert d['schemaVersion']=='1.4'
+          assert d['schemaVersion']=='1.5'
           assert re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z',d['screenedAtUtc'])
           assert d['screeningStatus']=='BLOCKED_METHODOLOGY_COMPARABILITY'
           assert d['publishableRevisionData'] is False
-          assert d['coverage']=={'requested':15,'comparableRows':15,'missing':[]}
+          assert d['coverage']=={'requested':15,'rowsPresentInBothVintages':15,'missing':[]}
+          assert 'comparableRows' not in d['coverage']
           g=d['methodologyGate']
           assert g['archiveNamesConsistent'] is True
           assert g['archiveNamesMatchExpectedScreeningContract'] is True
@@ -66,17 +67,21 @@ jobs:
           assert all(x['indicatorNameInArchive']=='GDP (constant 2015 US$)' for x in releases)
           assert all(re.fullmatch(r'[0-9a-f]{64}',x['archiveSha256']) for x in releases)
           assert all(isinstance(x['archiveBytes'],int) and x['archiveBytes']>1_000_000 for x in releases)
+          assert d['license']['name']=='Creative Commons Attribution 4.0'
+          assert d['license']['datasetTermsUrl'].startswith('https://www.worldbank.org/')
           assert h.is_file() and i.is_file() and h.stat().st_size>1000 and i.stat().st_size>1000
           html=h.read_text(encoding='utf-8'); page=i.read_text(encoding='utf-8'); status=p.read_text(encoding='utf-8')
           combined='\n'.join((status,html,page))
-          for forbidden in ('"rows"','"absoluteRevision"','"relativeRevision"'):
+          for forbidden in ('"rows"','"absoluteRevision"','"relativeRevision"','comparableRows'):
               assert forbidden not in combined,forbidden
           assert d['screenedAtUtc'] in html and d['screenedAtUtc'] in page
+          assert 'Presence is not a methodology-comparability claim.' in html
+          assert 'this is not a methodology-comparability claim' in page
           for x in releases:
               assert x['archiveSha256'] in html
               assert x['url'] in html
               assert f"{x['archiveBytes']:,} bytes" in html
-          print('Verified one synchronized fail-closed GDP run across status, provenance and public screening page')
+          print('Verified synchronized fail-closed GDP run with precise row-presence semantics and licensing')
           PY
       - name: Commit reproducible GDP screening artifacts
         run: |
