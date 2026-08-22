@@ -1,5 +1,27 @@
 {
-  "generatedAt": "2026-08-22T20:42:30.881595+00:00",
+  "schemaVersion": "1.1",
+  "generatedAt": "2026-08-22T21:41:18.437063+00:00",
+  "indicator": {
+    "code": "SP.POP.TOTL",
+    "referenceYear": 2023,
+    "unit": "people"
+  },
+  "archives": [
+    {
+      "vintage": "2025-01-28",
+      "url": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip",
+      "archiveFile": "WDIEXCEL.xlsx",
+      "archiveSha256": "7ff8c66e5a074a4a0f923cd603ff0d5fee5b043406f90c6fc9ae34c0fb5bfd60",
+      "archiveBytes": 78775530
+    },
+    {
+      "vintage": "2025-07-02",
+      "url": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip",
+      "archiveFile": "WDIEXCEL.xlsx",
+      "archiveSha256": "b33fef211eeebaa43f668f822e7825ea737d7ffada1787d495ee042b4821eaf3",
+      "archiveBytes": 80658288
+    }
+  ],
   "count": 15,
   "items": [
     {
@@ -7,105 +29,225 @@
       "country": "Germany",
       "slug": "germany-population-revision-2025",
       "absolute": 621923.0,
-      "relative": 0.007467855427473583
+      "relative": 0.007467855427473583,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 83280000.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 83901923.0
+      }
     },
     {
       "code": "USA",
       "country": "United States",
       "slug": "united-states-population-revision-2025",
       "absolute": 1891336.0,
-      "relative": 0.005647213749630335
+      "relative": 0.005647213749630335,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 334914895.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 336806231.0
+      }
     },
     {
       "code": "CHN",
       "country": "China",
       "slug": "china-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 1410710000.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 1410710000.0
+      }
     },
     {
       "code": "IND",
       "country": "India",
       "slug": "india-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 1438069596.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 1438069596.0
+      }
     },
     {
       "code": "JPN",
       "country": "Japan",
       "slug": "japan-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 124516650.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 124516650.0
+      }
     },
     {
       "code": "GBR",
       "country": "United Kingdom",
       "slug": "united-kingdom-population-revision-2025",
       "absolute": 142000.0,
-      "relative": 0.002077542062911485
+      "relative": 0.002077542062911485,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 68350000.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 68492000.0
+      }
     },
     {
       "code": "FRA",
       "country": "France",
       "slug": "france-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 68287487.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 68287487.0
+      }
     },
     {
       "code": "ITA",
       "country": "Italy",
       "slug": "italy-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 58993475.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 58993475.0
+      }
     },
     {
       "code": "BRA",
       "country": "Brazil",
       "slug": "brazil-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 211140729.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 211140729.0
+      }
     },
     {
       "code": "CAN",
       "country": "Canada",
       "slug": "canada-population-revision-2025",
       "absolute": -14277.0,
-      "relative": -0.00035605479318408825
+      "relative": -0.00035605479318408825,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 40097761.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 40083484.0
+      }
     },
     {
       "code": "AUS",
       "country": "Australia",
       "slug": "australia-population-revision-2025",
       "absolute": -6171.0,
-      "relative": -0.00023147950174177916
+      "relative": -0.00023147950174177916,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 26658948.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 26652777.0
+      }
     },
     {
       "code": "ESP",
       "country": "Spain",
       "slug": "spain-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 48347910.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 48347910.0
+      }
     },
     {
       "code": "MEX",
       "country": "Mexico",
       "slug": "mexico-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 129739759.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 129739759.0
+      }
     },
     {
       "code": "IDN",
       "country": "Indonesia",
       "slug": "indonesia-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 281190067.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 281190067.0
+      }
     },
     {
       "code": "KOR",
       "country": "Korea, Rep.",
       "slug": "korea-rep-population-revision-2025",
       "absolute": 0.0,
-      "relative": 0.0
+      "relative": 0.0,
+      "first": {
+        "vintage": "2025-01-28",
+        "value": 51712619.0
+      },
+      "latest": {
+        "vintage": "2025-07-02",
+        "value": 51712619.0
+      }
     }
   ]
 }
