@@ -40,35 +40,41 @@ jobs:
           fi
           test -s data/screening/real-gdp-2025.json
           echo "GDP screener exited non-zero as required (rc=$rc). Validating exact blocker next."
-      - name: Validate exact methodology blocker and sanitize public status
+      - name: Validate exact methodology blocker and publish sanitized provenance
         run: python scripts/publish-gdp-screening-status.py
-      - name: Verify public status leaks no screened GDP values
+      - name: Verify public outputs leak no screened GDP values
         run: |
           python - <<'PY'
-          import json
+          import json, re
           from pathlib import Path
           p=Path('site/indicators/real-gdp/status.json')
+          h=Path('site/indicators/real-gdp/provenance.html')
           d=json.loads(p.read_text(encoding='utf-8'))
+          assert d['schemaVersion']=='1.2'
           assert d['screeningStatus']=='BLOCKED_METHODOLOGY_COMPARABILITY'
           assert d['publishableRevisionData'] is False
-          assert d['coverage']['requested']==15
-          assert d['coverage']['comparableRows']==15
-          assert d['coverage']['missing']==[]
+          assert d['coverage']=={'requested':15,'comparableRows':15,'missing':[]}
           assert d['methodologyGate']['archiveNamesConsistent'] is True
           assert d['methodologyGate']['releaseSpecificBaseAndValuationVerified'] is False
-          assert [x['vintage'] for x in d['provenance']['releases']]==['2025-01-28','2025-07-02']
-          text=p.read_text(encoding='utf-8')
+          releases=d['provenance']['releases']
+          assert [x['vintage'] for x in releases]==['2025-01-28','2025-07-02']
+          assert all(re.fullmatch(r'[0-9a-f]{64}', x['archiveSha256']) for x in releases)
+          assert h.is_file() and h.stat().st_size > 1000
+          text=(p.read_text(encoding='utf-8')+'\n'+h.read_text(encoding='utf-8'))
           for forbidden in ('"rows"','"absoluteRevision"','"relativeRevision"'):
               assert forbidden not in text, forbidden
-          print('Verified fail-closed public GDP screening status with provenance and no revision values')
+          for x in releases:
+              assert x['archiveSha256'] in h.read_text(encoding='utf-8')
+              assert x['url'] in h.read_text(encoding='utf-8')
+          print('Verified fail-closed GDP screening status + human-readable provenance, with no revision values')
           PY
-      - name: Commit reproducible screening status
+      - name: Commit reproducible screening status and provenance
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/indicators/real-gdp/status.json
+          git add site/indicators/real-gdp/status.json site/indicators/real-gdp/provenance.html
           if git diff --cached --quiet; then
-            echo 'No GDP screening-status changes to commit.'
+            echo 'No GDP screening-status/provenance changes to commit.'
           else
             git commit -m 'Refresh fail-closed GDP screening provenance'
             git push
