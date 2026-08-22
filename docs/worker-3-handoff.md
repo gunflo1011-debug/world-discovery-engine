@@ -18,23 +18,22 @@ Earlier CI uncertainty was partially resolved by direct user evidence: GitHub Pa
 6. Machine discovery index is schema 1.2 and includes only REAL, discovery-ready evidence with indicator/entity/reference-year/vintage/methodology/license metadata.
 7. Build-time discovery validation requires both `evidence.json` and `evidence.csv`, valid source URLs and complete core provenance. `build.json` counts `discoveryIncompleteExcluded`.
 8. Regression tests require emitted machine records to be REAL, discovery-ready, JSON/CSV-backed and provenance-complete.
-9. **Live all-record + semantic verification is now actually present on current main in commit `11240cb0f15769f3f2e64af37022ac6cd7cead19`.** The Pages `verify-live` job downloads live `/evidence/index.json`, requires schema 1.2, iterates every advertised record, requires `REAL` + `discoveryReady=true`, fetches every advertised JSON and CSV URL, parses JSON, checks CSV shape, and cross-checks live JSON `indicator.code`, `entity.code` and `referenceYear` against the parent index record. Germany `SP.POP.TOTL`/DEU remains a required sentinel.
-
-Important correction to the previous handoff: it described an earlier all-record live verifier commit (`ddcb3f55...`), but the workflow content fetched at the start of this run did not contain that step. Do not rely on that prior claim. Commit `11240cb0...` is the concrete current-main implementation observed and written in this run.
+9. Pages `verify-live` now enumerates every advertised machine record, fetches JSON+CSV, requires REAL/discovery-ready, and semantically cross-checks indicator/entity/reference year for both formats.
+10. Live mobile browser coverage was expanded in `f7fe0d7c49f6ab6b3c1f285ed1b8b5796b9ecc42`: 360/390/430px now cover Home, Indicators, Real GDP and Germany REAL evidence, with horizontal-overflow, nav visibility, console/page-error, absolute canonical, title and meta-description assertions.
 
 ## Reproducible evidence / concrete defects
 
 - Germany REAL payload contains `SP.POP.TOTL`, DEU/Germany, reference year 2023, methodology version, both official WDI archive URLs, methodology note and license; JSON and CSV exist.
-- Build-time machine discovery already fails closed when REAL evidence lacks required provenance or JSON/CSV files.
-- At the start of this run, `.github/workflows/pages.yml` verified only critical routes and Germany-specific files; it did not enumerate all records in `/evidence/index.json`. Therefore a non-Germany advertised endpoint, or a valid endpoint serving the wrong indicator/entity/year, could escape live verification.
-- Commit `11240cb0...` closes both gaps: every advertised distribution is fetched and each JSON payload is semantically tied back to its index record.
+- Build-time machine discovery fails closed when REAL evidence lacks required provenance or JSON/CSV files.
+- Current `.github/workflows/pages.yml` contains all-record JSON+CSV live semantic verification and commit-exact release identity.
+- Before `f7fe0d7...`, the Playwright live mobile smoke covered only Home and Germany evidence. Worker 2 had explicitly requested mobile validation of the indicator/GDP screening UX, so the actual methodology-blocked GDP page was not under browser-CI coverage. That gap is now closed.
 - GDP screening remains status-only/fail-closed. Do not add revision values, Dataset schema or CSV for the screened pair absent new authoritative release-specific comparability evidence.
 
 ## Verification / failures
 
 - Direct user evidence previously proved Pages #77/#78 green for `3bc47f4...` and `aced4b6...`.
-- Current workflow also has commit-exact `release-sha.txt`, critical live route checks, GDP fail-closed verification, canonical/robots/sitemap checks and a Playwright mobile browser smoke.
-- Fresh Actions/Pages result for `11240cb0...` has not yet been observed in this run. Do not claim it green/live until deploy + verify-live completes for that SHA or a descendant containing it.
+- Current workflow has commit-exact `release-sha.txt`, critical live route checks, GDP fail-closed verification, canonical/robots/sitemap checks, all-record semantic machine verification, and Playwright mobile smoke.
+- Fresh Actions/Pages result for `f7fe0d7...` has not yet been observed. Do not claim the expanded browser assertions green/live until deploy + verify-live completes for that SHA or a descendant containing it.
 - No local clone/test was run from this automation runtime; GitHub connector writes succeeded.
 
 ## HANDOFF AN WORKER 4
@@ -46,21 +45,20 @@ Important correction to the previous handoff: it described an earlier all-record
 - Demo/noindex/nonexistent/discovery-incomplete evidence is not preferred via sitemap/machine index.
 - GDP screening is transparently status-only and the screened 2025 pair remains methodology-blocked.
 - README is aligned with repo evidence/product decision.
-- Pages workflow now contains concrete all-record live distribution verification plus semantic identity checks for indicator code, entity code and reference year (`11240cb0...`).
+- Pages workflow contains all-record live distribution verification plus semantic identity checks for JSON and CSV.
+- Mobile browser CI now directly covers the Indicators hub and Real-GDP screening page at 360/390/430px, including canonical/title/description checks.
 
 ### Failure / unverified
-- Fresh CI/Pages result for `11240cb0...` has not yet been observed.
-- Previous handoff claimed `ddcb3f55...` supplied all-record live verification, but current workflow content did not show it; this run corrected the repository rather than trusting that stale claim.
-- CSV live validation currently checks non-empty comma-delimited shape, not semantic identity columns/values.
+- Fresh CI/Pages result for `f7fe0d7...` has not yet been observed.
+- Connector/runtime did not provide a local clone execution path in this run, so browser results must come from Actions.
 
 ### Open checks / fixes
-1. Observe the Pages run containing `11240cb0...`; require deploy + `verify-live` success and commit-exact `release-sha.txt` convergence.
-2. If the new verifier fails, fix the specific broken advertised endpoint/index record; do not weaken the gate.
-3. Strengthen CSV semantic verification only after inspecting the normalized CSV schema: require expected identity columns and compare indicator/entity/reference year where represented.
-4. Audit REAL population human pages for canonical/meta/human-visible provenance consistency; fix concrete defects only.
-5. Keep the existing Playwright 360–430px live browser smoke green.
-6. For future `IT.NET.USER.ZS`, require exact WDI/ITU source attribution, observation year vs retrieval date distinction, `% of population` unit, applicable license/citation requirements, JSON/CSV from the same normalized record, and no archive-revision language.
-7. Do not reopen GDP by inference.
+1. Observe the Pages run containing `f7fe0d7...`; require deploy + `verify-live` success and commit-exact `release-sha.txt` convergence.
+2. If mobile smoke fails, use the uploaded browser-smoke artifact/screenshots to fix the concrete route/viewport defect; do not relax assertions just to green CI.
+3. Audit additional REAL population human pages for canonical/meta/human-visible provenance consistency; fix concrete defects only.
+4. Consider adding keyboard focus traversal assertions to the browser smoke if the current nav markup supports stable focus expectations.
+5. For future `IT.NET.USER.ZS`, require exact WDI/ITU source attribution, observation year vs retrieval date distinction, `% of population` unit, applicable license/citation requirements, JSON/CSV from the same normalized record, and no archive-revision language.
+6. Do not reopen GDP by inference.
 
 ### Recommended additional task
-After the new semantic live verifier is green, inspect the actual evidence CSV schema and extend the same parent-record identity check to CSV without assuming columns that do not exist. This completes semantic integrity for both advertised machine formats while preserving fail-closed behavior.
+After `f7fe0d7...` is green, extend the live browser smoke to one representative non-Germany REAL evidence page and assert its machine-readable JSON/CSV links are visible and navigable from the human page. That would test human→machine crawlability, not merely endpoint availability.
