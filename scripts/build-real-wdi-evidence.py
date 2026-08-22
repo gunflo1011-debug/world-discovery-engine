@@ -29,17 +29,22 @@ def read_indicator_rows(xlsx_bytes):
         vals=[str(v).strip() if v is not None else '' for v in row]
         if 'Country Name' in vals and 'Country Code' in vals and 'Indicator Code' in vals: header=vals; break
     if not header: raise RuntimeError('Could not locate WDI header')
-    idx={name:i for i,name in enumerate(header)}; year=str(REFERENCE_YEAR); out={}
+    idx={name:i for i,name in enumerate(header)}; year=str(REFERENCE_YEAR); out={}; archived_names=set()
     if year not in idx: raise RuntimeError(f'Reference year {REFERENCE_YEAR} not found')
+    if 'Indicator Name' not in idx: raise RuntimeError('Indicator Name column not found')
     for row in rows:
         if row[idx['Indicator Code']] != INDICATOR_CODE: continue
         code=row[idx['Country Code']]; value=row[idx[year]]
         if code in ENTITY_CODES and value is not None:
+            archived_name=str(row[idx['Indicator Name']]).strip()
+            archived_names.add(archived_name)
             try: out[str(code)]={"country":str(row[idx['Country Name']]),"value":float(value)}
             except (TypeError,ValueError): pass
     missing=set(ENTITY_CODES)-set(out)
     if missing: raise RuntimeError(f'Missing countries: {sorted(missing)}')
-    return out
+    if archived_names != {INDICATOR_NAME}:
+        raise RuntimeError(f'Unexpected archived indicator identity for {INDICATOR_CODE}: {sorted(archived_names)}')
+    return out, next(iter(archived_names))
 
 def slug(name): return re.sub(r'[^a-z0-9]+','-',name.lower()).strip('-')
 def fmt(v): return f"{v:,.0f}"
@@ -50,23 +55,23 @@ def main():
     for rel in RELEASES:
         blob=download(rel['url'])
         xlsx,name=extract_data_xlsx(blob)
-        data=read_indicator_rows(xlsx)
-        snapshots.append({**rel,"archive_file":name,"archive_sha256":__import__('hashlib').sha256(blob).hexdigest(),"archive_bytes":len(blob),"data":data})
-        print(f"Loaded {INDICATOR_CODE} for {len(data)} countries from {rel['vintage']}")
+        data,archived_indicator_name=read_indicator_rows(xlsx)
+        snapshots.append({**rel,"archive_file":name,"archive_sha256":__import__('hashlib').sha256(blob).hexdigest(),"archive_bytes":len(blob),"archived_indicator_name":archived_indicator_name,"data":data})
+        print(f"Loaded {INDICATOR_CODE} ({archived_indicator_name}) for {len(data)} countries from {rel['vintage']}")
     generated=datetime.now(timezone.utc).isoformat(); manifest=[]
     for code in ENTITY_CODES:
         first=snapshots[0]['data'][code]['value']; latest=snapshots[1]['data'][code]['value']; country=snapshots[1]['data'][code]['country']
         absolute=latest-first; relative=absolute/abs(first) if first else 0.0
         page_slug=f"{slug(country)}-population-revision-2025"; out=ROOT/page_slug; out.mkdir(parents=True,exist_ok=True)
-        evidence={"schemaVersion":"1.1","status":"REAL","indicator":{"code":INDICATOR_CODE,"name":INDICATOR_NAME,"unit":UNIT,"methodologyVersion":METHODOLOGY_VERSION},"entity":{"code":code,"name":country,"entityType":"country"},"referenceYear":REFERENCE_YEAR,
-                  "first":{"vintage":RELEASES[0]['vintage'],"value":first,"sourceUrl":RELEASES[0]['url'],"archiveFile":snapshots[0]['archive_file'],"archiveSha256":snapshots[0]['archive_sha256'],"archiveBytes":snapshots[0]['archive_bytes']},
-                  "latest":{"vintage":RELEASES[1]['vintage'],"value":latest,"sourceUrl":RELEASES[1]['url'],"archiveFile":snapshots[1]['archive_file'],"archiveSha256":snapshots[1]['archive_sha256'],"archiveBytes":snapshots[1]['archive_bytes']},
-                  "revision":{"absolute":absolute,"relative":relative},"generatedAt":generated,"methodologyNote":"Same WDI indicator, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.","license":"CC BY 4.0 (World Bank WDI; preserve attribution)"}
+        evidence={"schemaVersion":"1.2","status":"REAL","indicator":{"code":INDICATOR_CODE,"name":INDICATOR_NAME,"unit":UNIT,"methodologyVersion":METHODOLOGY_VERSION},"entity":{"code":code,"name":country,"entityType":"country"},"referenceYear":REFERENCE_YEAR,
+                  "first":{"vintage":RELEASES[0]['vintage'],"value":first,"sourceUrl":RELEASES[0]['url'],"archiveFile":snapshots[0]['archive_file'],"archiveSha256":snapshots[0]['archive_sha256'],"archiveBytes":snapshots[0]['archive_bytes'],"archivedIndicatorName":snapshots[0]['archived_indicator_name']},
+                  "latest":{"vintage":RELEASES[1]['vintage'],"value":latest,"sourceUrl":RELEASES[1]['url'],"archiveFile":snapshots[1]['archive_file'],"archiveSha256":snapshots[1]['archive_sha256'],"archiveBytes":snapshots[1]['archive_bytes'],"archivedIndicatorName":snapshots[1]['archived_indicator_name']},
+                  "revision":{"absolute":absolute,"relative":relative},"generatedAt":generated,"methodologyNote":"Same WDI indicator code and archived indicator name, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.","license":"CC BY 4.0 (World Bank WDI; preserve attribution)"}
         (out/'evidence.json').write_text(json.dumps(evidence,indent=2)+"\n",encoding='utf-8')
         with (out/'evidence.csv').open('w',newline='',encoding='utf-8') as f:
-            w=csv.writer(f); w.writerow(['entity_code','entity','indicator_code','reference_year','vintage','value','unit','source_url','archive_file','archive_sha256','archive_bytes'])
+            w=csv.writer(f); w.writerow(['entity_code','entity','indicator_code','archived_indicator_name','reference_year','vintage','value','unit','source_url','archive_file','archive_sha256','archive_bytes'])
             for key in ('first','latest'):
-                x=evidence[key]; w.writerow([code,country,INDICATOR_CODE,REFERENCE_YEAR,x['vintage'],x['value'],UNIT,x['sourceUrl'],x['archiveFile'],x['archiveSha256'],x['archiveBytes']])
+                x=evidence[key]; w.writerow([code,country,INDICATOR_CODE,x['archivedIndicatorName'],REFERENCE_YEAR,x['vintage'],x['value'],UNIT,x['sourceUrl'],x['archiveFile'],x['archiveSha256'],x['archiveBytes']])
         unchanged=(absolute==0)
         direction='increased' if absolute>0 else ('decreased' if absolute<0 else 'was unchanged')
         canonical=f"https://gunflo1011-debug.github.io/world-discovery-engine/evidence/{page_slug}/"
@@ -98,11 +103,11 @@ def main():
             what_changed=f"The published value for {country_possessive} {REFERENCE_YEAR} population was identical in both archived releases: <strong>{fmt(first)} people</strong>. This verified null finding means no revision was observed in this vintage pair; it is not a statement about population growth between January and July 2025."
         else:
             what_changed=f"The value published for {country_possessive} {REFERENCE_YEAR} population changed by <strong>{absolute:+,.0f} people</strong> ({relative*100:+.4f}%) between the two archived releases. This is a revision of a published estimate, not population growth between January and July 2025."
-        provenance=f"Indicator: {INDICATOR_NAME} ({INDICATOR_CODE}) · Unit: {UNIT} · Country: {code} · Reference year: {REFERENCE_YEAR} · Methodology gate: {METHODOLOGY_VERSION}. Regional aggregates are excluded. Source license: CC BY 4.0. Archive fingerprints: Jan {snapshots[0]['archive_sha256'][:12]}… · Jul {snapshots[1]['archive_sha256'][:12]}…; exact hashes and archive members are included in JSON/CSV."
+        provenance=f"Indicator: {INDICATOR_NAME} ({INDICATOR_CODE}) · Archived series name verified in both releases: {INDICATOR_NAME} · Unit: {UNIT} · Country: {code} · Reference year: {REFERENCE_YEAR} · Methodology gate: {METHODOLOGY_VERSION}. Regional aggregates are excluded. Source license: CC BY 4.0. Archive fingerprints: Jan {snapshots[0]['archive_sha256'][:12]}… · Jul {snapshots[1]['archive_sha256'][:12]}…; exact hashes, archived series names and archive members are included in JSON/CSV."
         html=f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{country} population revision 2025 — World Discovery Engine</title><meta name="description" content="{description}"><link rel="canonical" href="{canonical}"><script type="application/ld+json">{structured_json}</script><link rel="stylesheet" href="../../styles.css"></head><body><header class="topbar"><div class="wrap"><div class="brand">World Discovery Engine</div><nav class="nav"><a href="../../index.html">Home</a><a href="../index.html">Evidence</a><a href="../../methodology/index.html">Methodology</a></nav></div></header><main><section class="evidence-head"><div class="wrap"><span class="pill">REAL WDI EVIDENCE · VERIFIED VINTAGE COMPARISON</span><h1>{country_possessive} published {REFERENCE_YEAR} population estimate {direction} between two 2025 WDI releases.</h1><p class="muted">A reproducible comparison of official archived World Development Indicators releases.</p></div></section><section class="section"><div class="wrap"><div class="facts"><div class="fact"><div class="label">28 Jan 2025</div><div class="value">{fmt(first)}</div><div class="muted">people</div></div><div class="fact"><div class="label">2 Jul 2025</div><div class="value">{fmt(latest)}</div><div class="muted">people</div></div><div class="fact"><div class="label">Revision</div><div class="value">{revision_percent}</div><div class="muted">{revision_people}</div></div></div><h2>What changed?</h2><p>{what_changed}</p><h2>Provenance</h2><div class="sourcebox">{provenance}</div><p><a href="./evidence.json">JSON evidence</a> · <a href="./evidence.csv">CSV evidence</a> · <a href="{RELEASES[0]['url']}">Jan archive</a> · <a href="{RELEASES[1]['url']}">Jul archive</a></p></div></section></main><footer class="footer"><div class="wrap">World Discovery Engine · Verified archived WDI evidence</div></footer></body></html>'''
         (out/'index.html').write_text(html,encoding='utf-8')
         manifest.append({"code":code,"country":country,"slug":page_slug,"absolute":absolute,"relative":relative,
                          "first":{"vintage":RELEASES[0]['vintage'],"value":first},"latest":{"vintage":RELEASES[1]['vintage'],"value":latest}})
-    (ROOT/'real-wdi-population-manifest.json').write_text(json.dumps({"schemaVersion":"1.1","generatedAt":generated,"indicator":{"code":INDICATOR_CODE,"referenceYear":REFERENCE_YEAR,"unit":UNIT},"archives":[{"vintage":s["vintage"],"url":s["url"],"archiveFile":s["archive_file"],"archiveSha256":s["archive_sha256"],"archiveBytes":s["archive_bytes"]} for s in snapshots],"count":len(manifest),"items":manifest},indent=2)+"\n",encoding='utf-8')
+    (ROOT/'real-wdi-population-manifest.json').write_text(json.dumps({"schemaVersion":"1.2","generatedAt":generated,"indicator":{"code":INDICATOR_CODE,"name":INDICATOR_NAME,"referenceYear":REFERENCE_YEAR,"unit":UNIT},"archives":[{"vintage":s["vintage"],"url":s["url"],"archiveFile":s["archive_file"],"archiveSha256":s["archive_sha256"],"archiveBytes":s["archive_bytes"],"archivedIndicatorName":s["archived_indicator_name"]} for s in snapshots],"count":len(manifest),"items":manifest},indent=2)+"\n",encoding='utf-8')
     print(json.dumps(manifest,indent=2))
 if __name__=='__main__': main()
