@@ -1,1 +1,206 @@
-PLACEHOLDER
+name: Deploy static site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'scripts/**'
+      - 'src/**'
+      - 'test/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install project dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund --package-lock=false
+      - name: Test and build release artifact
+        run: npm run check
+      - name: Stamp release identity
+        run: printf '%s\n' "$GITHUB_SHA" > site/release-sha.txt
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./site
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  verify-live:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install project dependencies for browser verification
+        run: npm install --ignore-scripts --no-audit --no-fund --package-lock=false
+      - name: Verify exact deployed commit with retry/backoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6; do
+            live_sha="$(curl -L --silent --show-error --fail --max-time 20 "${BASE_URL}/release-sha.txt" || true)"
+            if [ "$live_sha" = "$GITHUB_SHA" ]; then echo "LIVE COMMIT VERIFIED: $live_sha"; exit 0; fi
+            sleep $((attempt * 10))
+          done
+          exit 1
+      - name: Verify critical live routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          routes=("/index.html" "/indicators/" "/indicators/real-gdp/" "/indicators/real-gdp/status.json" "/indicators/internet-use/" "/indicators/internet-use/data.json" "/indicators/internet-use/data.csv" "/indicators/internet-use/country/index.json" "/indicators/internet-use/country/deu/" "/indicators/internet-use/country/deu/data.json" "/build.json" "/evidence/" "/evidence/index.json" "/evidence/germany-population-revision-2025/" "/evidence/germany-population-revision-2025/evidence.json" "/evidence/germany-population-revision-2025/evidence.csv" "/sitemap.xml" "/robots.txt")
+          for route in "${routes[@]}"; do curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}${route}" -o /tmp/live-body; test -s /tmp/live-body; done
+      - name: Verify GDP remains fail-closed
+        shell: bash
+        run: |
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/indicators/real-gdp/status.json" -o /tmp/gdp.json
+          node - <<'NODE'
+          const s=JSON.parse(require('fs').readFileSync('/tmp/gdp.json','utf8'));
+          if(s?.indicator?.code!=='NY.GDP.MKTP.KD'||s?.screeningStatus!=='BLOCKED_METHODOLOGY_COMPARABILITY'||s?.publishableRevisionData!==false) throw new Error('GDP fail-closed contract violated');
+          NODE
+      - name: Verify discovery metadata
+        shell: bash
+        run: |
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/index.html" -o /tmp/index.html
+          grep -qi 'rel="canonical"' /tmp/index.html
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/robots.txt" -o /tmp/robots.txt
+          grep -qi "Sitemap: ${BASE_URL}/sitemap.xml" /tmp/robots.txt
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
+          grep -q "${BASE_URL}/evidence/germany-population-revision-2025/" /tmp/sitemap.xml
+      - name: Verify Internet-use country discovery contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/indicators/internet-use/data.json" -o /tmp/internet-use-data.json
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/indicators/internet-use/country/index.json" -o /tmp/internet-country-index.json
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/build.json" -o /tmp/build.json
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
+          BASE_URL="$BASE_URL" node - <<'NODE'
+          const fs = require('fs');
+          const { execFileSync } = require('child_process');
+          const baseUrl = process.env.BASE_URL.replace(/\/$/, '');
+          const source = JSON.parse(fs.readFileSync('/tmp/internet-use-data.json', 'utf8'));
+          const index = JSON.parse(fs.readFileSync('/tmp/internet-country-index.json', 'utf8'));
+          const build = JSON.parse(fs.readFileSync('/tmp/build.json', 'utf8'));
+          const sitemap = fs.readFileSync('/tmp/sitemap.xml', 'utf8');
+          if (index.schemaVersion !== '1.1' || index.status !== 'CURRENT_VERIFIED') throw new Error('Unexpected Internet-use country index contract');
+          if (index.indicator !== 'IT.NET.USER.ZS' || index.observationYear !== 2024) throw new Error('Internet-use country index identity mismatch');
+          if (!index.provenance?.publisher || !index.provenance?.metadataUrl || !index.provenance?.retrievalUrl || !index.provenance?.license) throw new Error('Internet-use country index provenance incomplete');
+          if (!Array.isArray(source.observations) || source.observations.length === 0) throw new Error('Internet-use source observations missing');
+          if (!Array.isArray(index.countries) || index.countries.length !== source.observations.length) throw new Error('Internet-use country profile count must match source observations');
+          if (build.internetUseCountryProfiles !== index.countries.length) throw new Error('build.json country profile count mismatch');
+          const seen = new Set();
+          for (const country of index.countries) {
+            if (!/^[A-Z]{3}$/.test(country.code) || !country.url || !country.machineDataUrl) throw new Error(`Malformed Internet-use country record: ${country.code || 'unknown'}`);
+            if (seen.has(country.code)) throw new Error(`Duplicate Internet-use country record: ${country.code}`);
+            seen.add(country.code);
+            const absolute = `${baseUrl}${country.url}`;
+            const machineAbsolute = `${baseUrl}${country.machineDataUrl}`;
+            const occurrences = sitemap.split(absolute).length - 1;
+            if (occurrences !== 1) throw new Error(`Country route must appear exactly once in sitemap: ${country.code}, found ${occurrences}`);
+            const htmlFile = `/tmp/internet-country-${country.code}.html`;
+            const machineFile = `/tmp/internet-country-${country.code}.json`;
+            execFileSync('curl', ['-L','--fail','--retry','5','--retry-all-errors','--retry-delay','10', absolute, '-o', htmlFile], { stdio: 'inherit' });
+            execFileSync('curl', ['-L','--fail','--retry','5','--retry-all-errors','--retry-delay','10', machineAbsolute, '-o', machineFile], { stdio: 'inherit' });
+            const payload = JSON.parse(fs.readFileSync(machineFile, 'utf8'));
+            if (payload.schemaVersion !== '1.0' || payload.status !== 'CURRENT_VERIFIED') throw new Error(`Country machine contract mismatch: ${country.code}`);
+            if (payload.indicator?.code !== index.indicator || payload.entity?.code !== country.code || payload.observation?.year !== index.observationYear || payload.observation?.value !== country.value) throw new Error(`Country machine semantic identity mismatch: ${country.code}`);
+            if (payload.scope?.completeGlobalRanking !== false || payload.scope?.historicalRevisionProduct !== false) throw new Error(`Country machine scope mismatch: ${country.code}`);
+            if (payload.humanUrl !== `${baseUrl}${country.url}`) throw new Error(`Country machine human URL mismatch: ${country.code}`);
+          }
+          NODE
+      - name: Verify every advertised machine distribution and semantic identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/evidence/index.json" -o /tmp/evidence-index.json
+          BASE_URL="$BASE_URL" node - <<'NODE'
+          const fs = require('fs');
+          const { execFileSync } = require('child_process');
+          const baseUrl = process.env.BASE_URL.replace(/\/$/, '');
+          const parseCsvLine = (line) => {
+            const values = [];
+            let current = '';
+            let quoted = false;
+            for (let i = 0; i < line.length; i += 1) {
+              const char = line[i];
+              if (char === '"') {
+                if (quoted && line[i + 1] === '"') { current += '"'; i += 1; }
+                else quoted = !quoted;
+              } else if (char === ',' && !quoted) {
+                values.push(current.trim()); current = '';
+              } else current += char;
+            }
+            if (quoted) throw new Error('Malformed CSV: unterminated quoted field');
+            values.push(current.trim());
+            return values;
+          };
+          const index = JSON.parse(fs.readFileSync('/tmp/evidence-index.json', 'utf8'));
+          if (index.schemaVersion !== '1.2' || !Array.isArray(index.evidence) || index.evidence.length === 0) throw new Error('Unexpected evidence index contract');
+          let germany = false;
+          for (const record of index.evidence) {
+            if (record.status !== 'REAL' || record.discoveryReady !== true) throw new Error(`Non-ready record advertised: ${record.slug}`);
+            const jsonPath = record.machineReadable?.json;
+            const csvPath = record.machineReadable?.csv;
+            if (!jsonPath || !csvPath) throw new Error(`Missing machine distributions: ${record.slug}`);
+            const resolveUrl = (value) => value.startsWith('http') ? value : `${baseUrl}${value.startsWith('/') ? '' : '/'}${value}`;
+            const jsonFile = `/tmp/${record.slug}-evidence.json`;
+            const csvFile = `/tmp/${record.slug}-evidence.csv`;
+            execFileSync('curl', ['-L','--fail','--retry','5','--retry-all-errors','--retry-delay','10', resolveUrl(jsonPath), '-o', jsonFile], { stdio: 'inherit' });
+            execFileSync('curl', ['-L','--fail','--retry','5','--retry-all-errors','--retry-delay','10', resolveUrl(csvPath), '-o', csvFile], { stdio: 'inherit' });
+            const payload = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+            if (payload.status !== 'REAL') throw new Error(`JSON status mismatch: ${record.slug}`);
+            if (payload.indicator?.code !== record.indicator?.code) throw new Error(`Indicator mismatch: ${record.slug}`);
+            if (payload.entity?.code !== record.entity?.code) throw new Error(`Entity mismatch: ${record.slug}`);
+            if (payload.referenceYear !== record.referenceYear) throw new Error(`Reference-year mismatch: ${record.slug}`);
+            const csv = fs.readFileSync(csvFile, 'utf8').trim();
+            const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
+            if (lines.length < 2) throw new Error(`CSV has no data rows: ${record.slug}`);
+            const columns = lines[0];
+            const required = ['entity_code','indicator_code','reference_year'];
+            for (const name of required) if (!columns.includes(name)) throw new Error(`CSV missing ${name}: ${record.slug}`);
+            const entityIx = columns.indexOf('entity_code');
+            const indicatorIx = columns.indexOf('indicator_code');
+            const yearIx = columns.indexOf('reference_year');
+            const matches = lines.slice(1).some(values => values[entityIx] === record.entity?.code && values[indicatorIx] === record.indicator?.code && String(values[yearIx]) === String(record.referenceYear));
+            if (!matches) throw new Error(`CSV semantic identity mismatch: ${record.slug}`);
+            if (record.indicator?.code === 'SP.POP.TOTL' && record.entity?.code === 'DEU') germany = true;
+          }
+          if (!germany) throw new Error('Germany population sentinel missing');
+          NODE
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run live mobile browser smoke
+        run: npx playwright test test/live-mobile-smoke.spec.js test/internet-use-country-live.spec.js --reporter=line
+      - name: Upload browser-smoke evidence on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-browser-smoke-${{ github.sha }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 14
