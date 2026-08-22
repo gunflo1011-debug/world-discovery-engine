@@ -43,7 +43,7 @@ jobs:
           echo "GDP screener exited non-zero as required (rc=$rc). Validating exact blocker next."
       - name: Validate exact methodology blocker and publish synchronized public artifacts
         run: python scripts/publish-gdp-screening-status.py
-      - name: Verify public outputs leak no screened GDP values and never call row presence comparability
+      - name: Verify public outputs leak no screened GDP values and expose exact country contract
         run: |
           python - <<'PY'
           import json,re
@@ -52,11 +52,12 @@ jobs:
           h=Path('site/indicators/real-gdp/provenance.html')
           i=Path('site/indicators/real-gdp/index.html')
           d=json.loads(p.read_text(encoding='utf-8'))
-          assert d['schemaVersion']=='1.5'
+          countries=['DEU','USA','CHN','IND','JPN','GBR','FRA','ITA','BRA','CAN','AUS','ESP','MEX','IDN','KOR']
+          assert d['schemaVersion']=='1.6'
           assert re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z',d['screenedAtUtc'])
           assert d['screeningStatus']=='BLOCKED_METHODOLOGY_COMPARABILITY'
           assert d['publishableRevisionData'] is False
-          assert d['coverage']=={'requested':15,'rowsPresentInBothVintages':15,'missing':[]}
+          assert d['coverage']=={'requested':15,'requestedCountryCodes':countries,'rowsPresentInBothVintages':15,'missing':[]}
           assert 'comparableRows' not in d['coverage']
           g=d['methodologyGate']
           assert g['archiveNamesConsistent'] is True
@@ -77,11 +78,13 @@ jobs:
           assert d['screenedAtUtc'] in html and d['screenedAtUtc'] in page
           assert 'Presence is not a methodology-comparability claim.' in html
           assert 'this is not a methodology-comparability claim' in page
+          contract=', '.join(countries)
+          assert contract in html and contract in page
           for x in releases:
               assert x['archiveSha256'] in html
               assert x['url'] in html
               assert f"{x['archiveBytes']:,} bytes" in html
-          print('Verified synchronized fail-closed GDP run with precise row-presence semantics and licensing')
+          print('Verified synchronized fail-closed GDP run with exact country contract, row-presence semantics and licensing')
           PY
       - name: Commit reproducible GDP screening artifacts
         run: |
