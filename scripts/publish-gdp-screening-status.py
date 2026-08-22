@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Publish a sanitized, fail-closed GDP screening status from a real screener run.
+"""Publish sanitized fail-closed GDP screening status and human-readable provenance.
 
 This intentionally publishes provenance + methodology-gate state, never screened GDP
-values. It refuses to emit a public status unless the live screening result proves the
+values. It refuses to emit public artifacts unless the live screening result proves the
 expected blocker is specifically unresolved release-specific methodology comparability.
 """
-import json, re
+import html, json, re
 from pathlib import Path
 
 SRC = Path("data/screening/real-gdp-2025.json")
 DST = Path("site/indicators/real-gdp/status.json")
+PROV = Path("site/indicators/real-gdp/provenance.html")
 EXPECTED_CODE = "NY.GDP.MKTP.KD"
 EXPECTED_YEAR = 2023
 EXPECTED_VINTAGES = ["2025-01-28", "2025-07-02"]
@@ -56,7 +57,7 @@ def main():
         require(bool(str(release.get("indicatorNameInArchive", "")).strip()), "missing archive indicator name")
 
     public = {
-        "schemaVersion": "1.1",
+        "schemaVersion": "1.2",
         "indicator": {
             "code": EXPECTED_CODE,
             "name": indicator.get("currentName", "Real GDP"),
@@ -79,17 +80,32 @@ def main():
         },
         "methodologyUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/methodology/",
         "screeningPageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/",
+        "provenancePageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html",
         "sourceCodeUrl": "https://github.com/gunflo1011-debug/world-discovery-engine/blob/main/scripts/screen-real-gdp.py",
         "note": "No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved.",
     }
 
-    # Defensive invariant: the public artifact must never expose row-level GDP values.
     serialized = json.dumps(public, indent=2) + "\n"
     require('"rows"' not in serialized and '"first"' not in serialized and '"latest"' not in serialized,
             "screened values leaked into public status")
     DST.parent.mkdir(parents=True, exist_ok=True)
     DST.write_text(serialized, encoding="utf-8")
-    print(f"Published sanitized GDP screening provenance to {DST}")
+
+    rows = []
+    for release in releases:
+        rows.append(
+            "<tr><td>{v}</td><td><a href=\"{u}\">Official WDI ZIP</a></td>"
+            "<td><code>{m}</code></td><td><code>{h}</code></td><td>{n}</td></tr>".format(
+                v=html.escape(release["vintage"]), u=html.escape(release["url"], quote=True),
+                m=html.escape(release["member"]), h=html.escape(release["archiveSha256"]),
+                n=html.escape(release["indicatorNameInArchive"]),
+            )
+        )
+    prov_html = """<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Real GDP screening provenance — World Discovery Engine</title><meta name=\"description\" content=\"Exact archived WDI vintages, archive fingerprints and fail-closed methodology state for the Real GDP screening slice.\"><link rel=\"canonical\" href=\"https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html\"><link rel=\"stylesheet\" href=\"../../styles.css\"></head><body><header class=\"topbar\"><div class=\"wrap\"><div class=\"brand\">World Discovery Engine</div><nav class=\"nav\" aria-label=\"Primary\"><a href=\"../../index.html\">Home</a><a href=\"../index.html\">Indicators</a><a href=\"./index.html\">GDP screening</a><a href=\"../../methodology/index.html\">Methodology</a></nav></div></header><main><section class=\"hero hero-compact\"><div class=\"wrap\"><div class=\"eyebrow\">Reproducibility → GDP screening</div><h1>Exact archive fingerprints for the blocked Real GDP comparison.</h1><p>This page is generated only from a live fail-closed screening run. It publishes source identity and fingerprints, not screened GDP values or revision claims.</p><span class=\"pill\">BLOCKED · METHODOLOGY COMPARABILITY</span></div></section><section class=\"section\"><div class=\"wrap\"><h2>Archive provenance</h2><div class=\"table-wrap\" role=\"region\" aria-label=\"GDP archive provenance\" tabindex=\"0\"><table class=\"table\"><thead><tr><th>Vintage</th><th>Source</th><th>Workbook member</th><th>Archive SHA-256</th><th>Indicator name in archive</th></tr></thead><tbody>{rows}</tbody></table></div><p class=\"muted\">Reference year: 2023 · Coverage: 15/15 requested sovereign countries · Indicator code: NY.GDP.MKTP.KD.</p></div></section><section class=\"section section-soft\"><div class=\"wrap\"><h2>Why publication is still blocked</h2><div class=\"notice\"><strong>Release-specific base year and valuation are not independently verified.</strong> The World Bank warns that this code has historically represented different base years and that archive views expose current metadata. Matching code, workbook name and coverage therefore do not prove cross-vintage methodological compatibility.</div><p><a href=\"https://databank.worldbank.org/databases/archives\">World Bank WDI archive guidance →</a></p><p><a href=\"https://databank.worldbank.org/metadataglossary/world-development-indicators/series/NY.GDP.MKTP.KD\">Current WDI metadata →</a></p><p><a href=\"./status.json\">Machine-readable status JSON →</a></p></div></section></main><footer class=\"footer\"><div class=\"wrap\">World Discovery Engine · Provenance without overclaiming.</div></footer></body></html>""".format(rows="".join(rows))
+    for forbidden in ('absoluteRevision', 'relativeRevision', '>first<', '>latest<'):
+        require(forbidden not in prov_html, f"screened value field leaked into provenance page: {forbidden}")
+    PROV.write_text(prov_html, encoding="utf-8")
+    print(f"Published sanitized GDP screening status to {DST} and provenance to {PROV}")
 
 
 if __name__ == "__main__":
