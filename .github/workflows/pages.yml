@@ -33,8 +33,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Install project dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund --package-lock=false
       - name: Test and build release artifact
         run: npm run check
       - name: Stamp release identity
@@ -53,6 +53,11 @@ jobs:
       BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install project dependencies for browser verification
+        run: npm install --ignore-scripts --no-audit --no-fund --package-lock=false
       - name: Verify exact deployed commit with retry/backoff
         shell: bash
         run: |
@@ -145,8 +150,6 @@ jobs:
           }
           if (!germany) throw new Error('Germany population sentinel missing');
           NODE
-      - name: Install Playwright test package
-        run: npm install --no-save --package-lock=false @playwright/test@1.55.0
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Run live mobile browser smoke
