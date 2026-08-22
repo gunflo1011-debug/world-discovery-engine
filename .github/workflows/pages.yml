@@ -114,8 +114,19 @@ jobs:
             if (payload.entity?.code !== record.entity?.code) throw new Error(`Entity mismatch: ${record.slug}`);
             if (payload.referenceYear !== record.referenceYear) throw new Error(`Reference-year mismatch: ${record.slug}`);
             const csv = fs.readFileSync(csvFile, 'utf8').trim();
-            const header = csv.split(/\r?\n/, 1)[0];
-            if (!csv || !header.includes(',')) throw new Error(`Invalid CSV shape: ${record.slug}`);
+            const lines = csv.split(/\r?\n/).filter(Boolean);
+            if (lines.length < 2) throw new Error(`CSV has no data rows: ${record.slug}`);
+            const columns = lines[0].split(',').map(v => v.trim());
+            const required = ['entity_code','indicator_code','reference_year'];
+            for (const name of required) if (!columns.includes(name)) throw new Error(`CSV missing ${name}: ${record.slug}`);
+            const entityIx = columns.indexOf('entity_code');
+            const indicatorIx = columns.indexOf('indicator_code');
+            const yearIx = columns.indexOf('reference_year');
+            const matches = lines.slice(1).some(line => {
+              const values = line.split(',').map(v => v.trim());
+              return values[entityIx] === record.entity?.code && values[indicatorIx] === record.indicator?.code && String(values[yearIx]) === String(record.referenceYear);
+            });
+            if (!matches) throw new Error(`CSV semantic identity mismatch: ${record.slug}`);
             if (record.indicator?.code === 'SP.POP.TOTL' && record.entity?.code === 'DEU') germany = true;
           }
           if (!germany) throw new Error('Germany population sentinel missing');
