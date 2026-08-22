@@ -64,10 +64,12 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.ok(buildMetadata.noindexPagesExcluded >= 2);
   assert.ok(Number.isInteger(buildMetadata.discoveryIncompleteExcluded));
 
-  const verifiedPopulationPage = await readFile(resolve(process.cwd(), 'site', 'evidence', 'germany-population-revision-2025', 'index.html'), 'utf8');
-  assert.match(verifiedPopulationPage, /<script type="application\/ld\+json">/);
-  assert.match(verifiedPopulationPage, /"@type":"Dataset"/);
-  assert.match(verifiedPopulationPage, /"propertyID":"SP\.POP\.TOTL"/);
-  assert.match(verifiedPopulationPage, /germany-population-revision-2025\/evidence\.json/);
-  assert.match(verifiedPopulationPage, /germany-population-revision-2025\/evidence\.csv/);
+  for (const slug of ['germany-population-revision-2025', 'united-states-population-revision-2025']) {
+    const verifiedPopulationPage = await readFile(resolve(process.cwd(), 'site', 'evidence', slug, 'index.html'), 'utf8');
+    assert.match(verifiedPopulationPage, /<script type="application\/ld\+json">/);
+    assert.match(verifiedPopulationPage, /"@type":"Dataset"/);
+    assert.match(verifiedPopulationPage, /"propertyID":"SP\.POP\.TOTL"/);
+    assert.match(verifiedPopulationPage, new RegExp(`${slug}\\/evidence\\.json`));
+    assert.match(verifiedPopulationPage, new RegExp(`${slug}\\/evidence\\.csv`));
+  }
 });
