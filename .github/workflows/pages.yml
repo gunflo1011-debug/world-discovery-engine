@@ -86,6 +86,40 @@ jobs:
           grep -qi "Sitemap: ${BASE_URL}/sitemap.xml" /tmp/robots.txt
           curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
           grep -q "${BASE_URL}/evidence/germany-population-revision-2025/" /tmp/sitemap.xml
+      - name: Verify every advertised machine distribution and semantic identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/evidence/index.json" -o /tmp/evidence-index.json
+          BASE_URL="$BASE_URL" node - <<'NODE'
+          const fs = require('fs');
+          const { execFileSync } = require('child_process');
+          const baseUrl = process.env.BASE_URL.replace(/\/$/, '');
+          const index = JSON.parse(fs.readFileSync('/tmp/evidence-index.json', 'utf8'));
+          if (index.schemaVersion !== '1.2' || !Array.isArray(index.evidence) || index.evidence.length === 0) throw new Error('Unexpected evidence index contract');
+          let germany = false;
+          for (const record of index.evidence) {
+            if (record.status !== 'REAL' || record.discoveryReady !== true) throw new Error(`Non-ready record advertised: ${record.slug}`);
+            const jsonPath = record.machineReadable?.json;
+            const csvPath = record.machineReadable?.csv;
+            if (!jsonPath || !csvPath) throw new Error(`Missing machine distributions: ${record.slug}`);
+            const resolveUrl = (value) => value.startsWith('http') ? value : `${baseUrl}${value.startsWith('/') ? '' : '/'}${value}`;
+            const jsonFile = `/tmp/${record.slug}-evidence.json`;
+            const csvFile = `/tmp/${record.slug}-evidence.csv`;
+            execFileSync('curl', ['-L','--fail','--retry','5','--retry-all-errors','--retry-delay','10', resolveUrl(jsonPath), '-o', jsonFile], { stdio: 'inherit' });
+            execFileSync('curl', ['-L','--fail','--retry','5','--retry-all-errors','--retry-delay','10', resolveUrl(csvPath), '-o', csvFile], { stdio: 'inherit' });
+            const payload = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+            if (payload.status !== 'REAL') throw new Error(`JSON status mismatch: ${record.slug}`);
+            if (payload.indicator?.code !== record.indicator?.code) throw new Error(`Indicator mismatch: ${record.slug}`);
+            if (payload.entity?.code !== record.entity?.code) throw new Error(`Entity mismatch: ${record.slug}`);
+            if (payload.referenceYear !== record.referenceYear) throw new Error(`Reference-year mismatch: ${record.slug}`);
+            const csv = fs.readFileSync(csvFile, 'utf8').trim();
+            const header = csv.split(/\r?\n/, 1)[0];
+            if (!csv || !header.includes(',')) throw new Error(`Invalid CSV shape: ${record.slug}`);
+            if (record.indicator?.code === 'SP.POP.TOTL' && record.entity?.code === 'DEU') germany = true;
+          }
+          if (!germany) throw new Error('Germany population sentinel missing');
+          NODE
       - name: Install Playwright Chromium
         run: npx --yes -p @playwright/test@1.55.0 playwright install --with-deps chromium
       - name: Run live mobile browser smoke
