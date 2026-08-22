@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """Screen archived WDI real GDP vintages; fail closed and never publish evidence.
 
-Important: WDI warns that NY.GDP.MKTP.KD has historically reused the same code
-for different base years and that archive pages expose only current metadata.
-Therefore matching code/name/current metadata is NOT sufficient to promote a
-cross-vintage GDP comparison to REAL evidence.
+WDI warns that NY.GDP.MKTP.KD has historically reused the same code for different
+base years and that archive pages expose only current metadata. Therefore matching
+code/name/current metadata is NOT sufficient to promote a cross-vintage GDP
+comparison to REAL evidence.
+
+Promotion is additionally bound to an optional reviewed release-specific methodology
+attestation. That evidence must reference the exact SHA-256 fingerprints downloaded
+in the same run. Missing, malformed or hash-mismatched evidence leaves the screener
+fail-closed.
 """
 import hashlib, io, json, math, urllib.request, zipfile
 from datetime import datetime, timezone
@@ -18,11 +23,12 @@ RELEASES=[
 CODE="NY.GDP.MKTP.KD"; CURRENT_NAME="GDP (constant 2015 US$)"; CURRENT_UNIT="constant 2015 US$"; YEAR=2023
 COUNTRIES=["DEU","USA","CHN","IND","JPN","GBR","FRA","ITA","BRA","CAN","AUS","ESP","MEX","IDN","KOR"]
 OUT=Path("data/screening/real-gdp-2025.json")
+METHODOLOGY_ATTESTATION=Path("data/methodology/real-gdp-2025-release-evidence.json")
 ARCHIVE_WARNING_URL="https://databank.worldbank.org/databases/archives"
 CURRENT_METADATA_URL="https://databank.worldbank.org/metadataglossary/world-development-indicators/series/NY.GDP.MKTP.KD"
 
 def download(url):
-    req=urllib.request.Request(url,headers={"User-Agent":"world-discovery-engine/0.4"})
+    req=urllib.request.Request(url,headers={"User-Agent":"world-discovery-engine/0.5"})
     with urllib.request.urlopen(req,timeout=180) as r:
         blob=r.read()
     if not blob: raise RuntimeError(f"Empty archive: {url}")
@@ -58,6 +64,50 @@ def read(blob):
     if len(names) != 1: raise RuntimeError(f'Ambiguous indicator names in archive: {sorted(names)}')
     return out,next(iter(names))
 
+def validate_methodology_attestation(snapshots):
+    diagnostics={
+      "attestationPath":str(METHODOLOGY_ATTESTATION),
+      "attestationPresent":METHODOLOGY_ATTESTATION.is_file(),
+      "boundToExactArchiveHashes":False,
+      "authoritativeReleaseSpecificSources":False,
+      "sameBaseYearUnitAndValuation":False,
+    }
+    if not METHODOLOGY_ATTESTATION.is_file():
+        diagnostics["reason"]="No reviewed release-specific methodology attestation is present for these exact archives."
+        return False,diagnostics
+    try:
+        att=json.loads(METHODOLOGY_ATTESTATION.read_text(encoding='utf-8'))
+        if att.get('schemaVersion') != 1: raise ValueError('schemaVersion must be 1')
+        if att.get('indicatorCode') != CODE: raise ValueError('indicatorCode mismatch')
+        if att.get('referenceYear') != YEAR: raise ValueError('referenceYear mismatch')
+        evidence=att.get('releases')
+        if not isinstance(evidence,list) or len(evidence) != len(snapshots): raise ValueError('exactly two releases required')
+        by_vintage={e.get('vintage'):e for e in evidence if isinstance(e,dict)}
+        if set(by_vintage) != {s['vintage'] for s in snapshots}: raise ValueError('vintage contract mismatch')
+        bases=[]; units=[]; valuations=[]; hashes_ok=True; sources_ok=True
+        for s in snapshots:
+            e=by_vintage[s['vintage']]
+            if e.get('archiveSha256') != s['archiveSha256']: hashes_ok=False
+            bases.append(e.get('baseYear')); units.append(e.get('unit')); valuations.append(e.get('valuation'))
+            srcs=e.get('authoritativeSources')
+            if not isinstance(srcs,list) or not srcs:
+                sources_ok=False
+            else:
+                for src in srcs:
+                    if not isinstance(src,dict) or src.get('releaseSpecific') is not True:
+                        sources_ok=False; continue
+                    url=str(src.get('url',''))
+                    if not url.startswith('https://') or 'worldbank.org' not in url.lower(): sources_ok=False
+        diagnostics['boundToExactArchiveHashes']=hashes_ok
+        diagnostics['authoritativeReleaseSpecificSources']=sources_ok
+        diagnostics['sameBaseYearUnitAndValuation']=(len(set(bases))==1 and bases[0]==2015 and len(set(units))==1 and units[0]==CURRENT_UNIT and len(set(valuations))==1 and bool(valuations[0]))
+        verified=all((diagnostics['boundToExactArchiveHashes'],diagnostics['authoritativeReleaseSpecificSources'],diagnostics['sameBaseYearUnitAndValuation']))
+        diagnostics['reason']='Release-specific methodology attestation satisfies the exact archive-hash, source, base-year, unit and valuation contract.' if verified else 'Release-specific methodology attestation does not satisfy every required contract check.'
+        return verified,diagnostics
+    except Exception as e:
+        diagnostics['reason']=f"Methodology attestation rejected: {e}"
+        return False,diagnostics
+
 def main():
     screened_at=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')
     snapshots=[]
@@ -73,10 +123,9 @@ def main():
 
     archive_names=[s['indicatorNameInArchive'] for s in snapshots]
     name_consistent=len(set(archive_names)) == 1
-    # Deliberately FALSE until release-specific evidence proves the base/valuation
-    # for BOTH snapshots. Current WDI metadata cannot satisfy this gate.
-    release_specific_methodology_verified=False
-    publishable=(not missing and name_consistent and release_specific_methodology_verified)
+    name_matches_expected=all(n == CURRENT_NAME for n in archive_names)
+    release_specific_methodology_verified,attestation=validate_methodology_attestation(snapshots)
+    publishable=(not missing and name_consistent and name_matches_expected and release_specific_methodology_verified)
     result={
       "status":"SCREENING" if not publishable else "VERIFIED",
       "publishable":publishable,
@@ -84,14 +133,21 @@ def main():
       "indicator":{"code":CODE,"currentName":CURRENT_NAME,"currentUnit":CURRENT_UNIT},
       "referenceYear":YEAR,
       "provenance":{"dataset":"World Development Indicators (WDI)","archiveWarningUrl":ARCHIVE_WARNING_URL,"currentMetadataUrl":CURRENT_METADATA_URL,"releases":[{k:s[k] for k in ('vintage','url','archiveSha256','archiveBytes','member','indicatorNameInArchive')} for s in snapshots]},
-      "methodologyGate":{"archiveNamesConsistent":name_consistent,"releaseSpecificBaseAndValuationVerified":release_specific_methodology_verified,"reason":"World Bank warns NY.GDP.MKTP.KD reused the same code across different base years and states archive views expose only current metadata. Current metadata says constant 2015 US$, but cannot prove the base/valuation of each archived release."},
+      "methodologyGate":{
+        "archiveNamesConsistent":name_consistent,
+        "archiveNamesMatchExpectedScreeningContract":name_matches_expected,
+        "releaseSpecificBaseAndValuationVerified":release_specific_methodology_verified,
+        "releaseEvidenceAttestation":attestation,
+        "reason":attestation.get('reason')
+      },
       "coverage":{"requested":len(COUNTRIES),"requestedCountryCodes":COUNTRIES,"rowsPresentInBothVintages":len(present_in_both),"missing":missing},
       "rows":rows,
-      "promotionGate":"Do not generate public REAL GDP evidence until independent release-specific metadata or another authoritative release artifact proves identical base year and valuation for both archived vintages."
+      "promotionGate":"Do not generate public REAL GDP evidence until a reviewed release-specific methodology attestation proves identical 2015 base year, unit and valuation for both vintages, cites authoritative release-specific World Bank sources, and binds those claims to the exact archive SHA-256 fingerprints observed by this run."
     }
     OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(result,indent=2)+"\n",encoding='utf-8')
     print(json.dumps(result,indent=2))
     if missing: raise SystemExit(f'Fail closed: missing countries {missing}')
     if not name_consistent: raise SystemExit('Fail closed: archived indicator names differ')
-    if not release_specific_methodology_verified: raise SystemExit('Fail closed: GDP release-specific base/valuation is not independently verified; screening output only')
+    if not name_matches_expected: raise SystemExit(f'Fail closed: archived indicator name differs from expected contract {CURRENT_NAME!r}')
+    if not release_specific_methodology_verified: raise SystemExit('Fail closed: GDP release-specific methodology is not verified and bound to the exact archive hashes; screening output only')
 if __name__=='__main__': main()
