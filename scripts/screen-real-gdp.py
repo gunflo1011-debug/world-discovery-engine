@@ -7,6 +7,7 @@ Therefore matching code/name/current metadata is NOT sufficient to promote a
 cross-vintage GDP comparison to REAL evidence.
 """
 import hashlib, io, json, math, urllib.request, zipfile
+from datetime import datetime, timezone
 from pathlib import Path
 from openpyxl import load_workbook
 
@@ -58,10 +59,11 @@ def read(blob):
     return out,next(iter(names))
 
 def main():
+    screened_at=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')
     snapshots=[]
     for rel in RELEASES:
         archive=download(rel['url']); member,xlsx=extract_xlsx(archive); data,name=read(xlsx)
-        snapshots.append({**rel,"archiveSha256":hashlib.sha256(archive).hexdigest(),"member":member,"indicatorNameInArchive":name,"data":data})
+        snapshots.append({**rel,"archiveSha256":hashlib.sha256(archive).hexdigest(),"archiveBytes":len(archive),"member":member,"indicatorNameInArchive":name,"data":data})
     common=[c for c in COUNTRIES if all(c in s['data'] for s in snapshots)]
     missing=[c for c in COUNTRIES if c not in common]
     rows=[]
@@ -78,9 +80,10 @@ def main():
     result={
       "status":"SCREENING" if not publishable else "VERIFIED",
       "publishable":publishable,
+      "screenedAtUtc":screened_at,
       "indicator":{"code":CODE,"currentName":CURRENT_NAME,"currentUnit":CURRENT_UNIT},
       "referenceYear":YEAR,
-      "provenance":{"dataset":"World Development Indicators (WDI)","archiveWarningUrl":ARCHIVE_WARNING_URL,"currentMetadataUrl":CURRENT_METADATA_URL,"releases":[{k:s[k] for k in ('vintage','url','archiveSha256','member','indicatorNameInArchive')} for s in snapshots]},
+      "provenance":{"dataset":"World Development Indicators (WDI)","archiveWarningUrl":ARCHIVE_WARNING_URL,"currentMetadataUrl":CURRENT_METADATA_URL,"releases":[{k:s[k] for k in ('vintage','url','archiveSha256','archiveBytes','member','indicatorNameInArchive')} for s in snapshots]},
       "methodologyGate":{"archiveNamesConsistent":name_consistent,"releaseSpecificBaseAndValuationVerified":release_specific_methodology_verified,"reason":"World Bank warns NY.GDP.MKTP.KD reused the same code across different base years and states archive views expose only current metadata. Current metadata says constant 2015 US$, but cannot prove the base/valuation of each archived release."},
       "coverage":{"requested":len(COUNTRIES),"comparableRows":len(common),"missing":missing},
       "rows":rows,
