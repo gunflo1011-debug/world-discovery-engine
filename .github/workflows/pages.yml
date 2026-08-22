@@ -49,3 +49,49 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify-live:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine
+    steps:
+      - name: Verify critical live routes with retry/backoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          routes=(
+            "/index.html"
+            "/indicators/"
+            "/indicators/real-gdp/"
+            "/indicators/real-gdp/status.json"
+            "/sitemap.xml"
+            "/robots.txt"
+          )
+          for route in "${routes[@]}"; do
+            ok=0
+            for attempt in 1 2 3 4 5 6; do
+              code="$(curl -L --silent --show-error --output /tmp/live-body --write-out '%{http_code}' --max-time 20 "${BASE_URL}${route}" || true)"
+              if [ "$code" = "200" ] && [ -s /tmp/live-body ]; then
+                echo "LIVE OK ${route} (attempt ${attempt})"
+                ok=1
+                break
+              fi
+              echo "Retry ${attempt}: ${route} returned ${code:-network-error}"
+              sleep $((attempt * 10))
+            done
+            if [ "$ok" -ne 1 ]; then
+              echo "LIVE FAILED ${route}"
+              exit 1
+            fi
+          done
+      - name: Verify discovery metadata on live homepage
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/index.html" -o /tmp/index.html
+          grep -qi 'rel="canonical"' /tmp/index.html
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/robots.txt" -o /tmp/robots.txt
+          grep -qi 'sitemap:' /tmp/robots.txt
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
+          grep -q '/world-discovery-engine/' /tmp/sitemap.xml
