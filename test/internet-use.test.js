@@ -53,9 +53,13 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   assert.match(html, /href="\.\/data\.json"/);
   assert.match(html, /href="\.\/data\.csv"/);
   assert.match(html, /International Telecommunication Union \(ITU\)/);
-  assert.match(html, /Quick answers from this slice/);
+  assert.match(html, /verified same-year subset/i);
+  assert.match(html, /Quick answers from this verified subset/);
+  assert.match(html, /Which included countries are highest\?/);
   assert.match(html, /How wide is the observed range\?/);
-  assert.match(html, /10 percentage points \(96% versus 86%\)/);
+  assert.match(html, /Among the 12 included countries, the gap between the highest and lowest values is 10 percentage points \(96% versus 86%\)/);
+  assert.match(html, /Rank in subset/);
+  assert.match(html, /Within this verified 12-country subset, Germany ranks 6th at 93%/);
   assert.match(html, /"spatialCoverage":\[/);
   assert.match(html, /not a complete global ranking/i);
   assert.match(html, /id="country-search"[^>]+placeholder="Type Germany, DEU…"/);
@@ -65,6 +69,9 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   assert.match(html, /id="compare-result" aria-live="polite" hidden/);
   assert.match(html, /tools\.hidden=false/);
   assert.match(html, /row\.hidden=!match/);
+  assert.match(html, /Within this verified 2024 subset/);
   assert.match(html, /percentage points/);
+  assert.doesNotMatch(html, /current\/latest vertical/i);
+  assert.doesNotMatch(html, /complete worldwide ranking/i);
   assert.doesNotMatch(html, /revision-ready|archive-to-archive delta/i);
 });
