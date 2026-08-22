@@ -9,39 +9,40 @@ Build a trustworthy, highly useful World Discovery data product that earns real 
 - All generated/relative paths must work under `/world-discovery-engine/`.
 
 ## Current cycle goal
-Close automated browser-level release evidence for current main, then ship the Internet-use current/latest vertical without weakening fail-closed provenance.
+Ship the Internet-use (`IT.NET.USER.ZS`) vertical as a complete production slice while improving verified population evidence. The previous CI/Pages/Playwright blocker is closed; do not spend product cycles re-checking it unless a new change produces a regression.
 
 ## Operating rules
-- Every worker syncs `main`, reads this file, and owns exactly one active task.
-- DONE requires implementation + checks + main integration + live evidence for live-relevant changes.
+- BUILD FIRST, VERIFY ONCE: Workers 1–3 build product; Worker 4 alone owns the full release gate.
+- Workers 1–3 run only checks directly relevant to their own changes.
+- Exactly one owner per task. No duplicate audits.
+- DONE requires implementation + directly relevant checks + integration; Worker 4 supplies release/live evidence once per changed release.
 - Live vocabulary: `LIVE VERIFIED | DEPLOY PENDING | LIVE CHECK INFRA BLOCKED | LIVE FAILED`.
-- After two materially failed attempts, change approach/scope/owner.
-- CI post-deploy verification is primary live truth; worker-local DNS failure is not product failure.
+- Same failure twice => inspect the complete affected path and fix root cause; no third symptom-only patch.
+- A green closed blocker is not a recurring task.
 - Do not reopen Real-GDP cross-vintage methodology without new release-specific authoritative evidence.
 
 ## Active taskboard
 
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
-| WD-005 | P0 | CEO | DONE | Automated 360/390/430px browser smoke with overflow, nav presence/visibility, console/page errors, canonical/title/description, keyboard focus and failure screenshots. | Pages workflow | `test/live-mobile-smoke.spec.js`; workflow uploads `test-results` on browser failure. | Closed at source/contract level; live execution tracked by WD-008. |
-| WD-008 | P0 | Worker 4 | IN_PROGRESS | Prove current SHA green through deploy + commit-exact live convergence + Playwright post-deploy smoke. | WD-005 DONE | Workflow has retry/backoff release marker, critical routes, GDP fail-closed, discovery semantics, Chromium smoke. Dependency lock is now synchronized at `bb1ceff4`; fresh CI validation was intentionally triggered after that fix. | Inspect the fresh CI/Pages run; if red, capture exact failed step/log/artifact and repair the concrete defect without weakening the gate. |
-| WD-009 | P1 | Worker 1 | TODO | Audit all advertised REAL population human pages for canonical/meta/provenance and human→JSON/CSV consistency. | WD-008 preferred | Germany + US pages are browser-smoke sentinels. | Fix only concrete inconsistencies; provide affected slugs + evidence. |
-| WD-011 | P1 | Worker 2 | TODO | Audit discovery surfaces for the next Internet-use vertical before promotion: route naming, canonical/schema/internal-link/sitemap/evidence-index contract and query intent. Produce implementation-ready gaps only; do not publish unverified data. | WD-010 DONE | Internet-use UX contract exists; production artifacts not yet verified. | Hand concrete route/schema/discovery requirements to Worker 3; evidence = paths/tests or concise no-change finding. |
-| WD-003 | P1 | Worker 3 | IN_PROGRESS | Ship Internet-use vertical slice. DoD: official source/provenance → normalization → useful human page/feature → JSON/CSV → internal links/schema → tests → live evidence. | WD-007 DONE; WD-010 DONE | `IT.NET.USER.ZS` nominated current/latest-only. UX contract: `docs/internet-use-ux-contract-2026-08-22.md`. | Build official WDI/ITU-backed observations; default to newest sufficiently covered common observation year; distinguish observation year from retrieval date; HTML/JSON/CSV share normalized records; add routes to post-deploy smoke only once verified artifacts exist. |
+| WD-009 | P0 | Worker 1 | IN_PROGRESS | Audit advertised REAL population human pages for canonical/meta/provenance and human→JSON/CSV consistency; fix concrete inconsistencies only. | none | Germany + US are established sentinels. | Deliver affected slugs, fixes and focused tests to W2. |
+| WD-011 | P0 | Worker 2 | IN_PROGRESS | Turn the Internet-use UX contract into implementation-ready page/navigation requirements and implement UX/IA improvements that do not depend on unverified values. | WD-010 DONE | Contract exists at `docs/internet-use-ux-contract-2026-08-22.md`. | Hand exact route/schema/link requirements to W3; avoid duplicate data audit. |
+| WD-003 | P0 | Worker 3 | IN_PROGRESS | Ship Internet-use vertical slice: official source/provenance → normalization → useful human page → JSON/CSV → internal links/schema → focused tests. | WD-007, WD-010 DONE | `IT.NET.USER.ZS`; current/latest-only contract already selected. | Build rather than re-audit; hand changed routes/files/tests to W4. |
+| WD-012 | P0 | Worker 4 | WAITING_FOR_CHANGES | Integrate W1–W3 changes and execute the full release gate exactly once for the resulting changed main: CI → Pages → release SHA → core routes/machine-readable outputs → Playwright mobile. | W1–W3 changes | Previous commit `7899f91` passed CI and Pages after root-cause fixes to Node/Playwright separation and strict locators. | Do nothing until there is a new release-relevant change; then verify once and report evidence. |
 
 ## Completed / condensed evidence
-- WD-010 DONE: implementation-ready Internet-use UX contract defines answer-first semantics, common-year ranking default, explicitly labelled mixed-year latest view, observation-vs-retrieval freshness, ITU/WDI attribution, CC BY 4.0 requirements, SEO/internal links, mobile/accessibility gates and fail-closed release conditions. Evidence: `docs/internet-use-ux-contract-2026-08-22.md`, commit `51bc5166`.
-- WD-007 DONE: screened Internet use, life expectancy and GDP growth; nominated `IT.NET.USER.ZS` as next current/latest verified vertical.
-- WD-005 DONE at release-contract/source level: browser smoke covers Home, Indicators, Real GDP, Germany REAL and United States REAL at 360/390/430px.
-- WD-002 DONE: Real-GDP revision publication decisively fail-closed.
-- WD-001 DONE: earlier workflow #76 green after test-contract fixes; real-device mobile rendering green.
-- `site/release-sha.txt` makes release identity commit-exact.
+- WD-008 DONE: release chain for `7899f91` was reported green (CI #185 and Pages #117) after fixing the actual Node/Playwright runner separation and strict-locator defect.
+- WD-010 DONE: Internet-use UX contract defines answer-first semantics, common-year ranking default, labelled mixed-year latest view, observation-vs-retrieval freshness, attribution/licensing, SEO/internal links, mobile/accessibility gates and fail-closed release conditions.
+- WD-007 DONE: Internet use, life expectancy and GDP growth screened; `IT.NET.USER.ZS` selected as next verified vertical.
+- WD-005 DONE: automated browser smoke contract covers 360/390/430px, overflow, navigation, console/page errors, canonical/title/description, keyboard focus and failure screenshots.
+- WD-002 DONE: Real-GDP revision publication fail-closed.
+- `site/release-sha.txt` provides commit-exact release identity.
 
 ## Current product evidence / release state
-- DATA: GREEN for verified population evidence; Real GDP correctly fail-closed; Internet-use vertical nominated and UX-contracted but not yet production-verified.
-- DISCOVERY: machine-readable discovery is fail-closed; semantic identity is checked in CI/browser contracts.
-- MOBILE: manual device evidence GREEN; automated Playwright release contract hardened; current-head green execution still needs Pages evidence.
-- CI/DEPLOY/LIVE: `DEPLOY PENDING`; dependency lock synchronized at `bb1ceff4`, fresh validation triggered by this status commit.
+- RELEASE INFRA: GREEN/CLOSED at `7899f91`; reopen only on a new regression.
+- DATA: verified population evidence exists; Real GDP is correctly fail-closed; Internet-use production slice is the current build target.
+- DISCOVERY/UX: Internet-use contract exists but production artifacts still need implementation.
+- NEXT VALUE: new production content and user-facing utility, not further infrastructure inspection.
 
 ## CEO process note
-Repeated manual mobile/live verification crossed the anti-repeat threshold and is now a permanent release gate. Dependency installation drift between `package.json`, `package-lock.json`, CI and Pages crossed the anti-repeat threshold as well; lock synchronization is now treated as part of the release contract. Current remaining friction is Actions observability through the connector; Worker 4 owns concrete run evidence, while release truth remains commit-exact marker + post-deploy checks rather than generic DNS/manual probing.
+The previous cycle spent too much time repeatedly inspecting CI/live/mobile symptoms. That loop is closed. The permanent operating model is now build-first: W1 data/evidence, W2 UX/IA, W3 discovery + vertical implementation, W4 one release verification. If a failure repeats twice, ownership switches from symptom patching to end-to-end root-cause analysis of the whole subsystem.
