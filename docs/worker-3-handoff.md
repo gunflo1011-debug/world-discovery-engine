@@ -20,44 +20,45 @@ Earlier CI uncertainty was partially resolved by direct user evidence: GitHub Pa
 8. Pages `verify-live` enumerates every advertised machine record, fetches JSON+CSV, and semantically cross-checks indicator/entity/reference year for both formats.
 9. Live mobile browser coverage at 360/390/430px covers Home, Indicators, Real GDP, Germany and United States REAL evidence with overflow/nav/error/canonical/title/description/focus assertions.
 10. REAL evidence browser checks require visible `evidence.json` and `evidence.csv` links and follow both, proving human-page → machine-evidence crawlability.
-11. Commit `7b745db569bc98b4550dae9c33df3f8b09b3ddc9` strengthens that browser proof: Germany and United States routes now declare their expected indicator/entity/reference-year identity, and Playwright verifies the JSON payload is REAL and matches those expectations. It also parses the linked CSV and requires a row matching the same `entity_code`, `indicator_code` and `reference_year`. This closes the subtle case where a visible link returns HTTP 200 but points to valid machine data for the wrong evidence page.
+11. Commit `7b745db569bc98b4550dae9c33df3f8b09b3ddc9` strengthens that browser proof: Germany and United States routes declare expected indicator/entity/reference-year identity, and Playwright verifies linked JSON/CSV against it.
+12. Commit `fa27c9c99477d28aa9b1f8f466e60f7e906c53ab` extends the source-faithful Dataset JSON-LD pattern to United States after verifying its REAL payload has the same core provenance fields as Germany. The schema uses only evidenced facts: SP.POP.TOTL, USA, 2023, the two official WDI archive URLs, unit people, and the page's JSON/CSV distributions.
+13. Commit `0ed6d5b6147ad6cd551391da1d0fb7cf6ae21f4b` extends build regression coverage so both Germany and United States REAL pages must retain Dataset JSON-LD, SP.POP.TOTL and their own JSON/CSV distribution URLs.
 
 ## Reproducible evidence / concrete defects
 
 - Germany REAL payload contains `SP.POP.TOTL`, DEU/Germany, reference year 2023, methodology version, both official WDI archive URLs, methodology note and license; JSON and CSV exist.
-- United States REAL human page has an absolute canonical, factual meta description, visible provenance, and explicit relative links to `./evidence.json` and `./evidence.csv`.
+- United States REAL payload independently contains `SP.POP.TOTL`, USA/United States, reference year 2023, the same methodology version, both official WDI archive URLs, methodology note and CC BY 4.0 attribution; its human page has an absolute canonical, factual meta description, visible provenance and explicit JSON/CSV links.
 - Build-time machine discovery fails closed when REAL evidence lacks required provenance or JSON/CSV files.
-- Current `.github/workflows/pages.yml` contains commit-exact release identity, all-record JSON+CSV live semantic verification and Playwright mobile smoke.
 - GDP screening remains status-only/fail-closed. Do not add revision values, Dataset schema or CSV for the screened pair absent new authoritative release-specific comparability evidence.
 
 ## Verification / failures
 
 - Direct user evidence previously proved Pages #77/#78 green for `3bc47f4...` and `aced4b6...`.
-- Fresh Actions/Pages result for `7b745db...` has not yet been observed. Do not claim the new browser-level semantic human→machine assertions green/live until deploy + verify-live completes for that SHA or a descendant containing it.
-- No local clone/test was run from this automation runtime; GitHub connector reads/writes succeeded.
+- Fresh Actions/Pages result for the newer browser semantic checks and the new US Dataset commits has not been observed through this connector. Do not claim them green/live until a deploy + verify-live run completes for a descendant containing them.
+- Attempt to enumerate Actions runs through generic GitHub fetch was rejected by connector URL restrictions; this is tooling visibility, not a repo failure.
 
 ## HANDOFF AN WORKER 4
 
 ### Success
 - Verified population evidence has canonical human pages plus source-backed JSON/CSV.
-- Germany has validated Dataset JSON-LD.
+- Germany and United States now both have source-faithful Dataset JSON-LD with machine distributions.
+- Regression coverage requires both pages to retain Dataset schema, indicator identity and their own JSON/CSV distribution URLs.
 - Machine collection index and live workflow fail closed on incomplete/broken machine evidence.
 - Demo/noindex/nonexistent/discovery-incomplete evidence is not preferred via sitemap/machine index.
 - GDP screening is transparently status-only and the screened 2025 pair remains methodology-blocked.
 - README is aligned with repo evidence/product decision.
-- Browser CI includes two REAL country pages and now semantically verifies that their visible JSON/CSV links resolve to the indicator/entity/reference-year represented by the human route.
 
 ### Failure / unverified
-- Fresh CI/Pages result for `7b745db...` has not yet been observed.
-- Connector/runtime did not provide a local clone execution path; browser results must come from Actions.
+- Fresh CI/Pages result for `7b745db...`, `fa27c9c...`, `0ed6d5b...` or a descendant has not been observed through this connector.
+- Generic Actions-run enumeration was blocked by connector URL policy.
 
 ### Open checks / fixes
-1. Observe the Pages run containing `7b745db...`; require deploy + `verify-live` success and commit-exact `release-sha.txt` convergence.
-2. If mobile smoke fails, use uploaded screenshots/artifacts to fix the concrete route/viewport/link/CSV parsing defect; do not weaken the gate.
-3. Audit additional REAL population human pages for canonical/meta/human-visible provenance consistency; fix concrete defects only.
-4. Consider replacing the simple workflow CSV `split(',')` parser with the browser test's quote-aware parser if any future evidence field introduces quoted commas into identity-relevant rows.
-5. For future `IT.NET.USER.ZS`, require exact WDI/ITU source attribution, observation year vs retrieval date distinction, `% of population` unit, applicable license/citation requirements, JSON/CSV from the same normalized record, and no archive-revision language.
+1. Observe a Pages run containing `0ed6d5b...`; require deploy + verify-live success and commit-exact `release-sha.txt` convergence.
+2. If browser/build tests fail, fix the concrete schema/link/viewport defect; do not weaken the evidence gates.
+3. Add a semantic JSON-LD regression check that parses the Dataset object rather than relying only on regex and confirms `identifier`, `variableMeasured.propertyID`, `spatialCoverage.name`, `isBasedOn` and each `distribution.contentUrl` agree with the corresponding evidence payload/page.
+4. Audit a third REAL population page before expanding Dataset JSON-LD broadly; only roll out where provenance fields are equivalent.
+5. For future `IT.NET.USER.ZS`, require exact WDI/ITU attribution, observation year vs retrieval date distinction, `% of population` unit, license/citation requirements, JSON/CSV from the same normalized record, and no archive-revision language.
 6. Do not reopen GDP by inference.
 
 ### Recommended additional task
-After the new browser run is green, extend source-faithful Dataset JSON-LD from Germany to United States only if its evidence payload carries the same provenance fields, then add a regression check that JSON-LD distribution URLs correspond exactly to the visible JSON/CSV links and machine payload identity.
+Create one reusable source-faithful Dataset-schema generator/test driven from `evidence.json`, so future REAL pages cannot drift between human metadata, JSON-LD and machine evidence through copy/paste. Keep generation fail-closed when required provenance is absent.
