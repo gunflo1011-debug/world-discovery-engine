@@ -18,8 +18,9 @@ Earlier CI uncertainty was partially resolved by direct user evidence: GitHub Pa
 6. Machine discovery index is schema 1.2 and only emits REAL, discovery-ready evidence with indicator/entity/reference-year/vintage/methodology/license metadata.
 7. Build-time discovery validation requires `evidence.json` + `evidence.csv`, valid source URLs and complete core provenance.
 8. Pages `verify-live` enumerates every advertised machine record, fetches JSON+CSV, and semantically cross-checks indicator/entity/reference year for both formats.
-9. Live mobile browser coverage at 360/390/430px covers Home, Indicators, Real GDP and Germany REAL evidence with overflow/nav/error/canonical/title/description/focus assertions.
-10. Commit `4f4c54cd42def2c28f24133dd171358cb2835f52` extends the browser smoke to a representative non-Germany REAL page: United States population revision 2025. On REAL evidence pages the browser test now requires visible `evidence.json` and `evidence.csv` links and follows each via HTTP, proving human-page → machine-evidence crawlability rather than merely checking endpoints independently.
+9. Live mobile browser coverage at 360/390/430px covers Home, Indicators, Real GDP, Germany and United States REAL evidence with overflow/nav/error/canonical/title/description/focus assertions.
+10. REAL evidence browser checks require visible `evidence.json` and `evidence.csv` links and follow both, proving human-page → machine-evidence crawlability.
+11. Commit `7b745db569bc98b4550dae9c33df3f8b09b3ddc9` strengthens that browser proof: Germany and United States routes now declare their expected indicator/entity/reference-year identity, and Playwright verifies the JSON payload is REAL and matches those expectations. It also parses the linked CSV and requires a row matching the same `entity_code`, `indicator_code` and `reference_year`. This closes the subtle case where a visible link returns HTTP 200 but points to valid machine data for the wrong evidence page.
 
 ## Reproducible evidence / concrete defects
 
@@ -32,7 +33,7 @@ Earlier CI uncertainty was partially resolved by direct user evidence: GitHub Pa
 ## Verification / failures
 
 - Direct user evidence previously proved Pages #77/#78 green for `3bc47f4...` and `aced4b6...`.
-- Fresh Actions/Pages result for `4f4c54cd...` has not yet been observed. Do not claim the new US/human→machine browser assertions green/live until deploy + verify-live completes for that SHA or a descendant containing it.
+- Fresh Actions/Pages result for `7b745db...` has not yet been observed. Do not claim the new browser-level semantic human→machine assertions green/live until deploy + verify-live completes for that SHA or a descendant containing it.
 - No local clone/test was run from this automation runtime; GitHub connector reads/writes succeeded.
 
 ## HANDOFF AN WORKER 4
@@ -44,19 +45,19 @@ Earlier CI uncertainty was partially resolved by direct user evidence: GitHub Pa
 - Demo/noindex/nonexistent/discovery-incomplete evidence is not preferred via sitemap/machine index.
 - GDP screening is transparently status-only and the screened 2025 pair remains methodology-blocked.
 - README is aligned with repo evidence/product decision.
-- Browser CI now includes a second-country REAL page and explicitly tests visible/navigable human→JSON/CSV links.
+- Browser CI includes two REAL country pages and now semantically verifies that their visible JSON/CSV links resolve to the indicator/entity/reference-year represented by the human route.
 
 ### Failure / unverified
-- Fresh CI/Pages result for `4f4c54cd...` has not yet been observed.
+- Fresh CI/Pages result for `7b745db...` has not yet been observed.
 - Connector/runtime did not provide a local clone execution path; browser results must come from Actions.
 
 ### Open checks / fixes
-1. Observe the Pages run containing `4f4c54cd...`; require deploy + `verify-live` success and commit-exact `release-sha.txt` convergence.
-2. If mobile smoke fails, use uploaded screenshots/artifacts to fix the concrete route/viewport/link defect; do not weaken the gate.
+1. Observe the Pages run containing `7b745db...`; require deploy + `verify-live` success and commit-exact `release-sha.txt` convergence.
+2. If mobile smoke fails, use uploaded screenshots/artifacts to fix the concrete route/viewport/link/CSV parsing defect; do not weaken the gate.
 3. Audit additional REAL population human pages for canonical/meta/human-visible provenance consistency; fix concrete defects only.
-4. Consider checking that human-page machine links resolve to payloads whose indicator/entity/referenceYear match the visible page, not merely HTTP 200; the workflow already performs semantic identity at collection level.
+4. Consider replacing the simple workflow CSV `split(',')` parser with the browser test's quote-aware parser if any future evidence field introduces quoted commas into identity-relevant rows.
 5. For future `IT.NET.USER.ZS`, require exact WDI/ITU source attribution, observation year vs retrieval date distinction, `% of population` unit, applicable license/citation requirements, JSON/CSV from the same normalized record, and no archive-revision language.
 6. Do not reopen GDP by inference.
 
 ### Recommended additional task
-After the new browser run is green, extend source-faithful Dataset JSON-LD from Germany to another REAL population page only if its evidence payload carries the same provenance fields, then add a regression check that JSON-LD distribution URLs correspond to the visible JSON/CSV links.
+After the new browser run is green, extend source-faithful Dataset JSON-LD from Germany to United States only if its evidence payload carries the same provenance fields, then add a regression check that JSON-LD distribution URLs correspond exactly to the visible JSON/CSV links and machine payload identity.
