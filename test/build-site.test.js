@@ -32,8 +32,20 @@ test('static build includes real public routes and excludes demo, noindex or abs
   assert.doesNotMatch(sitemap, /world-discovery-engine\/evidence\/real-wdi-population-revision-2025\//);
 
   const evidenceIndex = JSON.parse(await readFile(resolve(process.cwd(), 'site', 'evidence', 'index.json'), 'utf8'));
+  assert.equal(evidenceIndex.schemaVersion, '1.1');
   assert.ok(evidenceIndex.evidence.every((record) => record.demo === false));
   assert.ok(evidenceIndex.evidence.every((record) => record.noindex === false));
+
+  const germany = evidenceIndex.evidence.find((record) => record.slug === 'germany-population-revision-2025');
+  assert.ok(germany);
+  assert.equal(germany.status, 'REAL');
+  assert.equal(germany.indicator.code, 'SP.POP.TOTL');
+  assert.equal(germany.entity.code, 'DEU');
+  assert.equal(germany.referenceYear, 2023);
+  assert.equal(germany.machineReadable.json, '/evidence/germany-population-revision-2025/evidence.json');
+  assert.equal(germany.machineReadable.csv, '/evidence/germany-population-revision-2025/evidence.csv');
+  assert.deepEqual(germany.vintages.map((item) => item.vintage), ['2025-01-28', '2025-07-02']);
+  assert.ok(germany.vintages.every((item) => item.sourceUrl?.startsWith('https://databank.worldbank.org/')));
 
   const buildMetadata = JSON.parse(await readFile(resolve(process.cwd(), 'site', 'build.json'), 'utf8'));
   assert.equal(buildMetadata.publicRoutes, result.pagePaths.length);
