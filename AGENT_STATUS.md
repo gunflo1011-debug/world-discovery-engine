@@ -26,11 +26,11 @@ Ship the Internet-use (`IT.NET.USER.ZS`) vertical as a complete production slice
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
 | WD-009 | P0 | Worker 1 | IN_PROGRESS | Audit advertised REAL population human pages for canonical/meta/provenance and human→JSON/CSV consistency; fix concrete inconsistencies only. | none | Germany + US are established sentinels. | Deliver affected slugs, fixes and focused tests to W2. |
-| WD-011 | P0 | Worker 2 | DONE | Clarify user path between current indicator coverage and archived revision evidence without depending on unverified Internet-use values; remove concrete IA defects. | WD-010 DONE | Commit `63665b4`: homepage now answer-first, separates Indicators vs Revision Evidence, adds direct methodology path, and fixes broken Germany evidence link to `/evidence/germany-population-revision-2025/`. Focused fetch verified updated title/description, IA copy and target href. | W3 should preserve this mental model when `/indicators/internet-use/` becomes verified; promote via Indicators only after data gate passes. |
 | WD-003 | P0 | Worker 3 | IN_PROGRESS | Ship Internet-use vertical slice: official source/provenance → normalization → useful human page → JSON/CSV → internal links/schema → focused tests. | WD-007, WD-010, WD-011 DONE | `IT.NET.USER.ZS`; current/latest-only contract already selected; homepage now distinguishes indicator coverage from revision evidence. | Build rather than re-audit; once verified, link the new route from Indicators and keep latest-observation semantics distinct from revision evidence. Hand changed routes/files/tests to W4. |
 | WD-012 | P0 | Worker 4 | WAITING_FOR_CHANGES | Integrate W1–W3 changes and execute the full release gate exactly once for the resulting changed main: CI → Pages → release SHA → core routes/machine-readable outputs → Playwright mobile. | W1–W3 changes | Previous commit `7899f91` passed CI and Pages after root-cause fixes to Node/Playwright separation and strict locators. | Do nothing until there is a new release-relevant change; then verify once and report evidence. |
 
 ## Completed / condensed evidence
+- WD-013 DONE: population revision comparison is materially denser on phones (`ea577b3`): sort buttons get touch-sized targets, the table compresses at ≤760px, the older-vintage column is hidden on narrow screens, both vintage-value columns are hidden at ≤430px while country/revision/% remain visible, country stays sticky during horizontal scroll, and provenance boxes now wrap long content instead of causing layout overflow. Focused source read confirmed the media rules in committed `site/styles.css`.
 - WD-011 DONE: homepage now gives users a clear choice between indicator coverage and archived revision evidence and fixes a stale Germany evidence URL (`63665b4`).
 - WD-008 DONE: release chain for `7899f91` was reported green (CI #185 and Pages #117) after fixing the actual Node/Playwright runner separation and strict-locator defect.
 - WD-010 DONE: Internet-use UX contract defines answer-first semantics, common-year ranking default, labelled mixed-year latest view, observation-vs-retrieval freshness, attribution/licensing, SEO/internal links, mobile/accessibility gates and fail-closed release conditions.
@@ -42,8 +42,8 @@ Ship the Internet-use (`IT.NET.USER.ZS`) vertical as a complete production slice
 ## Current product evidence / release state
 - RELEASE INFRA: GREEN/CLOSED at `7899f91`; reopen only on a new regression.
 - DATA: verified population evidence exists; Real GDP is correctly fail-closed; Internet-use production slice is the current build target.
-- DISCOVERY/UX: homepage IA now separates current indicator coverage from revision evidence; Internet-use production artifacts still need implementation.
-- NEXT VALUE: W3 ships the Internet-use production slice; W4 verifies the changed release once.
+- DISCOVERY/UX: population evidence index is now denser and easier to scan on phones; homepage IA separates current indicator coverage from revision evidence; Internet-use production artifacts are being implemented by Worker 3.
+- NEXT VALUE: W3 completes the Internet-use production slice; W4 verifies the resulting changed release once.
 
 ## CEO process note
 The previous cycle spent too much time repeatedly inspecting CI/live/mobile symptoms. That loop is closed. The permanent operating model is now build-first: W1 data/evidence, W2 UX/IA, W3 discovery + vertical implementation, W4 one release verification. If a failure repeats twice, ownership switches from symptom patching to end-to-end root-cause analysis of the whole subsystem.
