@@ -1,28 +1,46 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "indicator": {
     "code": "NY.GDP.MKTP.KD",
-    "name": "Real GDP",
+    "name": "GDP (constant 2015 US$)",
+    "currentUnit": "constant 2015 US$",
     "referenceYear": 2023
   },
   "screeningStatus": "BLOCKED_METHODOLOGY_COMPARABILITY",
   "publishableRevisionData": false,
-  "reason": "Release-specific base year and valuation comparability has not been independently verified for both archived WDI releases.",
-  "vintages": [
-    {
-      "releaseDate": "2025-01-28",
-      "archiveUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip",
-      "indicatorPresent": true,
-      "releaseSpecificMethodologyVerified": false
-    },
-    {
-      "releaseDate": "2025-07-02",
-      "archiveUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip",
-      "indicatorPresent": true,
-      "releaseSpecificMethodologyVerified": false
-    }
-  ],
+  "coverage": {
+    "requested": 15,
+    "comparableRows": 15,
+    "missing": []
+  },
+  "methodologyGate": {
+    "archiveNamesConsistent": true,
+    "releaseSpecificBaseAndValuationVerified": false,
+    "reason": "World Bank warns NY.GDP.MKTP.KD reused the same code across different base years and states archive views expose only current metadata. Current metadata says constant 2015 US$, but cannot prove the base/valuation of each archived release."
+  },
+  "provenance": {
+    "dataset": "World Development Indicators (WDI)",
+    "archiveWarningUrl": "https://databank.worldbank.org/databases/archives",
+    "currentMetadataUrl": "https://databank.worldbank.org/metadataglossary/world-development-indicators/series/NY.GDP.MKTP.KD",
+    "releases": [
+      {
+        "vintage": "2025-01-28",
+        "url": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip",
+        "archiveSha256": "7ff8c66e5a074a4a0f923cd603ff0d5fee5b043406f90c6fc9ae34c0fb5bfd60",
+        "member": "WDIEXCEL.xlsx",
+        "indicatorNameInArchive": "GDP (constant 2015 US$)"
+      },
+      {
+        "vintage": "2025-07-02",
+        "url": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip",
+        "archiveSha256": "b33fef211eeebaa43f668f822e7825ea737d7ffada1787d495ee042b4821eaf3",
+        "member": "WDIEXCEL.xlsx",
+        "indicatorNameInArchive": "GDP (constant 2015 US$)"
+      }
+    ]
+  },
   "methodologyUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/methodology/",
   "screeningPageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/",
-  "note": "No GDP revision values, rankings, or REAL CSV export are published while this gate remains unresolved."
+  "sourceCodeUrl": "https://github.com/gunflo1011-debug/world-discovery-engine/blob/main/scripts/screen-real-gdp.py",
+  "note": "No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved."
 }
