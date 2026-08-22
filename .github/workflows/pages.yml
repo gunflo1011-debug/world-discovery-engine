@@ -82,6 +82,11 @@ jobs:
             "/indicators/"
             "/indicators/real-gdp/"
             "/indicators/real-gdp/status.json"
+            "/evidence/"
+            "/evidence/index.json"
+            "/evidence/germany-population-revision-2025/"
+            "/evidence/germany-population-revision-2025/evidence.json"
+            "/evidence/germany-population-revision-2025/evidence.csv"
             "/sitemap.xml"
             "/robots.txt"
           )
@@ -102,6 +107,39 @@ jobs:
               exit 1
             fi
           done
+      - name: Verify live machine discovery contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/evidence/index.json" -o /tmp/evidence-index.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const index = JSON.parse(fs.readFileSync('/tmp/evidence-index.json', 'utf8'));
+          if (index.schemaVersion !== '1.2') throw new Error(`Expected evidence index schema 1.2, got ${index.schemaVersion}`);
+          const records = index.records || index.items || index.evidence || [];
+          if (!Array.isArray(records) || records.length === 0) throw new Error('Evidence index has no records');
+          const germany = records.find((record) =>
+            record?.status === 'REAL' &&
+            record?.discoveryReady === true &&
+            (record?.indicator?.code === 'SP.POP.TOTL' || record?.indicatorCode === 'SP.POP.TOTL') &&
+            (record?.entity?.code === 'DEU' || record?.entityCode === 'DEU')
+          );
+          if (!germany) throw new Error('Missing discovery-ready REAL Germany population record');
+          const jsonPath = germany?.distributions?.json || germany?.json || germany?.jsonPath || germany?.evidenceJson;
+          const csvPath = germany?.distributions?.csv || germany?.csv || germany?.csvPath || germany?.evidenceCsv;
+          if (!jsonPath || !csvPath) throw new Error('Germany record does not advertise JSON and CSV distributions');
+          fs.writeFileSync('/tmp/machine-paths.txt', `${jsonPath}\n${csvPath}\n`);
+          NODE
+          while IFS= read -r path; do
+            case "$path" in
+              http://*|https://*) url="$path" ;;
+              /*) url="${BASE_URL}${path}" ;;
+              *) url="${BASE_URL}/${path}" ;;
+            esac
+            curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "$url" -o /tmp/machine-body
+            test -s /tmp/machine-body
+            echo "MACHINE DISCOVERY OK $url"
+          done < /tmp/machine-paths.txt
       - name: Verify discovery metadata on live homepage
         shell: bash
         run: |
