@@ -64,10 +64,10 @@ def main():
     for rel in RELEASES:
         archive=download(rel['url']); member,xlsx=extract_xlsx(archive); data,name=read(xlsx)
         snapshots.append({**rel,"archiveSha256":hashlib.sha256(archive).hexdigest(),"archiveBytes":len(archive),"member":member,"indicatorNameInArchive":name,"data":data})
-    common=[c for c in COUNTRIES if all(c in s['data'] for s in snapshots)]
-    missing=[c for c in COUNTRIES if c not in common]
+    present_in_both=[c for c in COUNTRIES if all(c in s['data'] for s in snapshots)]
+    missing=[c for c in COUNTRIES if c not in present_in_both]
     rows=[]
-    for c in common:
+    for c in present_in_both:
         a=snapshots[0]['data'][c]['value']; b=snapshots[1]['data'][c]['value']; d=b-a
         rows.append({"code":c,"country":snapshots[1]['data'][c]['country'],"first":a,"latest":b,"absoluteRevision":d,"relativeRevision":d/abs(a)})
 
@@ -85,7 +85,7 @@ def main():
       "referenceYear":YEAR,
       "provenance":{"dataset":"World Development Indicators (WDI)","archiveWarningUrl":ARCHIVE_WARNING_URL,"currentMetadataUrl":CURRENT_METADATA_URL,"releases":[{k:s[k] for k in ('vintage','url','archiveSha256','archiveBytes','member','indicatorNameInArchive')} for s in snapshots]},
       "methodologyGate":{"archiveNamesConsistent":name_consistent,"releaseSpecificBaseAndValuationVerified":release_specific_methodology_verified,"reason":"World Bank warns NY.GDP.MKTP.KD reused the same code across different base years and states archive views expose only current metadata. Current metadata says constant 2015 US$, but cannot prove the base/valuation of each archived release."},
-      "coverage":{"requested":len(COUNTRIES),"comparableRows":len(common),"missing":missing},
+      "coverage":{"requested":len(COUNTRIES),"rowsPresentInBothVintages":len(present_in_both),"missing":missing},
       "rows":rows,
       "promotionGate":"Do not generate public REAL GDP evidence until independent release-specific metadata or another authoritative release artifact proves identical base year and valuation for both archived vintages."
     }
