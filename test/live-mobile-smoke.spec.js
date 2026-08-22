@@ -6,6 +6,7 @@ const routes = [
   '/indicators/',
   '/indicators/real-gdp/',
   '/evidence/germany-population-revision-2025/',
+  '/evidence/united-states-population-revision-2025/',
 ];
 const widths = [360, 390, 430];
 
@@ -44,6 +45,19 @@ for (const width of widths) {
         const description = await page.locator('meta[name="description"]').getAttribute('content');
         expect((description || '').trim().length, `meta description too short on ${route}`).toBeGreaterThan(40);
 
+        if (route.startsWith('/evidence/') && route !== '/evidence/') {
+          const jsonLink = page.locator('a[href$="evidence.json"]');
+          const csvLink = page.locator('a[href$="evidence.csv"]');
+          await expect(jsonLink, `visible JSON evidence link missing on ${route}`).toHaveCount(1);
+          await expect(csvLink, `visible CSV evidence link missing on ${route}`).toHaveCount(1);
+          await expect(jsonLink).toBeVisible();
+          await expect(csvLink).toBeVisible();
+          const jsonHref = await jsonLink.getAttribute('href');
+          const csvHref = await csvLink.getAttribute('href');
+          expect((await page.request.get(new URL(jsonHref, `${BASE}${route}`).href)).ok(), `JSON evidence unreachable from ${route}`).toBeTruthy();
+          expect((await page.request.get(new URL(csvHref, `${BASE}${route}`).href)).ok(), `CSV evidence unreachable from ${route}`).toBeTruthy();
+        }
+
         await page.locator('body').click({ position: { x: 1, y: 1 } });
         await page.keyboard.press('Tab');
         const focusState = await page.evaluate(() => {
@@ -68,7 +82,6 @@ for (const width of widths) {
         expect(pageErrors, `uncaught page errors: ${pageErrors.join(' | ')}`).toEqual([]);
         expect(consoleErrors, `console errors: ${consoleErrors.join(' | ')}`).toEqual([]);
       } finally {
-        // Always retain browser evidence, including the state at the point of failure.
         await page.screenshot({ path: testInfo.outputPath(`mobile-${width}-${route.replace(/[^a-z0-9]+/gi, '-')}.png`), fullPage: true }).catch(() => {});
       }
     });
