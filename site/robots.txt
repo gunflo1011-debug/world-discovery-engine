@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Public evidence is intentionally crawlable by search and AI discovery systems.
+Sitemap: https://gunflo1011-debug.github.io/world-discovery-engine/sitemap.xml
