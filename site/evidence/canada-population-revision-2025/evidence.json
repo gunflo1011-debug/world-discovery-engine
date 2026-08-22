@@ -1,6 +1,10 @@
 {
-  "schemaVersion": "1.2",
+  "schemaVersion": "1.3",
   "status": "REAL",
+  "finding": {
+    "type": "DOWNWARD_REVISION",
+    "isRevision": true
+  },
   "indicator": {
     "code": "SP.POP.TOTL",
     "name": "Population, total",
@@ -35,7 +39,7 @@
     "absolute": -14277.0,
     "relative": -0.00035605479318408825
   },
-  "generatedAt": "2026-08-22T22:42:49.559412+00:00",
+  "generatedAt": "2026-08-22T23:39:34.885288+00:00",
   "methodologyNote": "Same WDI indicator code and archived indicator name, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.",
   "license": "CC BY 4.0 (World Bank WDI; preserve attribution)"
 }
