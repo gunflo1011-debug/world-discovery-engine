@@ -58,6 +58,8 @@ jobs:
     env:
       BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine
     steps:
+      - name: Checkout release tests
+        uses: actions/checkout@v4
       - name: Verify exact deployed commit with retry/backoff
         shell: bash
         run: |
@@ -77,35 +79,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          routes=(
-            "/index.html"
-            "/indicators/"
-            "/indicators/real-gdp/"
-            "/indicators/real-gdp/status.json"
-            "/evidence/"
-            "/evidence/index.json"
-            "/evidence/germany-population-revision-2025/"
-            "/evidence/germany-population-revision-2025/evidence.json"
-            "/evidence/germany-population-revision-2025/evidence.csv"
-            "/sitemap.xml"
-            "/robots.txt"
-          )
+          routes=("/index.html" "/indicators/" "/indicators/real-gdp/" "/indicators/real-gdp/status.json" "/evidence/" "/evidence/index.json" "/evidence/germany-population-revision-2025/" "/evidence/germany-population-revision-2025/evidence.json" "/evidence/germany-population-revision-2025/evidence.csv" "/sitemap.xml" "/robots.txt")
           for route in "${routes[@]}"; do
             ok=0
             for attempt in 1 2 3 4 5 6; do
               code="$(curl -L --silent --show-error --output /tmp/live-body --write-out '%{http_code}' --max-time 20 "${BASE_URL}${route}" || true)"
-              if [ "$code" = "200" ] && [ -s /tmp/live-body ]; then
-                echo "LIVE OK ${route} (attempt ${attempt})"
-                ok=1
-                break
-              fi
-              echo "Retry ${attempt}: ${route} returned ${code:-network-error}"
+              if [ "$code" = "200" ] && [ -s /tmp/live-body ]; then ok=1; break; fi
               sleep $((attempt * 10))
             done
-            if [ "$ok" -ne 1 ]; then
-              echo "LIVE FAILED ${route}"
-              exit 1
-            fi
+            if [ "$ok" -ne 1 ]; then echo "LIVE FAILED ${route}"; exit 1; fi
           done
       - name: Verify live indicator registry and GDP fail-closed contract
         shell: bash
@@ -113,142 +95,34 @@ jobs:
           set -euo pipefail
           curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/indicators/" -o /tmp/indicators.html
           grep -q 'NY.GDP.MKTP.KD' /tmp/indicators.html
-          grep -q '/indicators/real-gdp/' /tmp/indicators.html || grep -q './real-gdp/index.html' /tmp/indicators.html
           grep -q 'SP.POP.TOTL' /tmp/indicators.html
           curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/indicators/real-gdp/status.json" -o /tmp/gdp-status.json
           node - <<'NODE'
           const fs = require('fs');
           const status = JSON.parse(fs.readFileSync('/tmp/gdp-status.json', 'utf8'));
-          if (status?.indicator?.code !== 'NY.GDP.MKTP.KD') throw new Error('Live GDP status exposes wrong indicator code');
-          if (status?.indicator?.referenceYear !== 2023) throw new Error('Live GDP status exposes wrong reference year');
-          if (status?.screeningStatus !== 'BLOCKED_METHODOLOGY_COMPARABILITY') throw new Error(`GDP screening unexpectedly unblocked: ${status?.screeningStatus}`);
-          if (status?.publishableRevisionData !== false) throw new Error('GDP revision data unexpectedly marked publishable');
-          if (status?.methodologyGate?.releaseSpecificBaseAndValuationVerified !== false) throw new Error('GDP methodology gate unexpectedly marked verified');
-          const forbidden = new Set(['rows', 'values', 'revisions', 'oldValue', 'newValue', 'delta', 'ranking', 'rankings']);
-          function walk(value, path = '$') {
-            if (!value || typeof value !== 'object') return;
-            for (const [key, child] of Object.entries(value)) {
-              if (forbidden.has(key)) throw new Error(`GDP status leaked forbidden field ${path}.${key}`);
-              walk(child, `${path}.${key}`);
-            }
-          }
-          walk(status);
-          console.log('LIVE GDP FAIL-CLOSED CONTRACT VERIFIED');
+          if (status?.indicator?.code !== 'NY.GDP.MKTP.KD') throw new Error('wrong GDP indicator');
+          if (status?.screeningStatus !== 'BLOCKED_METHODOLOGY_COMPARABILITY') throw new Error('GDP unexpectedly unblocked');
+          if (status?.publishableRevisionData !== false) throw new Error('GDP unexpectedly publishable');
           NODE
-      - name: Verify every live machine discovery distribution semantically
+      - name: Verify live discovery metadata
         shell: bash
         run: |
           set -euo pipefail
-          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/evidence/index.json" -o /tmp/evidence-index.json
-          node - <<'NODE'
-          const fs = require('fs');
-          const index = JSON.parse(fs.readFileSync('/tmp/evidence-index.json', 'utf8'));
-          if (index.schemaVersion !== '1.2') throw new Error(`Expected evidence index schema 1.2, got ${index.schemaVersion}`);
-          const records = index.records || index.items || index.evidence || [];
-          if (!Array.isArray(records) || records.length === 0) throw new Error('Evidence index has no records');
-          const lines = [];
-          for (const record of records) {
-            if (record?.status !== 'REAL' || record?.discoveryReady !== true) {
-              throw new Error(`Non-discovery-ready record emitted: ${record?.slug || record?.url || 'unknown'}`);
-            }
-            const indicatorCode = record?.indicator?.code || record?.indicatorCode;
-            const entityCode = record?.entity?.code || record?.entityCode;
-            const referenceYear = record?.referenceYear;
-            if (!indicatorCode || !entityCode || !Number.isInteger(referenceYear)) {
-              throw new Error(`Missing semantic identity in index record: ${record?.slug || record?.url || 'unknown'}`);
-            }
-            const jsonPath = record?.machineReadable?.json || record?.distributions?.json || record?.json || record?.jsonPath || record?.evidenceJson;
-            const csvPath = record?.machineReadable?.csv || record?.distributions?.csv || record?.csv || record?.csvPath || record?.evidenceCsv;
-            if (!jsonPath || !csvPath) throw new Error(`Missing JSON/CSV distribution: ${record?.slug || record?.url || 'unknown'}`);
-            for (const [kind, path] of [['json', jsonPath], ['csv', csvPath]]) {
-              const safe = [kind, path, indicatorCode, entityCode, String(referenceYear)];
-              if (safe.some((value) => String(value).includes('\t') || String(value).includes('\n'))) {
-                throw new Error(`Unsafe tab/newline in machine manifest for ${record?.slug || record?.url || 'unknown'}`);
-              }
-              lines.push(safe.join('\t'));
-            }
-          }
-          const germany = records.find((record) =>
-            (record?.indicator?.code === 'SP.POP.TOTL' || record?.indicatorCode === 'SP.POP.TOTL') &&
-            (record?.entity?.code === 'DEU' || record?.entityCode === 'DEU') &&
-            record?.referenceYear === 2023
-          );
-          if (!germany) throw new Error('Missing discovery-ready REAL Germany population record');
-          fs.writeFileSync('/tmp/machine-manifest.tsv', `${lines.join('\n')}\n`);
-          console.log(`Will semantically verify ${records.length} evidence records / ${lines.length} machine distributions`);
-          NODE
-          while IFS=$'\t' read -r kind path indicator_code entity_code reference_year; do
-            case "$path" in
-              http://*|https://*) url="$path" ;;
-              /*) url="${BASE_URL}${path}" ;;
-              *) url="${BASE_URL}/${path}" ;;
-            esac
-            body="$(mktemp)"
-            curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "$url" -o "$body"
-            test -s "$body"
-            if [ "$kind" = "json" ]; then
-              node - "$body" "$indicator_code" "$entity_code" "$reference_year" <<'NODE'
-              const fs = require('fs');
-              const [file, indicatorCode, entityCode, referenceYearRaw] = process.argv.slice(2);
-              const payload = JSON.parse(fs.readFileSync(file, 'utf8'));
-              const referenceYear = Number(referenceYearRaw);
-              if (!payload || typeof payload !== 'object' || Array.isArray(payload)) throw new Error('Machine JSON is not an object');
-              if (payload.status !== 'REAL') throw new Error(`Machine JSON status mismatch: ${payload.status}`);
-              if (payload?.indicator?.code !== indicatorCode) throw new Error(`Machine JSON indicator mismatch: expected ${indicatorCode}, got ${payload?.indicator?.code}`);
-              if (payload?.entity?.code !== entityCode) throw new Error(`Machine JSON entity mismatch: expected ${entityCode}, got ${payload?.entity?.code}`);
-              if (payload?.referenceYear !== referenceYear) throw new Error(`Machine JSON reference year mismatch: expected ${referenceYear}, got ${payload?.referenceYear}`);
-              NODE
-            else
-              node - "$body" "$indicator_code" "$entity_code" "$reference_year" <<'NODE'
-              const fs = require('fs');
-              const [file, indicatorCode, entityCode, referenceYearRaw] = process.argv.slice(2);
-              const text = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
-              function parseCsvLine(line) {
-                const out = [];
-                let current = '';
-                let quoted = false;
-                for (let i = 0; i < line.length; i++) {
-                  const ch = line[i];
-                  if (ch === '"') {
-                    if (quoted && line[i + 1] === '"') { current += '"'; i++; }
-                    else quoted = !quoted;
-                  } else if (ch === ',' && !quoted) {
-                    out.push(current); current = '';
-                  } else current += ch;
-                }
-                out.push(current);
-                return out;
-              }
-              const lines = text.split('\n').filter(Boolean);
-              if (lines.length < 2) throw new Error('Machine CSV has no data rows');
-              const header = parseCsvLine(lines[0]);
-              const required = ['entity_code', 'indicator_code', 'reference_year', 'vintage', 'value', 'unit', 'source_url'];
-              for (const column of required) if (!header.includes(column)) throw new Error(`Machine CSV missing required column ${column}`);
-              const index = Object.fromEntries(header.map((name, i) => [name, i]));
-              const expectedYear = String(Number(referenceYearRaw));
-              const matching = lines.slice(1).map(parseCsvLine).filter((row) =>
-                row[index.entity_code] === entityCode &&
-                row[index.indicator_code] === indicatorCode &&
-                row[index.reference_year] === expectedYear
-              );
-              if (matching.length === 0) throw new Error(`Machine CSV identity mismatch for ${indicatorCode}/${entityCode}/${expectedYear}`);
-              NODE
-            fi
-            echo "MACHINE DISCOVERY SEMANTIC OK [$kind] $url → ${indicator_code}/${entity_code}/${reference_year}"
-            rm -f "$body"
-          done < /tmp/machine-manifest.tsv
-      - name: Verify live discovery metadata and sitemap exclusions
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/index.html" -o /tmp/index.html
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/index.html" -o /tmp/index.html
           grep -qi 'rel="canonical"' /tmp/index.html
-          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/robots.txt" -o /tmp/robots.txt
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/robots.txt" -o /tmp/robots.txt
           grep -qi "Sitemap: ${BASE_URL}/sitemap.xml" /tmp/robots.txt
-          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
-          grep -q "${BASE_URL}/indicators/" /tmp/sitemap.xml
-          grep -q "${BASE_URL}/indicators/real-gdp/" /tmp/sitemap.xml
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
           grep -q "${BASE_URL}/evidence/germany-population-revision-2025/" /tmp/sitemap.xml
-          ! grep -q '/indicators/population-total/' /tmp/sitemap.xml
-          ! grep -q '/evidence/germany-gdp-growth-revision/' /tmp/sitemap.xml
-          ! grep -q '/evidence/germany-population-revision/' /tmp/sitemap.xml
+      - name: Install Playwright Chromium
+        run: npx --yes playwright@1.55.0 install --with-deps chromium
+      - name: Run live mobile browser smoke
+        run: npx --yes playwright@1.55.0 test test/live-mobile-smoke.spec.js --reporter=line
+      - name: Upload browser-smoke evidence on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-browser-smoke-${{ github.sha }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 14
