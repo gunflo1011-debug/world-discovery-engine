@@ -24,6 +24,7 @@ async function collectEvidence() {
         title: extract(html, /<h1[^>]*>(.*?)<\/h1>/s)?.replace(/<[^>]+>/g, '') || entry.name,
         description: extract(html, /<meta\s+name="description"\s+content="([^"]*)"/i),
         demo: /\bDEMO\b/i.test(html),
+        noindex: /<meta\s+name="robots"\s+content="[^"]*noindex/i.test(html),
         url: `/evidence/${entry.name}/`
       });
     } catch (error) {
@@ -63,7 +64,7 @@ export async function buildSite() {
     '/indicators/real-gdp/',
     '/leaderboard/'
   ]);
-  const indexableEvidence = evidence.filter((record) => !record.demo);
+  const indexableEvidence = evidence.filter((record) => !record.demo && !record.noindex);
   const pagePaths = [
     ...staticRoutes,
     ...indexableEvidence.map((record) => record.url)
@@ -73,7 +74,7 @@ export async function buildSite() {
   await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt({ baseUrl }), 'utf8');
   await writeFile(resolve(root, 'sitemap.xml'), renderSitemap({ baseUrl, pages: pagePaths.map((path) => ({ path })) }), 'utf8');
   await writeFile(resolve(root, 'evidence', 'index.json'), `${JSON.stringify({ schemaVersion: '1.0', generatedAt, evidence: indexableEvidence }, null, 2)}\n`, 'utf8');
-  await writeFile(resolve(root, 'build.json'), `${JSON.stringify({ generatedAt, baseUrl, publicRoutes: pagePaths.length, evidencePages: indexableEvidence.length, demoPagesExcluded: evidence.filter((item) => item.demo).length }, null, 2)}\n`, 'utf8');
+  await writeFile(resolve(root, 'build.json'), `${JSON.stringify({ generatedAt, baseUrl, publicRoutes: pagePaths.length, evidencePages: indexableEvidence.length, demoPagesExcluded: evidence.filter((item) => item.demo).length, noindexPagesExcluded: evidence.filter((item) => item.noindex).length }, null, 2)}\n`, 'utf8');
 
   return { evidence: indexableEvidence, pagePaths, generatedAt };
 }
