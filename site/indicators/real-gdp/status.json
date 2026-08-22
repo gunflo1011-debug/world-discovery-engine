@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.6",
-  "screenedAtUtc": "2026-08-22T15:40:40Z",
+  "schemaVersion": "1.7",
+  "screenedAtUtc": "2026-08-22T16:42:04Z",
   "indicator": {
     "code": "NY.GDP.MKTP.KD",
     "name": "GDP (constant 2015 US$)",
@@ -35,7 +35,23 @@
     "archiveNamesConsistent": true,
     "archiveNamesMatchExpectedScreeningContract": true,
     "releaseSpecificBaseAndValuationVerified": false,
-    "reason": "World Bank warns NY.GDP.MKTP.KD reused the same code across different base years and states archive views expose only current metadata. Current metadata says constant 2015 US$, but cannot prove the base/valuation of each archived release."
+    "releaseEvidenceAttestation": {
+      "attestationPresent": false,
+      "boundToExactArchiveHashes": false,
+      "authoritativeReleaseSpecificSources": false,
+      "sameBaseYearUnitAndValuation": false
+    },
+    "reason": "No reviewed release-specific methodology attestation is present for these exact archives."
+  },
+  "promotionEvidenceContract": {
+    "state": "MISSING_REVIEWED_RELEASE_SPECIFIC_ATTESTATION",
+    "requiredAttestationPath": "data/methodology/real-gdp-2025-release-evidence.json",
+    "mustBindToExactArchiveSha256": true,
+    "mustUseAuthoritativeReleaseSpecificWorldBankSources": true,
+    "requiredBaseYear": 2015,
+    "requiredUnit": "constant 2015 US$",
+    "requiredValuationConsistency": "same non-empty valuation definition across both vintages",
+    "note": "A matching series code/name or current metadata alone can never satisfy this promotion contract."
   },
   "provenance": {
     "dataset": "World Development Indicators (WDI)",
