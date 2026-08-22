@@ -1,0 +1,13 @@
+country,country_code,indicator_code,value,unit,observation_year,source,retrieved_at
+Australia,AUS,IT.NET.USER.ZS,96,% of population,2024,ITU via World Bank WDI,2026-08-22
+Belgium,BEL,IT.NET.USER.ZS,96,% of population,2024,ITU via World Bank WDI,2026-08-22
+France,FRA,IT.NET.USER.ZS,89,% of population,2024,ITU via World Bank WDI,2026-08-22
+Germany,DEU,IT.NET.USER.ZS,93,% of population,2024,ITU via World Bank WDI,2026-08-22
+Greece,GRC,IT.NET.USER.ZS,86,% of population,2024,ITU via World Bank WDI,2026-08-22
+Hungary,HUN,IT.NET.USER.ZS,94,% of population,2024,ITU via World Bank WDI,2026-08-22
+Italy,ITA,IT.NET.USER.ZS,89,% of population,2024,ITU via World Bank WDI,2026-08-22
+Japan,JPN,IT.NET.USER.ZS,86,% of population,2024,ITU via World Bank WDI,2026-08-22
+Poland,POL,IT.NET.USER.ZS,89,% of population,2024,ITU via World Bank WDI,2026-08-22
+Portugal,PRT,IT.NET.USER.ZS,88,% of population,2024,ITU via World Bank WDI,2026-08-22
+Spain,ESP,IT.NET.USER.ZS,96,% of population,2024,ITU via World Bank WDI,2026-08-22
+United States,USA,IT.NET.USER.ZS,95,% of population,2024,ITU via World Bank WDI,2026-08-22
