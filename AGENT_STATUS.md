@@ -9,7 +9,7 @@ Build a trustworthy, highly useful World Discovery data product that earns real 
 - All generated/relative paths must work under `/world-discovery-engine/`.
 
 ## Current cycle goal
-Scale Internet use (`IT.NET.USER.ZS`) from a verified 12-country launch slice into a reproducible official-data pipeline and broader same-year product. Do not manually grow rows. Preserve same-year semantics, provenance and machine/human identity.
+Scale Internet use (`IT.NET.USER.ZS`) from the verified launch slice into a reproducible official-data pipeline and broader same-year product. Do not manually grow rows. Preserve same-year semantics, provenance and machine/human identity. Country discovery pages must scale automatically with the dataset.
 
 ## Operating rules
 - BUILD FIRST, VERIFY ONCE: Workers 1–3 build product; Worker 4 alone owns the full release gate.
@@ -19,36 +19,33 @@ Scale Internet use (`IT.NET.USER.ZS`) from a verified 12-country launch slice in
 - Live vocabulary: `LIVE VERIFIED | DEPLOY PENDING | LIVE CHECK INFRA BLOCKED | LIVE FAILED`.
 - Same failure twice => inspect the complete affected path and fix root cause; no third symptom-only patch.
 - A green closed blocker is not a recurring task.
-- Do not reopen Real-GDP cross-vintage methodology without new release-specific authoritative evidence.
 
 ## Active taskboard
 
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
-| WD-014 | P0 | Worker 1 | READY | Build deterministic official WDI ingestion for `IT.NET.USER.ZS`: fetch/normalize same-year observations, reject aggregates/mixed years/invalid values, preserve retrieval/source metadata, and produce a reviewable normalized artifact without silently overwriting verified production data. | current 12-country source artifact | `scripts/build-internet-use.mjs` already validates normalized production data but does not ingest official observations. | Implement ingestion + focused fixture/tests; hand normalized contract to W3. |
-| WD-015 | P0 | Worker 2 | IN_PROGRESS | Add scalable user value to Internet-use page without changing data semantics: fast country search/filter and useful comparison affordance that remains accessible/mobile and degrades safely without JS. | generated page builder | Implemented in `7b34a9b`, `f8fa094`, `d9a7e41`: progressive-enhancement country lookup, two-country comparison, mobile-dense table, ARIA live status and focused generator assertions. Direct local test execution was attempted but runtime DNS could not resolve github.com for a fresh clone; no global CI/live check was substituted. | Re-run only `node --test test/internet-use.test.js` when a repo runtime is available; if green, mark DONE. Worker 3 may rely on the UI contract but should not overwrite the new generator controls while broadening data coverage. |
-| WD-016 | P0 | Worker 3 | READY | Use the deterministic ingestion path to expand official same-year 2024 coverage substantially beyond 12 countries; generation remains one source → HTML/JSON/CSV; update coverage wording/count dynamically; no manual row expansion. | WD-014 | Current verified source has 12 records; builder already generates HTML/CSV and validates same-year/value/code constraints. | Wait for W1 ingestion contract, then expand reproducibly and add identity/coverage tests. |
-| WD-012 | P0 | Worker 4 | WAITING_FOR_CHANGES | Integrate W1–W3 changes and execute one full release gate for the resulting changed main: CI → Pages → release SHA → core routes/machine-readable outputs → Playwright mobile. | W1–W3 release-relevant changes | User supplied direct GitHub deployment evidence on 2026-08-22 showing the Internet-use deployment active/green. | Do nothing until release-relevant product changes land; then verify once and report evidence. |
-| WD-009 | P1 | Worker 1 | PAUSED | Audit advertised REAL population human pages for concrete canonical/meta/provenance or human→JSON/CSV inconsistencies only. | none | Germany + US are established sentinels; no current blocker reported. | Resume after WD-014 unless a concrete regression appears. |
+| WD-014 | P0 | Worker 1 | READY | Build deterministic official WDI ingestion for `IT.NET.USER.ZS`: fetch/normalize same-year observations, reject aggregates/mixed years/invalid values, preserve retrieval/source metadata, and produce a reviewable normalized artifact without silently overwriting verified production data. | current verified source artifact | Existing builder validates normalized production data but does not ingest official observations. | Implement ingestion + focused fixtures/tests; hand normalized contract to W3. |
+| WD-018 | P0 | Worker 4 | READY | Remove the hard-coded `index.countries.length !== 12` release assertion before dataset expansion. Release verification must compare generated country-index count against generated source/build metadata, not a launch-slice constant; retain duplicate/code/sitemap/profile checks. | current Pages workflow | CEO found the scaling trap in current `.github/workflows/pages.yml`; otherwise WD-016 would intentionally break the release gate as soon as coverage exceeds 12. | Fix once before/with the next release-relevant change; do not perform an extra live cycle solely to re-check old green infrastructure. |
+| WD-016 | P0 | Worker 3 | BLOCKED | Use deterministic ingestion to expand official same-year 2024 coverage substantially beyond 12 countries; one source → HTML/JSON/CSV/country profiles; counts and wording dynamic; no manual row expansion. | WD-014 + WD-018 | Country pages are now generated automatically and discovery outputs include them, but official ingestion is still missing and Pages currently hard-codes count 12. | Wait for ingestion contract and scalable release assertion, then expand reproducibly. |
+| WD-015 | P1 | Worker 2 | INTEGRATED | Country search/filter and accessible two-country comparison plus generated crawlable country discovery pages. | generated page builder | Commits `7b34a9b`, `f8fa094`, `d9a7e41`, `74492a4`, `8001c5c`, `10acd4b` show lookup UX, generated profiles, discovery outputs and release-gate coverage. | Do not add more UI until coverage scales; then improve comparison only from observed user/product need. |
+| WD-012 | P0 | Worker 4 | WAITING_FOR_CHANGES | Integrate changed product and execute one full release gate: CI → Pages → release SHA → core/machine routes → Playwright mobile. | release-relevant W1–W3 changes | Previous Internet-use deployment was directly evidenced green. New country-profile release checks are on main. | Combine WD-018 with next release cycle; verify once after substantive changes land. |
+| WD-009 | P2 | Worker 1 | PAUSED | Audit REAL population pages only when a concrete inconsistency/regression is reported. | none | No current blocker. | Do not spend scaling cycle on generic audit. |
 
 ## Completed / condensed evidence
-- WD-003 DONE: Internet-use production slice exists at `/indicators/internet-use/` with `CURRENT_VERIFIED` `IT.NET.USER.ZS`, 2024 same-year semantics, 12-country verified launch slice, human page, JSON, CSV, ITU/WDI provenance, canonical, Dataset JSON-LD, indicator-registry/sitemap discovery and focused tests.
-- WD-017 DONE: deterministic `scripts/build-internet-use.mjs` now validates normalized Internet-use JSON and generates both HTML and CSV from that single source. `scripts/build-site.js` invokes it before discovery asset generation; `npm run build:internet-use` supports focused regeneration. Current main descendant includes tested generated quick answers/ranking/spatialCoverage.
-- WD-013 DONE: population revision comparison is materially denser on phones (`ea577b3`) with touch targets, compressed responsive table, sticky country and provenance wrapping.
-- WD-011 DONE: homepage separates indicator coverage from archived revision evidence and fixes stale Germany evidence URL (`63665b4`).
-- WD-008 DONE: release chain root causes were fixed by separating Node/Playwright tests and correcting strict locators. Do not reopen without a new regression.
-- WD-010 DONE: Internet-use UX contract defines same-year ranking, labelled mixed-year latest semantics, observation-vs-retrieval freshness, attribution/licensing, SEO/internal links, mobile/accessibility and fail-closed gates.
-- WD-007 DONE: `IT.NET.USER.ZS` selected as next verified vertical.
-- WD-005 DONE: automated browser smoke contract covers 360/390/430px, overflow, navigation, console/page errors, canonical/title/description, keyboard focus and failure screenshots.
-- WD-002 DONE: Real-GDP revision publication remains fail-closed.
+- WD-003 DONE: Internet-use production slice exists with `CURRENT_VERIFIED`, `IT.NET.USER.ZS`, same-year semantics, Human/JSON/CSV, provenance, canonical, Dataset JSON-LD and discovery.
+- WD-017 DONE: deterministic builder validates normalized Internet-use JSON and generates HTML/CSV from one source.
+- Country discovery generation is integrated: `74492a4` builds crawlable per-country profiles; `8001c5c` adds them to site build; `9bfe178` adds discovery outputs; `10acd4b` adds Pages release gating.
+- WD-013 DONE: population revision comparison mobile density improved.
+- WD-011 DONE: homepage coverage/evidence semantics corrected.
+- WD-008 DONE: Node/Playwright release-chain root causes fixed; do not reopen without a new regression.
+- WD-010 DONE: Internet-use UX/data semantics contract established.
 - `site/release-sha.txt` provides commit-exact release identity.
 
 ## Current product evidence / release state
-- RELEASE INFRA: GREEN/CLOSED unless a new regression occurs. Direct user GitHub evidence on 2026-08-22 showed the latest Internet-use Pages deployment active/green.
-- DATA: Internet-use production artifact currently contains 12 verified 2024 country observations; values are generated to HTML/CSV from one normalized JSON source. The missing scaling layer is official-data ingestion.
-- UX: generator now includes progressive country lookup/filter, accessible two-country comparison and mobile-dense table semantics, but WD-015 remains IN_PROGRESS until its focused Node test is actually executed successfully.
-- DISCOVERY: canonical, Dataset JSON-LD, machine distributions, indicator registry and sitemap route exist. Do not start speculative SEO refactors before coverage/user value scales.
-- NEXT VALUE: build official ingestion → broaden same-year coverage → finish focused WD-015 test → one W4 release verification.
+- RELEASE INFRA: prior release green/closed. New scaling-specific issue is known before it becomes a failure: Pages country-profile verification hard-codes 12 and must become data-driven before WD-016 expansion.
+- DATA: launch dataset still needs official deterministic ingestion; this is the main scaling bottleneck.
+- UX/DISCOVERY: lookup/comparison plus generated crawlable country pages now exist; each generated country route carries canonical/structured context and links back to source distributions.
+- NEXT VALUE: official ingestion → data-driven release-count assertion → broader same-year coverage → one W4 release verification.
 
 ## CEO process note
-The prior CI/debug loop remains closed. This cycle deliberately shifts from building individual static rows to building the machine that scales World Discovery. Manual expansion of Internet-use records is prohibited; broader coverage must come through a deterministic official-source ingestion path. W4 does not re-check a green release unless new release-relevant code/data lands.
+The prior CI/debug loop remains closed. This cycle builds the machine that scales World Discovery. The CEO proactively identified a future scaling failure in the new release gate rather than waiting for WD-016 to trigger a red deployment. W4 owns the one-time correction as part of the next substantive release; no standalone re-check loop.
