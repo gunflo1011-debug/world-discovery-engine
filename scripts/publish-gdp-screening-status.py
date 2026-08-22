@@ -19,6 +19,7 @@ EXPECTED_URLS = [
     "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip",
 ]
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+UTCSTAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
 
 def require(condition, message):
@@ -32,6 +33,8 @@ def main():
 
     require(data.get("status") == "SCREENING", "status must remain SCREENING")
     require(data.get("publishable") is False, "publishable must be false")
+    screened_at = str(data.get("screenedAtUtc", ""))
+    require(UTCSTAMP.match(screened_at), "missing or invalid screenedAtUtc")
     indicator = data.get("indicator", {})
     require(indicator.get("code") == EXPECTED_CODE, "unexpected indicator code")
     require(data.get("referenceYear") == EXPECTED_YEAR, "unexpected reference year")
@@ -53,11 +56,14 @@ def main():
     require([r.get("url") for r in releases] == EXPECTED_URLS, "unexpected archive URLs")
     for release in releases:
         require(SHA256.match(str(release.get("archiveSha256", ""))), "invalid archive SHA-256")
+        require(isinstance(release.get("archiveBytes"), int) and release["archiveBytes"] > 1_000_000,
+                "archive byte length is missing or implausibly small")
         require(str(release.get("member", "")).lower().endswith(".xlsx"), "missing XLSX member provenance")
         require(bool(str(release.get("indicatorNameInArchive", "")).strip()), "missing archive indicator name")
 
     public = {
-        "schemaVersion": "1.2",
+        "schemaVersion": "1.3",
+        "screenedAtUtc": screened_at,
         "indicator": {
             "code": EXPECTED_CODE,
             "name": indicator.get("currentName", "Real GDP"),
@@ -95,13 +101,13 @@ def main():
     for release in releases:
         rows.append(
             "<tr><td>{v}</td><td><a href=\"{u}\">Official WDI ZIP</a></td>"
-            "<td><code>{m}</code></td><td><code>{h}</code></td><td>{n}</td></tr>".format(
+            "<td><code>{m}</code></td><td>{b:,} bytes</td><td><code>{h}</code></td><td>{n}</td></tr>".format(
                 v=html.escape(release["vintage"]), u=html.escape(release["url"], quote=True),
-                m=html.escape(release["member"]), h=html.escape(release["archiveSha256"]),
-                n=html.escape(release["indicatorNameInArchive"]),
+                m=html.escape(release["member"]), b=release["archiveBytes"],
+                h=html.escape(release["archiveSha256"]), n=html.escape(release["indicatorNameInArchive"]),
             )
         )
-    prov_html = """<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Real GDP screening provenance — World Discovery Engine</title><meta name=\"description\" content=\"Exact archived WDI vintages, archive fingerprints and fail-closed methodology state for the Real GDP screening slice.\"><link rel=\"canonical\" href=\"https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html\"><link rel=\"stylesheet\" href=\"../../styles.css\"></head><body><header class=\"topbar\"><div class=\"wrap\"><div class=\"brand\">World Discovery Engine</div><nav class=\"nav\" aria-label=\"Primary\"><a href=\"../../index.html\">Home</a><a href=\"../index.html\">Indicators</a><a href=\"./index.html\">GDP screening</a><a href=\"../../methodology/index.html\">Methodology</a></nav></div></header><main><section class=\"hero hero-compact\"><div class=\"wrap\"><div class=\"eyebrow\">Reproducibility → GDP screening</div><h1>Exact archive fingerprints for the blocked Real GDP comparison.</h1><p>This page is generated only from a live fail-closed screening run. It publishes source identity and fingerprints, not screened GDP values or revision claims.</p><span class=\"pill\">BLOCKED · METHODOLOGY COMPARABILITY</span></div></section><section class=\"section\"><div class=\"wrap\"><h2>Archive provenance</h2><div class=\"table-wrap\" role=\"region\" aria-label=\"GDP archive provenance\" tabindex=\"0\"><table class=\"table\"><thead><tr><th>Vintage</th><th>Source</th><th>Workbook member</th><th>Archive SHA-256</th><th>Indicator name in archive</th></tr></thead><tbody>{rows}</tbody></table></div><p class=\"muted\">Reference year: 2023 · Coverage: 15/15 requested sovereign countries · Indicator code: NY.GDP.MKTP.KD.</p></div></section><section class=\"section section-soft\"><div class=\"wrap\"><h2>Why publication is still blocked</h2><div class=\"notice\"><strong>Release-specific base year and valuation are not independently verified.</strong> The World Bank warns that this code has historically represented different base years and that archive views expose current metadata. Matching code, workbook name and coverage therefore do not prove cross-vintage methodological compatibility.</div><p><a href=\"https://databank.worldbank.org/databases/archives\">World Bank WDI archive guidance →</a></p><p><a href=\"https://databank.worldbank.org/metadataglossary/world-development-indicators/series/NY.GDP.MKTP.KD\">Current WDI metadata →</a></p><p><a href=\"./status.json\">Machine-readable status JSON →</a></p></div></section></main><footer class=\"footer\"><div class=\"wrap\">World Discovery Engine · Provenance without overclaiming.</div></footer></body></html>""".format(rows="".join(rows))
+    prov_html = """<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Real GDP screening provenance — World Discovery Engine</title><meta name=\"description\" content=\"Exact archived WDI vintages, archive fingerprints and fail-closed methodology state for the Real GDP screening slice.\"><link rel=\"canonical\" href=\"https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html\"><link rel=\"stylesheet\" href=\"../../styles.css\"></head><body><header class=\"topbar\"><div class=\"wrap\"><div class=\"brand\">World Discovery Engine</div><nav class=\"nav\" aria-label=\"Primary\"><a href=\"../../index.html\">Home</a><a href=\"../index.html\">Indicators</a><a href=\"./index.html\">GDP screening</a><a href=\"../../methodology/index.html\">Methodology</a></nav></div></header><main><section class=\"hero hero-compact\"><div class=\"wrap\"><div class=\"eyebrow\">Reproducibility → GDP screening</div><h1>Exact archive fingerprints for the blocked Real GDP comparison.</h1><p>This page is generated only from a live fail-closed screening run. It publishes source identity and fingerprints, not screened GDP values or revision claims.</p><span class=\"pill\">BLOCKED · METHODOLOGY COMPARABILITY</span></div></section><section class=\"section\"><div class=\"wrap\"><h2>Archive provenance</h2><p><strong>Last live screening run:</strong> <time datetime=\"{screened}\">{screened}</time></p><div class=\"table-wrap\" role=\"region\" aria-label=\"GDP archive provenance\" tabindex=\"0\"><table class=\"table\"><thead><tr><th>Vintage</th><th>Source</th><th>Workbook member</th><th>Archive size</th><th>Archive SHA-256</th><th>Indicator name in archive</th></tr></thead><tbody>{rows}</tbody></table></div><p class=\"muted\">Reference year: 2023 · Coverage: 15/15 requested sovereign countries · Indicator code: NY.GDP.MKTP.KD.</p></div></section><section class=\"section section-soft\"><div class=\"wrap\"><h2>Why publication is still blocked</h2><div class=\"notice\"><strong>Release-specific base year and valuation are not independently verified.</strong> The World Bank warns that this code has historically represented different base years and that archive views expose current metadata. Matching code, workbook name and coverage therefore do not prove cross-vintage methodological compatibility.</div><p><a href=\"https://databank.worldbank.org/databases/archives\">World Bank WDI archive guidance →</a></p><p><a href=\"https://databank.worldbank.org/metadataglossary/world-development-indicators/series/NY.GDP.MKTP.KD\">Current WDI metadata →</a></p><p><a href=\"./status.json\">Machine-readable status JSON →</a></p></div></section></main><footer class=\"footer\"><div class=\"wrap\">World Discovery Engine · Provenance without overclaiming.</div></footer></body></html>""".format(rows="".join(rows), screened=html.escape(screened_at, quote=True))
     for forbidden in ('absoluteRevision', 'relativeRevision', '>first<', '>latest<'):
         require(forbidden not in prov_html, f"screened value field leaked into provenance page: {forbidden}")
     PROV.write_text(prov_html, encoding="utf-8")
