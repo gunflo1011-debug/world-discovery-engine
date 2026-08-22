@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.5",
-  "screenedAtUtc": "2026-08-22T13:39:18Z",
+  "schemaVersion": "1.6",
+  "screenedAtUtc": "2026-08-22T15:40:40Z",
   "indicator": {
     "code": "NY.GDP.MKTP.KD",
     "name": "GDP (constant 2015 US$)",
@@ -11,6 +11,23 @@
   "publishableRevisionData": false,
   "coverage": {
     "requested": 15,
+    "requestedCountryCodes": [
+      "DEU",
+      "USA",
+      "CHN",
+      "IND",
+      "JPN",
+      "GBR",
+      "FRA",
+      "ITA",
+      "BRA",
+      "CAN",
+      "AUS",
+      "ESP",
+      "MEX",
+      "IDN",
+      "KOR"
+    ],
     "rowsPresentInBothVintages": 15,
     "missing": []
   },
@@ -54,5 +71,5 @@
   "screeningPageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/",
   "provenancePageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html",
   "sourceCodeUrl": "https://github.com/gunflo1011-debug/world-discovery-engine/blob/main/scripts/screen-real-gdp.py",
-  "note": "Rows are present in both vintages, but they are not labeled methodologically comparable. No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved."
+  "note": "Rows are present in both vintages for the exact published country-code contract, but they are not labeled methodologically comparable. No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved."
 }
