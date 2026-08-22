@@ -1,15 +1,27 @@
 import { assessComparability } from './comparability-gate.js';
 
+function publicReason(reason) {
+  return String(reason ?? '').replaceAll('-', '_');
+}
+
+function normalizeNumber(value) {
+  return Number.isFinite(value) ? Number(value.toPrecision(15)) : value;
+}
+
 export function compareObservations(previous, current) {
   if (!previous || !current) throw new Error('Both observations are required');
   const assessment = assessComparability(previous, current);
   if (!assessment.comparable) {
-    return { comparable: false, reason: assessment.reasons[0], reasons: assessment.reasons };
+    return { comparable: false, reason: publicReason(assessment.reasons[0]) };
   }
-  if (!Number.isFinite(previous.value) || !Number.isFinite(current.value)) return { comparable: false, reason: 'invalid-value' };
+  if (!Number.isFinite(previous.value) || !Number.isFinite(current.value)) {
+    return { comparable: false, reason: 'invalid_value' };
+  }
 
-  const absoluteRevision = current.value - previous.value;
-  const percentageRevision = previous.value === 0 ? null : (absoluteRevision / Math.abs(previous.value)) * 100;
+  const absoluteRevision = normalizeNumber(current.value - previous.value);
+  const percentageRevision = previous.value === 0
+    ? null
+    : normalizeNumber((absoluteRevision / Math.abs(previous.value)) * 100);
 
   return {
     comparable: true,
