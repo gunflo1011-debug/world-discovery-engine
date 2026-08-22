@@ -46,6 +46,7 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
     assert.equal(Number(row.observation_year), record.year);
     assert.match(html, new RegExp(`>${record.country.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<`));
     assert.match(html, new RegExp(`>${record.value}%<`));
+    assert.match(html, new RegExp(`data-code="${record.code.toLowerCase()}"`));
   }
 
   assert.match(html, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/indicators\/internet-use\/"/);
@@ -57,5 +58,13 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   assert.match(html, /10 percentage points \(96% versus 86%\)/);
   assert.match(html, /"spatialCoverage":\[/);
   assert.match(html, /not a complete global ranking/i);
+  assert.match(html, /id="country-search"[^>]+placeholder="Type Germany, DEU…"/);
+  assert.match(html, /id="country-status" aria-live="polite"/);
+  assert.match(html, /id="compare-a"/);
+  assert.match(html, /id="compare-b"/);
+  assert.match(html, /id="compare-result" aria-live="polite" hidden/);
+  assert.match(html, /tools\.hidden=false/);
+  assert.match(html, /row\.hidden=!match/);
+  assert.match(html, /percentage points/);
   assert.doesNotMatch(html, /revision-ready|archive-to-archive delta/i);
 });
