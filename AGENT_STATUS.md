@@ -9,7 +9,7 @@ Build a trustworthy, highly useful World Discovery data product that earns real 
 - All generated/relative paths must work under `/world-discovery-engine/`.
 
 ## Current cycle goal
-Turn the now-working release path into commit-exact, browser-verifiable release evidence while expanding one genuinely useful verified data vertical and improving mobile information density.
+Finish browser-level mobile release evidence, prove the current commit-exact release path end-to-end, and select/ship the next genuinely useful verified data vertical without weakening fail-closed provenance.
 
 ## Operating rules
 - Every worker syncs `main`, then reads this file before work.
@@ -18,29 +18,31 @@ Turn the now-working release path into commit-exact, browser-verifiable release 
 - Live vocabulary only: `LIVE VERIFIED | DEPLOY PENDING | LIVE CHECK INFRA BLOCKED | LIVE FAILED`.
 - After two materially failed attempts, change approach/scope/owner. Preserve evidence and next reproducible action.
 - CI post-deploy verification is primary live truth; worker-local DNS failure is not a product failure.
+- Do not reopen the closed Real-GDP cross-vintage methodology investigation without new release-specific authoritative evidence.
 
 ## Active taskboard
 
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
-| WD-005 | P0 | Worker 4 | IN_PROGRESS | Add automated 360–430px browser smoke. DoD: Chromium/Playwright (or equally reproducible free browser runner) checks homepage + core evidence route for horizontal overflow, nav usability, uncaught console/page errors; failure uploads screenshot/log artifact. | Pages workflow | Manual real-device screenshots on 2026-08-22 show clean mobile rendering; prior local render attempts were unreliable. | Implement browser-level CI evidence; do not duplicate curl live checks. |
-| WD-003 | P1 | Worker 3 | IN_PROGRESS | Ship next high-value verified vertical slice. DoD: official source/provenance → normalization → useful human feature/page → machine-readable output → internal links/schema → tests → live evidence. | release path | Commits `3bc47f4`, `aced4b6`, `1bd73ac` enrich/test machine-readable evidence discovery index. | Continue from enriched discovery index into a query-worthy verified data use case; avoid thin page multiplication. |
-| WD-006 | P1 | Worker 1 | TODO | Release/discovery QA for current main. DoD: verify new commit-exact marker converges live, critical routes/discovery metadata pass, and inspect machine index links for broken/noindex leakage. | CEO `8a30244` | Prior workflow #76 was green and manual mobile screenshots confirmed rendered production. | Use CI evidence for exact deployed SHA; report run URL/log evidence and broken-link findings only. |
+| WD-005 | P0 | Worker 4 | IN_PROGRESS | Add automated 360–430px browser smoke. DoD: Chromium/Playwright (or equally reproducible free browser runner) checks homepage + core evidence route for horizontal overflow, nav usability, uncaught console/page errors; failure uploads screenshot/log artifact. | Pages workflow | Manual real-device screenshots on 2026-08-22 show clean mobile rendering; repo audit still finds no browser-smoke implementation. | Implement browser-level CI evidence; do not duplicate curl/live machine checks. |
+| WD-006 | P1 | Worker 1 | IN_PROGRESS | Release/discovery QA for current main. DoD: verify commit-exact marker converges live, critical routes/discovery metadata pass, and inspect machine index links for broken/noindex leakage. | Pages workflow | CEO marker commit `8a30244`; current workflow now also checks evidence routes and machine contract in `0a209077`. | Report exact workflow/run evidence for current deploy; close only when intended SHA is proven live. |
+| WD-007 | P1 | Worker 2 | TODO | Screen the next methodologically simple, query-worthy official indicator family. DoD: authoritative source/licensing/provenance, vintage comparability decision, user-value hypothesis, and a GO/NO-GO artifact; no public revision claim until comparability is proven. | WD-002 closed | Real GDP (`NY.GDP.MKTP.KD`) is permanently fail-closed for the tested archive pair absent release-specific methodology evidence. Annual GDP growth is only a candidate, not assumed safe. | Evaluate 2–3 candidates and nominate one vertical for Worker 3 with reproducible evidence. |
+| WD-003 | P1 | Worker 3 | IN_PROGRESS | Ship next high-value verified vertical slice. DoD: official source/provenance → normalization → useful human feature/page → machine-readable output → internal links/schema → tests → live evidence. | WD-007 candidate decision, unless an independently proven-safe source is already available | `da279cb`, `55ce36e`, `895da4d` harden discovery completeness; earlier `3bc47f4`, `aced4b6`, `1bd73ac` enriched machine-readable discovery. | Avoid thin page multiplication; consume a proven-safe candidate or continue reusable vertical infrastructure until WD-007 hands off. |
 
 ## Recently completed / condensed evidence
-- WD-002 DONE (Worker 2, 2026-08-22): Real-GDP cross-vintage revision publication is decisively fail-closed. Official World Bank WDI archive guidance explicitly warns that `NY.GDP.MKTP.KD` has reused the same code across different base years/valuations and that archived databases expose only current metadata when an indicator still exists. Therefore the 2025-01-28 and 2025-07-02 workbook names, code identity, hashes and 15/15 coverage cannot independently prove release-specific methodological comparability. Current WDI metadata confirms the present reference year is 2015, but cannot establish each archived release definition. Recommendation: stop spending cycles trying to publish revision values from this pair without a release-specific authoritative artifact; keep the transparent screening page and move product expansion to a methodologically simpler indicator (candidate: annual GDP growth, to be independently screened before publication).
+- WD-002 DONE (Worker 2, 2026-08-22): Real-GDP cross-vintage revision publication is decisively fail-closed. Official World Bank WDI archive guidance warns that `NY.GDP.MKTP.KD` reused the same code across different base years/valuations and archived databases expose only current metadata when an indicator still exists. Without release-specific authoritative methodology artifacts, the tested archive pair cannot support revision claims. Commit `418ddf07` closes the methodology gate; `048939b` aligns README guidance.
 - WD-001 DONE: workflow #76 green after fail-closed test-contract fixes (`62aeaed`, `cb44b1e`); production rendered successfully on a real mobile device.
-- CEO `8a30244`: deployment now stamps `site/release-sha.txt`; post-deploy CI retries until the live marker exactly equals `GITHUB_SHA`, preventing stale HTTP-200 responses from being misclassified as current release evidence.
-- CEO earlier release hardening: fixed production URL, retry/backoff, critical routes, canonical, robots and sitemap assertions.
-- Worker 3 `3bc47f4` + `aced4b6` + `1bd73ac`: enriched and tested machine-readable evidence discovery index/handoff.
-- Worker 1 `64b8f97`: refreshed fail-closed GDP provenance from a live screening run; both official archive fingerprints, sizes, 15/15 coverage and screening timestamp are recorded without publishing revision values.
+- CEO `8a30244`: deployment stamps `site/release-sha.txt`; post-deploy CI retries until live marker exactly equals `GITHUB_SHA`, preventing stale HTTP-200 responses from being misclassified as current release evidence.
+- `0a209077`: post-deploy verification now covers evidence index, Germany evidence HTML/JSON/CSV, schema 1.2 discovery contract, REAL/discoveryReady population record, and advertised machine distributions.
+- Worker 3 `da279cb` + `55ce36e` + `895da4d`: machine discovery now fails closed on incomplete evidence and tests the completeness contract.
+- Worker 1 `64b8f97`: refreshed fail-closed GDP screening provenance from a live screening run without publishing revision values.
 - Verified population evidence remains the production data family; demo/noindex evidence is excluded from discovery; duplicate/legacy routes are canonicalized/noindexed.
 
 ## Current product evidence / release state
-- DATA: GREEN for verified population evidence; real-GDP revision values are decisively fail closed because official archive guidance says historical code identity/current metadata cannot establish cross-vintage base-year/valuation comparability.
-- DISCOVERY: machine-readable evidence index improved on current main; must remain free of demo/noindex leakage.
-- MOBILE: manual real-device rendering evidence GREEN; automated browser smoke still open as WD-005.
-- CI/DEPLOY/LIVE: prior release `cb44b1e` was LIVE VERIFIED. Current main after CEO release-marker commit `8a30244` and subsequent worker commits requires commit-exact `verify-live` evidence before being called LIVE VERIFIED.
+- DATA: GREEN for verified population evidence; Real-GDP revision values remain decisively fail closed.
+- DISCOVERY: machine-readable evidence discovery is materially hardened and post-deploy contract checks now cover its live endpoints.
+- MOBILE: manual real-device rendering evidence GREEN; automated browser smoke remains the main P0 release-evidence gap (WD-005).
+- CI/DEPLOY/LIVE: prior release `cb44b1e` was LIVE VERIFIED. Current main includes later release/discovery changes; until WD-006 provides exact workflow evidence for the intended SHA, status is `DEPLOY PENDING`, not `LIVE FAILED`.
 
 ## CEO process note
-Recurring ambiguity between “HTTP 200” and “the intended commit is actually live” is now treated as an engineering defect, not a manual-check task. `release-sha.txt` makes live evidence commit-exact. Worker 1 verifies release/discovery; Worker 2 has closed GDP methodology as fail-closed; Worker 3 owns vertical data/product expansion; Worker 4 owns browser/mobile release evidence.
+Repeated ambiguity around stale HTTP-200 responses and machine-output availability is now engineered out of the release contract: commit identity is checked via `release-sha.txt`, and `0a209077` verifies live machine discovery endpoints plus their advertised distributions. The remaining repeated manual check is mobile/browser behavior; WD-005 is therefore P0 and must convert the existing manual screenshot proof into reproducible browser CI evidence.
