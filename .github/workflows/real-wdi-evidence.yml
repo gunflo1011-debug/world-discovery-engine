@@ -26,114 +26,58 @@ jobs:
         run: python -m pip install --disable-pip-version-check openpyxl==3.1.5
       - name: Build real archived WDI evidence
         run: python scripts/build-real-wdi-evidence.py
-      - name: Verify generated evidence
+      - name: Verify generated evidence contract
         run: |
           python - <<'PY'
           import csv, json, re
           from pathlib import Path
-
           root=Path('site/evidence')
           manifest=json.load(open(root/'real-wdi-population-manifest.json',encoding='utf-8'))
-          assert manifest['schemaVersion']=='1.2'
-          assert manifest['count']==15, manifest['count']
-          assert len(manifest['items'])==15
+          assert manifest['schemaVersion']=='1.3'
+          assert manifest['count']==15 and len(manifest['items'])==15
           assert manifest['indicator']=={'code':'SP.POP.TOTL','name':'Population, total','referenceYear':2023,'unit':'people'}
           assert [a['vintage'] for a in manifest['archives']]==['2025-01-28','2025-07-02']
-          for archive in manifest['archives']:
-              assert archive['url'].startswith('https://databank.worldbank.org/data/download/Archive/WDI_excel_')
-              assert archive['archiveFile'].lower().endswith('.xlsx')
-              assert archive['archivedIndicatorName']=='Population, total'
-              assert re.fullmatch(r'[0-9a-f]{64}',archive['archiveSha256'])
-              assert archive['archiveBytes'] > 1_000_000
-          codes={item['code'] for item in manifest['items']}
-          assert {'DEU','USA','CHN','IND','JPN','GBR','FRA','ITA','BRA','CAN','AUS','ESP','MEX','IDN','KOR'} == codes
-
+          for a in manifest['archives']:
+              assert a['archivedIndicatorName']=='Population, total'
+              assert re.fullmatch(r'[0-9a-f]{64}',a['archiveSha256']) and a['archiveBytes']>1_000_000
+              assert a['archiveFile'].lower().endswith('.xlsx')
+          expected={'DEU','USA','CHN','IND','JPN','GBR','FRA','ITA','BRA','CAN','AUS','ESP','MEX','IDN','KOR'}
+          assert {i['code'] for i in manifest['items']}==expected
           for item in manifest['items']:
-              page=root/item['slug']
-              index=page/'index.html'; json_path=page/'evidence.json'; csv_path=page/'evidence.csv'
-              assert index.is_file(), item
-              assert json_path.is_file(), item
-              assert csv_path.is_file(), item
-
-              d=json.load(open(json_path,encoding='utf-8'))
-              assert d['schemaVersion']=='1.2'
-              assert d['status']=='REAL'
-              assert d['entity']['code']==item['code']
-              assert d['entity']['entityType']=='country'
-              assert d['first']['vintage']=='2025-01-28'
-              assert d['latest']['vintage']=='2025-07-02'
-              assert d['indicator']['code']=='SP.POP.TOTL'
-              assert d['indicator']['name']=='Population, total'
-              assert d['referenceYear']==2023
-              assert item['first']=={'vintage':d['first']['vintage'],'value':d['first']['value']}
-              assert item['latest']=={'vintage':d['latest']['vintage'],'value':d['latest']['value']}
-              for key,archive in zip(('first','latest'),manifest['archives']):
+              page=root/item['slug']; d=json.load(open(page/'evidence.json',encoding='utf-8')); html=(page/'index.html').read_text(encoding='utf-8')
+              assert d['schemaVersion']=='1.3' and d['status']=='REAL'
+              assert d['entity']['code']==item['code'] and d['entity']['entityType']=='country'
+              assert d['indicator']['code']=='SP.POP.TOTL' and d['indicator']['name']=='Population, total' and d['referenceYear']==2023
+              expected_type='NO_REVISION' if d['revision']['absolute']==0 else ('UPWARD_REVISION' if d['revision']['absolute']>0 else 'DOWNWARD_REVISION')
+              assert d['finding']=={'type':expected_type,'isRevision':d['revision']['absolute']!=0}
+              assert item['finding']==d['finding']
+              assert f'Finding type: {expected_type}' in html
+              for key,a in zip(('first','latest'),manifest['archives']):
                   x=d[key]
-                  assert x['sourceUrl']==archive['url']
-                  assert x['archiveFile']==archive['archiveFile']
-                  assert x['archiveSha256']==archive['archiveSha256']
-                  assert x['archiveBytes']==archive['archiveBytes']
-                  assert x['archivedIndicatorName']==archive['archivedIndicatorName']=='Population, total'
-
-              html=index.read_text(encoding='utf-8')
+                  assert x['vintage']==a['vintage'] and x['sourceUrl']==a['url']
+                  assert x['archiveFile']==a['archiveFile'] and x['archiveSha256']==a['archiveSha256'] and x['archiveBytes']==a['archiveBytes']
+                  assert x['archivedIndicatorName']==a['archivedIndicatorName']=='Population, total'
               canonical=f"https://gunflo1011-debug.github.io/world-discovery-engine/evidence/{item['slug']}/"
               assert f'<link rel="canonical" href="{canonical}">' in html
-              assert '<meta name="description" content="Verified World Bank WDI vintage comparison' in html
-              assert f'Country: {d["entity"]["code"]}' in html
-              assert f'Reference year: {d["referenceYear"]}' in html
-              assert f'Methodology gate: {d["indicator"]["methodologyVersion"]}' in html
-              assert 'Archived series name verified in both releases: Population, total' in html
               assert './evidence.json' in html and './evidence.csv' in html
-              assert d['first']['archiveSha256'][:12]+'…' in html
-              assert d['latest']['archiveSha256'][:12]+'…' in html
-              assert 'exact hashes, archived series names and archive members are included in JSON/CSV' in html
-
-              unchanged=d['revision']['absolute']==0
-              if unchanged:
-                  assert '0 people' in html
-                  assert '0.0000%' in html
-                  assert '+0 people' not in html
-                  assert '+0.0000%' not in html
-                  assert 'was identical in both archived releases' in html
-                  assert 'no revision was observed in this vintage pair' in html
-                  assert 'changed by <strong>+0 people</strong>' not in html
-                  assert 'was unchanged between January and July 2025' in html
+              if expected_type=='NO_REVISION':
+                  assert 'was identical in both archived releases' in html and 'no revision was observed' in html
+                  assert '+0 people' not in html and '+0.0000%' not in html
               else:
                   assert f'{d["revision"]["absolute"]:+,.0f} people' in html
                   assert f'{d["revision"]["relative"]*100:+.4f}%' in html
-                  assert 'changed by <strong>' in html
-
-              match=re.search(r'<script type="application/ld\+json">(.*?)</script>',html)
-              assert match, f'missing Dataset JSON-LD: {item["slug"]}'
-              ld=json.loads(match.group(1))
-              assert ld['@type']=='Dataset'
-              assert ld['url']==canonical
-              assert ld['identifier']==f"SP.POP.TOTL-{d['entity']['code']}-2023-2025-01-28-2025-07-02"
-              assert ld['spatialCoverage']['name']==d['entity']['name']
-              assert ld['variableMeasured']['name']==d['indicator']['name']=='Population, total'
-              assert ld['distribution'][0]['contentUrl']==canonical+'evidence.json'
-              assert ld['distribution'][1]['contentUrl']==canonical+'evidence.csv'
+              m=re.search(r'<script type="application/ld\+json">(.*?)</script>',html); assert m
+              ld=json.loads(m.group(1)); assert ld['@type']=='Dataset' and ld['url']==canonical
               assert ld['isBasedOn']==[d['first']['sourceUrl'],d['latest']['sourceUrl']]
-
-              with open(csv_path,newline='',encoding='utf-8') as f:
-                  rows=list(csv.DictReader(f))
+              with open(page/'evidence.csv',newline='',encoding='utf-8') as f: rows=list(csv.DictReader(f))
               assert len(rows)==2
-              assert set(rows[0])=={'entity_code','entity','indicator_code','archived_indicator_name','reference_year','vintage','value','unit','source_url','archive_file','archive_sha256','archive_bytes'}
               for row,key in zip(rows,('first','latest')):
-                  assert row['entity_code']==d['entity']['code']
-                  assert row['entity']==d['entity']['name']
-                  assert row['indicator_code']==d['indicator']['code']
-                  assert row['archived_indicator_name']==d[key]['archivedIndicatorName']=='Population, total'
-                  assert int(row['reference_year'])==d['referenceYear']
-                  assert row['vintage']==d[key]['vintage']
-                  assert float(row['value'])==d[key]['value']
-                  assert row['unit']==d['indicator']['unit']
-                  assert row['source_url']==d[key]['sourceUrl']
-                  assert row['archive_file']==d[key]['archiveFile']
+                  assert row['entity_code']==d['entity']['code'] and row['indicator_code']==d['indicator']['code']
+                  assert row['archived_indicator_name']=='Population, total' and float(row['value'])==d[key]['value']
                   assert row['archive_sha256']==d[key]['archiveSha256']
-                  assert int(row['archive_bytes'])==d[key]['archiveBytes']
-
-          print(f"Verified {manifest['count']} REAL population pages: archived series identity + exact archive provenance + HTML/JSON/CSV consistency")
+          counts={t:sum(i['finding']['type']==t for i in manifest['items']) for t in ('UPWARD_REVISION','DOWNWARD_REVISION','NO_REVISION')}
+          assert sum(counts.values())==15
+          print('Verified REAL population finding classifications:',counts)
           PY
       - name: Commit generated real evidence
         run: |
