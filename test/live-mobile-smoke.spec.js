@@ -78,8 +78,8 @@ test.describe('mobile smoke tests', () => {
             await expect(page.getByText('SCREENING · FAIL CLOSED')).toBeVisible();
             await expect(page.getByText(/No GDP revision values are published/i)).toBeVisible();
             await expect(page.getByText(/15 \/ 15/)).toBeVisible();
-            await expect(page.locator('a[href$="status.json"]')).toBeVisible();
-            await expect(page.locator('a[href$="provenance.html"]')).toBeVisible();
+            await expect(page.locator('a[href$="status.json"]').first()).toBeVisible();
+            await expect(page.locator('a[href$="provenance.html"]').first()).toBeVisible();
             await expect(page.locator('a[href$="evidence.json"]')).toHaveCount(0);
             await expect(page.locator('a[href$="evidence.csv"]')).toHaveCount(0);
 
