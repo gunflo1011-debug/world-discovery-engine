@@ -49,7 +49,7 @@ Core entities: `Source`, `Indicator`, `Vintage`, `Observation`, `MethodologyVers
 
 ## Search & AI discovery
 
-Public evidence pages are designed for humans first while remaining easy to retrieve and cite: stable canonical URLs, concise answer blocks, provenance, methodology and machine-readable JSON/CSV where the evidence gate has passed. Blocked indicator screens may expose machine-readable status JSON without exposing unverified values. Sitemap generation excludes demo evidence and absent static routes.
+Public evidence pages are designed for humans first while remaining easy to retrieve and cite: stable canonical URLs, concise answer blocks, provenance, methodology and machine-readable JSON/CSV where the evidence gate has passed. Blocked indicator screens may expose machine-readable status JSON without exposing unverified values. Sitemap generation excludes demo, noindex, absent and discovery-incomplete evidence so machine-facing discovery fails closed when provenance or exports are incomplete.
 
 ## Current implementation
 
@@ -68,12 +68,12 @@ Implemented in the repository:
 - responsive home, discovery, evidence, indicator and methodology pages;
 - GitHub Pages deployment workflow and `.nojekyll` static-serving marker;
 - real population-revision evidence from two archived 2025 WDI vintages;
-- fail-closed real-GDP screening that withholds revision values until release-specific methodology comparability is independently verified.
+- a transparent real-GDP screening path that remains decisively fail-closed for the screened 2025 vintage pair because official archive guidance/current metadata cannot prove release-specific base-year/valuation comparability.
 
 ## Next milestone
 
-Harden the verified indicator/evidence slices for search, citation and machine retrieval; independently resolve the real-GDP release-specific methodology gate before any GDP revision values are published; continue replacing demo fixtures with source-backed evidence.
+Expand into the next methodologically verifiable indicator slice while hardening the existing population evidence for search, citation and machine retrieval. Do not publish real-GDP revision values for the screened 2025 vintage pair unless a new release-specific authoritative artifact independently resolves the comparability problem; avoid spending product cycles trying to infer comparability from code identity or current metadata alone.
 
 ## Status
 
-Active build. Real WDI vintage evidence is now present; broader public scaling remains gated on source/methodology verification, quality controls and reproducible deployment checks.
+Active build. Real WDI vintage evidence is present for population revisions; broader public scaling remains gated on source/methodology verification, quality controls and reproducible deployment checks.
