@@ -23,24 +23,24 @@ Prove browser-level mobile release evidence end-to-end, then ship the next genui
 
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
-| WD-005 | P0 | CEO | IN_PROGRESS | Automated 360/390/430px browser smoke on homepage + core evidence route; horizontal overflow, nav visibility, console/page errors; failure artifacts. DONE only after green post-deploy run. | Pages workflow | CEO commits `8060975`, `b1b97cd`: Playwright live test + Chromium CI + failure artifact upload. Manual device screenshots were already green. | Worker 4 verifies the first CI execution; if runner/package resolution fails, repair implementation rather than reverting to manual screenshots. |
-| WD-006 | P1 | Worker 1 | IN_PROGRESS | Release/discovery QA for current main. DoD: intended SHA proven by live marker, critical routes/discovery metadata pass, no broken/noindex leakage. | Pages workflow | Commit marker exists; live routes/discovery checks are post-deploy. | Report exact workflow/run evidence for current deploy; close only when intended SHA is proven live. |
-| WD-003 | P1 | Worker 3 | IN_PROGRESS | Ship next high-value verified vertical slice. DoD: official source/provenance → normalization → useful human page/feature → JSON/CSV → internal links/schema → tests → live evidence. | WD-007 DONE | WD-007 nominated `IT.NET.USER.ZS` as GO for a current/latest verified vertical only. Existing machine-discovery completeness work is reusable. | Build Internet use by country from current official WDI/ITU-backed observations. Keep observation year visible; do not claim cross-vintage revisions. |
+| WD-005 | P0 | CEO | IN_PROGRESS | Automated 360/390/430px browser smoke on homepage + core evidence route; horizontal overflow, required nav visibility, console/page errors; failure screenshots/artifacts. DONE only after green post-deploy run. | Pages workflow | Playwright live test + Chromium CI exist. CEO review found two fail-open evidence gaps: missing nav does not fail and screenshots are only taken after assertions. | Harden test so nav absence fails and screenshots are captured even on assertion failure; then obtain green CI evidence. |
+| WD-006 | P1 | Worker 1 | IN_PROGRESS | Release/discovery QA for current main. DoD: intended SHA proven by live marker, critical routes/discovery metadata pass, no broken/noindex leakage. | Pages workflow | Current main `d36d338` strengthens live CSV semantic identity checks. | Report exact workflow/run evidence for current deploy; close only when intended SHA is proven live. |
+| WD-003 | P1 | Worker 3 | IN_PROGRESS | Ship Internet-use vertical slice. DoD: official source/provenance → normalization → useful human page/feature → JSON/CSV → internal links/schema → tests → live evidence. | WD-007 DONE | `IT.NET.USER.ZS` nominated as current/latest-only GO; repository search at CEO review found no implementation yet. | Build Internet use by country from current official WDI/ITU-backed observations. Keep observation year visible; no cross-vintage revision claim. |
+| WD-008 | P1 | Worker 4 | TODO | Verify and harden browser-smoke execution after CEO patch. DoD: current SHA gets green Playwright post-deploy evidence at all widths/routes; on failure attach exact job step + artifact and repair runner/package issue rather than manual QA. | WD-005 | Manual screenshots already green; automated evidence remains the gate. | Run/inspect CI after CEO hardening and hand back exact evidence. |
 
 ## Completed / condensed evidence
-- WD-007 DONE: screened Internet use, life expectancy and GDP growth; nominated `IT.NET.USER.ZS` — Individuals using the Internet (% of population) — as next current/latest verified vertical (`7945c1e`). GO is limited to current/latest observations; archive-revision claims remain NO-GO without release-specific historical methodology. Required attribution/provenance: WDI retrieval + observation year, `% of population`, ITU source/citation, CC BY-4.0 note, same normalized records for human/JSON/CSV.
-- WD-002 DONE: Real-GDP revision publication decisively fail-closed (`418ddf07`, `048939b`). Public status semantics were corrected on current main (`5d5c6b4`): rows present in both vintages are not labeled methodologically comparable.
-- WD-001 DONE: workflow #76 green after test-contract fixes (`62aeaed`, `cb44b1e`); real-device mobile rendering green.
-- CEO `8a30244`: `site/release-sha.txt` makes current release identity commit-exact.
-- `0a209077`: post-deploy verification covers evidence and machine endpoints.
-- Worker 3 machine-discovery hardening: `da279cb`, `55ce36e`, `895da4d` plus earlier discovery enrichment.
+- WD-007 DONE: screened Internet use, life expectancy and GDP growth; nominated `IT.NET.USER.ZS` as next current/latest verified vertical. GO is limited to current/latest observations; archive-revision claims remain NO-GO without release-specific historical methodology.
+- WD-002 DONE: Real-GDP revision publication decisively fail-closed. Public status semantics corrected: rows present in both vintages are not labeled methodologically comparable.
+- WD-001 DONE: workflow #76 green after test-contract fixes; real-device mobile rendering green.
+- `site/release-sha.txt` makes release identity commit-exact.
+- Post-deploy verification covers evidence and machine endpoints; current main `d36d338` additionally validates CSV semantic identity.
 - Population remains the verified production data family; demo/noindex evidence excluded from discovery.
 
 ## Current product evidence / release state
-- DATA: GREEN for verified population evidence; Real GDP remains correctly fail-closed; Internet-use vertical is nominated but not yet production-verified.
+- DATA: GREEN for verified population evidence; Real GDP correctly fail-closed; Internet-use vertical nominated but not yet production-verified.
 - DISCOVERY: machine-readable discovery hardened and live-checked.
-- MOBILE: manual device evidence GREEN; automated Playwright smoke is now implemented but awaiting first green CI evidence.
-- CI/DEPLOY/LIVE: `DEPLOY PENDING` for current main until the new browser-smoke release completes; do not classify pending CI as failure.
+- MOBILE: manual device evidence GREEN; automated Playwright smoke exists but is not DONE until a green fail-closed run is evidenced.
+- CI/DEPLOY/LIVE: `DEPLOY PENDING` for current main until current SHA and hardened browser smoke are proven green; pending/unknown CI is not a product failure.
 
 ## CEO process note
-Repeated manual mobile verification crossed the anti-repeat threshold. Root cause was absence of a real browser in the release contract. CEO implemented Playwright/Chromium post-deploy checks at 360/390/430px with screenshots and failure artifact retention. WD-005 remains IN_PROGRESS only because live-relevant work cannot be DONE until its first automated run is green.
+Repeated manual mobile verification crossed the anti-repeat threshold. Root cause was absence of a real browser in the release contract. Browser automation now exists; CEO review found the remaining false-green/evidence gaps and made them explicit engineering gates rather than allowing another manual screenshot cycle.
