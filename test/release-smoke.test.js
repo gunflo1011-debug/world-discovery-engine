@@ -4,6 +4,7 @@ import { readFile, access } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 
 const siteRoot = resolve(process.cwd(), 'site');
+const baseUrl = 'https://gunflo1011-debug.github.io/world-discovery-engine/';
 
 async function readSite(path) {
   return readFile(resolve(siteRoot, path), 'utf8');
@@ -34,6 +35,15 @@ async function assertInternalLinksResolve(htmlPath) {
   }
 }
 
+function collectKeys(value, keys = new Set()) {
+  if (!value || typeof value !== 'object') return keys;
+  for (const [key, child] of Object.entries(value)) {
+    keys.add(key);
+    collectKeys(child, keys);
+  }
+  return keys;
+}
+
 test('critical navigation and indicator discovery links resolve', async () => {
   await assertInternalLinksResolve('index.html');
   await assertInternalLinksResolve('indicators/index.html');
@@ -52,6 +62,12 @@ test('GDP screening remains fail-closed and machine-readable', async () => {
   assert.equal(status.publishableRevisionData, false);
   assert.equal(status.screeningStatus, 'BLOCKED_METHODOLOGY_COMPARABILITY');
   assert.ok(!('revisionValue' in status));
+
+  const forbiddenPublicationKeys = ['rows', 'values', 'revisions', 'oldValue', 'newValue', 'delta', 'ranking', 'rank'];
+  const statusKeys = collectKeys(status);
+  for (const key of forbiddenPublicationKeys) {
+    assert.equal(statusKeys.has(key), false, `GDP status must not publish ${key}`);
+  }
 });
 
 test('indicator registry is canonical and does not advertise a missing population hub', async () => {
@@ -60,6 +76,32 @@ test('indicator registry is canonical and does not advertise a missing populatio
   assert.match(page, /Population, total/);
   assert.match(page, /Real GDP/);
   assert.doesNotMatch(page, /href="\.\/population-total\/index\.html"/);
+});
+
+test('robots and sitemap expose the canonical release surface only', async () => {
+  const robots = await readSite('robots.txt');
+  assert.match(robots, /^User-agent: \*$/m);
+  assert.match(robots, /^Allow: \/$/m);
+  assert.match(robots, new RegExp(`^Sitemap: ${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}sitemap\\.xml$`, 'm'));
+
+  const sitemap = await readSite('sitemap.xml');
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  assert.ok(locations.length > 0);
+  assert.equal(new Set(locations).size, locations.length, 'sitemap must not contain duplicate URLs');
+
+  for (const expected of [
+    baseUrl,
+    `${baseUrl}indicators/`,
+    `${baseUrl}indicators/real-gdp/`,
+    `${baseUrl}evidence/germany-population-revision-2025/`
+  ]) {
+    assert.ok(locations.includes(expected), `sitemap missing ${expected}`);
+  }
+
+  assert.ok(locations.every((url) => url.startsWith(baseUrl)));
+  assert.ok(locations.every((url) => !url.includes('/indicators/population-total/')));
+  assert.ok(locations.every((url) => !url.includes('/evidence/germany-gdp-growth-revision/')));
+  assert.ok(locations.every((url) => !url.includes('/evidence/real-wdi-population-revision-2025/')));
 });
 
 test('demo and legacy duplicate pages are explicitly noindex', async () => {
@@ -71,4 +113,8 @@ test('demo and legacy duplicate pages are explicitly noindex', async () => {
   assert.match(legacy, /name="robots" content="noindex,follow"/);
   assert.match(legacy, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/evidence\/germany-population-revision-2025\/"/);
   await assertExists('evidence/germany-population-revision-2025/index.html');
+
+  const canonicalEvidence = await readSite('evidence/germany-population-revision-2025/index.html');
+  assert.match(canonicalEvidence, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/evidence\/germany-population-revision-2025\/"/);
+  assert.doesNotMatch(canonicalEvidence, /name="robots" content="[^"]*noindex/i);
 });
