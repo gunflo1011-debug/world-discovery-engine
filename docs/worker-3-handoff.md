@@ -2,75 +2,79 @@
 
 ## Scope consumed
 
-Worker 2 approved `IT.NET.USER.ZS` only as a **current/latest observation vertical**, not as archive-revision evidence. Required semantics: observation year remains distinct from retrieval date; unit is `% of population`; source attribution is International Telecommunication Union (ITU), surfaced through World Bank WDI; CC BY 4.0/citation requirements remain preserved. GDP `NY.GDP.MKTP.KD` remains fail-closed for vintage revisions and was not reopened.
+Worker 2 approved `IT.NET.USER.ZS` only as a **current/latest observation vertical**, not as archive-revision evidence. Observation year remains distinct from retrieval date; unit is `% of population`; source attribution remains International Telecommunication Union (ITU), surfaced through World Bank WDI. GDP `NY.GDP.MKTP.KD` remains fail-closed for vintage revisions and was not reopened.
 
-## New Worker 3 implementation
+## New implementation in this run
 
-The Internet-use vertical now has a deterministic product builder instead of manually duplicated HTML/CSV facts.
+Worker 3 extended the verified 12-country Internet-use slice into crawlable long-tail discovery pages without adding new external data or new claims.
 
-### Generator / source-of-truth chain
+### Country-profile builder
 
-- `site/indicators/internet-use/data.json` remains the normalized verified source artifact.
-- New `scripts/build-internet-use.mjs` validates before generation:
-  - `status=CURRENT_VERIFIED`
-  - indicator must be `IT.NET.USER.ZS`
-  - exactly one observation year across all records
-  - percentage values constrained to 0–100
-  - unique country codes
-  - required source provenance
-- It generates both `data.csv` and `index.html` from the same source records.
-- `scripts/build-site.js` invokes this generator before sitemap/discovery assets are built, so a site build cannot silently deploy stale human/CSV content against newer JSON.
-- `package.json` exposes `npm run build:internet-use` for focused regeneration.
+New `scripts/build-internet-use-countries.mjs`:
 
-### Search / GEO / AI product improvements generated from verified records
+- consumes only the existing `CURRENT_VERIFIED` `site/indicators/internet-use/data.json` source;
+- rejects wrong indicator, mixed years and malformed country records;
+- deterministically ranks the verified slice;
+- generates one country profile under `/indicators/internet-use/country/{iso3-lower}/` for every verified record;
+- generates `country/index.json` as a machine-readable country-profile registry;
+- inserts crawlable country links into the parent comparison table;
+- cleans stale generated country directories before rebuilding;
+- adds source-faithful `WebPage` JSON-LD with a `PropertyValue` for `IT.NET.USER.ZS`, rather than misrepresenting each profile as a new standalone dataset;
+- derives rank, slice median context, gap to the slice leader and three nearest peers from the same normalized records;
+- preserves the explicit non-global-ranking, no-revision and no-causality scope notes;
+- links every profile back to the parent comparison, source metadata, and the shared JSON/CSV distributions.
 
-The generated page retains the canonical, factual meta description, ITU/WDI attribution, JSON/CSV downloads, no-imputation language and non-global-ranking disclaimer, and additionally derives rather than hand-codes:
+### Discovery output integration
 
-- answer-first min/max summary;
-- tied leaders in the launch slice;
-- Germany's slice rank/value when present;
-- observed percentage-point spread;
-- ranked HTML table from normalized records;
-- Dataset JSON-LD including `spatialCoverage` for all represented country codes;
-- Dataset distributions pointing to the same JSON/CSV outputs.
+New `scripts/finalize-internet-country-discovery.mjs` adds generated country-profile routes to the built sitemap and records `internetUseCountryProfiles` in `site/build.json` after the normal site build.
 
-These are deterministic transformations of the verified same-year dataset, not new external claims.
+`package.json` now runs the pipeline in this order:
+
+`build-site.js → build-internet-use-countries.mjs → finalize-internet-country-discovery.mjs`
+
+This preserves the existing site builder while ensuring the parent Internet-use page is regenerated first, then enriched with country links, then the generated profiles are advertised in discovery outputs.
 
 ## Direct regression coverage
 
-`test/internet-use.test.js` now executes the generator itself, then verifies the generated HTML/JSON/CSV chain. It requires:
+New `test/internet-use-countries.test.js` runs only the Internet-use parent generator plus the new country builder and checks:
 
-- `CURRENT_VERIFIED`, `IT.NET.USER.ZS`, `% of population`, 2024 and 12 records;
-- a single observation year;
-- every JSON record to match CSV and be visible in HTML;
-- canonical and visible JSON/CSV links;
-- ITU attribution and non-global-ranking disclaimer;
-- generated quick-answer section and the current 10-point observed range (96% to 86%);
-- Dataset `spatialCoverage`;
-- no revision-ready/archive-delta language.
+- country index identity (`IT.NET.USER.ZS`, 2024, all verified records);
+- one generated canonical country page for every source record;
+- parent-table links to every country profile;
+- exact country/value/year identity in the human page;
+- source-faithful `WebPage` + `PropertyValue` structured data;
+- visible World Bank/WDI provenance and shared JSON/CSV links;
+- explicit no-historical-revision and non-global-ranking language.
+
+Worker 3 attempted the directly relevant tests from the automation runtime, but that runtime cannot resolve `github.com`, so no local test result is claimed. Worker 4 should run the tests once in the normal release environment.
 
 ## New commits from this run
 
-- `aaa0177fd2a2d6328fa9babe5f177dc0fbcab6ed` — Generate internet-use vertical from verified data
-- `d7ac2bd337fe65a044ee4630bbbb6514dfdb5163` — intermediate build-site edit, immediately superseded
-- `44b7b4301651dbeafe62769f43358d8e318d402c` — Restore build-site and hook internet-use generator
-- `e6a0c281aac9f335e6c6d1266b992ae6cd5d42ba` — Add internet-use build command
-- `ee85b28f8a171be55b4a16e18553cd0adf7d16c1` — Test generated internet-use vertical
+- `74492a41dbe77cef148c7a09e9e10084fc757937` — build crawlable Internet-use country pages
+- `9bfe178e68981ca98aef2bd5015ae8d1efd66f8c` — add country profiles to sitemap/build discovery outputs
+- `8001c5c212814007d608057d9f66ac6f42f4e1e6` — wire country generation/finalization into the normal site build
+- `23a29c4ce0fda3079c9b4ccd8e9e4b36e9494281` — direct country-profile regression test
 
-Important: `d7ac2bd...` was an incomplete intermediate replacement of `build-site.js`; `44b7b430...` immediately restores the full prior build logic and adds only the generator hook. Worker 4 should verify a descendant containing `44b7b430...`, never the intermediate commit in isolation.
+## Changed routes / outputs
 
-## Handoff to Worker 4 — one release gate only
+- `/indicators/internet-use/` — table country names become internal links after generation
+- `/indicators/internet-use/country/{iso3-lower}/` — 12 generated country profiles from the current verified slice
+- `/indicators/internet-use/country/index.json` — generated machine-readable country-profile registry
+- `/sitemap.xml` — receives the 12 generated country routes after the normal site build
+- `/build.json` — adds `internetUseCountryProfiles`
 
-Verify the descendant containing `ee85b28...` once through the normal release gate:
+## Worker 4 — one release gate
 
-1. Run the directly relevant internet-use test; it regenerates the vertical from `data.json` and checks HTML/CSV identity.
-2. Run the existing build-site test once because `build-site.js` now invokes the generator before discovery asset generation.
-3. Confirm the generated page still appears at `/indicators/internet-use/` and the sitemap retains that route.
-4. Confirm live `index.html`, `data.json`, and `data.csv` agree on `IT.NET.USER.ZS` and observation year 2024 after deployment.
-5. If the release gate fails, fix the concrete generator/build mismatch; do not weaken the same-year/provenance checks.
+Verify only once in the normal integration/release environment:
 
-No full CI/Pages/Live/Mobile verification was repeated by Worker 3.
+1. Run `node --test test/internet-use.test.js test/internet-use-countries.test.js`.
+2. Run the normal site build and confirm it completes with the new post-build country generation/finalization steps.
+3. Confirm sitemap contains the generated country routes exactly once and `build.json.internetUseCountryProfiles` equals the verified source-record count.
+4. Spot-check parent → country-page internal navigation plus one generated canonical/JSON-LD profile.
+5. If a failure appears, fix the concrete generator/discovery-output mismatch; do not weaken the same-year/provenance/scope gates.
+
+No full CI, Pages, live-site or mobile verification was performed by Worker 3.
 
 ## Next Worker 3 product opportunity
 
-The remaining high-value product task is broader **reproducible** same-year coverage. Extend the source ingestion from 12 countries only when official WDI observations can be fetched/normalized by a deterministic ingestion step. Do not manually grow static rows. A separate latest-per-country mode may follow later, but it must clearly preserve each country's observation year and must not be mixed into the same-year ranking semantics.
+The highest-value next build remains reproducible broader same-year coverage from an official WDI ingestion step. Do not manually expand the 12 source rows. Once ingestion is deterministic, the new country-profile builder will automatically turn every additional verified record into a linked Search/GEO/AI discovery page without duplicating facts by hand.
