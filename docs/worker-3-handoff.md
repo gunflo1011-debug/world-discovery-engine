@@ -2,71 +2,94 @@
 
 ## Handoff chain consumed
 
-Worker 1 (`cbfa901b158970ff36c7566532e8d338405ad4e5`) proved the archived WDI files contain `NY.GDP.MKTP.KD` for screened 2023 rows but failed closed because release-specific base-year/valuation comparability is not independently proven. No public REAL GDP revision values/rankings/CSV should be emitted until methodology evidence resolves that gate.
+Worker 1 (`cbfa901b158970ff36c7566532e8d338405ad4e5`) established that `NY.GDP.MKTP.KD` exists in both screened 2025 WDI archives but that release-specific base-year/valuation comparability cannot be inferred from code identity/current metadata. Worker 2 built the transparent `/indicators/real-gdp/` screening page and kept real GDP revision publication fail-closed.
 
-Worker 2 then built the transparent `/indicators/real-gdp/` screening page, linked it from Indicators, added accessible provenance/table UX, added the route to sitemap generation and documented that CI/Pages/live deployment were unverified because the automation container could not clone GitHub.
+Worker 2 subsequently closed the methodology task decisively: official World Bank archive guidance/current metadata do not independently prove release-specific comparability for the 2025-01-28 and 2025-07-02 archive pair. The product decision recorded on current main is to stop spending cycles trying to infer comparability for this pair, keep the screening/provenance path transparent, and move expansion to a methodologically simpler independently screened indicator unless a new authoritative release-specific artifact appears.
 
-## Worker 3 implementation
+Worker 2 also documented earlier CI/live uncertainty. That uncertainty was partially resolved later: the user supplied direct GitHub Actions evidence showing Pages workflow #77 green for `3bc47f4...` and #78 green for `aced4b6...`; later release engineering added a commit-exact `release-sha.txt` verification path. Do not generalize those green runs to later commits without fresh CI/deploy evidence.
 
-1. **Sitemap/index hardening** — commit `d0f1f67321872181997833fd2f2c5991b426f48b`
-   - `scripts/build-site.js` checks that static routes actually have an `index.html` before placing them in the sitemap.
-   - Removed the nonexistent `/indicators/population-total/` hardcode.
-   - Demo evidence is excluded from generated sitemap and `site/evidence/index.json`.
+## Worker 3 implementation already completed
 
-2. **Machine-readable GDP screening status** — commit `f80e669c573cff0a71f26038c234c9690fbed30d`
-   - Added `/indicators/real-gdp/status.json` with only indicator identity, archive references and the unresolved methodology gate; no GDP revision values or REAL CSV.
+1. **Sitemap/index hardening** — `d0f1f67321872181997833fd2f2c5991b426f48b`
+   - Build checks static routes exist before adding them to sitemap.
+   - Removed nonexistent `/indicators/population-total/`.
+   - Demo evidence is excluded from generated sitemap and machine index.
 
-3. **GDP metadata/structured-data correctness** — commit `f0d36b2fe1ab7723bfca4451e972f0780766e9e4`
-   - Changed GDP screening JSON-LD from `Dataset` to `WebPage` because the page intentionally publishes no GDP dataset.
-   - Tightened title/meta description and linked the status JSON.
+2. **Machine-readable GDP screening status** — `f80e669c573cff0a71f26038c234c9690fbed30d`
+   - Added `/indicators/real-gdp/status.json` containing status/provenance only; no unverified GDP revision values or REAL CSV.
 
-4. **README trust/status refresh** — commit `65352b6b33f9f10493124a3afef44e60e7f663aa`
-   - Removed stale claims that all visible evidence was demo and that real vintage evidence was still pending.
-   - README now accurately states that real population-revision evidence exists and GDP remains methodology-blocked.
+3. **GDP structured-data correctness** — `f0d36b2fe1ab7723bfca4451e972f0780766e9e4`
+   - GDP screening page changed from misleading `Dataset` JSON-LD to `WebPage`.
 
-5. **Regression hardening** — commit `2551b38a5777f9dd4ae3cabb635df734fb9c31ad`
-   - Tests require the GDP route, reject the nonexistent population-total route, reject known demo evidence from sitemap and require generated evidence JSON to contain no demo records.
+4. **README trust refresh** — `65352b6b33f9f10493124a3afef44e60e7f663aa`
+   - Removed stale claim that visible evidence was still only demo.
 
-6. **Immediate sitemap correction** — commit `eadfa238997283093209f14cb4ac1b8da7e4b76c`
-   - Removed `/indicators/population-total/` from checked-in sitemap and added the real `/archive/` route.
+5. **Regression hardening / sitemap cleanup** — `2551b38a5777f9dd4ae3cabb635df734fb9c31ad`, `eadfa238997283093209f14cb4ac1b8da7e4b76c`
+   - Tests reject demo/nonexistent routes; checked-in sitemap corrected.
 
-7. **Verified Germany evidence schema** — commits `08c704749f23126dcf88200a7de6bc66f4f84406` and `be5eaa179c14a728b37ceae0980c9a74ab6b9115`
-   - Added source-faithful `Dataset` JSON-LD to `/evidence/germany-population-revision-2025/` only after verifying its REAL `evidence.json`.
-   - Schema includes `SP.POP.TOTL`, Germany, both archive releases and JSON/CSV distributions; regression tests protect it.
+6. **Verified Germany Dataset schema** — `08c704749f23126dcf88200a7de6bc66f4f84406`, `be5eaa179c14a728b37ceae0980c9a74ab6b9115`
+   - Added source-faithful Dataset JSON-LD only after validating the REAL Germany evidence payload and JSON/CSV distributions.
 
-8. **Machine-discovery index enrichment** — commits `3bc47f498a7f3319619a33c69b9e073fd0b22de1` and `aced4b62d50d668275b95d8f9d3c309356333610`
-   - `scripts/build-site.js` now reads each page's `evidence.json` when present and enriches the generated `/evidence/index.json` for REAL records with source-faithful machine fields: status, indicator code/name/unit/methodology version, entity identity/type, reference year, both vintage dates/source URLs, methodology note, license, and stable JSON/CSV distribution paths.
-   - Machine index schema version is now `1.1`.
-   - Payloads explicitly marked with a non-REAL status are treated as demo/non-indexable even if the HTML itself lacks the word `DEMO`, strengthening fail-closed discovery behavior.
-   - Regression tests assert the Germany record carries `REAL`, `SP.POP.TOTL`, `DEU`, reference year 2023, JSON/CSV paths and the two World Bank archive vintages/source URLs.
+7. **Machine discovery index enrichment** — `3bc47f498a7f3319619a33c69b9e073fd0b22de1`, `aced4b62d50d668275b95d8f9d3c309356333610`
+   - `/evidence/index.json` schema 1.1 gained REAL indicator/entity/reference-year/vintage/provenance/methodology/license and stable JSON/CSV paths.
+   - Non-REAL payloads fail closed from discovery even when HTML lacks a DEMO marker.
+   - Direct GitHub Actions evidence later showed Pages runs #77/#78 green for these commits.
 
-## Reproducible evidence / concrete defects found
+## This run — new concrete discovery hardening
 
-- `site/sitemap.xml` previously advertised `/indicators/population-total/`, but the route did not exist. This crawl-quality bug was fixed.
-- `site/evidence/germany-gdp-growth-revision/index.html` is explicitly a demo fixture and carries `noindex,follow`; build logic now excludes demo/noindex evidence from discovery outputs.
-- `site/indicators/real-gdp/index.html` previously declared `Dataset` despite intentionally publishing no revision values; it now declares `WebPage`.
-- `site/evidence/germany-population-revision-2025/evidence.json` explicitly states `REAL`, indicator `SP.POP.TOTL`, Germany/DEU, reference year 2023, both source archive URLs, revision values and license. This is the source for its Dataset markup and now for the enriched machine index.
-- Other REAL country pages such as United States already expose canonical/meta description, exact provenance and crawlable per-page `evidence.json` / `evidence.csv`, but do not all yet carry Dataset JSON-LD. Do not mass-add it without validating each payload equivalently.
-- `site/robots.txt` allows public crawling and points to the canonical Pages sitemap; no additional robot-specific AI claims are made.
-- README was rechecked after the earlier refresh and is currently consistent with repository evidence; no additional README change was justified in this run.
+8. **Fail closed on incomplete machine evidence** — `da279cbce6cbe71a06141f5571658804e82f1f6d`
+   - Found a latent machine-discovery weakness: the collection index constructed `evidence.json` and `evidence.csv` URLs mechanically for every otherwise-indexable page, without first proving both files exist or that the REAL payload carries complete provenance/methodology fields.
+   - `scripts/build-site.js` now validates REAL evidence before it may enter sitemap or `/evidence/index.json`.
+   - Required fields: indicator code/name/unit/methodologyVersion; entity code/name/type; integer reference year; first/latest vintage and valid HTTP(S) source URLs; methodology note; license; actual `evidence.json` and `evidence.csv` files.
+   - Pages that are neither demo nor noindex but fail this discovery-completeness gate are excluded from preferred machine discovery instead of advertising broken or under-specified endpoints.
+   - `/evidence/index.json` schema is now `1.2` and marks emitted records `discoveryReady: true`.
+   - `site/build.json` now records `discoveryIncompleteExcluded` for release QA.
+
+9. **Regression tests for discovery completeness** — `55ce36e39b58a51fb88adaa780091eed9d9603cf`
+   - Build tests now require every emitted machine record to be REAL, discovery-ready, backed by JSON/CSV, carry methodology/provenance/license and two source vintages, while preserving existing demo/noindex/nonexistent-route exclusions.
+
+10. **README aligned with closed GDP decision and new discovery rule** — `048939b44aa1ac871287e39622c57056ce76fec4`
+   - README no longer frames independent resolution of the screened real-GDP pair as the next product milestone.
+   - It now records the decisive fail-closed decision and says expansion should move to the next methodologically verifiable indicator unless new release-specific authoritative evidence appears.
+   - Search/AI section now accurately states that demo, noindex, absent and discovery-incomplete evidence are excluded from preferred discovery.
+
+## Reproducible evidence / concrete defects
+
+- Germany REAL payload explicitly contains `SP.POP.TOTL`, DEU/Germany, reference year 2023, methodology version, both official WDI archive URLs, methodology note and license; its JSON and CSV files exist. This is the reference record for the discovery-completeness contract.
+- The old machine-index implementation advertised JSON/CSV paths by string construction alone. The new build verifies the files and source metadata before exposing the record.
+- GDP screening remains status-only/fail-closed. Do not add revision values, Dataset schema or CSV for the screened pair unless a new authoritative release-specific comparability artifact changes the methodology decision.
+- Demo/noindex evidence remains excluded from generated sitemap/index; the known Germany GDP-growth fixture is explicitly demo/noindex.
 
 ## Verification / failures
 
-- GitHub Actions lookup for the newest commit `aced4b62...` returned no associated workflow runs. **CI green is not claimed.**
-- The updated tests are committed but have not been observed executing in GitHub Actions.
-- Live GitHub Pages/mobile rendering and the generated live `/evidence/index.json` schema `1.1` are not independently confirmed yet.
-- Worker 2's earlier local clone failure was environmental; this run did not claim local build success.
+- Local clone/test remains unavailable in this automation runtime because DNS cannot resolve `github.com`; this is an environment failure, not a repository test failure.
+- Direct GitHub Actions evidence from the user previously proved Pages #77/#78 green for `3bc47f4...` and `aced4b6...`.
+- Fresh combined-status lookup for the newest README commit returned no statuses. Therefore CI/deploy for `da279cb...`, `55ce36e...` and `048939b...` is **not yet claimed green** in this handoff.
+- Current main also contains later release/methodology coordination commits including `418ddf07...`; worker 4 should verify the final head rather than an older intermediate SHA.
 
-## Open problems / opportunities for Worker 4
+## HANDOFF AN WORKER 4
 
-1. **Highest priority:** run/confirm `npm test` and `npm run build` for a head containing `aced4b62...`. Verify generated `/evidence/index.json` is schema `1.1` and contains only indexable REAL records.
-2. Live-fetch `/sitemap.xml`, `/evidence/index.json`, `/indicators/real-gdp/`, `/indicators/real-gdp/status.json`, `/evidence/germany-population-revision-2025/`, its `evidence.json` and `evidence.csv`; require HTTP 200 and canonical consistency.
-3. Audit remaining demo/thin evidence directories for `noindex` and internal-link exposure. Machine filtering is stronger now, but direct HTML crawl paths can still exist.
-4. Validate that all REAL population `evidence.json` payloads share the expected structure before generalizing Dataset JSON-LD beyond Germany. If any payload is missing provenance/license/methodology, fix the source record first rather than generating schema from assumptions.
-5. Consider adding a visible/crawlable link from the Evidence library page to `/evidence/index.json` so humans and agents can discover the collection-level machine index without guessing the endpoint.
-6. Check mobile/keyboard navigation at 360–430 px and canonical→200 behavior as Worker 2 originally requested.
-7. Keep REAL GDP revisions blocked until release-specific base-year/valuation comparability is independently verified by the methodology/data worker.
+### Success
+- Verified population evidence has canonical human pages plus source-backed JSON/CSV.
+- Germany has validated Dataset JSON-LD.
+- Machine collection index is enriched and now fails closed on incomplete provenance or missing JSON/CSV.
+- Demo/noindex/nonexistent/discovery-incomplete evidence is not preferred via sitemap/machine index.
+- GDP screening is transparently status-only and the 2025 pair is decisively methodology-blocked.
+- README is aligned with repository evidence and current product decision.
 
-## Recommended Worker 4 extra task
+### Failure / unverified
+- Current-head CI and commit-exact Pages deployment have not been observed from this run.
+- Automation runtime still cannot clone GitHub, so local `npm test` / `npm run build` could not be executed here.
+- Full browser/mobile CI remains owned by Worker 4/WD-005; do not duplicate with speculative manual rendering.
 
-Perform one end-to-end live discovery smoke test from `robots.txt → sitemap.xml → evidence library → evidence/index.json → Germany evidence page → evidence.json/evidence.csv`, and separately `Indicators → Real GDP → status.json`. Verify that only the population path exposes data-bearing evidence and the GDP path remains status-only/fail-closed. If the new machine index is not live or fails generation, inspect the build/test output before weakening any filtering rule.
+### Open checks / fixes
+1. Run/observe CI for a head containing `da279cb...`, `55ce36e...` and `048939b...`; require `npm test` and build success.
+2. Verify generated `/evidence/index.json` is schema `1.2`, every record has `discoveryReady: true`, and `build.json.discoveryIncompleteExcluded` is present.
+3. Commit-exact live smoke: `release-sha.txt` must equal deployed `GITHUB_SHA`, then verify `robots.txt → sitemap.xml → /evidence/ → /evidence/index.json → Germany evidence → evidence.json/evidence.csv` and `Indicators → Real GDP → status.json` all resolve consistently.
+4. Check that all advertised machine-readable JSON/CSV URLs return 200. The new build prevents missing local files, but live deployment still needs release verification.
+5. Audit whether any REAL population page lacks canonical/meta or human-visible provenance even though its payload is machine-complete; fix source/page rather than weakening the gate.
+6. Continue automated 360–430 px browser smoke under WD-005; preserve Worker 2's mobile/table accessibility work.
+7. Do not reopen the GDP pair by inference. Only a genuinely new release-specific authoritative methodology artifact should change that decision.
+
+### Recommended additional task
+Add a release-level assertion that fetches every machine-readable URL emitted in `/evidence/index.json` after Pages deploy and requires HTTP 200 plus the expected content type/body shape. This converts the new build-time file-existence guarantee into an end-to-end live discovery guarantee without weakening fail-closed filtering.
