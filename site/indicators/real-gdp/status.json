@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.3",
-  "screenedAtUtc": "2026-08-22T12:39:14Z",
+  "schemaVersion": "1.4",
+  "screenedAtUtc": "2026-08-22T13:39:18Z",
   "indicator": {
     "code": "NY.GDP.MKTP.KD",
     "name": "GDP (constant 2015 US$)",
@@ -16,6 +16,7 @@
   },
   "methodologyGate": {
     "archiveNamesConsistent": true,
+    "archiveNamesMatchExpectedScreeningContract": true,
     "releaseSpecificBaseAndValuationVerified": false,
     "reason": "World Bank warns NY.GDP.MKTP.KD reused the same code across different base years and states archive views expose only current metadata. Current metadata says constant 2015 US$, but cannot prove the base/valuation of each archived release."
   },
