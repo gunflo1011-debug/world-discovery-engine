@@ -71,6 +71,11 @@ test('internet-use country builder creates source-faithful long-tail discovery p
     assert.match(parentHtml, new RegExp(`href="\\./country/${slug}/">${escapeRegex(record.country)}<`));
     assert.match(html, new RegExp(`<h1>${escapeRegex(record.country)} internet use rate: ${record.value}%</h1>`));
     assert.match(html, new RegExp(`${record.value}% of people in ${escapeRegex(record.country)} used the internet in ${record.year}`));
+    assert.match(html, new RegExp(`Among the ${data.records.length} countries currently included in this verified same-year dataset`));
+    assert.match(html, /countries currently included in this verified same-year dataset, not to a complete worldwide ranking/i);
+    assert.match(html, /reports the 2024 observation from the same validated same-year dataset/i);
+    assert.doesNotMatch(html, /verified launch slice/i);
+    assert.doesNotMatch(html, /current\/latest observation/i);
     assert.match(html, new RegExp(`rel="canonical" href="https://gunflo1011-debug\\.github\\.io/world-discovery-engine/indicators/internet-use/country/${slug}/"`));
     assert.match(html, /rel="alternate" type="application\/json" href="\.\/data\.json"/);
     assert.match(html, /"@type":"WebPage"/);
