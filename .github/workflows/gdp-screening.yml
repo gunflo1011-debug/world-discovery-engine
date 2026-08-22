@@ -50,7 +50,8 @@ jobs:
           p=Path('site/indicators/real-gdp/status.json')
           h=Path('site/indicators/real-gdp/provenance.html')
           d=json.loads(p.read_text(encoding='utf-8'))
-          assert d['schemaVersion']=='1.2'
+          assert d['schemaVersion']=='1.3'
+          assert re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z', d['screenedAtUtc'])
           assert d['screeningStatus']=='BLOCKED_METHODOLOGY_COMPARABILITY'
           assert d['publishableRevisionData'] is False
           assert d['coverage']=={'requested':15,'comparableRows':15,'missing':[]}
@@ -59,14 +60,18 @@ jobs:
           releases=d['provenance']['releases']
           assert [x['vintage'] for x in releases]==['2025-01-28','2025-07-02']
           assert all(re.fullmatch(r'[0-9a-f]{64}', x['archiveSha256']) for x in releases)
+          assert all(isinstance(x['archiveBytes'], int) and x['archiveBytes'] > 1_000_000 for x in releases)
           assert h.is_file() and h.stat().st_size > 1000
-          text=(p.read_text(encoding='utf-8')+'\n'+h.read_text(encoding='utf-8'))
+          html=h.read_text(encoding='utf-8')
+          text=p.read_text(encoding='utf-8')+'\n'+html
           for forbidden in ('"rows"','"absoluteRevision"','"relativeRevision"'):
               assert forbidden not in text, forbidden
+          assert d['screenedAtUtc'] in html
           for x in releases:
-              assert x['archiveSha256'] in h.read_text(encoding='utf-8')
-              assert x['url'] in h.read_text(encoding='utf-8')
-          print('Verified fail-closed GDP screening status + human-readable provenance, with no revision values')
+              assert x['archiveSha256'] in html
+              assert x['url'] in html
+              assert f"{x['archiveBytes']:,} bytes" in html
+          print('Verified fail-closed GDP status + timestamped archive provenance, with no revision values')
           PY
       - name: Commit reproducible screening status and provenance
         run: |
