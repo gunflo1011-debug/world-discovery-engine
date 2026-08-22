@@ -14,6 +14,7 @@ fail-closed.
 import hashlib, io, json, math, urllib.request, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 from openpyxl import load_workbook
 
 RELEASES=[
@@ -27,7 +28,17 @@ METHODOLOGY_ATTESTATION=Path("data/methodology/real-gdp-2025-release-evidence.js
 ARCHIVE_WARNING_URL="https://databank.worldbank.org/databases/archives"
 CURRENT_METADATA_URL="https://databank.worldbank.org/metadataglossary/world-development-indicators/series/NY.GDP.MKTP.KD"
 
+def is_worldbank_https_url(url):
+    try:
+        p=urlsplit(str(url))
+    except Exception:
+        return False
+    host=(p.hostname or "").lower().rstrip(".")
+    return p.scheme=="https" and bool(host) and (host=="worldbank.org" or host.endswith(".worldbank.org")) and not p.username and not p.password
+
 def download(url):
+    if not is_worldbank_https_url(url):
+        raise RuntimeError(f"Refusing non-World-Bank archive URL: {url}")
     req=urllib.request.Request(url,headers={"User-Agent":"world-discovery-engine/0.5"})
     with urllib.request.urlopen(req,timeout=180) as r:
         blob=r.read()
@@ -68,6 +79,7 @@ def validate_methodology_attestation(snapshots):
     diagnostics={
       "attestationPath":str(METHODOLOGY_ATTESTATION),
       "attestationPresent":METHODOLOGY_ATTESTATION.is_file(),
+      "reviewMetadataComplete":False,
       "boundToExactArchiveHashes":False,
       "authoritativeReleaseSpecificSources":False,
       "sameBaseYearUnitAndValuation":False,
@@ -77,14 +89,23 @@ def validate_methodology_attestation(snapshots):
         return False,diagnostics
     try:
         att=json.loads(METHODOLOGY_ATTESTATION.read_text(encoding='utf-8'))
-        if att.get('schemaVersion') != 1: raise ValueError('schemaVersion must be 1')
+        if att.get('schemaVersion') != 2: raise ValueError('schemaVersion must be 2')
         if att.get('indicatorCode') != CODE: raise ValueError('indicatorCode mismatch')
         if att.get('referenceYear') != YEAR: raise ValueError('referenceYear mismatch')
+        review=att.get('review')
+        if not isinstance(review,dict) or review.get('status') != 'APPROVED':
+            raise ValueError('review.status must be APPROVED')
+        reviewer=str(review.get('reviewedBy','')).strip()
+        reviewed_at=str(review.get('reviewedAtUtc','')).strip()
+        if len(reviewer) < 3 or not reviewed_at.endswith('Z'):
+            raise ValueError('review metadata incomplete')
+        diagnostics['reviewMetadataComplete']=True
         evidence=att.get('releases')
         if not isinstance(evidence,list) or len(evidence) != len(snapshots): raise ValueError('exactly two releases required')
         by_vintage={e.get('vintage'):e for e in evidence if isinstance(e,dict)}
         if set(by_vintage) != {s['vintage'] for s in snapshots}: raise ValueError('vintage contract mismatch')
         bases=[]; units=[]; valuations=[]; hashes_ok=True; sources_ok=True
+        seen_source_urls=set()
         for s in snapshots:
             e=by_vintage[s['vintage']]
             if e.get('archiveSha256') != s['archiveSha256']: hashes_ok=False
@@ -93,16 +114,30 @@ def validate_methodology_attestation(snapshots):
             if not isinstance(srcs,list) or not srcs:
                 sources_ok=False
             else:
+                release_has_source=False
                 for src in srcs:
                     if not isinstance(src,dict) or src.get('releaseSpecific') is not True:
                         sources_ok=False; continue
-                    url=str(src.get('url',''))
-                    if not url.startswith('https://') or 'worldbank.org' not in url.lower(): sources_ok=False
+                    url=str(src.get('url','')).strip()
+                    title=str(src.get('title','')).strip()
+                    evidence_note=str(src.get('evidence','')).strip()
+                    if not is_worldbank_https_url(url):
+                        sources_ok=False; continue
+                    if url in (ARCHIVE_WARNING_URL,CURRENT_METADATA_URL):
+                        sources_ok=False; continue
+                    if url in seen_source_urls:
+                        sources_ok=False; continue
+                    seen_source_urls.add(url)
+                    if len(title) < 5 or len(evidence_note) < 20:
+                        sources_ok=False; continue
+                    release_has_source=True
+                if not release_has_source:
+                    sources_ok=False
         diagnostics['boundToExactArchiveHashes']=hashes_ok
         diagnostics['authoritativeReleaseSpecificSources']=sources_ok
         diagnostics['sameBaseYearUnitAndValuation']=(len(set(bases))==1 and bases[0]==2015 and len(set(units))==1 and units[0]==CURRENT_UNIT and len(set(valuations))==1 and bool(valuations[0]))
-        verified=all((diagnostics['boundToExactArchiveHashes'],diagnostics['authoritativeReleaseSpecificSources'],diagnostics['sameBaseYearUnitAndValuation']))
-        diagnostics['reason']='Release-specific methodology attestation satisfies the exact archive-hash, source, base-year, unit and valuation contract.' if verified else 'Release-specific methodology attestation does not satisfy every required contract check.'
+        verified=all((diagnostics['reviewMetadataComplete'],diagnostics['boundToExactArchiveHashes'],diagnostics['authoritativeReleaseSpecificSources'],diagnostics['sameBaseYearUnitAndValuation']))
+        diagnostics['reason']='Release-specific methodology attestation satisfies the reviewed source, exact archive-hash, base-year, unit and valuation contract.' if verified else 'Release-specific methodology attestation does not satisfy every required contract check.'
         return verified,diagnostics
     except Exception as e:
         diagnostics['reason']=f"Methodology attestation rejected: {e}"
@@ -142,7 +177,7 @@ def main():
       },
       "coverage":{"requested":len(COUNTRIES),"requestedCountryCodes":COUNTRIES,"rowsPresentInBothVintages":len(present_in_both),"missing":missing},
       "rows":rows,
-      "promotionGate":"Do not generate public REAL GDP evidence until a reviewed release-specific methodology attestation proves identical 2015 base year, unit and valuation for both vintages, cites authoritative release-specific World Bank sources, and binds those claims to the exact archive SHA-256 fingerprints observed by this run."
+      "promotionGate":"Do not generate public REAL GDP evidence until a reviewed release-specific methodology attestation (schema 2, APPROVED review metadata) proves identical 2015 base year, unit and valuation for both vintages, cites distinct authoritative release-specific World Bank HTTPS sources with explicit evidence notes, and binds those claims to the exact archive SHA-256 fingerprints observed by this run."
     }
     OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(result,indent=2)+"\n",encoding='utf-8')
     print(json.dumps(result,indent=2))
