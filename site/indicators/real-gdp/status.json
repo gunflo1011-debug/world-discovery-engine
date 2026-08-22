@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.4",
+  "schemaVersion": "1.5",
   "screenedAtUtc": "2026-08-22T13:39:18Z",
   "indicator": {
     "code": "NY.GDP.MKTP.KD",
@@ -11,7 +11,7 @@
   "publishableRevisionData": false,
   "coverage": {
     "requested": 15,
-    "comparableRows": 15,
+    "rowsPresentInBothVintages": 15,
     "missing": []
   },
   "methodologyGate": {
@@ -22,6 +22,7 @@
   },
   "provenance": {
     "dataset": "World Development Indicators (WDI)",
+    "datasetCatalogUrl": "https://datacatalog.worldbank.org/search/dataset/0037712/world-development-indicators",
     "archiveWarningUrl": "https://databank.worldbank.org/databases/archives",
     "currentMetadataUrl": "https://databank.worldbank.org/metadataglossary/world-development-indicators/series/NY.GDP.MKTP.KD",
     "releases": [
@@ -43,9 +44,15 @@
       }
     ]
   },
+  "license": {
+    "name": "Creative Commons Attribution 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "datasetTermsUrl": "https://www.worldbank.org/ext/en/legal/terms-conditions/datasets",
+    "attribution": "World Bank, World Development Indicators (WDI). World Discovery Engine derives screening/provenance status from archived WDI releases and does not imply World Bank endorsement."
+  },
   "methodologyUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/methodology/",
   "screeningPageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/",
   "provenancePageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html",
   "sourceCodeUrl": "https://github.com/gunflo1011-debug/world-discovery-engine/blob/main/scripts/screen-real-gdp.py",
-  "note": "No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved."
+  "note": "Rows are present in both vintages, but they are not labeled methodologically comparable. No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved."
 }
