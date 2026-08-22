@@ -63,8 +63,21 @@ jobs:
               assert f'Reference year: {d["referenceYear"]}' in html
               assert f'Methodology gate: {d["indicator"]["methodologyVersion"]}' in html
               assert './evidence.json' in html and './evidence.csv' in html
-              assert f'{d["revision"]["absolute"]:+,.0f} people' in html
-              assert f'{d["revision"]["relative"]*100:+.4f}%' in html
+
+              unchanged=d['revision']['absolute']==0
+              if unchanged:
+                  assert '0 people' in html
+                  assert '0.0000%' in html
+                  assert '+0 people' not in html
+                  assert '+0.0000%' not in html
+                  assert 'was identical in both archived releases' in html
+                  assert 'no revision was observed in this vintage pair' in html
+                  assert 'changed by <strong>+0 people</strong>' not in html
+                  assert 'was unchanged between January and July 2025' in html
+              else:
+                  assert f'{d["revision"]["absolute"]:+,.0f} people' in html
+                  assert f'{d["revision"]["relative"]*100:+.4f}%' in html
+                  assert 'changed by <strong>' in html
 
               match=re.search(r'<script type="application/ld\+json">(.*?)</script>',html)
               assert match, f'missing Dataset JSON-LD: {item["slug"]}'
@@ -90,7 +103,7 @@ jobs:
                   assert row['unit']==d['indicator']['unit']
                   assert row['source_url']==d[key]['sourceUrl']
 
-          print(f"Verified {manifest['count']} REAL population pages: HTML canonical/meta/provenance + JSON-LD + JSON/CSV consistency")
+          print(f"Verified {manifest['count']} REAL population pages: precise null findings + HTML/JSON/CSV consistency")
           PY
       - name: Commit generated real evidence
         run: |
