@@ -4,11 +4,11 @@ Evidence-driven global data discovery and revision-intelligence platform.
 
 ## Preview / current MVP
 
-A browseable static MVP now lives in [`site/`](./site). Start with [`site/index.html`](./site/index.html), then browse the new [`site/discoveries/`](./site/discoveries/) hub, the evidence library and methodology.
+A browseable static MVP lives in [`site/`](./site). Start with [`site/index.html`](./site/index.html), then browse the indicator registry, evidence library, discoveries and methodology.
 
-**Important:** the current visible evidence examples are clearly marked demo fixtures. They exist to validate product UX and navigation while the first real archived WDI-vintage evidence is being completed. No synthetic number is presented as a real-world fact.
+The repository now contains **real archived WDI vintage evidence** for population revisions alongside clearly marked demo fixtures used for product/UX testing. Demo fixtures are not intended to be preferred for indexing, and synthetic numbers must never be presented as real-world facts.
 
-The repository is now public and contains a GitHub Pages workflow that publishes the `site/` directory once Pages is enabled with **Settings → Pages → Build and deployment → Source: GitHub Actions**. The intended public preview URL is:
+The public GitHub Pages site is intended at:
 
 `https://gunflo1011-debug.github.io/world-discovery-engine/`
 
@@ -35,33 +35,25 @@ No causal claims are generated automatically.
 
 `source -> indicator registry -> vintage -> observation store -> comparability gate -> revision engine -> discovery validator -> evidence store -> web/API`
 
-Core entities:
-
-- `Source`
-- `Indicator`
-- `Vintage`
-- `Observation`
-- `MethodologyVersion`
-- `RevisionEvent`
-- `Discovery`
-- `Evidence`
+Core entities: `Source`, `Indicator`, `Vintage`, `Observation`, `MethodologyVersion`, `RevisionEvent`, `Discovery`, `Evidence`.
 
 ## Trust rules
 
 1. Every public numeric claim must be reproducible from stored observations.
-2. Every evidence page must identify source, vintage, formula/method and update timestamp.
+2. Every evidence page must identify source, vintage, formula/method and update timestamp where available.
 3. A revision comparison is rejected when units or indicator semantics are incompatible.
 4. Correlation is never presented as causation.
 5. Programmatic pages are published only when they provide distinct user value.
 6. Source licensing and attribution are stored with the source/series metadata.
+7. Methodology-blocked indicators may expose screening/provenance status, but not unverified revision values.
 
 ## Search & AI discovery
 
-Public evidence pages are designed for humans first, while remaining easy to retrieve and cite: stable canonical URLs, concise answer blocks, tables, provenance, methodology, update timestamps, structured data, and JSON/CSV representations. Search/AI crawler policy remains explicit; OAI-SearchBot should not be accidentally blocked when the site becomes public.
+Public evidence pages are designed for humans first while remaining easy to retrieve and cite: stable canonical URLs, concise answer blocks, provenance, methodology and machine-readable JSON/CSV where the evidence gate has passed. Blocked indicator screens may expose machine-readable status JSON without exposing unverified values. Sitemap generation excludes demo evidence and absent static routes.
 
 ## Current implementation
 
-Already implemented in the repository:
+Implemented in the repository:
 
 - World Bank observation normalization;
 - WDI archive and CSV adapters;
@@ -70,16 +62,18 @@ Already implemented in the repository:
 - deterministic revision engine and history;
 - evidence builder;
 - HTML evidence rendering;
-- JSON/CSV exports;
+- JSON/CSV exports for verified evidence;
 - sitemap/robots generation;
-- automated tests and GitHub Actions CI;
-- responsive home, discovery hub, evidence library and methodology preview in `site/`;
-- GitHub Pages deployment workflow and `.nojekyll` static-serving marker.
+- automated tests and GitHub Actions CI configuration;
+- responsive home, discovery, evidence, indicator and methodology pages;
+- GitHub Pages deployment workflow and `.nojekyll` static-serving marker;
+- real population-revision evidence from two archived 2025 WDI vintages;
+- fail-closed real-GDP screening that withholds revision values until release-specific methodology comparability is independently verified.
 
 ## Next milestone
 
-Run two real, methodologically compatible archived WDI releases through the complete pipeline and replace at least one demo evidence page with fully source-backed real evidence.
+Harden the verified indicator/evidence slices for search, citation and machine retrieval; independently resolve the real-GDP release-specific methodology gate before any GDP revision values are published; continue replacing demo fixtures with source-backed evidence.
 
 ## Status
 
-Phase 3 / active build. A visible MVP now exists; enabling GitHub Pages is the last deployment switch, while real historical-vintage evidence remains the main data milestone before broader public launch.
+Active build. Real WDI vintage evidence is now present; broader public scaling remains gated on source/methodology verification, quality controls and reproducible deployment checks.
