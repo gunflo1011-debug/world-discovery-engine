@@ -44,127 +44,171 @@ function isHttpUrl(value) {
   }
 }
 
-function isDiscoveryReadyEvidence(payload, { jsonExists, csvExists }) {
-  if (!payload || payload.status !== 'REAL' || !jsonExists || !csvExists) return false;
-  const indicator = payload.indicator ?? {};
-  const entity = payload.entity ?? {};
-  const vintages = payload.vintages ?? {};
-  return (
-    hasText(indicator.code) &&
-    hasText(indicator.name) &&
-    hasText(indicator.unit) &&
-    hasText(indicator.methodologyVersion) &&
-    hasText(entity.code) &&
-    hasText(entity.name) &&
-    hasText(entity.type) &&
-    Number.isInteger(payload.referenceYear) &&
-    hasText(vintages?.a?.id) &&
-    isHttpUrl(vintages?.a?.sourceUrl) &&
-    hasText(vintages?.b?.id) &&
-    isHttpUrl(vintages?.b?.sourceUrl) &&
-    hasText(payload.methodologyNote) &&
-    hasText(payload.license)
-  );
+function validateRealEvidence(payload, files) {
+  if (!payload || payload.status !== 'REAL') {
+    return { ready: false, reasons: ['status_not_real'] };
+  }
+
+  const reasons = [];
+  const requiredText = [
+    ['indicator.code', payload.indicator?.code],
+    ['indicator.name', payload.indicator?.name],
+    ['indicator.unit', payload.indicator?.unit],
+    ['indicator.methodologyVersion', payload.indicator?.methodologyVersion],
+    ['entity.code', payload.entity?.code],
+    ['entity.name', payload.entity?.name],
+    ['entity.entityType', payload.entity?.entityType],
+    ['first.vintage', payload.first?.vintage],
+    ['latest.vintage', payload.latest?.vintage],
+    ['methodologyNote', payload.methodologyNote],
+    ['license', payload.license]
+  ];
+
+  for (const [field, value] of requiredText) {
+    if (!hasText(value)) reasons.push(`missing_${field}`);
+  }
+
+  if (!Number.isInteger(payload.referenceYear)) reasons.push('missing_referenceYear');
+  if (!isHttpUrl(payload.first?.sourceUrl)) reasons.push('invalid_first.sourceUrl');
+  if (!isHttpUrl(payload.latest?.sourceUrl)) reasons.push('invalid_latest.sourceUrl');
+  if (!files.json) reasons.push('missing_evidence.json');
+  if (!files.csv) reasons.push('missing_evidence.csv');
+
+  return { ready: reasons.length === 0, reasons };
 }
 
-async function evidenceRecords() {
+function machineRecord(record) {
+  const payload = record.payload;
+  const base = {
+    slug: record.slug,
+    title: record.title,
+    description: record.description,
+    demo: record.demo,
+    noindex: record.noindex,
+    discoveryReady: record.discovery.ready,
+    url: record.url,
+    machineReadable: {
+      json: `${record.url}evidence.json`,
+      csv: `${record.url}evidence.csv`
+    }
+  };
+
+  if (!payload || payload.status !== 'REAL' || !record.discovery.ready) return base;
+
+  return {
+    ...base,
+    status: payload.status,
+    indicator: {
+      code: payload.indicator.code,
+      name: payload.indicator.name,
+      unit: payload.indicator.unit,
+      methodologyVersion: payload.indicator.methodologyVersion
+    },
+    entity: {
+      code: payload.entity.code,
+      name: payload.entity.name,
+      entityType: payload.entity.entityType
+    },
+    referenceYear: payload.referenceYear,
+    vintages: [payload.first, payload.latest].map((item) => ({
+      vintage: item.vintage,
+      sourceUrl: item.sourceUrl
+    })),
+    methodologyNote: payload.methodologyNote,
+    license: payload.license
+  };
+}
+
+async function collectEvidence() {
   const evidenceRoot = resolve(root, 'evidence');
   const entries = await readdir(evidenceRoot, { withFileTypes: true });
   const records = [];
-  let discoveryIncompleteExcluded = 0;
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const slug = entry.name;
-    const pagePath = resolve(evidenceRoot, slug, 'index.html');
-    if (!(await fileExists(pagePath))) continue;
-    const html = await readFile(pagePath, 'utf8');
-    if (/noindex/i.test(html) || /DEMO FIXTURE|\bDEMO\b/i.test(html)) continue;
-
-    const payload = await readEvidencePayload(evidenceRoot, slug);
-    if (payload && payload.status !== 'REAL') continue;
-
-    const jsonExists = await fileExists(resolve(evidenceRoot, slug, 'evidence.json'));
-    const csvExists = await fileExists(resolve(evidenceRoot, slug, 'evidence.csv'));
-    if (!isDiscoveryReadyEvidence(payload, { jsonExists, csvExists })) {
-      discoveryIncompleteExcluded += 1;
-      continue;
+    const directory = resolve(evidenceRoot, entry.name);
+    const path = resolve(directory, 'index.html');
+    try {
+      const html = await readFile(path, 'utf8');
+      const payload = await readEvidencePayload(evidenceRoot, entry.name);
+      const files = {
+        json: await fileExists(resolve(directory, 'evidence.json')),
+        csv: await fileExists(resolve(directory, 'evidence.csv'))
+      };
+      const discovery = validateRealEvidence(payload, files);
+      records.push({
+        slug: entry.name,
+        title: extract(html, /<h1[^>]*>(.*?)<\/h1>/s)?.replace(/<[^>]+>/g, '') || entry.name,
+        description: extract(html, /<meta\s+name="description"\s+content="([^"]*)"/i),
+        demo: /\bDEMO\b/i.test(html) || (payload?.status && payload.status !== 'REAL'),
+        noindex: /<meta\s+name="robots"\s+content="[^"]*noindex/i.test(html),
+        url: `/evidence/${entry.name}/`,
+        payload,
+        files,
+        discovery
+      });
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
     }
-
-    const canonical = extract(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i);
-    const title = extract(html, /<title>([^<]+)<\/title>/i);
-    const description = extract(html, /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i);
-    if (!canonical || !title || !description) {
-      discoveryIncompleteExcluded += 1;
-      continue;
-    }
-
-    records.push({
-      slug,
-      title,
-      description,
-      url: canonical,
-      status: 'REAL',
-      discoveryReady: true,
-      indicator: payload.indicator,
-      entity: payload.entity,
-      referenceYear: payload.referenceYear,
-      vintages: payload.vintages,
-      methodologyNote: payload.methodologyNote,
-      license: payload.license,
-      distributions: {
-        json: `${canonical}evidence.json`,
-        csv: `${canonical}evidence.csv`
-      }
-    });
   }
 
-  return { records, discoveryIncompleteExcluded };
+  return records.sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
-async function main() {
-  const { records, discoveryIncompleteExcluded } = await evidenceRecords();
-  records.sort((a, b) => a.title.localeCompare(b.title));
+async function existingStaticRoutes(routes) {
+  const kept = [];
+  for (const route of routes) {
+    const relative = route === '/' ? 'index.html' : `${route.replace(/^\//, '').replace(/\/$/, '')}/index.html`;
+    try {
+      await access(resolve(root, relative));
+      kept.push(route);
+    } catch {
+      // Sitemap must not advertise routes that are absent from the built site.
+    }
+  }
+  return kept;
+}
 
-  const evidenceIndex = {
-    schemaVersion: '1.2',
-    generatedAt: new Date().toISOString(),
-    status: 'REAL_ONLY',
-    count: records.length,
-    records
-  };
-  await writeFile(resolve(root, 'evidence', 'index.json'), `${JSON.stringify(evidenceIndex, null, 2)}\n`);
-
-  const staticRoutes = [
-    '',
-    'evidence/',
-    'explore/',
-    'indicators/',
-    'indicators/real-gdp/',
-    'indicators/internet-use/',
-    'methodology/',
-    'sources/',
-    'archive/'
+export async function buildSite() {
+  const evidence = await collectEvidence();
+  const staticRoutes = await existingStaticRoutes([
+    '/',
+    '/explore/',
+    '/discoveries/',
+    '/methodology/',
+    '/sources/',
+    '/archive/',
+    '/status/',
+    '/evidence/',
+    '/indicators/',
+    '/indicators/internet-use/',
+    '/indicators/real-gdp/',
+    '/leaderboard/'
+  ]);
+  const indexableEvidence = evidence.filter((record) => !record.demo && !record.noindex && record.discovery.ready);
+  const pagePaths = [
+    ...staticRoutes,
+    ...indexableEvidence.map((record) => record.url)
   ];
-  const existingRoutes = [];
-  for (const route of staticRoutes) {
-    const page = resolve(root, route, 'index.html');
-    if (await fileExists(page)) existingRoutes.push(route);
-  }
-  const evidenceRoutes = records.map((record) => `evidence/${record.slug}/`);
-  const sitemap = renderSitemap(baseUrl, [...existingRoutes, ...evidenceRoutes]);
-  await writeFile(resolve(root, 'sitemap.xml'), sitemap);
-  await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt(baseUrl));
+  const generatedAt = new Date().toISOString();
 
-  const build = {
-    schemaVersion: '1.0',
-    generatedAt: new Date().toISOString(),
-    evidenceCount: records.length,
-    discoveryIncompleteExcluded,
-    routes: [...existingRoutes, ...evidenceRoutes]
-  };
-  await writeFile(resolve(root, 'build.json'), `${JSON.stringify(build, null, 2)}\n`);
-  console.log(`Built site discovery assets with ${records.length} REAL evidence records; excluded ${discoveryIncompleteExcluded} incomplete records.`);
+  await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt({ baseUrl }), 'utf8');
+  await writeFile(resolve(root, 'sitemap.xml'), renderSitemap({ baseUrl, pages: pagePaths.map((path) => ({ path })) }), 'utf8');
+  await writeFile(resolve(root, 'evidence', 'index.json'), `${JSON.stringify({ schemaVersion: '1.2', generatedAt, evidence: indexableEvidence.map(machineRecord) }, null, 2)}\n`, 'utf8');
+  await writeFile(resolve(root, 'build.json'), `${JSON.stringify({
+    generatedAt,
+    baseUrl,
+    publicRoutes: pagePaths.length,
+    evidencePages: indexableEvidence.length,
+    demoPagesExcluded: evidence.filter((item) => item.demo).length,
+    noindexPagesExcluded: evidence.filter((item) => item.noindex).length,
+    discoveryIncompleteExcluded: evidence.filter((item) => !item.demo && !item.noindex && !item.discovery.ready).length
+  }, null, 2)}\n`, 'utf8');
+
+  return { evidence: indexableEvidence, allEvidence: evidence, pagePaths, generatedAt };
 }
 
-await main();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const result = await buildSite();
+  console.log(`Built ${result.pagePaths.length} public routes (${result.evidence.length} indexable evidence pages).`);
+}
