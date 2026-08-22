@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:internet-use": "node scripts/build-internet-use.mjs",
     "build": "node scripts/build-site.js",
     "test": "node --test \"test/**/*.test.js\"",
     "test:playwright": "playwright test",
