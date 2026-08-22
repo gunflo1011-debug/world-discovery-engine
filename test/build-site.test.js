@@ -16,6 +16,7 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.ok(result.pagePaths.includes('/archive/'));
   assert.ok(result.pagePaths.includes('/status/'));
   assert.ok(result.pagePaths.includes('/indicators/'));
+  assert.ok(result.pagePaths.includes('/indicators/internet-use/'));
   assert.ok(result.pagePaths.includes('/indicators/real-gdp/'));
   assert.ok(result.pagePaths.some((path) => path.startsWith('/evidence/') && path !== '/evidence/'));
   assert.ok(!result.pagePaths.includes('/indicators/population-total/'));
@@ -27,6 +28,7 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.match(sitemap, /world-discovery-engine\/explore\//);
   assert.match(sitemap, /world-discovery-engine\/archive\//);
   assert.match(sitemap, /world-discovery-engine\/indicators\//);
+  assert.match(sitemap, /world-discovery-engine\/indicators\/internet-use\//);
   assert.match(sitemap, /world-discovery-engine\/indicators\/real-gdp\//);
   assert.doesNotMatch(sitemap, /world-discovery-engine\/indicators\/population-total\//);
   assert.doesNotMatch(sitemap, /world-discovery-engine\/evidence\/germany-gdp-growth-revision\//);
