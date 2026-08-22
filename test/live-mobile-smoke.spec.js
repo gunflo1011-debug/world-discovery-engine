@@ -4,7 +4,7 @@ const BASE = process.env.BASE_URL || 'https://gunflo1011-debug.github.io/world-d
 const routes = [
   { path: '/index.html' },
   { path: '/indicators/' },
-  { path: '/indicators/real-gdp/' },
+  { path: '/indicators/real-gdp/', gdpScreening: true },
   {
     path: '/evidence/germany-population-revision-2025/',
     evidence: { indicatorCode: 'SP.POP.TOTL', entityCode: 'DEU', referenceYear: 2023 },
@@ -15,6 +15,8 @@ const routes = [
   },
 ];
 const widths = [360, 390, 430];
+const GDP_COUNTRIES = ['DEU','USA','CHN','IND','JPN','GBR','FRA','ITA','BRA','CAN','AUS','ESP','MEX','IDN','KOR'];
+const GDP_VINTAGES = ['2025-01-28','2025-07-02'];
 
 function parseCsvLine(line) {
   const values = [];
@@ -68,6 +70,57 @@ for (const width of widths) {
         expect(title.length, `title too short on ${route}`).toBeGreaterThan(10);
         const description = await page.locator('meta[name="description"]').getAttribute('content');
         expect((description || '').trim().length, `meta description too short on ${route}`).toBeGreaterThan(40);
+
+        if (routeConfig.gdpScreening) {
+          await expect(page.getByText('SCREENING · FAIL CLOSED')).toBeVisible();
+          await expect(page.getByText(/No GDP revision values are published/i)).toBeVisible();
+          await expect(page.getByText(/15 \/ 15/)).toBeVisible();
+          await expect(page.locator('a[href$="status.json"]')).toBeVisible();
+          await expect(page.locator('a[href$="provenance.html"]')).toBeVisible();
+          await expect(page.locator('a[href$="evidence.json"]')).toHaveCount(0);
+          await expect(page.locator('a[href$="evidence.csv"]')).toHaveCount(0);
+
+          const statusResponse = await page.request.get(`${BASE}/indicators/real-gdp/status.json`);
+          expect(statusResponse.ok(), 'GDP status JSON unreachable').toBeTruthy();
+          const statusText = await statusResponse.text();
+          const status = JSON.parse(statusText);
+          expect(status.schemaVersion).toBe('1.7');
+          expect(status.indicator?.code).toBe('NY.GDP.MKTP.KD');
+          expect(status.indicator?.name).toBe('GDP (constant 2015 US$)');
+          expect(status.indicator?.referenceYear).toBe(2023);
+          expect(status.screeningStatus).toBe('BLOCKED_METHODOLOGY_COMPARABILITY');
+          expect(status.publishableRevisionData).toBe(false);
+          expect(status.coverage).toEqual({ requested: 15, requestedCountryCodes: GDP_COUNTRIES, rowsPresentInBothVintages: 15, missing: [] });
+          expect(status.methodologyGate?.releaseSpecificBaseAndValuationVerified).toBe(false);
+          expect(status.methodologyGate?.releaseEvidenceAttestation?.attestationPresent).toBe(false);
+          expect(status.promotionEvidenceContract?.state).toBe('MISSING_REVIEWED_RELEASE_SPECIFIC_ATTESTATION');
+          expect(status.promotionEvidenceContract?.mustBindToExactArchiveSha256).toBe(true);
+          expect(status.promotionEvidenceContract?.mustUseAuthoritativeReleaseSpecificWorldBankSources).toBe(true);
+          expect(status.promotionEvidenceContract?.requiredBaseYear).toBe(2015);
+          expect(status.promotionEvidenceContract?.requiredUnit).toBe('constant 2015 US$');
+          expect(status.provenance?.releases?.map(r => r.vintage)).toEqual(GDP_VINTAGES);
+          for (const release of status.provenance.releases) {
+            expect(release.url).toMatch(/^https:\/\/databank\.worldbank\.org\/data\/download\/Archive\/WDI_excel_2025_/);
+            expect(release.archiveSha256).toMatch(/^[0-9a-f]{64}$/);
+            expect(release.archiveBytes).toBeGreaterThan(1_000_000);
+            expect(release.member).toMatch(/\.xlsx$/i);
+            expect(release.indicatorNameInArchive).toBe('GDP (constant 2015 US$)');
+          }
+          for (const forbidden of ['"rows"','"absoluteRevision"','"relativeRevision"','comparableRows']) {
+            expect(statusText.includes(forbidden), `GDP public status leaked ${forbidden}`).toBeFalsy();
+          }
+
+          const provenanceResponse = await page.request.get(`${BASE}/indicators/real-gdp/provenance.html`);
+          expect(provenanceResponse.ok(), 'GDP provenance page unreachable').toBeTruthy();
+          const provenanceHtml = await provenanceResponse.text();
+          expect(provenanceHtml).toContain(status.screenedAtUtc);
+          expect(provenanceHtml).toContain('Presence is not a methodology-comparability claim.');
+          expect(provenanceHtml).toContain(GDP_COUNTRIES.join(', '));
+          for (const release of status.provenance.releases) {
+            expect(provenanceHtml).toContain(release.archiveSha256);
+            expect(provenanceHtml).toContain(release.url);
+          }
+        }
 
         if (routeConfig.evidence) {
           const jsonLink = page.locator('a[href$="evidence.json"]');
