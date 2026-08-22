@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.2",
   "indicator": {
     "code": "NY.GDP.MKTP.KD",
     "name": "GDP (constant 2015 US$)",
@@ -41,6 +41,7 @@
   },
   "methodologyUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/methodology/",
   "screeningPageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/",
+  "provenancePageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html",
   "sourceCodeUrl": "https://github.com/gunflo1011-debug/world-discovery-engine/blob/main/scripts/screen-real-gdp.py",
   "note": "No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved."
 }
