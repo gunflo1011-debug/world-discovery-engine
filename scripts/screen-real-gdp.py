@@ -85,7 +85,7 @@ def main():
       "referenceYear":YEAR,
       "provenance":{"dataset":"World Development Indicators (WDI)","archiveWarningUrl":ARCHIVE_WARNING_URL,"currentMetadataUrl":CURRENT_METADATA_URL,"releases":[{k:s[k] for k in ('vintage','url','archiveSha256','archiveBytes','member','indicatorNameInArchive')} for s in snapshots]},
       "methodologyGate":{"archiveNamesConsistent":name_consistent,"releaseSpecificBaseAndValuationVerified":release_specific_methodology_verified,"reason":"World Bank warns NY.GDP.MKTP.KD reused the same code across different base years and states archive views expose only current metadata. Current metadata says constant 2015 US$, but cannot prove the base/valuation of each archived release."},
-      "coverage":{"requested":len(COUNTRIES),"rowsPresentInBothVintages":len(present_in_both),"missing":missing},
+      "coverage":{"requested":len(COUNTRIES),"requestedCountryCodes":COUNTRIES,"rowsPresentInBothVintages":len(present_in_both),"missing":missing},
       "rows":rows,
       "promotionGate":"Do not generate public REAL GDP evidence until independent release-specific metadata or another authoritative release artifact proves identical base year and valuation for both archived vintages."
     }
