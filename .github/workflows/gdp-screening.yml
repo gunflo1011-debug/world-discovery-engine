@@ -7,6 +7,7 @@ on:
     paths:
       - 'scripts/screen-real-gdp.py'
       - 'scripts/publish-gdp-screening-status.py'
+      - 'data/methodology/real-gdp-2025-release-evidence.json'
       - '.github/workflows/gdp-screening.yml'
 
 permissions:
@@ -43,7 +44,7 @@ jobs:
           echo "GDP screener exited non-zero as required (rc=$rc). Validating exact blocker next."
       - name: Validate exact methodology blocker and publish synchronized public artifacts
         run: python scripts/publish-gdp-screening-status.py
-      - name: Verify public outputs leak no screened GDP values and expose exact country contract
+      - name: Verify public outputs leak no screened GDP values and expose exact promotion contract
         run: |
           python - <<'PY'
           import json,re
@@ -53,7 +54,7 @@ jobs:
           i=Path('site/indicators/real-gdp/index.html')
           d=json.loads(p.read_text(encoding='utf-8'))
           countries=['DEU','USA','CHN','IND','JPN','GBR','FRA','ITA','BRA','CAN','AUS','ESP','MEX','IDN','KOR']
-          assert d['schemaVersion']=='1.6'
+          assert d['schemaVersion']=='1.7'
           assert re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z',d['screenedAtUtc'])
           assert d['screeningStatus']=='BLOCKED_METHODOLOGY_COMPARABILITY'
           assert d['publishableRevisionData'] is False
@@ -63,6 +64,14 @@ jobs:
           assert g['archiveNamesConsistent'] is True
           assert g['archiveNamesMatchExpectedScreeningContract'] is True
           assert g['releaseSpecificBaseAndValuationVerified'] is False
+          a=g['releaseEvidenceAttestation']
+          assert a=={'attestationPresent':False,'boundToExactArchiveHashes':False,'authoritativeReleaseSpecificSources':False,'sameBaseYearUnitAndValuation':False}
+          c=d['promotionEvidenceContract']
+          assert c['state']=='MISSING_REVIEWED_RELEASE_SPECIFIC_ATTESTATION'
+          assert c['mustBindToExactArchiveSha256'] is True
+          assert c['mustUseAuthoritativeReleaseSpecificWorldBankSources'] is True
+          assert c['requiredBaseYear']==2015
+          assert c['requiredUnit']=='constant 2015 US$'
           releases=d['provenance']['releases']
           assert [x['vintage'] for x in releases]==['2025-01-28','2025-07-02']
           assert all(x['indicatorNameInArchive']=='GDP (constant 2015 US$)' for x in releases)
@@ -78,13 +87,15 @@ jobs:
           assert d['screenedAtUtc'] in html and d['screenedAtUtc'] in page
           assert 'Presence is not a methodology-comparability claim.' in html
           assert 'this is not a methodology-comparability claim' in page
+          assert 'bind' in html.lower() and 'sha-256' in html.lower()
+          assert 'manual boolean flip' in page.lower()
           contract=', '.join(countries)
           assert contract in html and contract in page
           for x in releases:
               assert x['archiveSha256'] in html
               assert x['url'] in html
               assert f"{x['archiveBytes']:,} bytes" in html
-          print('Verified synchronized fail-closed GDP run with exact country contract, row-presence semantics and licensing')
+          print('Verified synchronized fail-closed GDP run with hash-bound promotion evidence contract')
           PY
       - name: Commit reproducible GDP screening artifacts
         run: |
