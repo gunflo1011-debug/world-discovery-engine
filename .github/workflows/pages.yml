@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          routes=("/index.html" "/indicators/" "/indicators/real-gdp/" "/indicators/real-gdp/status.json" "/evidence/" "/evidence/index.json" "/evidence/germany-population-revision-2025/" "/evidence/germany-population-revision-2025/evidence.json" "/evidence/germany-population-revision-2025/evidence.csv" "/sitemap.xml" "/robots.txt")
+          routes=("/index.html" "/indicators/" "/indicators/real-gdp/" "/indicators/real-gdp/status.json" "/indicators/internet-use/" "/indicators/internet-use/data.json" "/indicators/internet-use/data.csv" "/indicators/internet-use/country/index.json" "/indicators/internet-use/country/deu/" "/build.json" "/evidence/" "/evidence/index.json" "/evidence/germany-population-revision-2025/" "/evidence/germany-population-revision-2025/evidence.json" "/evidence/germany-population-revision-2025/evidence.csv" "/sitemap.xml" "/robots.txt")
           for route in "${routes[@]}"; do curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "${BASE_URL}${route}" -o /tmp/live-body; test -s /tmp/live-body; done
       - name: Verify GDP remains fail-closed
         shell: bash
@@ -91,6 +91,35 @@ jobs:
           grep -qi "Sitemap: ${BASE_URL}/sitemap.xml" /tmp/robots.txt
           curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
           grep -q "${BASE_URL}/evidence/germany-population-revision-2025/" /tmp/sitemap.xml
+      - name: Verify Internet-use country discovery contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/indicators/internet-use/country/index.json" -o /tmp/internet-country-index.json
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/build.json" -o /tmp/build.json
+          curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 "${BASE_URL}/sitemap.xml" -o /tmp/sitemap.xml
+          BASE_URL="$BASE_URL" node - <<'NODE'
+          const fs = require('fs');
+          const { execFileSync } = require('child_process');
+          const baseUrl = process.env.BASE_URL.replace(/\/$/, '');
+          const index = JSON.parse(fs.readFileSync('/tmp/internet-country-index.json', 'utf8'));
+          const build = JSON.parse(fs.readFileSync('/tmp/build.json', 'utf8'));
+          const sitemap = fs.readFileSync('/tmp/sitemap.xml', 'utf8');
+          if (index.schemaVersion !== '1.0') throw new Error('Unexpected Internet-use country index schema');
+          if (index.indicator !== 'IT.NET.USER.ZS' || index.observationYear !== 2024) throw new Error('Internet-use country index identity mismatch');
+          if (!Array.isArray(index.countries) || index.countries.length !== 12) throw new Error('Internet-use country profile count mismatch');
+          if (build.internetUseCountryProfiles !== index.countries.length) throw new Error('build.json country profile count mismatch');
+          const seen = new Set();
+          for (const country of index.countries) {
+            if (!/^[A-Z]{3}$/.test(country.code) || !country.url) throw new Error(`Malformed Internet-use country record: ${country.code || 'unknown'}`);
+            if (seen.has(country.code)) throw new Error(`Duplicate Internet-use country record: ${country.code}`);
+            seen.add(country.code);
+            const absolute = `${baseUrl}${country.url}`;
+            const occurrences = sitemap.split(absolute).length - 1;
+            if (occurrences !== 1) throw new Error(`Country route must appear exactly once in sitemap: ${country.code}, found ${occurrences}`);
+            execFileSync('curl', ['-L','--fail','--retry','5','--retry-all-errors','--retry-delay','10', absolute, '-o', `/tmp/internet-country-${country.code}.html`], { stdio: 'inherit' });
+          }
+          NODE
       - name: Verify every advertised machine distribution and semantic identity
         shell: bash
         run: |
@@ -153,7 +182,7 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Run live mobile browser smoke
-        run: npx playwright test test/live-mobile-smoke.spec.js --reporter=line
+        run: npx playwright test test/live-mobile-smoke.spec.js test/internet-use-country-live.spec.js --reporter=line
       - name: Upload browser-smoke evidence on failure
         if: failure()
         uses: actions/upload-artifact@v4
