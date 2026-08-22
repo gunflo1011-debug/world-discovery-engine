@@ -95,6 +95,23 @@ jobs:
           const fs = require('fs');
           const { execFileSync } = require('child_process');
           const baseUrl = process.env.BASE_URL.replace(/\/$/, '');
+          const parseCsvLine = (line) => {
+            const values = [];
+            let current = '';
+            let quoted = false;
+            for (let i = 0; i < line.length; i += 1) {
+              const char = line[i];
+              if (char === '"') {
+                if (quoted && line[i + 1] === '"') { current += '"'; i += 1; }
+                else quoted = !quoted;
+              } else if (char === ',' && !quoted) {
+                values.push(current.trim()); current = '';
+              } else current += char;
+            }
+            if (quoted) throw new Error('Malformed CSV: unterminated quoted field');
+            values.push(current.trim());
+            return values;
+          };
           const index = JSON.parse(fs.readFileSync('/tmp/evidence-index.json', 'utf8'));
           if (index.schemaVersion !== '1.2' || !Array.isArray(index.evidence) || index.evidence.length === 0) throw new Error('Unexpected evidence index contract');
           let germany = false;
@@ -114,18 +131,15 @@ jobs:
             if (payload.entity?.code !== record.entity?.code) throw new Error(`Entity mismatch: ${record.slug}`);
             if (payload.referenceYear !== record.referenceYear) throw new Error(`Reference-year mismatch: ${record.slug}`);
             const csv = fs.readFileSync(csvFile, 'utf8').trim();
-            const lines = csv.split(/\r?\n/).filter(Boolean);
+            const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
             if (lines.length < 2) throw new Error(`CSV has no data rows: ${record.slug}`);
-            const columns = lines[0].split(',').map(v => v.trim());
+            const columns = lines[0];
             const required = ['entity_code','indicator_code','reference_year'];
             for (const name of required) if (!columns.includes(name)) throw new Error(`CSV missing ${name}: ${record.slug}`);
             const entityIx = columns.indexOf('entity_code');
             const indicatorIx = columns.indexOf('indicator_code');
             const yearIx = columns.indexOf('reference_year');
-            const matches = lines.slice(1).some(line => {
-              const values = line.split(',').map(v => v.trim());
-              return values[entityIx] === record.entity?.code && values[indicatorIx] === record.indicator?.code && String(values[yearIx]) === String(record.referenceYear);
-            });
+            const matches = lines.slice(1).some(values => values[entityIx] === record.entity?.code && values[indicatorIx] === record.indicator?.code && String(values[yearIx]) === String(record.referenceYear));
             if (!matches) throw new Error(`CSV semantic identity mismatch: ${record.slug}`);
             if (record.indicator?.code === 'SP.POP.TOTL' && record.entity?.code === 'DEU') germany = true;
           }
