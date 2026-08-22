@@ -8,6 +8,9 @@
     "test": "node --test",
     "check": "npm test && npm run build"
   },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
+  },
   "engines": {
     "node": ">=20"
   }
