@@ -6,6 +6,10 @@ const routes = [
   { path: '/indicators/' },
   { path: '/indicators/real-gdp/', gdpScreening: true },
   {
+    path: '/indicators/internet-use/',
+    currentDataset: { indicatorCode: 'IT.NET.USER.ZS', observationYear: 2024, recordCount: 12 },
+  },
+  {
     path: '/evidence/germany-population-revision-2025/',
     evidence: { indicatorCode: 'SP.POP.TOTL', entityCode: 'DEU', referenceYear: 2023 },
   },
@@ -123,6 +127,51 @@ test.describe('mobile smoke tests', () => {
               expect(provenanceHtml).toContain(release.archiveSha256);
               expect(provenanceHtml).toContain(release.url);
             }
+          }
+
+          if (routeConfig.currentDataset) {
+            const jsonLink = page.locator('a[href$="data.json"]');
+            const csvLink = page.locator('a[href$="data.csv"]');
+            await expect(jsonLink, `visible JSON data link missing on ${route}`).toHaveCount(1);
+            await expect(csvLink, `visible CSV data link missing on ${route}`).toHaveCount(1);
+            await expect(jsonLink).toBeVisible();
+            await expect(csvLink).toBeVisible();
+
+            const jsonHref = await jsonLink.getAttribute('href');
+            const csvHref = await csvLink.getAttribute('href');
+            const jsonResponse = await page.request.get(new URL(jsonHref, `${BASE}${route}`).href);
+            const csvResponse = await page.request.get(new URL(csvHref, `${BASE}${route}`).href);
+            expect(jsonResponse.ok(), `JSON data unreachable from ${route}`).toBeTruthy();
+            expect(csvResponse.ok(), `CSV data unreachable from ${route}`).toBeTruthy();
+
+            const payload = await jsonResponse.json();
+            expect(payload.status, `JSON status mismatch for ${route}`).toBe('CURRENT_VERIFIED');
+            expect(payload.indicator?.code, `JSON indicator mismatch for ${route}`).toBe(routeConfig.currentDataset.indicatorCode);
+            expect(payload.indicator?.unit, `JSON unit mismatch for ${route}`).toBe('% of population');
+            expect(payload.observationYear, `JSON observation year mismatch for ${route}`).toBe(routeConfig.currentDataset.observationYear);
+            expect(payload.records, `JSON records missing for ${route}`).toHaveLength(routeConfig.currentDataset.recordCount);
+            expect(payload.records.every(record => record.year === routeConfig.currentDataset.observationYear), `mixed observation years in ${route}`).toBeTruthy();
+
+            const csv = (await csvResponse.text()).trim();
+            const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
+            expect(lines.length - 1, `CSV record count mismatch for ${route}`).toBe(routeConfig.currentDataset.recordCount);
+            const header = lines[0];
+            const codeIx = header.indexOf('country_code');
+            const indicatorIx = header.indexOf('indicator_code');
+            const yearIx = header.indexOf('observation_year');
+            const valueIx = header.indexOf('value');
+            expect(codeIx, `CSV country_code missing for ${route}`).toBeGreaterThanOrEqual(0);
+            expect(indicatorIx, `CSV indicator_code missing for ${route}`).toBeGreaterThanOrEqual(0);
+            expect(yearIx, `CSV observation_year missing for ${route}`).toBeGreaterThanOrEqual(0);
+            expect(valueIx, `CSV value missing for ${route}`).toBeGreaterThanOrEqual(0);
+            for (const record of payload.records) {
+              const row = lines.slice(1).find(values => values[codeIx] === record.code);
+              expect(row, `CSV row missing for ${record.code}`).toBeTruthy();
+              expect(row[indicatorIx], `CSV indicator mismatch for ${record.code}`).toBe(routeConfig.currentDataset.indicatorCode);
+              expect(Number(row[yearIx]), `CSV year mismatch for ${record.code}`).toBe(record.year);
+              expect(Number(row[valueIx]), `CSV value mismatch for ${record.code}`).toBe(record.value);
+            }
+            await expect(page.getByText(/not a complete global ranking/i)).toBeVisible();
           }
 
           if (routeConfig.evidence) {
