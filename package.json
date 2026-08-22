@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:internet-use": "node scripts/build-internet-use.mjs",
-    "build": "node scripts/build-site.js",
+    "build:internet-use": "node scripts/build-internet-use.mjs && node scripts/build-internet-use-countries.mjs",
+    "build": "node scripts/build-site.js && node scripts/build-internet-use-countries.mjs && node scripts/finalize-internet-country-discovery.mjs",
     "test": "node --test \"test/**/*.test.js\"",
     "test:playwright": "playwright test",
     "check": "npm test && npm run build"
