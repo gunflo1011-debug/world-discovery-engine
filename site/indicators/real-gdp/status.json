@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "indicator": {
+    "code": "NY.GDP.MKTP.KD",
+    "name": "Real GDP",
+    "referenceYear": 2023
+  },
+  "screeningStatus": "BLOCKED_METHODOLOGY_COMPARABILITY",
+  "publishableRevisionData": false,
+  "reason": "Release-specific base year and valuation comparability has not been independently verified for both archived WDI releases.",
+  "vintages": [
+    {
+      "releaseDate": "2025-01-28",
+      "archiveUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip",
+      "indicatorPresent": true,
+      "releaseSpecificMethodologyVerified": false
+    },
+    {
+      "releaseDate": "2025-07-02",
+      "archiveUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip",
+      "indicatorPresent": true,
+      "releaseSpecificMethodologyVerified": false
+    }
+  ],
+  "methodologyUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/methodology/",
+  "screeningPageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/",
+  "note": "No GDP revision values, rankings, or REAL CSV export are published while this gate remains unresolved."
+}
