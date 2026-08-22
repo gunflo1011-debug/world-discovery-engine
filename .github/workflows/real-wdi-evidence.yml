@@ -29,20 +29,24 @@ jobs:
       - name: Verify generated evidence
         run: |
           python - <<'PY'
-          import json
+          import csv, json, re
           from pathlib import Path
+
           root=Path('site/evidence')
           manifest=json.load(open(root/'real-wdi-population-manifest.json',encoding='utf-8'))
           assert manifest['count']==15, manifest['count']
           assert len(manifest['items'])==15
           codes={item['code'] for item in manifest['items']}
           assert {'DEU','USA','CHN','IND','JPN','GBR','FRA','ITA','BRA','CAN','AUS','ESP','MEX','IDN','KOR'} == codes
+
           for item in manifest['items']:
               page=root/item['slug']
-              assert (page/'index.html').is_file(), item
-              assert (page/'evidence.json').is_file(), item
-              assert (page/'evidence.csv').is_file(), item
-              d=json.load(open(page/'evidence.json',encoding='utf-8'))
+              index=page/'index.html'; json_path=page/'evidence.json'; csv_path=page/'evidence.csv'
+              assert index.is_file(), item
+              assert json_path.is_file(), item
+              assert csv_path.is_file(), item
+
+              d=json.load(open(json_path,encoding='utf-8'))
               assert d['status']=='REAL'
               assert d['entity']['code']==item['code']
               assert d['entity']['entityType']=='country'
@@ -50,7 +54,43 @@ jobs:
               assert d['latest']['vintage']=='2025-07-02'
               assert d['indicator']['code']=='SP.POP.TOTL'
               assert d['referenceYear']==2023
-          print(f"Verified {manifest['count']} REAL sovereign-country evidence pages")
+
+              html=index.read_text(encoding='utf-8')
+              canonical=f"https://gunflo1011-debug.github.io/world-discovery-engine/evidence/{item['slug']}/"
+              assert f'<link rel="canonical" href="{canonical}">' in html
+              assert '<meta name="description" content="Verified World Bank WDI vintage comparison' in html
+              assert f'Country: {d["entity"]["code"]}' in html
+              assert f'Reference year: {d["referenceYear"]}' in html
+              assert f'Methodology gate: {d["indicator"]["methodologyVersion"]}' in html
+              assert './evidence.json' in html and './evidence.csv' in html
+              assert f'{d["revision"]["absolute"]:+,.0f} people' in html
+              assert f'{d["revision"]["relative"]*100:+.4f}%' in html
+
+              match=re.search(r'<script type="application/ld\+json">(.*?)</script>',html)
+              assert match, f'missing Dataset JSON-LD: {item["slug"]}'
+              ld=json.loads(match.group(1))
+              assert ld['@type']=='Dataset'
+              assert ld['url']==canonical
+              assert ld['identifier']==f"SP.POP.TOTL-{d['entity']['code']}-2023-2025-01-28-2025-07-02"
+              assert ld['spatialCoverage']['name']==d['entity']['name']
+              assert ld['distribution'][0]['contentUrl']==canonical+'evidence.json'
+              assert ld['distribution'][1]['contentUrl']==canonical+'evidence.csv'
+              assert ld['isBasedOn']==[d['first']['sourceUrl'],d['latest']['sourceUrl']]
+
+              with open(csv_path,newline='',encoding='utf-8') as f:
+                  rows=list(csv.DictReader(f))
+              assert len(rows)==2
+              for row,key in zip(rows,('first','latest')):
+                  assert row['entity_code']==d['entity']['code']
+                  assert row['entity']==d['entity']['name']
+                  assert row['indicator_code']==d['indicator']['code']
+                  assert int(row['reference_year'])==d['referenceYear']
+                  assert row['vintage']==d[key]['vintage']
+                  assert float(row['value'])==d[key]['value']
+                  assert row['unit']==d['indicator']['unit']
+                  assert row['source_url']==d[key]['sourceUrl']
+
+          print(f"Verified {manifest['count']} REAL population pages: HTML canonical/meta/provenance + JSON-LD + JSON/CSV consistency")
           PY
       - name: Commit generated real evidence
         run: |
