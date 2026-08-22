@@ -1,8 +1,9 @@
 {
-  "schemaVersion": "1.1",
-  "generatedAt": "2026-08-22T21:41:18.437063+00:00",
+  "schemaVersion": "1.2",
+  "generatedAt": "2026-08-22T22:42:49.559412+00:00",
   "indicator": {
     "code": "SP.POP.TOTL",
+    "name": "Population, total",
     "referenceYear": 2023,
     "unit": "people"
   },
@@ -12,14 +13,16 @@
       "url": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip",
       "archiveFile": "WDIEXCEL.xlsx",
       "archiveSha256": "7ff8c66e5a074a4a0f923cd603ff0d5fee5b043406f90c6fc9ae34c0fb5bfd60",
-      "archiveBytes": 78775530
+      "archiveBytes": 78775530,
+      "archivedIndicatorName": "Population, total"
     },
     {
       "vintage": "2025-07-02",
       "url": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip",
       "archiveFile": "WDIEXCEL.xlsx",
       "archiveSha256": "b33fef211eeebaa43f668f822e7825ea737d7ffada1787d495ee042b4821eaf3",
-      "archiveBytes": 80658288
+      "archiveBytes": 80658288,
+      "archivedIndicatorName": "Population, total"
     }
   ],
   "count": 15,

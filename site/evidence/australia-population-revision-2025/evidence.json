@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.2",
   "status": "REAL",
   "indicator": {
     "code": "SP.POP.TOTL",
@@ -19,7 +19,8 @@
     "sourceUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_01_28.zip",
     "archiveFile": "WDIEXCEL.xlsx",
     "archiveSha256": "7ff8c66e5a074a4a0f923cd603ff0d5fee5b043406f90c6fc9ae34c0fb5bfd60",
-    "archiveBytes": 78775530
+    "archiveBytes": 78775530,
+    "archivedIndicatorName": "Population, total"
   },
   "latest": {
     "vintage": "2025-07-02",
@@ -27,13 +28,14 @@
     "sourceUrl": "https://databank.worldbank.org/data/download/Archive/WDI_excel_2025_07_02.zip",
     "archiveFile": "WDIEXCEL.xlsx",
     "archiveSha256": "b33fef211eeebaa43f668f822e7825ea737d7ffada1787d495ee042b4821eaf3",
-    "archiveBytes": 80658288
+    "archiveBytes": 80658288,
+    "archivedIndicatorName": "Population, total"
   },
   "revision": {
     "absolute": -6171.0,
     "relative": -0.00023147950174177916
   },
-  "generatedAt": "2026-08-22T21:41:18.437063+00:00",
-  "methodologyNote": "Same WDI indicator, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.",
+  "generatedAt": "2026-08-22T22:42:49.559412+00:00",
+  "methodologyNote": "Same WDI indicator code and archived indicator name, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.",
   "license": "CC BY 4.0 (World Bank WDI; preserve attribution)"
 }
