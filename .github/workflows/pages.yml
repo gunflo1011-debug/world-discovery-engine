@@ -40,6 +40,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Test and build release artifact
         run: npm run check
+      - name: Stamp release identity
+        run: printf '%s\n' "$GITHUB_SHA" > site/release-sha.txt
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
@@ -56,6 +58,21 @@ jobs:
     env:
       BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine
     steps:
+      - name: Verify exact deployed commit with retry/backoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6; do
+            live_sha="$(curl -L --silent --show-error --fail --max-time 20 "${BASE_URL}/release-sha.txt" || true)"
+            if [ "$live_sha" = "$GITHUB_SHA" ]; then
+              echo "LIVE COMMIT VERIFIED: $live_sha (attempt ${attempt})"
+              exit 0
+            fi
+            echo "Retry ${attempt}: expected $GITHUB_SHA, got ${live_sha:-network-error-or-empty}"
+            sleep $((attempt * 10))
+          done
+          echo "LIVE FAILED: deployed commit identity did not converge to $GITHUB_SHA"
+          exit 1
       - name: Verify critical live routes with retry/backoff
         shell: bash
         run: |
