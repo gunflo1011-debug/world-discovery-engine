@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "status": "CURRENT_VERIFIED",
+  "indicator": {
+    "code": "IT.NET.USER.ZS",
+    "name": "Individuals using the Internet (% of population)",
+    "unit": "% of population",
+    "definition": "Individuals who have used the Internet from any location in the last 3 months."
+  },
+  "observationYear": 2024,
+  "coverage": {
+    "type": "verified_launch_slice",
+    "countries": 12,
+    "note": "This is a curated same-year launch slice, not a complete global ranking."
+  },
+  "retrievedAt": "2026-08-22",
+  "retrievalUrl": "https://data.worldbank.org/indicator/IT.NET.USER.ZS",
+  "source": {
+    "publisher": "International Telecommunication Union (ITU)",
+    "dataset": "World Telecommunication/ICT Indicators Database",
+    "surface": "World Bank World Development Indicators (WDI)",
+    "metadataUrl": "https://databank.worldbank.org/metadataglossary/world-development-indicators/series/IT.NET.USER.ZS",
+    "license": "CC BY-4.0",
+    "attribution": "Please cite the International Telecommunication Union for third-party use of these data."
+  },
+  "records": [
+    {"country":"Australia","code":"AUS","value":96,"year":2024},
+    {"country":"Belgium","code":"BEL","value":96,"year":2024},
+    {"country":"France","code":"FRA","value":89,"year":2024},
+    {"country":"Germany","code":"DEU","value":93,"year":2024},
+    {"country":"Greece","code":"GRC","value":86,"year":2024},
+    {"country":"Hungary","code":"HUN","value":94,"year":2024},
+    {"country":"Italy","code":"ITA","value":89,"year":2024},
+    {"country":"Japan","code":"JPN","value":86,"year":2024},
+    {"country":"Poland","code":"POL","value":89,"year":2024},
+    {"country":"Portugal","code":"PRT","value":88,"year":2024},
+    {"country":"Spain","code":"ESP","value":96,"year":2024},
+    {"country":"United States","code":"USA","value":95,"year":2024}
+  ]
+}
