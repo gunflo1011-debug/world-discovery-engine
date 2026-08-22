@@ -1,0 +1,75 @@
+name: Screen real GDP WDI vintages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/screen-real-gdp.py'
+      - 'scripts/publish-gdp-screening-status.py'
+      - '.github/workflows/gdp-screening.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  screen-gdp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned XLSX reader
+        run: python -m pip install --disable-pip-version-check openpyxl==3.1.5
+      - name: Syntax-check GDP screening tools
+        run: python -m py_compile scripts/screen-real-gdp.py scripts/publish-gdp-screening-status.py
+      - name: Run live GDP archive screener and require fail-closed
+        shell: bash
+        run: |
+          set +e
+          python scripts/screen-real-gdp.py
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo 'ERROR: GDP screener unexpectedly became publishable. Human methodology review required before any promotion.'
+            exit 1
+          fi
+          test -s data/screening/real-gdp-2025.json
+          echo "GDP screener exited non-zero as required (rc=$rc). Validating exact blocker next."
+      - name: Validate exact methodology blocker and sanitize public status
+        run: python scripts/publish-gdp-screening-status.py
+      - name: Verify public status leaks no screened GDP values
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('site/indicators/real-gdp/status.json')
+          d=json.loads(p.read_text(encoding='utf-8'))
+          assert d['screeningStatus']=='BLOCKED_METHODOLOGY_COMPARABILITY'
+          assert d['publishableRevisionData'] is False
+          assert d['coverage']['requested']==15
+          assert d['coverage']['comparableRows']==15
+          assert d['coverage']['missing']==[]
+          assert d['methodologyGate']['archiveNamesConsistent'] is True
+          assert d['methodologyGate']['releaseSpecificBaseAndValuationVerified'] is False
+          assert [x['vintage'] for x in d['provenance']['releases']]==['2025-01-28','2025-07-02']
+          text=p.read_text(encoding='utf-8')
+          for forbidden in ('"rows"','"absoluteRevision"','"relativeRevision"'):
+              assert forbidden not in text, forbidden
+          print('Verified fail-closed public GDP screening status with provenance and no revision values')
+          PY
+      - name: Commit reproducible screening status
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/indicators/real-gdp/status.json
+          if git diff --cached --quiet; then
+            echo 'No GDP screening-status changes to commit.'
+          else
+            git commit -m 'Refresh fail-closed GDP screening provenance'
+            git push
+          fi
