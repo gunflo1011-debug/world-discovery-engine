@@ -1,7 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 const BASE = process.env.BASE_URL || 'https://gunflo1011-debug.github.io/world-discovery-engine';
-const routes = ['/index.html', '/evidence/germany-population-revision-2025/'];
+const routes = [
+  '/index.html',
+  '/indicators/',
+  '/indicators/real-gdp/',
+  '/evidence/germany-population-revision-2025/',
+];
 const widths = [360, 390, 430];
 
 for (const width of widths) {
@@ -29,10 +34,20 @@ for (const width of widths) {
         expect(box?.width || 0, 'navigation should have visible width').toBeGreaterThan(40);
       }
 
+      const canonical = page.locator('link[rel="canonical"]');
+      await expect(canonical, `canonical missing on ${route}`).toHaveCount(1);
+      const canonicalHref = await canonical.getAttribute('href');
+      expect(canonicalHref, `canonical must be absolute on ${route}`).toMatch(/^https:\/\//);
+
+      const title = (await page.title()).trim();
+      expect(title.length, `title too short on ${route}`).toBeGreaterThan(10);
+      const description = await page.locator('meta[name="description"]').getAttribute('content');
+      expect((description || '').trim().length, `meta description too short on ${route}`).toBeGreaterThan(40);
+
       expect(pageErrors, `uncaught page errors: ${pageErrors.join(' | ')}`).toEqual([]);
       expect(consoleErrors, `console errors: ${consoleErrors.join(' | ')}`).toEqual([]);
 
-      await page.screenshot({ path: testInfo.outputPath(`mobile-${width}.png`), fullPage: true });
+      await page.screenshot({ path: testInfo.outputPath(`mobile-${width}-${route.replace(/[^a-z0-9]+/gi, '-')}.png`), fullPage: true });
     });
   }
 }
