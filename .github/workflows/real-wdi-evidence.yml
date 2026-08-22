@@ -34,14 +34,15 @@ jobs:
 
           root=Path('site/evidence')
           manifest=json.load(open(root/'real-wdi-population-manifest.json',encoding='utf-8'))
-          assert manifest['schemaVersion']=='1.1'
+          assert manifest['schemaVersion']=='1.2'
           assert manifest['count']==15, manifest['count']
           assert len(manifest['items'])==15
-          assert manifest['indicator']=={'code':'SP.POP.TOTL','referenceYear':2023,'unit':'people'}
+          assert manifest['indicator']=={'code':'SP.POP.TOTL','name':'Population, total','referenceYear':2023,'unit':'people'}
           assert [a['vintage'] for a in manifest['archives']]==['2025-01-28','2025-07-02']
           for archive in manifest['archives']:
               assert archive['url'].startswith('https://databank.worldbank.org/data/download/Archive/WDI_excel_')
               assert archive['archiveFile'].lower().endswith('.xlsx')
+              assert archive['archivedIndicatorName']=='Population, total'
               assert re.fullmatch(r'[0-9a-f]{64}',archive['archiveSha256'])
               assert archive['archiveBytes'] > 1_000_000
           codes={item['code'] for item in manifest['items']}
@@ -55,13 +56,14 @@ jobs:
               assert csv_path.is_file(), item
 
               d=json.load(open(json_path,encoding='utf-8'))
-              assert d['schemaVersion']=='1.1'
+              assert d['schemaVersion']=='1.2'
               assert d['status']=='REAL'
               assert d['entity']['code']==item['code']
               assert d['entity']['entityType']=='country'
               assert d['first']['vintage']=='2025-01-28'
               assert d['latest']['vintage']=='2025-07-02'
               assert d['indicator']['code']=='SP.POP.TOTL'
+              assert d['indicator']['name']=='Population, total'
               assert d['referenceYear']==2023
               assert item['first']=={'vintage':d['first']['vintage'],'value':d['first']['value']}
               assert item['latest']=={'vintage':d['latest']['vintage'],'value':d['latest']['value']}
@@ -71,6 +73,7 @@ jobs:
                   assert x['archiveFile']==archive['archiveFile']
                   assert x['archiveSha256']==archive['archiveSha256']
                   assert x['archiveBytes']==archive['archiveBytes']
+                  assert x['archivedIndicatorName']==archive['archivedIndicatorName']=='Population, total'
 
               html=index.read_text(encoding='utf-8')
               canonical=f"https://gunflo1011-debug.github.io/world-discovery-engine/evidence/{item['slug']}/"
@@ -79,10 +82,11 @@ jobs:
               assert f'Country: {d["entity"]["code"]}' in html
               assert f'Reference year: {d["referenceYear"]}' in html
               assert f'Methodology gate: {d["indicator"]["methodologyVersion"]}' in html
+              assert 'Archived series name verified in both releases: Population, total' in html
               assert './evidence.json' in html and './evidence.csv' in html
               assert d['first']['archiveSha256'][:12]+'…' in html
               assert d['latest']['archiveSha256'][:12]+'…' in html
-              assert 'exact hashes and archive members are included in JSON/CSV' in html
+              assert 'exact hashes, archived series names and archive members are included in JSON/CSV' in html
 
               unchanged=d['revision']['absolute']==0
               if unchanged:
@@ -106,6 +110,7 @@ jobs:
               assert ld['url']==canonical
               assert ld['identifier']==f"SP.POP.TOTL-{d['entity']['code']}-2023-2025-01-28-2025-07-02"
               assert ld['spatialCoverage']['name']==d['entity']['name']
+              assert ld['variableMeasured']['name']==d['indicator']['name']=='Population, total'
               assert ld['distribution'][0]['contentUrl']==canonical+'evidence.json'
               assert ld['distribution'][1]['contentUrl']==canonical+'evidence.csv'
               assert ld['isBasedOn']==[d['first']['sourceUrl'],d['latest']['sourceUrl']]
@@ -113,11 +118,12 @@ jobs:
               with open(csv_path,newline='',encoding='utf-8') as f:
                   rows=list(csv.DictReader(f))
               assert len(rows)==2
-              assert set(rows[0])=={'entity_code','entity','indicator_code','reference_year','vintage','value','unit','source_url','archive_file','archive_sha256','archive_bytes'}
+              assert set(rows[0])=={'entity_code','entity','indicator_code','archived_indicator_name','reference_year','vintage','value','unit','source_url','archive_file','archive_sha256','archive_bytes'}
               for row,key in zip(rows,('first','latest')):
                   assert row['entity_code']==d['entity']['code']
                   assert row['entity']==d['entity']['name']
                   assert row['indicator_code']==d['indicator']['code']
+                  assert row['archived_indicator_name']==d[key]['archivedIndicatorName']=='Population, total'
                   assert int(row['reference_year'])==d['referenceYear']
                   assert row['vintage']==d[key]['vintage']
                   assert float(row['value'])==d[key]['value']
@@ -127,7 +133,7 @@ jobs:
                   assert row['archive_sha256']==d[key]['archiveSha256']
                   assert int(row['archive_bytes'])==d[key]['archiveBytes']
 
-          print(f"Verified {manifest['count']} REAL population pages: exact archive provenance + HTML/JSON/CSV consistency")
+          print(f"Verified {manifest['count']} REAL population pages: archived series identity + exact archive provenance + HTML/JSON/CSV consistency")
           PY
       - name: Commit generated real evidence
         run: |
