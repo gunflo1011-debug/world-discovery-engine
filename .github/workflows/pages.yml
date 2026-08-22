@@ -107,7 +107,7 @@ jobs:
               exit 1
             fi
           done
-      - name: Verify live machine discovery contract
+      - name: Verify every live machine discovery distribution
         shell: bash
         run: |
           set -euo pipefail
@@ -118,28 +118,46 @@ jobs:
           if (index.schemaVersion !== '1.2') throw new Error(`Expected evidence index schema 1.2, got ${index.schemaVersion}`);
           const records = index.records || index.items || index.evidence || [];
           if (!Array.isArray(records) || records.length === 0) throw new Error('Evidence index has no records');
+          const paths = [];
+          for (const record of records) {
+            if (record?.status !== 'REAL' || record?.discoveryReady !== true) {
+              throw new Error(`Non-discovery-ready record emitted: ${record?.slug || record?.url || 'unknown'}`);
+            }
+            const jsonPath = record?.distributions?.json || record?.json || record?.jsonPath || record?.evidenceJson;
+            const csvPath = record?.distributions?.csv || record?.csv || record?.csvPath || record?.evidenceCsv;
+            if (!jsonPath || !csvPath) throw new Error(`Missing JSON/CSV distribution: ${record?.slug || record?.url || 'unknown'}`);
+            paths.push(`json\t${jsonPath}`, `csv\t${csvPath}`);
+          }
           const germany = records.find((record) =>
-            record?.status === 'REAL' &&
-            record?.discoveryReady === true &&
             (record?.indicator?.code === 'SP.POP.TOTL' || record?.indicatorCode === 'SP.POP.TOTL') &&
             (record?.entity?.code === 'DEU' || record?.entityCode === 'DEU')
           );
           if (!germany) throw new Error('Missing discovery-ready REAL Germany population record');
-          const jsonPath = germany?.distributions?.json || germany?.json || germany?.jsonPath || germany?.evidenceJson;
-          const csvPath = germany?.distributions?.csv || germany?.csv || germany?.csvPath || germany?.evidenceCsv;
-          if (!jsonPath || !csvPath) throw new Error('Germany record does not advertise JSON and CSV distributions');
-          fs.writeFileSync('/tmp/machine-paths.txt', `${jsonPath}\n${csvPath}\n`);
+          fs.writeFileSync('/tmp/machine-paths.tsv', `${paths.join('\n')}\n`);
+          console.log(`Will verify ${records.length} evidence records / ${paths.length} machine distributions`);
           NODE
-          while IFS= read -r path; do
+          while IFS=$'\t' read -r kind path; do
             case "$path" in
               http://*|https://*) url="$path" ;;
               /*) url="${BASE_URL}${path}" ;;
               *) url="${BASE_URL}/${path}" ;;
             esac
-            curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 "$url" -o /tmp/machine-body
-            test -s /tmp/machine-body
-            echo "MACHINE DISCOVERY OK $url"
-          done < /tmp/machine-paths.txt
+            headers="$(mktemp)"
+            body="$(mktemp)"
+            curl -L --fail --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 -D "$headers" "$url" -o "$body"
+            test -s "$body"
+            if [ "$kind" = "json" ]; then
+              node -e 'const fs=require("fs"); const p=process.argv[1]; const x=JSON.parse(fs.readFileSync(p,"utf8")); if(!x || typeof x!=="object") process.exit(1)' "$body"
+            else
+              first_line="$(head -n 1 "$body" | tr -d '\r')"
+              case "$first_line" in
+                *,*) ;;
+                *) echo "CSV SHAPE FAILED $url: no comma-delimited header"; exit 1 ;;
+              esac
+            fi
+            echo "MACHINE DISCOVERY OK [$kind] $url"
+            rm -f "$headers" "$body"
+          done < /tmp/machine-paths.tsv
       - name: Verify discovery metadata on live homepage
         shell: bash
         run: |
