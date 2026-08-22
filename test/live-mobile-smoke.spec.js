@@ -44,6 +44,29 @@ for (const width of widths) {
       const description = await page.locator('meta[name="description"]').getAttribute('content');
       expect((description || '').trim().length, `meta description too short on ${route}`).toBeGreaterThan(40);
 
+      // Accessibility smoke: keyboard users must be able to reach a visible,
+      // visibly-focused interactive element without relying on pointer input.
+      await page.locator('body').click({ position: { x: 1, y: 1 } });
+      await page.keyboard.press('Tab');
+      const focusState = await page.evaluate(() => {
+        const el = document.activeElement;
+        if (!el || el === document.body || el === document.documentElement) return null;
+        const style = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        return {
+          tag: el.tagName,
+          visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none',
+          outlineStyle: style.outlineStyle,
+          outlineWidth: style.outlineWidth,
+          boxShadow: style.boxShadow,
+        };
+      });
+      expect(focusState, `Tab did not reach an interactive element on ${route}`).not.toBeNull();
+      expect(focusState?.visible, `focused element is not visible on ${route}: ${JSON.stringify(focusState)}`).toBeTruthy();
+      const hasOutline = focusState?.outlineStyle !== 'none' && focusState?.outlineWidth !== '0px';
+      const hasFocusShadow = Boolean(focusState?.boxShadow && focusState.boxShadow !== 'none');
+      expect(hasOutline || hasFocusShadow, `no visible keyboard focus indicator on ${route}: ${JSON.stringify(focusState)}`).toBeTruthy();
+
       expect(pageErrors, `uncaught page errors: ${pageErrors.join(' | ')}`).toEqual([]);
       expect(consoleErrors, `console errors: ${consoleErrors.join(' | ')}`).toEqual([]);
 
