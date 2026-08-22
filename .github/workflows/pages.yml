@@ -145,10 +145,12 @@ jobs:
           }
           if (!germany) throw new Error('Germany population sentinel missing');
           NODE
+      - name: Install Playwright test package
+        run: npm install --no-save --package-lock=false @playwright/test@1.55.0
       - name: Install Playwright Chromium
-        run: npx --yes -p @playwright/test@1.55.0 playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium
       - name: Run live mobile browser smoke
-        run: npx --yes -p @playwright/test@1.55.0 playwright test test/live-mobile-smoke.spec.js --reporter=line
+        run: npx playwright test test/live-mobile-smoke.spec.js --reporter=line
       - name: Upload browser-smoke evidence on failure
         if: failure()
         uses: actions/upload-artifact@v4
