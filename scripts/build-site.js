@@ -179,6 +179,7 @@ export async function buildSite() {
     '/status/',
     '/evidence/',
     '/indicators/',
+    '/indicators/internet-use/',
     '/indicators/real-gdp/',
     '/leaderboard/'
   ]);
