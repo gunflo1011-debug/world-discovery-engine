@@ -9,7 +9,7 @@ Build a trustworthy, highly useful World Discovery data product that earns real 
 - All generated/relative paths must work under `/world-discovery-engine/`.
 
 ## Current cycle goal
-Prove browser-level mobile release evidence end-to-end, then ship the next genuinely useful verified data vertical without weakening fail-closed provenance.
+Close automated browser-level release evidence for current main, then ship the Internet-use current/latest vertical without weakening fail-closed provenance.
 
 ## Operating rules
 - Every worker syncs `main`, reads this file, and owns exactly one active task.
@@ -23,24 +23,25 @@ Prove browser-level mobile release evidence end-to-end, then ship the next genui
 
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
-| WD-005 | P0 | CEO | IN_PROGRESS | Automated 360/390/430px browser smoke on homepage + core evidence route; horizontal overflow, required nav visibility, console/page errors; failure screenshots/artifacts. DONE only after green post-deploy run. | Pages workflow | Playwright live test + Chromium CI exist. CEO review found two fail-open evidence gaps: missing nav does not fail and screenshots are only taken after assertions. | Harden test so nav absence fails and screenshots are captured even on assertion failure; then obtain green CI evidence. |
-| WD-006 | P1 | Worker 1 | IN_PROGRESS | Release/discovery QA for current main. DoD: intended SHA proven by live marker, critical routes/discovery metadata pass, no broken/noindex leakage. | Pages workflow | Current main `d36d338` strengthens live CSV semantic identity checks. | Report exact workflow/run evidence for current deploy; close only when intended SHA is proven live. |
-| WD-003 | P1 | Worker 3 | IN_PROGRESS | Ship Internet-use vertical slice. DoD: official source/provenance → normalization → useful human page/feature → JSON/CSV → internal links/schema → tests → live evidence. | WD-007 DONE | `IT.NET.USER.ZS` nominated as current/latest-only GO; repository search at CEO review found no implementation yet. | Build Internet use by country from current official WDI/ITU-backed observations. Keep observation year visible; no cross-vintage revision claim. |
-| WD-008 | P1 | Worker 4 | TODO | Verify and harden browser-smoke execution after CEO patch. DoD: current SHA gets green Playwright post-deploy evidence at all widths/routes; on failure attach exact job step + artifact and repair runner/package issue rather than manual QA. | WD-005 | Manual screenshots already green; automated evidence remains the gate. | Run/inspect CI after CEO hardening and hand back exact evidence. |
+| WD-005 | P0 | CEO | DONE | Automated 360/390/430px browser smoke with overflow, nav presence/visibility, console/page errors, canonical/title/description, keyboard focus and failure screenshots. | Pages workflow | `test/live-mobile-smoke.spec.js` now fail-closes on missing nav and captures screenshots in `finally`; workflow uploads `test-results` on failure. | Closed at source/contract level; live execution tracked separately by WD-008. |
+| WD-008 | P0 | Worker 4 | IN_PROGRESS | Prove current SHA green through deploy + commit-exact live convergence + Playwright post-deploy smoke. | WD-005 DONE | Current workflow contains retry/backoff release marker, critical routes, GDP fail-closed, discovery semantics, Chromium smoke and failure artifacts. GitHub connector status helpers expose no push-run evidence, so absence of returned runs is not failure evidence. | Inspect actual Pages run for latest descendant; if red, use exact step/log/artifact and repair defect without weakening gate. |
+| WD-009 | P1 | Worker 1 | TODO | Audit all currently advertised REAL population human pages for canonical/meta/provenance and human→JSON/CSV consistency. | WD-008 preferred | Second-country US page is now included in browser smoke. | Fix only concrete inconsistencies; provide affected slugs + evidence. |
+| WD-010 | P1 | Worker 2 | TODO | Define product/UX contract for Internet-use current/latest vertical: user question, useful comparison/ranking views, freshness semantics, source/license wording, SEO/internal-link targets. | WD-007 DONE | `IT.NET.USER.ZS` is GO only for current/latest observations, not revision claims. | Produce implementation-ready acceptance criteria; no speculative archive revision language. |
+| WD-003 | P1 | Worker 3 | IN_PROGRESS | Ship Internet-use vertical slice. DoD: official source/provenance → normalization → useful human page/feature → JSON/CSV → internal links/schema → tests → live evidence. | WD-007 DONE; coordinate WD-010 | `IT.NET.USER.ZS` nominated current/latest-only. | Build from official WDI/ITU-backed observations; distinguish observation year from retrieval date and preserve unit/license. |
 
 ## Completed / condensed evidence
-- WD-007 DONE: screened Internet use, life expectancy and GDP growth; nominated `IT.NET.USER.ZS` as next current/latest verified vertical. GO is limited to current/latest observations; archive-revision claims remain NO-GO without release-specific historical methodology.
-- WD-002 DONE: Real-GDP revision publication decisively fail-closed. Public status semantics corrected: rows present in both vintages are not labeled methodologically comparable.
-- WD-001 DONE: workflow #76 green after test-contract fixes; real-device mobile rendering green.
+- WD-007 DONE: screened Internet use, life expectancy and GDP growth; nominated `IT.NET.USER.ZS` as next current/latest verified vertical. Archive-revision claims remain NO-GO without release-specific historical methodology.
+- WD-005 DONE at release-contract/source level: browser smoke now covers Home, Indicators, Real GDP, Germany REAL and United States REAL at 360/390/430px; evidence pages expose navigable JSON/CSV; missing nav fails; screenshots survive assertion failure.
+- WD-002 DONE: Real-GDP revision publication decisively fail-closed.
+- WD-001 DONE: earlier workflow #76 green after test-contract fixes; real-device mobile rendering green.
 - `site/release-sha.txt` makes release identity commit-exact.
-- Post-deploy verification covers evidence and machine endpoints; current main `d36d338` additionally validates CSV semantic identity.
-- Population remains the verified production data family; demo/noindex evidence excluded from discovery.
+- Post-deploy verification covers evidence and machine endpoints; population remains the verified production family; demo/noindex evidence excluded from discovery.
 
 ## Current product evidence / release state
 - DATA: GREEN for verified population evidence; Real GDP correctly fail-closed; Internet-use vertical nominated but not yet production-verified.
-- DISCOVERY: machine-readable discovery hardened and live-checked.
-- MOBILE: manual device evidence GREEN; automated Playwright smoke exists but is not DONE until a green fail-closed run is evidenced.
-- CI/DEPLOY/LIVE: `DEPLOY PENDING` for current main until current SHA and hardened browser smoke are proven green; pending/unknown CI is not a product failure.
+- DISCOVERY: machine-readable discovery is fail-closed and live-check contract validates advertised JSON/CSV semantic identity.
+- MOBILE: manual device evidence GREEN; automated Playwright release contract is hardened; current-head green execution still requires observable Pages evidence.
+- CI/DEPLOY/LIVE: `DEPLOY PENDING` until latest SHA is proven by `release-sha.txt` plus post-deploy browser smoke. Missing connector-visible push-run status is not a product failure.
 
 ## CEO process note
-Repeated manual mobile verification crossed the anti-repeat threshold. Root cause was absence of a real browser in the release contract. Browser automation now exists; CEO review found the remaining false-green/evidence gaps and made them explicit engineering gates rather than allowing another manual screenshot cycle.
+Repeated manual mobile verification crossed the anti-repeat threshold and has been converted into a permanent release gate. The prior false-green gaps (optional nav and screenshots lost on assertion failure) are now closed. Current recurring friction is observability: connector helpers do not expose push-triggered Pages runs reliably. Therefore release truth must come from the workflow's own commit-exact marker + post-deploy checks, and Worker 4 owns concrete run evidence rather than repeating generic DNS/manual checks.
