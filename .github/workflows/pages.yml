@@ -211,8 +211,33 @@ jobs:
                 await page.close();
               }
             }
+            for(const width of [360,390,430]){
+              const page=await browser.newPage({viewport:{width,height:900}});
+              const url=`${base}/indicators/internet-use/?q=Germany&region=ecs&compare=DEU,FRA`;
+              const response=await page.goto(url,{waitUntil:'networkidle',timeout:30000});
+              if(!response?.ok()) throw new Error(`shareable discovery HTTP failure ${width}px ${url}`);
+              const readState=()=>page.evaluate(()=>({
+                query:document.querySelector('#country-search')?.value,
+                region:document.querySelector('#region-filter')?.value,
+                compareA:document.querySelector('#compare-a')?.value,
+                compareB:document.querySelector('#compare-b')?.value,
+                comparison:document.querySelector('#compare-result')?.textContent?.trim(),
+                visibleCodes:[...document.querySelectorAll('#internet-table tbody tr')].filter(row=>!row.hidden).map(row=>row.dataset.code),
+                shareHref:document.querySelector('#share-view')?.href,
+                canonical:document.querySelector('link[rel="canonical"]')?.href,
+                overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth
+              }));
+              const assertState=state=>{
+                const shared=new URL(state.shareHref);
+                if(state.query!=='Germany'||state.region!=='ecs'||state.compareA!=='DEU'||state.compareB!=='FRA'||state.visibleCodes.length!==1||state.visibleCodes[0]!=='deu'||!state.comparison?.includes('Germany')||!state.comparison?.includes('France')||shared.searchParams.get('q')!=='Germany'||shared.searchParams.get('region')!=='ecs'||shared.searchParams.get('compare')!=='DEU,FRA'||state.canonical!==`${base}/indicators/internet-use/`||state.overflow>1) throw new Error(`shareable discovery contract failure ${width}px: ${JSON.stringify(state)}`);
+              };
+              assertState(await readState());
+              await page.reload({waitUntil:'networkidle'});
+              assertState(await readState());
+              await page.close();
+            }
           } finally { await browser.close(); }
-          console.log('REGIONAL MOBILE VERIFIED: 7 routes at 360/390/430 px');
+          console.log('REGIONAL MOBILE + SHAREABLE DISCOVERY VERIFIED: 7 regional routes and query restoration at 360/390/430 px');
           NODE
       - name: Upload browser-smoke evidence on failure
         if: failure()
