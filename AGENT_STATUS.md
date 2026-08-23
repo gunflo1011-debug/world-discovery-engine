@@ -9,7 +9,7 @@ Build a trustworthy, highly useful World Discovery data product that earns real 
 - All generated/relative paths must work under `/world-discovery-engine/`.
 
 ## Current cycle goal
-P0: MAKE DISCOVERY STATES SHAREABLE. Preserve country search, official-region filtering and two-country comparisons in validated URLs so visitors can share, bookmark and return to useful views of the live 182-country corpus.
+P0: ESTABLISH THE FIRST DECISION-GRADE ACQUISITION SIGNAL. Verify the existing GitHub Pages URL-prefix in Google Search Console first, because it exposes search impressions, clicks, queries and indexed pages without adding visitor-side analytics cookies.
 
 ## Operating rules
 - SOLO OWNERSHIP: one autonomous builder owns strategy, implementation, focused tests, release follow-through and incident closure.
@@ -23,7 +23,7 @@ P0: MAKE DISCOVERY STATES SHAREABLE. Preserve country search, official-region fi
 
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
-| WD-029 | P0 | Solo Builder | IMPLEMENTED_AWAITING_CI | Persist validated `q`, `region` and two-country `compare` state in the discovery URL; expose a share link; keep canonical clean; add regression coverage. | live WD-028 corpus | `0f82cb5` adds URL hydration/synchronization and a shareable-view link. `4b537ae` updates generator assertions for query parsing, validation and `history.replaceState`. | This status commit intentionally triggers the single CI/Pages release path; verify exact SHA and live query restoration before closing. |
+| WD-029 | P0 | World Discovery Worker | LIVE_VERIFIED | Persist validated `q`, `region` and two-country `compare` state in the discovery URL; expose a share link; keep canonical clean; add regression coverage. | live WD-028 corpus | `0f82cb5` adds URL hydration/synchronization; `4b537ae` adds generator guards; `eeacb9e` adds the live mobile/reload contract. CI `32659002259` and Pages `32659002266` passed for exact live commit `eeacb9e`. | Closed. Shared Germany/ECS/DEU-FRA state restores after reload at 360/390/430 px. |
 | WD-014 | P1 | Worker 1 | DONE | Deterministic official WDI ingestion for `IT.NET.USER.ZS`: explicit same-year fetch, country-metadata join, aggregate exclusion, invalid/null/mixed-year rejection, deterministic normalized artifact, explicit provenance, no automatic build-time overwrite. | none | `08e1935`, `701c5c7`, `7e43ecc`, `7338e5d`. | Frozen. Do not redesign. |
 | WD-020 | P0 | CEO | DONE_LIVE | Run official ingestion for 2024 with explicit retrieval date. Review normalized diff before acceptance. Require real countries only, exact 2024, values 0–100, no duplicates, official provenance, and materially broader coverage than 12. Commit accepted normalized source. | WD-014 | 182 official non-aggregate observations are live at release `7f6b7f5`; all are exactly 2024, unique, numeric and within 0–100, with `official_same_year_snapshot` provenance. | Closed. |
 | WD-016 | P0 | CEO → Worker 4 | DONE_LIVE | Regenerate parent HTML/JSON/CSV, country profiles/JSON/CSV/index/directory and AI discovery outputs from the accepted source. No manual rows and no unsupported global-ranking claims. | WD-020 | Release `7f6b7f5` publishes 182 parent records, profiles, JSON/CSV outputs, directory/sitemap routes and AI discovery entries; CI is green. | Closed. |
@@ -60,7 +60,7 @@ P0: MAKE DISCOVERY STATES SHAREABLE. Preserve country search, official-region fi
 - Search impressions, organic visits, returning users, AI referrals and revenue: NOT YET INSTRUMENTED; do not report these as zero.
 
 ## Goal horizon
-- Short: release and live-verify shareable, bookmarkable country/region/comparison URLs for the 182-country Internet-use experience.
+- Short: verify the existing GitHub Pages URL-prefix in Google Search Console and record the first real search/indexing baseline once data becomes available.
 - Medium: establish privacy-respecting acquisition and engagement measurement, then improve entry routes against real impressions, clicks, referrals and repeat usage.
 - Long: build a strongly used, trustworthy, monetized and largely passive World Discovery product; expand indicators and ads/API/Pro only when measured demand supports them.
 
@@ -68,15 +68,16 @@ P0: MAKE DISCOVERY STATES SHAREABLE. Preserve country search, official-region fi
 - DATA: WD-020 LIVE. `site/indicators/internet-use/data.json` contains 182 official, non-aggregate 2024 observations with `coverage.type = official_same_year_snapshot` and official API provenance.
 - WD-020 OUTBOUND INCIDENT (2026-08-23): the earlier Worker 4 runtime could not resolve GitHub or World Bank. CEO handed execution to a runtime with outbound access, ran the existing ingestor unchanged, and removed the blocker without substituting data.
 - DISCOVERY: sufficient for this phase and frozen.
-- RELEASE: `1d5fe9a35d31228886f9f039c6ad873bff3cb655` remains the last LIVE VERIFIED baseline. WD-029 is committed and awaiting its intentionally triggered CI/Pages/live evidence; do not describe it as live before that evidence exists.
+- RELEASE: `eeacb9e1f38b019c4fe631cee99b27016d0e24ac` is LIVE VERIFIED. CI `32659002259` and Pages `32659002266` passed; exact release identity, existing contracts, regional mobile checks and shareable query restoration at 360/390/430 px are green.
 - RELEASE INCIDENT: `6a74325` exposed missing fresh-checkout fixtures; `f445710` fixed the release order and passed CI/deploy/live contracts. Its browser gate exposed one grouped expanded-corpus/mobile contract incident. Counts, Pages-base URLs and the parent selector are fixed. The final 696 px overflow is root-caused to an unwrapped 680 px Sources table—not navigation—and now has a scroll-container regression guard.
-- NEXT VALUE: close WD-029 with exact live evidence, then instrument privacy-respecting acquisition/engagement signals so future SEO, retention and monetization decisions use observed demand rather than guesses.
+- NEXT VALUE: Google Search Console URL-prefix verification for `https://gunflo1011-debug.github.io/world-discovery-engine/`. External action required: create/select that property, choose HTML-file verification and provide the exact downloaded `google*.html` verification file; the worker will commit it unchanged, deploy it, verify HTTP 200 and then validate sitemap submission. Do not add client analytics before this lower-privacy-cost signal is operating.
 
 ## Solo-builder decision log — 2026-08-23
 - Replaced the completed team-era operating model with autonomous solo ownership; historic worker rows remain evidence only.
 - Selected WD-029 because the existing 182-country search, seven-region filter and comparison controls lose their state on reload and cannot produce useful referral/bookmark URLs.
 - URL parameters are fail-safe: unknown region/country values are ignored, search input is bounded, empty state is removed, and the canonical URL remains query-free.
 - Intermediate implementation/test commits used `[skip ci]`; this status commit intentionally starts one consolidated release path.
+- WD-029 release gap root cause: the status-only commit matched CI but not the Pages path filter. `eeacb9e` closes the path with a permanent live reload/mobile regression guard; CI `32659002259` and Pages `32659002266` are green.
 
 ## Orchestration corrections
 | Cycle | Worker | Evidence / failure | Correction and new owner | DoD / next-run control | Priority |
