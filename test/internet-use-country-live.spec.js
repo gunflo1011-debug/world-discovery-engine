@@ -44,7 +44,7 @@ test.describe('internet-use country profile live smoke', () => {
       await expect(page.getByText(/not to a complete worldwide ranking/i)).toBeVisible();
       await expect(page.locator('a[href="../../data.json"]')).toBeVisible();
       await expect(page.locator('a[href="../../data.csv"]')).toBeVisible();
-      await expect(page.locator('a[href="../../"]')).toBeVisible();
+      await expect(page.getByRole('link', { name: /Back to Internet use by country/i })).toBeVisible();
 
       const structured = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
       expect(structured['@type']).toBe('WebPage');

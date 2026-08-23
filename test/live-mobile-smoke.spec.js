@@ -7,7 +7,7 @@ const routes = [
   { path: '/indicators/real-gdp/', gdpScreening: true },
   {
     path: '/indicators/internet-use/',
-    currentDataset: { indicatorCode: 'IT.NET.USER.ZS', observationYear: 2024, recordCount: 12 },
+    currentDataset: { indicatorCode: 'IT.NET.USER.ZS', observationYear: 2024 },
   },
   {
     path: '/evidence/germany-population-revision-2025/',
@@ -149,12 +149,13 @@ test.describe('mobile smoke tests', () => {
             expect(payload.indicator?.code, `JSON indicator mismatch for ${route}`).toBe(routeConfig.currentDataset.indicatorCode);
             expect(payload.indicator?.unit, `JSON unit mismatch for ${route}`).toBe('% of population');
             expect(payload.observationYear, `JSON observation year mismatch for ${route}`).toBe(routeConfig.currentDataset.observationYear);
-            expect(payload.records, `JSON records missing for ${route}`).toHaveLength(routeConfig.currentDataset.recordCount);
+            expect(payload.records.length, `JSON coverage is not materially broader for ${route}`).toBeGreaterThan(12);
+            expect(payload.records.length, `JSON coverage count mismatch for ${route}`).toBe(payload.coverage?.countries);
             expect(payload.records.every(record => record.year === routeConfig.currentDataset.observationYear), `mixed observation years in ${route}`).toBeTruthy();
 
             const csv = (await csvResponse.text()).trim();
             const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
-            expect(lines.length - 1, `CSV record count mismatch for ${route}`).toBe(routeConfig.currentDataset.recordCount);
+            expect(lines.length - 1, `CSV record count mismatch for ${route}`).toBe(payload.records.length);
             const header = lines[0];
             const codeIx = header.indexOf('country_code');
             const indicatorIx = header.indexOf('indicator_code');

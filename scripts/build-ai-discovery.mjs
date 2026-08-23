@@ -4,7 +4,7 @@ const siteRoot = new URL('../site/', import.meta.url);
 const baseUrl = 'https://gunflo1011-debug.github.io/world-discovery-engine';
 
 function absolute(path) {
-  return new URL(path, `${baseUrl}/`).href;
+  return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 function requireObject(value, label) {
