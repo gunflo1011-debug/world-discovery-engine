@@ -129,7 +129,7 @@ jobs:
             const html=await get(country.url);
             const payload=await get(country.machineDataUrl,'json');
             const csvText=await get(country.machineCsvUrl);
-            if(payload.schemaVersion!=='1.1'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.entity?.code!==country.code||payload.observation?.year!==2024||payload.observation?.value!==country.value||payload.region?.code!==country.region?.code||payload.region?.name!==country.region?.name) throw new Error(`country JSON identity mismatch ${country.code}`);
+            if(payload.schemaVersion!=='1.1'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.entity?.code!==country.code||payload.observation?.year!==2024||payload.observation?.value!==country.value||payload.entity?.region?.code!==country.region?.code||payload.entity?.region?.name!==country.region?.name) throw new Error(`country JSON identity mismatch ${country.code}`);
             if(payload.scope?.completeGlobalRanking!==false||payload.scope?.historicalRevisionProduct!==false||payload.humanUrl!==human) throw new Error(`country JSON scope mismatch ${country.code}`);
             if(!html.includes('./data.json')||!html.includes('./data.csv')) throw new Error(`country machine links missing ${country.code}`);
             const lines=csvText.trim().split(/\r?\n/).map(csv); const cols=lines[0]; const row=lines[1];
