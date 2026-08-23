@@ -9,9 +9,9 @@ const BASE_URL = "https://gunflo1011-debug.github.io/world-discovery-engine/";
 const SITE_ROOT = new URL("../site/", import.meta.url);
 
 function canonicalHref(html) {
-  const tags = [...html.matchAll(/<link\b[^>]*\brel=["']canonical["'][^>]*>/gi)].map(
-    (match) => match[0],
-  );
+  const tags = [...html.matchAll(/<link\b[^>]*>/gi)]
+    .map((match) => match[0])
+    .filter((tag) => /\brel=["']canonical["']/i.test(tag));
   assert.equal(tags.length, 1, "each sitemap page must have exactly one canonical link");
   const href = tags[0].match(/\bhref=["']([^"']+)["']/i)?.[1];
   assert.ok(href, "canonical link must include href");
