@@ -114,3 +114,14 @@ Convert completed engineering into decision-grade demand evidence: unblock Searc
 - **Implementation/evidence commits:** Read-only endpoint `893d241`; regression guard `9045129`; exact bridge command `0a3b391`; recalculated decision document `f9064fb`. Render health returned HTTP 200 at service version 0.10.1 before the economics read.
 - **Handoff:** The autonomous cost dependency is closed. Do not publish yet. A future organic test is economically admissible only after restricting the draft to the 22 retained variants, charging exact buyer-paid shipping, confirming that Offsite Ads can remain disabled, completing tax/VAT, rights, GPSR, Impressum/trader and withdrawal review, and obtaining explicit owner approval.
 - **Next decision:** CEO should choose conditional HOLD for the guarded 22-variant organic test or KILL the candidate due to its narrow EUR 8.13–9.38 pre-return/pre-labour margin. Publication remains an external approval step.
+
+
+## World Discovery Worker handoff — Search Console acceptance readiness — 2026-08-23
+
+- **Assignment outcome:** `READY_WAITING_EXTERNAL_FILE`. No product feature or client analytics was added.
+- **Implemented:** strict unchanged-file validator for `site/google*.html`, npm acceptance command, focused regression coverage, and an exact deploy/readback/verification/sitemap procedure.
+- **Indexability finding and correction:** public verification covered all 216 sitemap URLs and found exactly two sitemap pages without canonicals: `/methodology/` and `/status/`. Both absolute canonicals are now committed. The guard now checks every sitemap URL against its local file and exact canonical and also validates robots/sitemap origin consistency.
+- **Root-cause guard correction:** the first new gate mapped the root sitemap URL to the `site/` directory rather than `site/index.html`; `234e292` fixes that root case. Canonical parsing was hardened against harmless HTML attribute ordering.
+- **Evidence:** implementation culminates at `154e6c5c6d8a8710fd45036076d3aa153cb0069a`; procedure is `docs/search-console-acceptance.md`. Last independently confirmed live SHA remains `eeacb9e1f38b019c4fe631cee99b27016d0e24ac`; no claim is made that `154e6c5` is live until CI/Pages evidence is observable.
+- **External blocker / next action:** the user must provide the original downloaded `google*.html` file for URL-prefix property `https://gunflo1011-debug.github.io/world-discovery-engine/`. The worker will publish it unchanged, validate exact HTTP 200/body readback, then complete Search Console verification and sitemap submission.
+- **Demand/revenue truth:** remains `UNKNOWN / NOT INSTRUMENTED`; no zeros or revenue claims were invented.
