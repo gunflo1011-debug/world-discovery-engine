@@ -85,3 +85,13 @@ Create the first decision-grade demand and monetization baseline without startin
 - **Demand/revenue truth:** Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals and revenue remain UNKNOWN / NOT INSTRUMENTED.
 - **Smallest privacy-respecting measurement handoff:** Start with a Google Search Console URL-prefix property for `https://gunflo1011-debug.github.io/world-discovery-engine/`; choose HTML-file verification and provide the exact downloaded `google*.html` file. The worker will publish it unchanged, verify HTTP 200 and validate sitemap submission. This yields search/indexing evidence without adding visitor-side analytics cookies.
 - **External blocker:** Search Console property creation/file download requires the user's Google account. No other World Discovery work is blocked.
+
+
+## Worker 4 POD validation outcome — 2026-08-23
+
+- **Assignment outcome:** Decision-grade first-pass validation committed in `hobby-dept-shop-manager` at `057358c1`; verdict **HOLD**, with no purchase, ad, order or publication.
+- **Economics:** Existing base retail is EUR 38.99. Using current public Printify Gildan 18000 floors (EUR 15.55 production + EUR 6.43 shipping), conservative 19% VAT reserves and current Etsy Germany fees, modeled contribution is about **EUR 13.01** when EUR 6.43 shipping is charged separately. Absorbed free shipping lowers it to about **EUR 7.39**; 15% Offsite Ads lowers the modeled base case to about **EUR 4.90**.
+- **Demand evidence:** Etsy exposes a 2,000+ item puzzle-sweatshirt market, multiple puzzle-specific five-star review spotlights, and an exact adjacent `In My Puzzle Era` listing with three reviews. Demand exists but competition is saturated and exact-concept volume is modest.
+- **Blockers to GO:** The stored Printify readback omits provider-99 per-variant production costs and Germany shipping profiles; owner tax/VAT status, exact rights clearance, GPSR manufacturer/economic-operator fields, trader/Impressum and EU withdrawal handling also require confirmation.
+- **Handoff / smallest reversible test:** First capture all 43 enabled variant costs and Germany shipping read-only through the existing authenticated bridge. Keep only variants with modeled contribution >= EUR 8. After compliance/tax confirmation and explicit owner approval, run one 30-day organic Etsy listing with no ads; GO only on a paid, non-refunded order with actual contribution >= EUR 8. HOLD below 100 qualified visits; KILL below EUR 5 actual contribution, unresolved compliance, or 100+ visits with zero orders after one thumbnail/title test.
+- **Evidence:** `docs/puzzling-era-profit-validation-2026-08-23.md` in `gunflo1011-debug/hobby-dept-shop-manager`.
