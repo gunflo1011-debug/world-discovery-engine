@@ -108,9 +108,17 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   assert.match(html, /id="compare-result" class="internet-compare-result" aria-live="polite" hidden/);
   assert.match(html, /tools\.hidden=false/);
   assert.match(html, /row\.hidden=!match/);
-  assert.match(html, /region\.addEventListener\('change',applyFilter\)/);
+  assert.match(html, /region\.addEventListener\('change',refresh\)/);
   assert.match(html, /const matchesRegion=!regionCode\|\|row\.dataset\.region===regionCode/);
   assert.match(html, /region\.value=''/);
+  assert.match(html, /id="share-view" href="\.\/">Share this filtered view/);
+  assert.match(html, /const params=new URLSearchParams\(location\.search\)/);
+  assert.match(html, /params\.get\('q'\)/);
+  assert.match(html, /params\.get\('region'\)/);
+  assert.match(html, /params\.get\('compare'\)/);
+  assert.match(html, /url\.searchParams\.set\('compare',a\.value\+'[,]'\+b\.value\)/);
+  assert.match(html, /history\.replaceState\(null,'',relative\)/);
+  assert.match(html, /if\(byCode\.has\(\(initialCompare\[0\]\|\|''\)\.toLowerCase\(\)\)\)a\.value=initialCompare\[0\]/);
   assert.match(html, new RegExp(`Within this verified ${data.observationYear} subset`));
   assert.match(html, /percentage points/);
   assert.doesNotMatch(html, /current\/latest vertical/i);
