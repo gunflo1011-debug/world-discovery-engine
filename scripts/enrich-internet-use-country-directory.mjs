@@ -43,9 +43,16 @@ const itemList = {
 const directory = `<section class="section section-soft" id="country-profiles"><div class="wrap"><h2>Browse country profiles</h2><p>Open a country page for the exact ${data.observationYear} observation, same-dataset rank context and country-level JSON/CSV evidence. These profiles cover only the countries in this verified same-year dataset.</p><div class="grid">${records.map((record) => `<article class="card"><span class="pill">${esc(record.code)} · ${record.value}%</span><h3><a href="./country/${record.code.toLowerCase()}/">${esc(record.country)}</a></h3><p>${record.value}% in ${record.year}. View provenance, peer context and machine-readable country evidence.</p></article>`).join('')}</div><p><a href="./country/index.json">Machine-readable country directory →</a></p></div></section>`;
 
 if (!html.includes('id="country-profiles"')) {
-  const marker = '<section class="section"><div class="wrap"><h2>How to read this indicator</h2>';
-  if (!html.includes(marker)) throw new Error('internet-use insertion marker not found');
-  html = html.replace(marker, `${directory}${marker}`);
+  const preferredMarker = '<section class="section"><div class="wrap"><h2>How to read this indicator</h2>';
+  const fallbackMarker = '</main>';
+
+  if (html.includes(preferredMarker)) {
+    html = html.replace(preferredMarker, `${directory}${preferredMarker}`);
+  } else if (html.includes(fallbackMarker)) {
+    html = html.replace(fallbackMarker, `${directory}${fallbackMarker}`);
+  } else {
+    throw new Error('internet-use insertion marker not found and no fallback location available');
+  }
 }
 
 if (!html.includes('Internet use country profiles')) {
