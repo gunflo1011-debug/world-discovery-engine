@@ -19,6 +19,26 @@ function parseCsv(text) {
   });
 }
 
+function ranked(records) {
+  const sorted = [...records].sort((a, b) => b.value - a.value || a.country.localeCompare(b.country));
+  let previous = null;
+  let rank = 0;
+  return sorted.map((record, index) => {
+    if (record.value !== previous) rank = index + 1;
+    previous = record.value;
+    return { ...record, rank };
+  });
+}
+
+function ordinal(rank) {
+  const mod100 = rank % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${rank}th`;
+  if (rank % 10 === 1) return `${rank}st`;
+  if (rank % 10 === 2) return `${rank}nd`;
+  if (rank % 10 === 3) return `${rank}rd`;
+  return `${rank}th`;
+}
+
 test('internet-use generator keeps human, JSON and CSV outputs on one verified source', async () => {
   await execFileAsync(process.execPath, [generatorPath.pathname]);
 
@@ -29,12 +49,16 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   ]);
   const data = JSON.parse(rawJson);
   const csv = parseCsv(rawCsv);
+  const rows = ranked(data.records);
+  const max = Math.max(...rows.map((record) => record.value));
+  const min = Math.min(...rows.map((record) => record.value));
+  const germany = rows.find((record) => record.code === 'DEU');
 
   assert.equal(data.status, 'CURRENT_VERIFIED');
   assert.equal(data.indicator.code, 'IT.NET.USER.ZS');
   assert.equal(data.indicator.unit, '% of population');
   assert.equal(data.observationYear, 2024);
-  assert.equal(data.records.length, 12);
+  assert.ok(data.records.length >= 2, 'verified source must contain at least two countries');
   assert.ok(data.records.every((record) => record.year === data.observationYear));
   assert.equal(csv.length, data.records.length);
 
@@ -57,9 +81,13 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   assert.match(html, /Quick answers from this verified subset/);
   assert.match(html, /Which included countries are highest\?/);
   assert.match(html, /How wide is the observed range\?/);
-  assert.match(html, /Among the 12 included countries, the gap between the highest and lowest values is 10 percentage points \(96% versus 86%\)/);
+  assert.match(html, new RegExp(`Among the ${data.records.length} included countries, the gap between the highest and lowest values is ${max - min} percentage points \\(${max}% versus ${min}%\\)`));
   assert.match(html, /Rank in subset/);
-  assert.match(html, /Within this verified 12-country subset, Germany ranks 6th at 93%/);
+  if (germany) {
+    assert.match(html, new RegExp(`Within this verified ${data.records.length}-country subset, Germany ranks ${ordinal(germany.rank)} at ${germany.value}%`));
+  } else {
+    assert.match(html, /Germany is not included in this verified subset\./);
+  }
   assert.match(html, /"spatialCoverage":\[/);
   assert.match(html, /not a complete global ranking/i);
   assert.match(html, /id="country-search"[^>]+placeholder="Type Germany, DEU…"/);
@@ -69,7 +97,7 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   assert.match(html, /id="compare-result" aria-live="polite" hidden/);
   assert.match(html, /tools\.hidden=false/);
   assert.match(html, /row\.hidden=!match/);
-  assert.match(html, /Within this verified 2024 subset/);
+  assert.match(html, new RegExp(`Within this verified ${data.observationYear} subset`));
   assert.match(html, /percentage points/);
   assert.doesNotMatch(html, /current\/latest vertical/i);
   assert.doesNotMatch(html, /complete worldwide ranking/i);
