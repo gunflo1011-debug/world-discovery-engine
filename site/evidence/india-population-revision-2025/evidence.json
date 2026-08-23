@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.3",
+  "schemaVersion": "1.4",
   "status": "REAL",
   "finding": {
     "type": "NO_REVISION",
@@ -14,7 +14,8 @@
   "entity": {
     "code": "IND",
     "name": "India",
-    "entityType": "country"
+    "entityType": "country",
+    "archivedNameVerifiedAcrossVintages": true
   },
   "referenceYear": 2023,
   "first": {
@@ -24,7 +25,8 @@
     "archiveFile": "WDIEXCEL.xlsx",
     "archiveSha256": "7ff8c66e5a074a4a0f923cd603ff0d5fee5b043406f90c6fc9ae34c0fb5bfd60",
     "archiveBytes": 78775530,
-    "archivedIndicatorName": "Population, total"
+    "archivedIndicatorName": "Population, total",
+    "archivedCountryName": "India"
   },
   "latest": {
     "vintage": "2025-07-02",
@@ -33,13 +35,14 @@
     "archiveFile": "WDIEXCEL.xlsx",
     "archiveSha256": "b33fef211eeebaa43f668f822e7825ea737d7ffada1787d495ee042b4821eaf3",
     "archiveBytes": 80658288,
-    "archivedIndicatorName": "Population, total"
+    "archivedIndicatorName": "Population, total",
+    "archivedCountryName": "India"
   },
   "revision": {
     "absolute": 0.0,
     "relative": 0.0
   },
-  "generatedAt": "2026-08-22T23:39:34.885288+00:00",
-  "methodologyNote": "Same WDI indicator code and archived indicator name, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.",
+  "generatedAt": "2026-08-23T04:43:45.269886+00:00",
+  "methodologyNote": "Same WDI indicator code, archived indicator name, archived country identity, unit, sovereign country and reference year across two archived 2025 releases. Regional and income aggregates are excluded.",
   "license": "CC BY 4.0 (World Bank WDI; preserve attribution)"
 }

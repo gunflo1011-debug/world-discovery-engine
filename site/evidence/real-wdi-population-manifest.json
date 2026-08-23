@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.3",
-  "generatedAt": "2026-08-22T23:39:34.885288+00:00",
+  "schemaVersion": "1.4",
+  "generatedAt": "2026-08-23T04:43:45.269886+00:00",
   "indicator": {
     "code": "SP.POP.TOTL",
     "name": "Population, total",
@@ -30,6 +30,8 @@
     {
       "code": "DEU",
       "country": "Germany",
+      "archivedCountryName": "Germany",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "germany-population-revision-2025",
       "finding": {
         "type": "UPWARD_REVISION",
@@ -49,6 +51,8 @@
     {
       "code": "USA",
       "country": "United States",
+      "archivedCountryName": "United States",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "united-states-population-revision-2025",
       "finding": {
         "type": "UPWARD_REVISION",
@@ -68,6 +72,8 @@
     {
       "code": "CHN",
       "country": "China",
+      "archivedCountryName": "China",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "china-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -87,6 +93,8 @@
     {
       "code": "IND",
       "country": "India",
+      "archivedCountryName": "India",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "india-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -106,6 +114,8 @@
     {
       "code": "JPN",
       "country": "Japan",
+      "archivedCountryName": "Japan",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "japan-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -125,6 +135,8 @@
     {
       "code": "GBR",
       "country": "United Kingdom",
+      "archivedCountryName": "United Kingdom",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "united-kingdom-population-revision-2025",
       "finding": {
         "type": "UPWARD_REVISION",
@@ -144,6 +156,8 @@
     {
       "code": "FRA",
       "country": "France",
+      "archivedCountryName": "France",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "france-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -163,6 +177,8 @@
     {
       "code": "ITA",
       "country": "Italy",
+      "archivedCountryName": "Italy",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "italy-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -182,6 +198,8 @@
     {
       "code": "BRA",
       "country": "Brazil",
+      "archivedCountryName": "Brazil",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "brazil-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -201,6 +219,8 @@
     {
       "code": "CAN",
       "country": "Canada",
+      "archivedCountryName": "Canada",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "canada-population-revision-2025",
       "finding": {
         "type": "DOWNWARD_REVISION",
@@ -220,6 +240,8 @@
     {
       "code": "AUS",
       "country": "Australia",
+      "archivedCountryName": "Australia",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "australia-population-revision-2025",
       "finding": {
         "type": "DOWNWARD_REVISION",
@@ -239,6 +261,8 @@
     {
       "code": "ESP",
       "country": "Spain",
+      "archivedCountryName": "Spain",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "spain-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -258,6 +282,8 @@
     {
       "code": "MEX",
       "country": "Mexico",
+      "archivedCountryName": "Mexico",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "mexico-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -277,6 +303,8 @@
     {
       "code": "IDN",
       "country": "Indonesia",
+      "archivedCountryName": "Indonesia",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "indonesia-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
@@ -296,6 +324,8 @@
     {
       "code": "KOR",
       "country": "Korea, Rep.",
+      "archivedCountryName": "Korea, Rep.",
+      "archivedNameVerifiedAcrossVintages": true,
       "slug": "korea-rep-population-revision-2025",
       "finding": {
         "type": "NO_REVISION",
