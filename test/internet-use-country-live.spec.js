@@ -78,7 +78,7 @@ test.describe('internet-use country profile live smoke', () => {
   });
 });
 
-test('AI discovery manifest and llms.txt are live and source-faithful', async ({ request }) => {
+test('AI discovery manifest and llms.txt are live, citation-ready, and source-faithful', async ({ request }) => {
   const [manifestResponse, llmsResponse, evidenceResponse, internetResponse] = await Promise.all([
     request.get(`${BASE}/ai-index.json`),
     request.get(`${BASE}/llms.txt`),
@@ -96,9 +96,10 @@ test('AI discovery manifest and llms.txt are live and source-faithful', async ({
   const evidence = await evidenceResponse.json();
   const internet = await internetResponse.json();
 
-  expect(manifest.schemaVersion).toBe('1.0');
+  expect(manifest.schemaVersion).toBe('1.1');
   expect(manifest.generatedFrom?.realEvidenceIndex).toBe(`${BASE}/evidence/index.json`);
   expect(manifest.generatedFrom?.internetUseDataset).toBe(`${BASE}/indicators/internet-use/data.json`);
+  expect(manifest.generatedFrom?.sourcesPage).toBe(`${BASE}/sources/`);
   expect(manifest.trustPolicy?.preferStatuses).toEqual(['REAL', 'CURRENT_VERIFIED']);
   expect(manifest.trustPolicy?.excludeDemoFromPreferredDiscovery).toBe(true);
   expect(manifest.trustPolicy?.realGdpRevisionStatus).toMatch(/blocked/i);
@@ -116,6 +117,12 @@ test('AI discovery manifest and llms.txt are live and source-faithful', async ({
     expect(record.humanUrl).toBe(`${BASE}${source.url}`);
     expect(record.jsonUrl).toBe(`${BASE}${source.machineReadable.json}`);
     expect(record.csvUrl).toBe(`${BASE}${source.machineReadable.csv}`);
+    expect(record.citation?.recommendedHumanUrl).toBe(record.humanUrl);
+    expect(record.citation?.recommendedMachineUrl).toBe(record.jsonUrl);
+    expect(record.citation?.sourceType).toBe('historical revision evidence');
+    expect(record.citation?.indicatorCode).toBe(record.indicator?.code);
+    expect(record.citation?.entityCode).toBe(record.entity?.code);
+    expect(record.citation?.referenceYear).toBe(record.referenceYear);
   }
 
   const aiInternet = manifest.collections?.internetUse;
@@ -125,21 +132,48 @@ test('AI discovery manifest and llms.txt are live and source-faithful', async ({
   expect(aiInternet?.humanUrl).toBe(`${BASE}/indicators/internet-use/`);
   expect(aiInternet?.jsonUrl).toBe(`${BASE}/indicators/internet-use/data.json`);
   expect(aiInternet?.csvUrl).toBe(`${BASE}/indicators/internet-use/data.csv`);
+  expect(aiInternet?.countryIndexUrl).toBe(`${BASE}/indicators/internet-use/country/index.json`);
+  expect(aiInternet?.source?.publisher).toBe(internet.source.publisher);
+  expect(aiInternet?.source?.dataset).toBe(internet.source.dataset);
+  expect(aiInternet?.source?.surface).toBe(internet.source.surface);
+  expect(aiInternet?.source?.metadataUrl).toBe(internet.source.metadataUrl);
+  expect(aiInternet?.source?.retrievalUrl).toBe(internet.retrievalUrl);
+  expect(aiInternet?.source?.retrievedAt).toBe(internet.retrievedAt);
+  expect(aiInternet?.source?.license).toBe(internet.source.license);
+  expect(aiInternet?.source?.attribution).toBe(internet.source.attribution);
+
   for (const record of internet.records) {
     const country = aiInternet.countries.find((candidate) => candidate.entity?.code === record.code);
     expect(country, `AI discovery country missing ${record.code}`).toBeTruthy();
     expect(country.status).toBe('CURRENT_VERIFIED');
+    expect(country.indicatorName).toBe(internet.indicator.name);
     expect(country.observationYear).toBe(record.year);
     expect(country.value).toBe(record.value);
     expect(country.humanUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/`);
     expect(country.jsonUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/data.json`);
     expect(country.csvUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/data.csv`);
+    expect(country.citation?.recommendedHumanUrl).toBe(country.humanUrl);
+    expect(country.citation?.recommendedMachineUrl).toBe(country.jsonUrl);
+    expect(country.citation?.publisher).toBe(internet.source.publisher);
+    expect(country.citation?.dataset).toBe(internet.source.dataset);
+    expect(country.citation?.surfacedVia).toBe(internet.source.surface);
+    expect(country.citation?.metadataUrl).toBe(internet.source.metadataUrl);
+    expect(country.citation?.retrievalUrl).toBe(internet.retrievalUrl);
+    expect(country.citation?.retrievedAt).toBe(internet.retrievedAt);
+    expect(country.citation?.license).toBe(internet.source.license);
+    expect(country.citation?.attribution).toBe(internet.source.attribution);
   }
 
   expect(llms).toContain('# World Discovery Engine');
+  expect(llms).toContain(`${BASE}/sources/`);
   expect(llms).toContain(`${BASE}/ai-index.json`);
   expect(llms).toContain(`${BASE}/evidence/index.json`);
   expect(llms).toContain(`${BASE}/indicators/internet-use/data.json`);
+  expect(llms).toContain(`${BASE}/indicators/internet-use/country/index.json`);
+  expect(llms).toContain(internet.source.publisher);
+  expect(llms).toContain(internet.source.metadataUrl);
+  expect(llms).toContain(internet.retrievalUrl);
+  expect(llms).toContain(internet.source.license);
   expect(llms).toMatch(/Real-GDP revision publishing is blocked/i);
   for (const country of aiInternet.countries) {
     expect(llms).toContain(country.humanUrl);
