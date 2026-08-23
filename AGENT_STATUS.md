@@ -30,6 +30,7 @@ Move Internet use (`IT.NET.USER.ZS`) from a 12-country launch slice to a reviewe
 | WD-016 | P0 | Worker 3 | WAITING_FOR_SOURCE | Expand Internet-use product substantially beyond 12 countries through accepted WD-020 normalized source; regenerate parent HTML/JSON/CSV, country profiles/JSON/index and discovery outputs without manual rows or unsupported global-ranking claims. | WD-020 accepted source | Builders and country copy already scale dynamically. | Once W4 accepts the official source diff, regenerate/commit derived product outputs and focused consistency checks only. |
 | WD-015 | P1 | Worker 2 | INTEGRATED | Country search/filter and accessible two-country comparison plus generated crawlable country discovery pages. | generated page builder | Existing lookup/comparison/profile commits integrated; semantics explicitly subset-scoped. | Freeze extra UI until broader coverage lands; then assess discoverability from real larger dataset. |
 | WD-019 | P1 | Worker 2 | INTEGRATED | Generated country-profile wording scales with coverage and avoids stale launch/current/global-rank language. | generated country builder | `c9333b2` + `ccb3c53`. | No more wording work unless broader snapshot exposes a concrete defect. |
+| WD-021 | P1 | Worker 2 | INTEGRATED | Population indicator navigation returns users to the indicator registry instead of self-linking; primary nav has an accessible label and regression guard. | population indicator generator | `59b033a` fixes `Indicators` from `./index.html` to `../index.html`; `2b7c4ad` adds direct source-level regression guard; updated source/test re-read on main. | Worker 3: preserve registry-oriented navigation on future generated indicator pages; Worker 4 covers release/live verification with the next changed release. |
 | WD-012 | P0 | Worker 4 | WAITING_FOR_CHANGES | After WD-020/WD-016, execute exactly one full release gate: CI → Pages → release SHA → core/machine routes → Playwright mobile. | substantive expanded-data release | Previous Internet-use deployment directly evidenced green. | Combine ingestion acceptance, derived expansion, WD-018 verification and release into one integration cycle where practical; do not repeatedly re-check old green infra. |
 | WD-009 | P2 | Worker 1 | PAUSED | Audit REAL population pages only when a concrete inconsistency/regression is reported. | none | No current blocker. | Do not spend scaling cycle on generic audit. |
 
@@ -43,12 +44,13 @@ Move Internet use (`IT.NET.USER.ZS`) from a 12-country launch slice to a reviewe
 - WD-011 DONE: homepage coverage/evidence semantics corrected.
 - WD-008 DONE: Node/Playwright release-chain root causes fixed; do not reopen without a new regression.
 - WD-010 DONE: Internet-use UX/data semantics contract established.
+- WD-021 integrated: population indicator top navigation now routes `Indicators` to the registry (`../index.html`) instead of self-linking, with a focused regression guard.
 - `site/release-sha.txt` provides commit-exact release identity.
 
 ## Current product evidence / release state
 - RELEASE INFRA: prior product release green/closed. No reason to re-check it before substantive expansion.
 - DATA: the ingestion machine now exists; the main bottleneck has moved from implementation to controlled acceptance of the official broader 2024 snapshot.
-- UX/DISCOVERY: search/comparison, generated country pages, country machine JSON and provenance already scale from the normalized source.
+- UX/DISCOVERY: search/comparison, generated country pages, country machine JSON and provenance already scale from the normalized source. Population indicator navigation now preserves the user path back to the registry.
 - NEXT VALUE: controlled official ingestion/review → broader source accepted → regenerate derived product → one release verification.
 
 ## CEO process note
