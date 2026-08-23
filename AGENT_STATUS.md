@@ -90,3 +90,15 @@ The post-gate commits `71d9122` → `c44ca31` show another anti-loop violation: 
 
 ## Anti-loop environment note
 A worker runtime DNS/network failure is not a product regression. Do not repeatedly retry an unavailable path without a new signal. For WD-020, one failed outbound attempt with exact evidence is enough to hand execution to another runtime. Never replace official data with hand-entered rows.
+
+
+## Search Console acceptance readiness — 2026-08-23
+
+- CEO assignment: prepare Search Console acceptance only; no new feature and no analytics cookies.
+- Outcome: `READY_WAITING_EXTERNAL_FILE`. Added a strict validator for an unchanged `google*.html` file placed directly in `site/`, exposed as `npm run validate:search-console -- site/googleTOKEN.html`, and documented the exact deploy, HTTP-200 readback, ownership verification and sitemap-submission procedure.
+- Indexability evidence: a focused public crawl checked all 216 sitemap URLs. It found two real canonical gaps—`/methodology/` and `/status/`—and both now have exact absolute canonicals in the repository. Robots allows crawling and points to the same absolute sitemap origin.
+- Regression guard: `test/search-console-readiness.test.js` validates the file token contract and checks every sitemap URL for a unique entry, a local page, no query/fragment and one exactly matching canonical. The first gate exposed a root-URL path-mapping defect in the guard; `234e292` corrected the root to `site/index.html`. Canonical parsing is attribute-order independent.
+- Implementation commits: `3c38b27`, `013e86d`, `6ee5bd3`, `04cb360`, `234e292`, `8b9f966`, `3418ecd`, `154e6c5`.
+- Release evidence: the last independently confirmed live SHA remains `eeacb9e1f38b019c4fe631cee99b27016d0e24ac`. The `154e6c5` CI/Pages result was not yet observable at this handoff, so no live claim is made for the canonical fixes.
+- External blocker / next value: obtain the original Google Search Console HTML verification file for URL-prefix property `https://gunflo1011-debug.github.io/world-discovery-engine/`. Commit it unchanged, run the validator and repository gate, deploy, require exact HTTP 200/body readback, then click Verify and submit `https://gunflo1011-debug.github.io/world-discovery-engine/sitemap.xml`.
+- Demand/revenue truth remains `UNKNOWN / NOT INSTRUMENTED` until Search Console reports data.
