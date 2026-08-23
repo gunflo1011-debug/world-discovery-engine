@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "ingest:internet-use": "node scripts/ingest-internet-use-wdi.mjs",
-    "build:internet-use": "node scripts/build-internet-use.mjs && node scripts/build-internet-use-countries.mjs && node scripts/enrich-internet-use-country-csv.mjs && node scripts/enrich-internet-use-country-directory.mjs",
-    "build": "node scripts/build-site.js && node scripts/build-internet-use-countries.mjs && node scripts/enrich-internet-use-country-csv.mjs && node scripts/enrich-internet-use-country-directory.mjs && node scripts/finalize-internet-country-discovery.mjs && node scripts/build-ai-discovery.mjs",
+    "build:internet-use": "node scripts/build-internet-use.mjs && node scripts/build-internet-use-countries.mjs && node scripts/enrich-internet-use-country-csv.mjs && node scripts/enrich-internet-use-country-directory.mjs && node scripts/build-internet-use-regions.mjs",
+    "build": "node scripts/build-site.js && node scripts/build-internet-use-countries.mjs && node scripts/enrich-internet-use-country-csv.mjs && node scripts/enrich-internet-use-country-directory.mjs && node scripts/build-internet-use-regions.mjs && node scripts/finalize-internet-country-discovery.mjs && node scripts/finalize-internet-region-discovery.mjs && node scripts/build-ai-discovery.mjs",
     "build:ai-discovery": "node scripts/build-ai-discovery.mjs",
     "test": "node --test --test-concurrency=1 \"test/**/*.test.js\"",
     "test:playwright": "playwright test",
