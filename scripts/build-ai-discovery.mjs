@@ -39,10 +39,17 @@ function validateInternetUse(data) {
   if (!Number.isInteger(data.observationYear)) throw new Error('internet-use observationYear is required');
   if (!Array.isArray(data.records) || data.records.length === 0) throw new Error('internet-use records are required');
   if (!data.records.every((record) => record.year === data.observationYear)) throw new Error('mixed internet-use observation years are forbidden');
+  requireText(data.indicator?.name, 'internet-use indicator.name');
+  requireText(data.indicator?.unit, 'internet-use indicator.unit');
+  requireText(data.indicator?.definition, 'internet-use indicator.definition');
   requireText(data.source?.publisher, 'internet-use source.publisher');
+  requireText(data.source?.dataset, 'internet-use source.dataset');
+  requireText(data.source?.surface, 'internet-use source.surface');
   requireText(data.source?.metadataUrl, 'internet-use source.metadataUrl');
   requireText(data.source?.license, 'internet-use source.license');
+  requireText(data.source?.attribution, 'internet-use source.attribution');
   requireText(data.retrievalUrl, 'internet-use retrievalUrl');
+  requireText(data.retrievedAt, 'internet-use retrievedAt');
 }
 
 function buildManifest(evidenceIndex, internetUse) {
@@ -57,27 +64,49 @@ function buildManifest(evidenceIndex, internetUse) {
     csvUrl: absolute(record.machineReadable.csv),
     methodologyNote: record.methodologyNote,
     license: record.license,
-    vintages: record.vintages
+    vintages: record.vintages,
+    citation: {
+      recommendedHumanUrl: absolute(record.url),
+      recommendedMachineUrl: absolute(record.machineReadable.json),
+      sourceType: 'historical revision evidence',
+      referenceYear: record.referenceYear,
+      indicatorCode: record.indicator.code,
+      entityCode: record.entity.code
+    }
   }));
 
   const internetUseCountries = internetUse.records.map((record) => ({
     type: 'current_indicator_observation',
     status: 'CURRENT_VERIFIED',
     indicatorCode: internetUse.indicator.code,
+    indicatorName: internetUse.indicator.name,
     entity: { type: 'country', code: record.code, name: record.country },
     observationYear: record.year,
     value: record.value,
     unit: internetUse.indicator.unit,
     humanUrl: absolute(`/indicators/internet-use/country/${record.code.toLowerCase()}/`),
     jsonUrl: absolute(`/indicators/internet-use/country/${record.code.toLowerCase()}/data.json`),
-    csvUrl: absolute(`/indicators/internet-use/country/${record.code.toLowerCase()}/data.csv`)
+    csvUrl: absolute(`/indicators/internet-use/country/${record.code.toLowerCase()}/data.csv`),
+    citation: {
+      recommendedHumanUrl: absolute(`/indicators/internet-use/country/${record.code.toLowerCase()}/`),
+      recommendedMachineUrl: absolute(`/indicators/internet-use/country/${record.code.toLowerCase()}/data.json`),
+      publisher: internetUse.source.publisher,
+      dataset: internetUse.source.dataset,
+      surfacedVia: internetUse.source.surface,
+      metadataUrl: internetUse.source.metadataUrl,
+      retrievalUrl: internetUse.retrievalUrl,
+      retrievedAt: internetUse.retrievedAt,
+      license: internetUse.source.license,
+      attribution: internetUse.source.attribution
+    }
   }));
 
   return {
-    schemaVersion: '1.0',
+    schemaVersion: '1.1',
     generatedFrom: {
       realEvidenceIndex: absolute('/evidence/index.json'),
-      internetUseDataset: absolute('/indicators/internet-use/data.json')
+      internetUseDataset: absolute('/indicators/internet-use/data.json'),
+      sourcesPage: absolute('/sources/')
     },
     trustPolicy: {
       preferStatuses: ['REAL', 'CURRENT_VERIFIED'],
@@ -94,9 +123,11 @@ function buildManifest(evidenceIndex, internetUse) {
         humanUrl: absolute('/indicators/internet-use/'),
         jsonUrl: absolute('/indicators/internet-use/data.json'),
         csvUrl: absolute('/indicators/internet-use/data.csv'),
+        countryIndexUrl: absolute('/indicators/internet-use/country/index.json'),
         source: {
           publisher: internetUse.source.publisher,
           dataset: internetUse.source.dataset,
+          surface: internetUse.source.surface,
           metadataUrl: internetUse.source.metadataUrl,
           retrievalUrl: internetUse.retrievalUrl,
           retrievedAt: internetUse.retrievedAt,
@@ -123,11 +154,17 @@ function buildLlmsText(manifest) {
     '- Internet-use pages report a verified same-year subset and do not claim a complete global ranking or a historical revision.',
     '- Real-GDP revision publishing is blocked until release-specific methodology comparability is independently established.',
     '',
+    '## Citation and provenance',
+    '',
+    `- [Sources and methodology](${manifest.generatedFrom.sourcesPage}): human-readable provenance hub.`,
+    `- For a specific claim, prefer the country/evidence human page plus its linked JSON as the machine-readable citation target.`,
+    '',
     '## Machine-readable collections',
     '',
     `- [REAL evidence index](${manifest.generatedFrom.realEvidenceIndex}): revision evidence with provenance, methodology, JSON and CSV links.`,
     `- [Internet-use dataset](${internet.jsonUrl}): ${internet.indicator.code}, ${internet.observationYear}, ${internet.coverage.countries} verified countries in the current snapshot.`,
     `- [Internet-use CSV](${internet.csvUrl}): same normalized observations in CSV.`,
+    `- [Internet-use country index](${internet.countryIndexUrl}): country-profile discovery registry with machine-readable links.`,
     `- [Internet-use human hub](${internet.humanUrl}): comparison page and country-profile directory.`,
     `- [AI discovery manifest](${absolute('/ai-index.json')}): structured manifest for the resources summarized in this file.`,
     '',
@@ -139,7 +176,7 @@ function buildLlmsText(manifest) {
     lines.push(`- [${country.entity.name}](${country.humanUrl}) — ${country.value}${country.unit === '% of population' ? '%' : ` ${country.unit}`} in ${country.observationYear}; [JSON](${country.jsonUrl}); [CSV](${country.csvUrl}).`);
   }
 
-  lines.push('', '## Citation guidance', '', `Internet-use source: ${internet.source.publisher}, ${internet.source.dataset}, surfaced via World Bank WDI. ${internet.source.attribution || ''}`.trim(), `License: ${internet.source.license}. Retrieved ${internet.source.retrievedAt}.`, '');
+  lines.push('', '## Citation guidance', '', `Internet-use source: ${internet.source.publisher}, ${internet.source.dataset}, surfaced via ${internet.source.surface}. ${internet.source.attribution}`.trim(), `Metadata: ${internet.source.metadataUrl}`, `Retrieval: ${internet.source.retrievalUrl}`, `License: ${internet.source.license}. Retrieved ${internet.source.retrievedAt}.`, '');
   return `${lines.join('\n')}\n`;
 }
 
