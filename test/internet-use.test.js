@@ -104,7 +104,7 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   }
   assert.match(html, /id="compare-a"/);
   assert.match(html, /id="compare-b"/);
-  assert.match(html, /id="compare-result" aria-live="polite" hidden/);
+  assert.match(html, /id="compare-result" class="internet-compare-result" aria-live="polite" hidden/);
   assert.match(html, /tools\.hidden=false/);
   assert.match(html, /row\.hidden=!match/);
   assert.match(html, /region\.addEventListener\('change',applyFilter\)/);
