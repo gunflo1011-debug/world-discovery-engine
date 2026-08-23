@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
@@ -25,7 +25,7 @@ test('internet-use country builder creates source-faithful long-tail discovery p
   const data = JSON.parse(rawData);
   const index = JSON.parse(rawIndex);
 
-  assert.equal(index.schemaVersion, '1.1');
+  assert.equal(index.schemaVersion, '1.2');
   assert.equal(index.status, 'CURRENT_VERIFIED');
   assert.equal(index.indicator, 'IT.NET.USER.ZS');
   assert.equal(index.observationYear, data.observationYear);
@@ -48,15 +48,17 @@ test('internet-use country builder creates source-faithful long-tail discovery p
 
     assert.ok(indexed, `missing country index record for ${record.code}`);
     assert.equal(indexed.value, record.value);
+    assert.deepEqual(indexed.region, record.region);
     assert.equal(indexed.url, `/indicators/internet-use/country/${slug}/`);
     assert.equal(indexed.machineDataUrl, `/indicators/internet-use/country/${slug}/data.json`);
 
-    assert.equal(machine.schemaVersion, '1.0');
+    assert.equal(machine.schemaVersion, '1.1');
     assert.equal(machine.status, 'CURRENT_VERIFIED');
     assert.equal(machine.indicator.code, 'IT.NET.USER.ZS');
     assert.equal(machine.entity.type, 'country');
     assert.equal(machine.entity.code, record.code);
     assert.equal(machine.entity.name, record.country);
+    assert.deepEqual(machine.entity.region, record.region);
     assert.equal(machine.observation.year, record.year);
     assert.equal(machine.observation.value, record.value);
     assert.equal(machine.provenance.publisher, data.source.publisher);
@@ -89,5 +91,17 @@ test('internet-use country builder creates source-faithful long-tail discovery p
     assert.match(html, /Full CSV →/);
     assert.match(html, /not claim a historical WDI revision/i);
     assert.match(html, /not to a complete worldwide ranking/i);
+  }
+
+  const invalid = structuredClone(data);
+  delete invalid.records[0].region;
+  try {
+    await writeFile(dataUrl, `${JSON.stringify(invalid, null, 2)}\n`, 'utf8');
+    await assert.rejects(
+      execFileAsync(process.execPath, [countryBuilder.pathname]),
+      /country records require official region code and name/
+    );
+  } finally {
+    await writeFile(dataUrl, rawData, 'utf8');
   }
 });
