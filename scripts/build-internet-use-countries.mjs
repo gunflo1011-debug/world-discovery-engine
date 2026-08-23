@@ -163,7 +163,7 @@ function linkCountryRows(html, data) {
 const data = JSON.parse(await readFile(dataUrl, 'utf8'));
 validate(data);
 const ranked = rankRecords(data.records);
-await rm(countriesRoot, { recursive: true, force: true });
+await rm(countriesRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
 await mkdir(countriesRoot, { recursive: true });
 
 for (const record of ranked) {
