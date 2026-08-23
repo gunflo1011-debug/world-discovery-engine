@@ -71,7 +71,7 @@ test("robots, sitemap and canonicals expose one consistent indexable URL set", a
     assert.equal(url.hash, "", `sitemap URL must not contain a fragment: ${location}`);
 
     const relativePath = url.pathname.slice(new URL(BASE_URL).pathname.length);
-    const fileUrl = relativePath.endsWith("/")
+    const fileUrl = relativePath === "" || relativePath.endsWith("/")
       ? new URL(`${relativePath}index.html`, SITE_ROOT)
       : new URL(relativePath, SITE_ROOT);
 
