@@ -140,10 +140,22 @@ function countryPage(data, record, ranked) {
 function linkCountryRows(html, data) {
   let output = html;
   for (const record of data.records) {
-    const plain = `<th scope="row">${esc(record.country)}</th>`;
-    const linked = `<th scope="row"><a href="./country/${slugFor(record.code)}/">${esc(record.country)}</a></th>`;
-    if (!output.includes(plain)) throw new Error(`country row not found for ${record.code}`);
-    output = output.replace(plain, linked);
+    const code = slugFor(record.code);
+    const rowPattern = new RegExp(`<tr([^>]*\\bdata-code="${code}"[^>]*)>([\\s\\S]*?)<\\/tr>`);
+    const match = output.match(rowPattern);
+    if (!match) throw new Error(`country row not found for ${record.code}`);
+
+    const row = match[0];
+    const href = `./country/${code}/`;
+    if (row.includes(`href="${href}"`)) continue;
+
+    const headerPattern = /<th\s+scope="row"([^>]*)>([\s\S]*?)<\/th>/;
+    const header = row.match(headerPattern);
+    if (!header) throw new Error(`country header cell not found for ${record.code}`);
+
+    const linkedHeader = `<th scope="row"${header[1]}><a href="${href}">${header[2]}</a></th>`;
+    const linkedRow = row.replace(headerPattern, linkedHeader);
+    output = output.replace(row, linkedRow);
   }
   return output;
 }
