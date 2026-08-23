@@ -79,7 +79,7 @@ test('AI discovery manifest exposes only verified source-faithful resources', as
 
   assert.match(llms, /^# World Discovery Engine/m);
   assert.match(llms, /Prefer records explicitly marked REAL or CURRENT_VERIFIED/);
-  assert.match(llms, /does not claim a complete global ranking or a historical revision/);
+  assert.match(llms, /do(?:es)? not claim a complete global ranking or a historical revision/);
   assert.match(llms, /Real-GDP revision publishing is blocked/);
   assert.match(llms, /\/sources\//);
   assert.match(llms, /\/evidence\/index\.json/);
