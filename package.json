@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "ingest:internet-use": "node scripts/ingest-internet-use-wdi.mjs",
     "build:internet-use": "node scripts/build-internet-use.mjs && node scripts/build-internet-use-countries.mjs",
     "build": "node scripts/build-site.js && node scripts/build-internet-use-countries.mjs && node scripts/finalize-internet-country-discovery.mjs",
     "test": "node --test \"test/**/*.test.js\"",
