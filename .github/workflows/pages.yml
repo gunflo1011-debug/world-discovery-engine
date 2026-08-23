@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: 22
       - name: Install project dependencies
-        run: npm install --ignore-scripts --no-audit --no-fund --package-lock=false
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Test and build release artifact
         run: npm run check
       - name: Stamp release identity
@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: 22
       - name: Install project dependencies for browser verification
-        run: npm install --ignore-scripts --no-audit --no-fund --package-lock=false
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Verify exact deployed commit with retry/backoff
         shell: bash
         run: |
