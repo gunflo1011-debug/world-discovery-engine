@@ -1,55 +1,55 @@
-# Worker 3 handoff — source-faithful AI discovery manifest
+# Worker 3 handoff — sources discovery refresh
 
 ## New implementation
 
-Worker 3 added a build-generated AI discovery layer for the existing REAL evidence corpus and the `IT.NET.USER.ZS` CURRENT_VERIFIED vertical. No source data changed and GDP revision work remains fail-closed.
+Worker 3 refreshed `/sources/` because it had become materially stale: it still claimed that visible evidence examples were DEMO and that REAL evidence had not yet been promoted. That contradicted the current product, which now has provenance-gated REAL population-revision evidence and a CURRENT_VERIFIED `IT.NET.USER.ZS` Internet Use vertical.
 
-New `scripts/build-ai-discovery.mjs` runs after the existing full build and produces:
+The page now:
 
-- `/llms.txt` — concise human-readable retrieval guidance for AI systems, with trust rules, primary machine-readable collections, verified Internet-use country profiles, JSON/CSV links and citation guidance;
-- `/ai-index.json` — structured machine manifest combining only `REAL` + `discoveryReady=true` revision evidence and `CURRENT_VERIFIED` Internet-use observations.
+- has an absolute canonical and updated search description;
+- exposes `Indicators` in primary navigation;
+- states the current production boundary accurately: REAL population revision evidence exists, Internet Use is CURRENT_VERIFIED same-year evidence, and Real-GDP revisions remain fail-closed where release-specific methodology comparability is not established;
+- removes stale claims that all visible evidence is DEMO;
+- adds a visible `Machine-readable access` section linking the REAL evidence index, `/ai-index.json`, `/llms.txt`, Internet Use JSON/CSV and the country machine index;
+- keeps WDI current metadata, WDI archive and licensing links visible;
+- adds source-faithful WebPage JSON-LD describing the source/provenance documentation page without inventing a Dataset owned by World Discovery Engine.
 
-The builder is fail-closed:
-
-- evidence input must be machine-index schema `1.2`;
-- every exported evidence record must be `REAL`, `discoveryReady=true`, have indicator/entity/reference-year identity and both JSON/CSV URLs;
-- Internet-use input must remain `CURRENT_VERIFIED`, `IT.NET.USER.ZS`, same-year and source/licence complete;
-- the manifest explicitly carries the scope boundary that Internet-use is a verified same-year subset, not a complete global ranking or historical revision product;
-- Real-GDP revision status is explicitly `blocked` pending release-specific methodology comparability evidence.
-
-The normal `npm run build` now calls the AI-discovery builder after the existing country/discovery finalization step. A focused `npm run build:ai-discovery` command is also available.
+No source observations, evidence calculations or GDP gate were changed.
 
 ## New commits
 
-- `b675e7d62d86088750298224323dbba51185c441` — build source-faithful AI discovery manifest (`llms.txt` + `ai-index.json`)
-- `dac9c1d9844d621871f122e5e5bb0e3a9e57ab01` — direct regression test for AI discovery outputs
-- `224feedd2b8aa34a6f36a0fba368e7b68aa3a7e3` — wire AI discovery into the full build and add focused build command
+- `b13eb0161bda363402671884e3538a5131df571d` — refresh `/sources/` for current REAL evidence and machine discovery
+- `3c1defe109314edf13de3fa0c89137ed70de5573` — direct sources discovery regression test
 
 ## Direct test only
 
 Run once:
 
-`node --test test/ai-discovery.test.js`
+`node --test test/sources-discovery.test.js`
 
-The test runs only `scripts/build-ai-discovery.mjs` and verifies:
+The test verifies only Worker 3's new contract:
 
-- manifest exports only REAL evidence;
-- evidence count/identity matches `/evidence/index.json`;
-- Internet-use country identity/value/year matches the CURRENT_VERIFIED source;
-- every country has Human + JSON + CSV URLs;
-- `llms.txt` preserves trust/scope/GDP-block rules and exposes the primary machine-readable endpoints.
+- absolute canonical and useful title;
+- production status mentions REAL population revision evidence + CURRENT_VERIFIED Internet Use;
+- GDP revision gate remains blocked;
+- old DEMO-only status text is absent;
+- visible links exist to `/evidence/index.json`, `/ai-index.json`, `/llms.txt`, Internet Use JSON/CSV and the country machine index;
+- Indicators navigation and source-page structured data remain present.
 
-Worker 3 attempted only this direct test locally, but the automation runtime could not resolve `github.com` while cloning the repository, so no local test result is claimed. No full CI, Pages, live-site or mobile verification was run.
+Worker 3 did not run full CI, Pages, live-site or mobile verification.
 
 ## Changed routes / outputs
 
-Two root-level machine/discovery outputs are added by the build:
+Changed human route:
 
-- `/llms.txt`
-- `/ai-index.json`
+- `/sources/`
 
-No existing route or source dataset was changed.
+Added test only:
+
+- `test/sources-discovery.test.js`
+
+No machine payload schema or source dataset changed in this run.
 
 ## Worker 4 release gate
 
-Verify once that `node --test test/ai-discovery.test.js` passes and that a normal `npm run build` leaves `/llms.txt` and `/ai-index.json` present after all downstream build steps. In the release/live gate, confirm both return HTTP 200 and that `ai-index.json` contains only REAL revision evidence + CURRENT_VERIFIED Internet-use observations. Do not weaken the fail-closed checks if a stale/non-verified record is rejected.
+Run `node --test test/sources-discovery.test.js` once, then let the normal release gate verify `/sources/` as part of integration. Confirm that the page's machine-access links resolve after the normal build, especially generated `/ai-index.json` and `/llms.txt`. Do not re-open the Real-GDP revision gate and do not restore the stale DEMO-only status copy.
