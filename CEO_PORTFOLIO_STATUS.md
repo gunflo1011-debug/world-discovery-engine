@@ -11,8 +11,8 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 | Initiative | Product evidence | Demand / revenue evidence | Current economic assessment |
 |---|---|---|---|
 | World Discovery | Public product; 182 official 2024 country profiles, 7 regions, and shareable search/region/comparison state are LIVE_VERIFIED at `eeacb9e`; CI `32659002259` and Pages `32659002266` passed. | Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Strongest scalable/passive asset; immediate bottleneck is Search Console ownership verification, not product code. |
-| Things App / Asset Market Alpha | Draft PR #3 was rebased from 59 stale commits to one focused commit `247f3c7`; GitHub now reports mergeable/rebaseable, but `mergeable_state = unstable` and no status checks are reported. | Active users, completed matches/trades, retention, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Technical debt improved, but security/hosted-backend proof remains incomplete; no growth allocation yet. |
-| Worker 4 validation bet: existing POD pipeline | Decision-grade validation `057358c1` returned HOLD. Modeled contribution is EUR 13.01 with buyer-paid shipping, EUR 7.39 with free shipping, and about EUR 4.90 with 15% Offsite Ads; exact variant and Germany-shipping inputs remain missing. | Paid orders, actual conversion, actual costs, actual contribution, revenue, and net profit are **UNKNOWN**. | Demand exists in a saturated niche; continue only with read-only exact-cost capture and strict margin/compliance gates. |
+| Things App / Asset Market Alpha | PR #3 is draft/mergeable at `24253e5`. Backend rebuild, pgTAP auth/RLS, lint and concurrency are green in run `32665950230`; local mobile checks are green in run `32665950216`. Hosted authenticated smoke is blocked only by absent non-privileged test-user secrets. | Active users, completed matches/trades, retention, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Core security risk is materially reduced; keep unmerged until the hosted RLS/user-isolation path is green. |
+| Worker 4 validation bet: existing POD pipeline | Exact authenticated costs are known. Only 22/43 variants model EUR 8.13–9.38 with buyer-paid shipping and no Offsite Ads. Official-policy gate `c6e0d42` returns HOLD pending owner and supplier evidence. | Paid orders, actual conversion, actual costs, actual contribution, revenue, and net profit are **UNKNOWN**. | Nearest-to-revenue candidate, but margins are narrow and any mandatory Offsite Ads, unresolved IP or missing EEA safety evidence kills the current configuration. |
 
 ## Portfolio metrics
 
@@ -32,7 +32,7 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 ## Top priority
 
-Convert completed engineering into decision-grade demand evidence: unblock Search Console, complete Things security proof, and replace POD proxy costs with exact authenticated cost data.
+Unblock the first real demand signal while closing the last autonomously verifiable POD supplier/compliance risk; do not add product scope while Search Console and hosted Things credentials remain external.
 
 ## Assignments
 
@@ -40,7 +40,7 @@ Convert completed engineering into decision-grade demand evidence: unblock Searc
 |---|---|---|---|---|
 | World Discovery Solo Builder | **HOLD — waiting for the original Search Console `google*.html` file.** Do not add features or repeat the already-complete indexability audit. | On receipt only: preserve the file byte-for-byte, run the acceptance guard, deploy, verify HTTP 200/body equality, then complete Search Console verification and sitemap submission. | User-owned Google account/file is the sole blocker; readiness culminates at `154e6c5`. | Prevents churn while preserving the shortest path to real acquisition metrics. |
 | Things App Worker | Accept the hosted-alpha gate after the user supplies the two test-user repository secrets; until then HOLD with no new code. | Rerun `mobile-alpha-ci` exactly once; prove authenticated RPC, shared-catalog read and owner-only inventory isolation; keep PR #3 draft and unmerged unless the entire hosted job is green. | Requires `ALPHA_TEST_EMAIL` and `ALPHA_TEST_PASSWORD` for a dedicated non-privileged hosted test user. | Converts the now-green local security foundation into a safe real-backend alpha decision. |
-| Worker 4 | Validate the guarded POD test's remaining official-policy feasibility; research only, no account changes or publication. | Using current official Etsy/EU/German sources, establish Offsite Ads opt-out eligibility and exact GPSR/trader/withdrawal/IP/tax decision checklist; identify which facts require owner confirmation; return GO/HOLD/KILL for a 22-variant organic test. | Exact costs are closed; VAT status, shop sales threshold, rights and owner approval remain external. | Reduces legal and margin risk on the shortest plausible path to first revenue while Things and Search Console await credentials. |
+| Worker 4 | Obtain supplier-backed GPSR and textile evidence for the 22 retained POD variants, read-only. | Through official Printify/provider-99 sources or the authenticated bridge, record the exact finished-product manufacturer, EU responsible person/economic operator, contact addresses, product identifier, per-colour fibre composition, warnings/safety/risk and traceability/recall contacts. If any cannot be obtained, document the exact missing supplier evidence and return EEA_EXCLUDE or KILL. No publish, update, order or ad. | Official-policy gate `c6e0d42` is complete; owner tax/IP/Offsite decisions remain separate external gates. | Closes the final autonomous compliance unknown for the shortest plausible revenue experiment. |
 
 ## Experiment gate and kill criteria
 
@@ -166,3 +166,12 @@ Convert completed engineering into decision-grade demand evidence: unblock Searc
 - **Evidence:** Decision checklist committed in `hobby-dept-shop-manager` at `c6e0d42eb4039eb4cf42b97d14eeabc433558a11`, file `docs/puzzling-era-policy-feasibility-2026-08-23.md`, with direct official sources and explicit GO/HOLD/KILL gates.
 - **Handoff / next step:** Owner supplies five evidence bundles: actual Offsite Ads eligibility/status; legal trader/Impressum identity; Printify/provider-99 GPSR and textile documents; artwork/font/mockup provenance plus search record; and VAT/turnover treatment. Only after all five are green and publication is expressly approved may the 30-day, one-listing, no-paid-traffic test proceed.
 - **Economic contribution:** The research prevents launching a configuration whose advertising fee can erase the already narrow EUR 8.13–9.38 modeled contribution and converts broad legal uncertainty into five finite evidence gates.
+
+
+## CEO control point — 2026-08-24 00:22
+
+- **Worker 4 delivered on time:** official-policy feasibility is documented at `c6e0d42`; verdict remains HOLD. No account or listing mutation occurred.
+- **Economic decision:** the 22-variant configuration is eligible for a future 30-day organic test only with buyer-paid shipping, Offsite Ads visibly opted out, no Etsy Ads, normal 14-day withdrawal handling, trader/Impressum completion, original/licensed design evidence, correct VAT treatment and supplier-backed GPSR/textile data. Mandatory Offsite Ads KILL current pricing.
+- **Autonomous next step:** Worker 4 now retrieves exact manufacturer/economic-operator/safety/fibre evidence from the Printify/provider chain. This work does not require publication or payment and prevents unverifiable compliance fields from being invented.
+- **Holds respected:** World Discovery remains waiting for the original Search Console verification file. Things PR #3 remains draft/unmerged and has no new run because test-user repository secrets are still absent.
+- **Revenue truth:** customers, revenue, costs and net profit remain UNKNOWN; modeled POD margin is not realized profit.
