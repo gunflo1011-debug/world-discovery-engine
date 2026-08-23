@@ -77,3 +77,73 @@ test.describe('internet-use country profile live smoke', () => {
     });
   });
 });
+
+test('AI discovery manifest and llms.txt are live and source-faithful', async ({ request }) => {
+  const [manifestResponse, llmsResponse, evidenceResponse, internetResponse] = await Promise.all([
+    request.get(`${BASE}/ai-index.json`),
+    request.get(`${BASE}/llms.txt`),
+    request.get(`${BASE}/evidence/index.json`),
+    request.get(`${BASE}/indicators/internet-use/data.json`),
+  ]);
+
+  expect(manifestResponse.ok(), 'ai-index.json is unreachable').toBeTruthy();
+  expect(llmsResponse.ok(), 'llms.txt is unreachable').toBeTruthy();
+  expect(evidenceResponse.ok(), 'evidence index is unreachable').toBeTruthy();
+  expect(internetResponse.ok(), 'internet-use source dataset is unreachable').toBeTruthy();
+
+  const manifest = await manifestResponse.json();
+  const llms = await llmsResponse.text();
+  const evidence = await evidenceResponse.json();
+  const internet = await internetResponse.json();
+
+  expect(manifest.schemaVersion).toBe('1.0');
+  expect(manifest.generatedFrom?.realEvidenceIndex).toBe(`${BASE}/evidence/index.json`);
+  expect(manifest.generatedFrom?.internetUseDataset).toBe(`${BASE}/indicators/internet-use/data.json`);
+  expect(manifest.trustPolicy?.preferStatuses).toEqual(['REAL', 'CURRENT_VERIFIED']);
+  expect(manifest.trustPolicy?.excludeDemoFromPreferredDiscovery).toBe(true);
+  expect(manifest.trustPolicy?.realGdpRevisionStatus).toMatch(/blocked/i);
+
+  const manifestEvidence = manifest.collections?.evidence;
+  expect(Array.isArray(manifestEvidence)).toBeTruthy();
+  expect(manifestEvidence).toHaveLength(evidence.evidence.length);
+  for (const record of manifestEvidence) {
+    expect(record.status).toBe('REAL');
+    const source = evidence.evidence.find((candidate) =>
+      candidate.indicator?.code === record.indicator?.code &&
+      candidate.entity?.code === record.entity?.code &&
+      candidate.referenceYear === record.referenceYear);
+    expect(source, `manifest evidence has no source record for ${record.entity?.code}`).toBeTruthy();
+    expect(record.humanUrl).toBe(`${BASE}${source.url}`);
+    expect(record.jsonUrl).toBe(`${BASE}${source.machineReadable.json}`);
+    expect(record.csvUrl).toBe(`${BASE}${source.machineReadable.csv}`);
+  }
+
+  const aiInternet = manifest.collections?.internetUse;
+  expect(aiInternet?.indicator?.code).toBe('IT.NET.USER.ZS');
+  expect(aiInternet?.observationYear).toBe(internet.observationYear);
+  expect(aiInternet?.countries).toHaveLength(internet.records.length);
+  expect(aiInternet?.humanUrl).toBe(`${BASE}/indicators/internet-use/`);
+  expect(aiInternet?.jsonUrl).toBe(`${BASE}/indicators/internet-use/data.json`);
+  expect(aiInternet?.csvUrl).toBe(`${BASE}/indicators/internet-use/data.csv`);
+  for (const record of internet.records) {
+    const country = aiInternet.countries.find((candidate) => candidate.entity?.code === record.code);
+    expect(country, `AI discovery country missing ${record.code}`).toBeTruthy();
+    expect(country.status).toBe('CURRENT_VERIFIED');
+    expect(country.observationYear).toBe(record.year);
+    expect(country.value).toBe(record.value);
+    expect(country.humanUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/`);
+    expect(country.jsonUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/data.json`);
+    expect(country.csvUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/data.csv`);
+  }
+
+  expect(llms).toContain('# World Discovery Engine');
+  expect(llms).toContain(`${BASE}/ai-index.json`);
+  expect(llms).toContain(`${BASE}/evidence/index.json`);
+  expect(llms).toContain(`${BASE}/indicators/internet-use/data.json`);
+  expect(llms).toMatch(/Real-GDP revision publishing is blocked/i);
+  for (const country of aiInternet.countries) {
+    expect(llms).toContain(country.humanUrl);
+    expect(llms).toContain(country.jsonUrl);
+    expect(llms).toContain(country.csvUrl);
+  }
+});
