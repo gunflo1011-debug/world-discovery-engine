@@ -30,6 +30,9 @@ function validate(data) {
   if (!Array.isArray(data?.records) || data.records.length < 2) throw new Error('at least two records are required');
   if (!data.records.every((record) => record.year === data.observationYear)) throw new Error('mixed observation years are forbidden');
   if (!data.records.every((record) => /^[A-Z]{3}$/.test(record.code) && typeof record.value === 'number')) throw new Error('invalid country record');
+  if (!data.records.every((record) => /^[A-Z]{3}$/.test(record?.region?.code) && typeof record?.region?.name === 'string' && record.region.name.trim())) {
+    throw new Error('country records require official region code and name');
+  }
   if (!data?.source?.publisher || !data?.source?.dataset || !data?.source?.metadataUrl || !data?.source?.license || !data?.retrievalUrl || !data?.retrievedAt) {
     throw new Error('country profile provenance is incomplete');
   }
@@ -62,7 +65,7 @@ function nearestPeers(record, ranked) {
 function countryMachineRecord(data, record) {
   const slug = slugFor(record.code);
   return {
-    schemaVersion: '1.0',
+    schemaVersion: '1.1',
     status: 'CURRENT_VERIFIED',
     indicator: {
       code: data.indicator.code,
@@ -73,7 +76,11 @@ function countryMachineRecord(data, record) {
     entity: {
       type: 'country',
       code: record.code,
-      name: record.country
+      name: record.country,
+      region: {
+        code: record.region.code,
+        name: record.region.name
+      }
     },
     observation: {
       year: record.year,
@@ -178,7 +185,7 @@ for (const record of ranked) {
 const indexHtml = await readFile(indexUrl, 'utf8');
 await writeFile(indexUrl, linkCountryRows(indexHtml, data), 'utf8');
 await writeFile(new URL('index.json', countriesRoot), `${JSON.stringify({
-  schemaVersion: '1.1',
+  schemaVersion: '1.2',
   status: 'CURRENT_VERIFIED',
   indicator: data.indicator.code,
   observationYear: data.observationYear,
@@ -194,6 +201,10 @@ await writeFile(new URL('index.json', countriesRoot), `${JSON.stringify({
   countries: ranked.map((record) => ({
     code: record.code,
     country: record.country,
+    region: {
+      code: record.region.code,
+      name: record.region.name
+    },
     value: record.value,
     rank: record.rank,
     url: `/indicators/internet-use/country/${slugFor(record.code)}/`,
