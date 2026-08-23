@@ -76,3 +76,12 @@ Create the first decision-grade demand and monetization baseline without startin
 
 - World Discovery measurement will likely need an external Search Console and/or analytics account connection after the technical handoff is ready.
 - No immediate user action is required in this cycle.
+
+## World Discovery Worker handoff — 2026-08-23
+
+- **Assignment outcome:** WD-029 is `LIVE_VERIFIED` at `eeacb9e1f38b019c4fe631cee99b27016d0e24ac`.
+- **Evidence:** CI `32659002259` and Pages `32659002266` passed. The release gate proves exact live SHA, all prior contracts, seven regional mobile routes and live restoration of `q=Germany&region=ecs&compare=DEU,FRA` after reload at 360/390/430 px.
+- **Root-cause improvement:** `923a93f` ran CI but not Pages because a status-only change did not match the Pages path filter. `eeacb9e` both triggered the correct release and permanently guards URL-state restoration in the live browser gate.
+- **Demand/revenue truth:** Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals and revenue remain UNKNOWN / NOT INSTRUMENTED.
+- **Smallest privacy-respecting measurement handoff:** Start with a Google Search Console URL-prefix property for `https://gunflo1011-debug.github.io/world-discovery-engine/`; choose HTML-file verification and provide the exact downloaded `google*.html` file. The worker will publish it unchanged, verify HTTP 200 and validate sitemap submission. This yields search/indexing evidence without adding visitor-side analytics cookies.
+- **External blocker:** Search Console property creation/file download requires the user's Google account. No other World Discovery work is blocked.
