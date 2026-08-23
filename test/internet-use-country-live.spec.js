@@ -147,3 +147,81 @@ test('AI discovery manifest and llms.txt are live and source-faithful', async ({
     expect(llms).toContain(country.csvUrl);
   }
 });
+
+test.describe('refreshed sources discovery page live smoke', () => {
+  const machineLinks = [
+    '/evidence/index.json',
+    '/ai-index.json',
+    '/llms.txt',
+    '/indicators/internet-use/data.json',
+    '/indicators/internet-use/data.csv',
+    '/indicators/internet-use/country/index.json',
+  ];
+
+  widths.forEach((width) => {
+    test(`${width}px sources page is usable and its machine access links resolve`, async ({ page }) => {
+      const consoleErrors = [];
+      const pageErrors = [];
+      page.on('console', (msg) => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
+      page.on('pageerror', (error) => pageErrors.push(String(error)));
+
+      await page.setViewportSize({ width, height: 900 });
+      const response = await page.goto(`${BASE}/sources/`, { waitUntil: 'networkidle', timeout: 30000 });
+      expect(response?.ok(), 'sources page is unreachable').toBeTruthy();
+
+      const overflow = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }));
+      expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
+
+      const nav = page.locator('nav').first();
+      await expect(nav).toBeVisible();
+      expect((await nav.boundingBox())?.width || 0).toBeGreaterThan(40);
+
+      const canonical = page.locator('link[rel="canonical"]');
+      await expect(canonical).toHaveCount(1);
+      await expect(canonical).toHaveAttribute('href', `${BASE}/sources/`);
+      expect((await page.title()).trim()).toContain('Sources, provenance & machine access');
+      expect(((await page.locator('meta[name="description"]').getAttribute('content')) || '').trim().length).toBeGreaterThan(40);
+
+      await expect(page.getByRole('heading', { level: 1 })).toContainText('Sources, provenance & machine access');
+      await expect(page.getByText(/verified REAL population-revision evidence is published/i)).toBeVisible();
+      await expect(page.getByText(/CURRENT_VERIFIED same-year observations/i)).toBeVisible();
+      await expect(page.getByText(/Real-GDP revision publishing remains blocked/i)).toBeVisible();
+
+      const structured = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+      expect(structured['@type']).toBe('WebPage');
+
+      for (const target of machineLinks) {
+        const link = page.locator(`a[href="..${target}"]`);
+        await expect(link, `sources page link missing: ${target}`).toHaveCount(1);
+        const targetResponse = await page.request.get(`${BASE}${target}`);
+        expect(targetResponse.ok(), `sources machine target unreachable: ${target}`).toBeTruthy();
+      }
+
+      await page.locator('body').click({ position: { x: 1, y: 1 } });
+      await page.keyboard.press('Tab');
+      const focusState = await page.evaluate(() => {
+        const el = document.activeElement;
+        if (!el || el === document.body || el === document.documentElement) return null;
+        const style = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        return {
+          visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none',
+          outlineStyle: style.outlineStyle,
+          outlineWidth: style.outlineWidth,
+          boxShadow: style.boxShadow,
+        };
+      });
+      expect(focusState).not.toBeNull();
+      expect(focusState?.visible).toBeTruthy();
+      const hasOutline = focusState?.outlineStyle !== 'none' && focusState?.outlineWidth !== '0px';
+      const hasFocusShadow = Boolean(focusState?.boxShadow && focusState.boxShadow !== 'none');
+      expect(hasOutline || hasFocusShadow).toBeTruthy();
+
+      expect(pageErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    });
+  });
+});
