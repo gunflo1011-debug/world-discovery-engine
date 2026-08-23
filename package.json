@@ -10,7 +10,7 @@
     "build:ai-discovery": "node scripts/build-ai-discovery.mjs",
     "test": "node --test \"test/**/*.test.js\"",
     "test:playwright": "playwright test",
-    "check": "npm test && npm run build"
+    "check": "npm run build && npm test"
   },
   "devDependencies": {
     "@playwright/test": "1.55.0"
