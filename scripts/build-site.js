@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { renderRobotsTxt, renderSitemap } from '../src/site-assets.js';
 
 await import('./build-internet-use.mjs');
+await import('./build-internet-use-regions.mjs');
 
 const root = resolve(process.cwd(), 'site');
 const baseUrl = process.env.SITE_BASE_URL || 'https://gunflo1011-debug.github.io/world-discovery-engine/';

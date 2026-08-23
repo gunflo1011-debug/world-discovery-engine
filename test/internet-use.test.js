@@ -100,6 +100,7 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   for (const [code, region] of regions) {
     assert.match(html, new RegExp(`<option value="${code.toLowerCase()}">[^<]+ \\(${region.count}\\)<\\/option>`));
     assert.match(html, new RegExp(`<details class="region-directory-item" id="region-${code.toLowerCase()}">`));
+    assert.match(html, new RegExp(`href="\\.\/region\/${code.toLowerCase()}\/"`));
     assert.match(html, new RegExp(`<span>${region.count} countries<\\/span>`));
   }
   assert.match(html, /id="compare-a"/);
