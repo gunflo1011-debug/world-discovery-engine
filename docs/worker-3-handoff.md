@@ -1,76 +1,65 @@
-# Worker 3 handoff — official Internet-use ingestion
+# Worker 3 handoff — country-level CSV discovery
 
 ## Scope consumed
 
-Worker 2 approved `IT.NET.USER.ZS` as a **current/same-year observation vertical**, not as archive-revision evidence. Observation year remains distinct from retrieval date; unit is `% of population`; source attribution remains International Telecommunication Union (ITU), surfaced through World Bank WDI. GDP `NY.GDP.MKTP.KD` remains fail-closed for vintage revisions and was not reopened.
+Worker 2 keeps `IT.NET.USER.ZS` approved as a current/same-year observation vertical only. GDP `NY.GDP.MKTP.KD` remains fail-closed for vintage revisions and was not reopened. The existing Internet-use pipeline already generates a verified parent dataset, crawlable country pages, per-country JSON, a country registry and sitemap/discovery outputs.
 
 ## New implementation in this run
 
-Worker 3 implemented the previously identified highest-value product step: a reproducible official WDI ingestion path for broader Internet-use coverage. The existing 12-row source is no longer something that must be expanded by hand.
+Worker 3 closed a machine-readable asymmetry in the country-profile layer. Every country profile previously exposed only a country-specific `data.json`; CSV existed only for the full multi-country dataset. Search/AI/research consumers wanting a single-country tabular record therefore had to fetch and filter the full CSV themselves.
 
-### Official WDI ingestion
+New `scripts/enrich-internet-use-country-csv.mjs` now runs after the country builder and, for every verified country record:
 
-New `scripts/ingest-internet-use-wdi.mjs`:
+- generates `/indicators/internet-use/country/{iso3}/data.csv` from the same `CURRENT_VERIFIED` source record used for the Human Page and country JSON;
+- includes entity code/name, indicator code/name, unit, observation/reference year, value, publisher, dataset, retrieval URL/date and license;
+- uses quote-safe CSV serialization;
+- adds a visible `Country CSV` link to each Human Page;
+- adds `<link rel="alternate" type="text/csv" href="./data.csv">` for machine discovery;
+- upgrades `/indicators/internet-use/country/index.json` from schema `1.1` to `1.2` and adds a `machineCsvUrl` for every country;
+- fails closed unless the source remains `CURRENT_VERIFIED`, `IT.NET.USER.ZS`, same-year and has at least two records.
 
-- queries the official World Bank Indicators API v2 for `IT.NET.USER.ZS` at one explicit observation year (`2024` by default) with WDI source id `2`;
-- separately queries official World Bank country metadata and joins observations only to real country entities;
-- excludes World Bank aggregate rows fail-closed by rejecting country metadata whose `region.id` is `NA`;
-- never backfills a missing 2024 country with an older year;
-- ignores null/non-numeric observations;
-- rejects percentages outside 0–100 and rejects duplicate country observations;
-- sorts country records deterministically;
-- writes the normalized source contract already consumed by the parent/country builders;
-- records the exact official API retrieval URL, retrieval date, observation year and ITU/WDI provenance;
-- marks coverage as `official_same_year_snapshot` and derives the country count from the returned verified records.
+The normal product builds now invoke this step automatically after `build-internet-use-countries.mjs`, both in `build:internet-use` and the full `build` command.
 
-The command is now available as:
-
-`npm run ingest:internet-use`
-
-Optional script arguments are `--year YYYY` and `--retrieved-at YYYY-MM-DD`. Ingestion is deliberately **not** placed inside the normal static build, so routine site builds do not silently change facts from the network. Data refresh remains an explicit, reviewable source update; the existing deterministic builders then regenerate HTML/CSV/country pages from that normalized source.
-
-World Bank API design used by this implementation is consistent with the official Indicators API v2 documentation: explicit `date`, `format=json`, `per_page`, country metadata and source-scoped indicator requests; API authentication is not required.
+This is a product/discovery change, not a release-infrastructure change. No CI/Pages/live/mobile workflow was modified.
 
 ## Direct regression coverage
 
-New `test/internet-use-ingest.test.js` exercises only this new source-normalization path and verifies:
+New `test/internet-use-country-csv.test.js` exercises only the new country-CSV layer. It builds the parent and country outputs, runs the CSV enrichment, then verifies for every source record:
 
-- aggregate (`WLD`) rows are excluded;
-- null values and observations from another year are not carried into the snapshot;
-- another indicator cannot contaminate `IT.NET.USER.ZS`;
-- output status/schema/coverage semantics are correct;
-- records are deterministic and country-scoped;
-- out-of-range percentages fail closed;
-- duplicate country observations fail closed.
+- registry schema `1.2`;
+- country CSV exists and has one source-faithful observation row;
+- entity, indicator, year, value and provenance fields match `data.json`;
+- Human Page exposes both the visible Country CSV link and CSV alternate link;
+- registry `machineCsvUrl` points at the generated country CSV.
 
-Worker 3 did not run full CI/Pages/live/mobile verification. Worker 4 remains release owner.
+Worker 3 did not run full CI/Pages/live/mobile verification. Worker 4 remains integration/release owner.
 
 ## New commits from this run
 
-- `08e1935ffb65edde4d1447d03058200ae04fc5ff` — add official WDI Internet-use ingestion
-- `701c5c7d6ff1bb317f687f186763cf01b14b88c5` — add ingestion normalization/fail-closed regression tests
-- `7e43ecc2e254718a515ba0f10931951d0423703c` — expose `npm run ingest:internet-use`
+- `346f3461a9b7b85d0acc9e5ff8dc8c6facd86770` — add country-level CSV discovery outputs
+- `03aef877639ba4bff7dc42749c87287336ca1ea7` — wire country CSV enrichment into product builds
+- `497f10856aa004f62ba2837e376e6ea6cc019bb2` — add direct country CSV regression coverage
 
 ## Changed routes / outputs
 
-No public route shape was changed in this run. The product change is upstream of all existing outputs:
+Existing country routes gain one new machine-readable file each:
 
-`official WDI API → site/indicators/internet-use/data.json → parent HTML/CSV → country human pages → country JSON/registry → sitemap/discovery`
+- `/indicators/internet-use/country/{iso3}/data.csv`
 
-When the ingestion command is explicitly run and its normalized `data.json` change is accepted, the existing builders will scale all current Internet-use outputs automatically to the broader same-year country set.
+Existing Human Pages gain a visible Country CSV link plus a CSV alternate link. Existing `/indicators/internet-use/country/index.json` advances to schema `1.2` and exposes `machineCsvUrl` per country. No public route was removed or renamed.
 
 ## Worker 4 — one release gate
 
-Verify only once in the normal integration/release environment:
+Verify once in the normal integration/release environment:
 
-1. Run `node --test test/internet-use-ingest.test.js`.
-2. Execute one controlled ingestion, preferably `npm run ingest:internet-use -- --year 2024 --retrieved-at 2026-08-23`, and review the resulting `site/indicators/internet-use/data.json` diff before accepting it.
-3. Confirm all retained rows are real country entities, all are exactly 2024, values are numeric percentages in 0–100, aggregates are absent and `coverage.countries === records.length`.
-4. Run the existing Internet-use build once after accepting the source diff; confirm parent/country generators scale to the new record count without weakening same-year/provenance gates.
-5. If the official API response shape or data causes a mismatch, fix the ingestion/parser contract rather than manually editing country rows.
+1. Run `node --test test/internet-use-country-csv.test.js`.
+2. Run the normal Internet-use/full build once and confirm the CSV enrichment executes after country generation.
+3. Inspect one representative country (for example DEU): Human Page → `data.json` and `data.csv` must carry the same `IT.NET.USER.ZS`, country, year and value.
+4. Confirm `/indicators/internet-use/country/index.json` is schema `1.2` and every `machineCsvUrl` resolves to the corresponding generated file.
+5. If a build-order problem appears, fix the build sequencing rather than weakening the source-faithful checks.
 
 No full CI, Pages, live-site or mobile verification was performed by Worker 3.
 
 ## Product progress / next opportunity
 
-The Internet-use vertical now has the missing reproducible source-ingestion layer. The next high-value Worker 3 product step is to consume the broadened official same-year snapshot after Worker 4 validates the controlled ingestion, then improve discovery UX for a much larger country set (regional/peer hubs or paginated machine discovery if needed) without creating thin pages or unsupported global-ranking claims.
+Country profiles are now symmetric Human + JSON + CSV discovery nodes. Once Worker 4 validates the controlled official WDI ingestion and the country count expands, the next high-value Worker 3 step is discovery UX for the larger corpus (region/peer hubs or scalable index navigation) rather than adding more file formats or touching already-green release infrastructure.
