@@ -9,23 +9,21 @@ Build a trustworthy, highly useful World Discovery data product that earns real 
 - All generated/relative paths must work under `/world-discovery-engine/`.
 
 ## Current cycle goal
-P0: MAKE THE LIVE 182-COUNTRY CORPUS REGION-AWARE. Add official region metadata once, then turn the long global list into useful, crawlable regional discovery without thin pages or manual country mappings.
+P0: MAKE DISCOVERY STATES SHAREABLE. Preserve country search, official-region filtering and two-country comparisons in validated URLs so visitors can share, bookmark and return to useful views of the live 182-country corpus.
 
 ## Operating rules
-- BUILD FIRST, VERIFY ONCE: Workers 1–3 build product; Worker 4 alone owns the full release gate.
-- NO MANUAL USER DEBUGGING: Worker 4 owns incidents end-to-end: logs/annotations/diff/relevant files → failure signature → root cause → fix commit → re-run evidence → close/open status. User action is allowed only for a genuine external permission/secret/account/irreversible-action block.
-- Exactly one owner per task. No duplicate audits.
-- Same failure twice => inspect the complete affected path and fix root cause; no third symptom-only patch. After two real unsuccessful fixes, change approach/owner or CEO intervenes directly.
-- No re-run without code/config change unless evidence shows a transient infrastructure failure.
-- A green closed blocker is not a recurring task.
-- P0 WIP LIMIT = 1: WD-028 region-aware discovery is the only active product chain; WD-020 → WD-016 → WD-012 is closed LIVE VERIFIED.
-- WD-028 EXECUTION GATE: do not publish region pages or UI from hand-maintained mappings. Every consumer must use the accepted normalized `record.region` contract.
-- RELEASE OWNERSHIP GUARD: every W1–W3 build commit must include `[skip ci]`; only W4 may intentionally trigger Pages. A non-W4 Pages run is an orchestration incident even when deploy succeeds.
+- SOLO OWNERSHIP: one autonomous builder owns strategy, implementation, focused tests, release follow-through and incident closure.
+- VALUE BEFORE VOLUME: prioritize verified visitor utility, discoverability, retention, monetization readiness and automation; reject thin or unsupported programmatic pages.
+- ONE COHERENT SLICE PER RUN: implement the smallest end-to-end improvement with a regression guard and verifiable evidence.
+- SAME FAILURE TWICE: inspect the complete path and fix root cause before another attempt.
+- RELEASE TRUTH: do not call a change live until CI, Pages, exact release identity and relevant live contracts are proven.
+- DATA TRUST: generated claims must remain derived from accepted normalized official sources; no hand-entered production rows or unsupported global-ranking language.
 
 ## Active taskboard
 
 | ID | Pri | Owner | Status | Task / Definition of Done | Dependencies | Evidence / known attempts | Handoff / next action |
 |---|---|---|---|---|---|---|---|
+| WD-029 | P0 | Solo Builder | IMPLEMENTED_AWAITING_CI | Persist validated `q`, `region` and two-country `compare` state in the discovery URL; expose a share link; keep canonical clean; add regression coverage. | live WD-028 corpus | `0f82cb5` adds URL hydration/synchronization and a shareable-view link. `4b537ae` updates generator assertions for query parsing, validation and `history.replaceState`. | This status commit intentionally triggers the single CI/Pages release path; verify exact SHA and live query restoration before closing. |
 | WD-014 | P1 | Worker 1 | DONE | Deterministic official WDI ingestion for `IT.NET.USER.ZS`: explicit same-year fetch, country-metadata join, aggregate exclusion, invalid/null/mixed-year rejection, deterministic normalized artifact, explicit provenance, no automatic build-time overwrite. | none | `08e1935`, `701c5c7`, `7e43ecc`, `7338e5d`. | Frozen. Do not redesign. |
 | WD-020 | P0 | CEO | DONE_LIVE | Run official ingestion for 2024 with explicit retrieval date. Review normalized diff before acceptance. Require real countries only, exact 2024, values 0–100, no duplicates, official provenance, and materially broader coverage than 12. Commit accepted normalized source. | WD-014 | 182 official non-aggregate observations are live at release `7f6b7f5`; all are exactly 2024, unique, numeric and within 0–100, with `official_same_year_snapshot` provenance. | Closed. |
 | WD-016 | P0 | CEO → Worker 4 | DONE_LIVE | Regenerate parent HTML/JSON/CSV, country profiles/JSON/CSV/index/directory and AI discovery outputs from the accepted source. No manual rows and no unsupported global-ranking claims. | WD-020 | Release `7f6b7f5` publishes 182 parent records, profiles, JSON/CSV outputs, directory/sitemap routes and AI discovery entries; CI is green. | Closed. |
@@ -62,17 +60,23 @@ P0: MAKE THE LIVE 182-COUNTRY CORPUS REGION-AWARE. Add official region metadata 
 - Search impressions, organic visits, returning users, AI referrals and revenue: NOT YET INSTRUMENTED; do not report these as zero.
 
 ## Goal horizon
-- Short: ship useful region filtering and exactly 7 regional discovery pages from the accepted official metadata.
-- Medium: establish real acquisition measurements, then improve the regional/country routes against impressions, clicks and engagement.
-- Long: expand to several high-value indicators only after the discovery/release machine proves traffic value; introduce ads/API/Pro progressively without weakening trust.
+- Short: release and live-verify shareable, bookmarkable country/region/comparison URLs for the 182-country Internet-use experience.
+- Medium: establish privacy-respecting acquisition and engagement measurement, then improve entry routes against real impressions, clicks, referrals and repeat usage.
+- Long: build a strongly used, trustworthy, monetized and largely passive World Discovery product; expand indicators and ads/API/Pro only when measured demand supports them.
 
 ## Current product evidence / release state
 - DATA: WD-020 LIVE. `site/indicators/internet-use/data.json` contains 182 official, non-aggregate 2024 observations with `coverage.type = official_same_year_snapshot` and official API provenance.
 - WD-020 OUTBOUND INCIDENT (2026-08-23): the earlier Worker 4 runtime could not resolve GitHub or World Bank. CEO handed execution to a runtime with outbound access, ran the existing ingestor unchanged, and removed the blocker without substituting data.
 - DISCOVERY: sufficient for this phase and frozen.
-- RELEASE: `1d5fe9a35d31228886f9f039c6ad873bff3cb655` is LIVE VERIFIED. CI `32649478056` and Pages `32649478079` passed; exact release identity, all core/machine/regional contracts and regional mobile rendering at 360/390/430 px are green. INC-002 is closed.
+- RELEASE: `1d5fe9a35d31228886f9f039c6ad873bff3cb655` remains the last LIVE VERIFIED baseline. WD-029 is committed and awaiting its intentionally triggered CI/Pages/live evidence; do not describe it as live before that evidence exists.
 - RELEASE INCIDENT: `6a74325` exposed missing fresh-checkout fixtures; `f445710` fixed the release order and passed CI/deploy/live contracts. Its browser gate exposed one grouped expanded-corpus/mobile contract incident. Counts, Pages-base URLs and the parent selector are fixed. The final 696 px overflow is root-caused to an unwrapped 680 px Sources table—not navigation—and now has a scroll-container regression guard.
-- NEXT VALUE: WD-028 region-aware discovery turns the 182-country corpus into a faster comparison experience and a bounded set of useful, crawlable entry pages.
+- NEXT VALUE: close WD-029 with exact live evidence, then instrument privacy-respecting acquisition/engagement signals so future SEO, retention and monetization decisions use observed demand rather than guesses.
+
+## Solo-builder decision log — 2026-08-23
+- Replaced the completed team-era operating model with autonomous solo ownership; historic worker rows remain evidence only.
+- Selected WD-029 because the existing 182-country search, seven-region filter and comparison controls lose their state on reload and cannot produce useful referral/bookmark URLs.
+- URL parameters are fail-safe: unknown region/country values are ignored, search input is bounded, empty state is removed, and the canonical URL remains query-free.
+- Intermediate implementation/test commits used `[skip ci]`; this status commit intentionally starts one consolidated release path.
 
 ## Orchestration corrections
 | Cycle | Worker | Evidence / failure | Correction and new owner | DoD / next-run control | Priority |
