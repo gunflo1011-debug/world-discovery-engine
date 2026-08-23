@@ -197,3 +197,15 @@ Unblock the first real demand signal while closing the last autonomously verifia
 - **Portfolio decision:** do not request supplier data from the user and do not publish. After the deployment incident is closed, the only admissible continuation is a separately re-costed, separately compliant US-only experiment; otherwise KILL the POD candidate.
 - **Other holds:** World Discovery awaits the original Search Console file. Things awaits non-privileged hosted test-user secrets and remains draft/unmerged.
 - **Revenue truth:** verified customers, revenue and net profit remain UNKNOWN.
+
+
+## Worker 4 Render release incident outcome — 2026-08-24
+
+- **Assignment outcome:** `FIX_COMMITTED_EXTERNAL_HOOK_REQUIRED`. The stale-host incident is root-caused at the release-control boundary: source reached `main`, but the hosted Render service remained on healthy version 0.10.1. The repository had neither a deterministic deploy trigger nor commit-exact post-deploy verification, so HTTP 200 falsely looked sufficient.
+- **Fresh evidence:** after the fix candidate, bridge health runs `32674969537` and `32675150722` again returned HTTP 200 with version 0.10.1. Native Render deployment therefore still did not apply the source release; the Supplier endpoint was not called again.
+- **Implementation:** `7d37813` exposes `RENDER_GIT_COMMIT` in `/healthz`; `48a46d2` declares current Blueprint `autoDeployTrigger: commit`; `a8217c9` syntax-checks the active `server-v09.js`; `cb6c510` adds exact version/SHA readback; `592b4ee` adds a deterministic Render deploy-hook trigger; `f63d6cc` aligns package version 0.10.2. Incident record: `fd94049`.
+- **Permanent gate:** for deployment-relevant commits, CI validates syntax/tests, triggers the exact SHA with secret `RENDER_DEPLOY_HOOK_URL`, and fails unless live `/healthz` returns both version 0.10.2 and the exact Render commit. A stale but healthy instance can no longer be accepted.
+- **Exact remaining blocker:** the repository does not yet have a usable `RENDER_DEPLOY_HOOK_URL`. The secret URL must be copied from this Render service's Settings and stored only as a GitHub Actions repository secret. No Render API/dashboard connector is available to Worker 4, so this external control-plane action cannot be completed safely from the repo.
+- **Handoff / next step:** add the deploy-hook secret, rerun `Render release readback` for the latest deployment-relevant SHA, then execute the supplier-evidence GET exactly once. If version and SHA are green, close the incident; otherwise continue from the exact failed workflow step.
+- **Economic contribution:** the fix prevents stale backend releases from masquerading as successful deployments, eliminates repeated blind probes, and reduces the path to legally testable POD evidence to one explicit deployment credential rather than further code changes. Revenue and net profit remain UNKNOWN.
+- **Safety:** no supplier request, product/listing mutation, ad, order, payment or publication occurred.
