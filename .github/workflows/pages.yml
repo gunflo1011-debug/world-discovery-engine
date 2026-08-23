@@ -93,7 +93,7 @@ jobs:
             const out=[]; let cur=''; let q=false;
             for(let i=0;i<line.length;i++){const c=line[i]; if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;}else if(c===','&&!q){out.push(cur.trim());cur='';}else cur+=c;} out.push(cur.trim()); return out;
           }
-          const critical=['/index.html','/indicators/','/indicators/real-gdp/','/indicators/real-gdp/status.json','/indicators/internet-use/','/indicators/internet-use/data.json','/indicators/internet-use/data.csv','/indicators/internet-use/country/index.json','/indicators/internet-use/country/deu/','/indicators/internet-use/country/deu/data.json','/indicators/internet-use/country/deu/data.csv','/build.json','/evidence/','/evidence/index.json','/sitemap.xml','/robots.txt'];
+          const critical=['/index.html','/indicators/','/indicators/real-gdp/','/indicators/real-gdp/status.json','/indicators/internet-use/','/indicators/internet-use/data.json','/indicators/internet-use/data.csv','/indicators/internet-use/country/index.json','/indicators/internet-use/country/deu/','/indicators/internet-use/country/deu/data.json','/indicators/internet-use/country/deu/data.csv','/indicators/internet-use/region/index.json','/build.json','/evidence/','/evidence/index.json','/sitemap.xml','/robots.txt'];
           for(const p of critical) await get(p);
 
           const home=await get('/index.html');
@@ -129,7 +129,7 @@ jobs:
             const html=await get(country.url);
             const payload=await get(country.machineDataUrl,'json');
             const csvText=await get(country.machineCsvUrl);
-            if(payload.schemaVersion!=='1.0'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.entity?.code!==country.code||payload.observation?.year!==2024||payload.observation?.value!==country.value) throw new Error(`country JSON identity mismatch ${country.code}`);
+            if(payload.schemaVersion!=='1.1'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.entity?.code!==country.code||payload.observation?.year!==2024||payload.observation?.value!==country.value||payload.region?.code!==country.region?.code||payload.region?.name!==country.region?.name) throw new Error(`country JSON identity mismatch ${country.code}`);
             if(payload.scope?.completeGlobalRanking!==false||payload.scope?.historicalRevisionProduct!==false||payload.humanUrl!==human) throw new Error(`country JSON scope mismatch ${country.code}`);
             if(!html.includes('./data.json')||!html.includes('./data.csv')) throw new Error(`country machine links missing ${country.code}`);
             const lines=csvText.trim().split(/\r?\n/).map(csv); const cols=lines[0]; const row=lines[1];
@@ -137,6 +137,31 @@ jobs:
             const v=k=>row[cols.indexOf(k)];
             if(v('entity_code')!==country.code||v('indicator_code')!==index.indicator||Number(v('reference_year'))!==2024||Number(v('value'))!==Number(country.value)) throw new Error(`country CSV identity mismatch ${country.code}`);
           }
+
+
+          const regionIndex=await get('/indicators/internet-use/region/index.json','json');
+          if(regionIndex.schemaVersion!=='1.0'||regionIndex.status!=='CURRENT_VERIFIED'||regionIndex.indicator!==index.indicator||regionIndex.observationYear!==2024||!Array.isArray(regionIndex.regions)||regionIndex.regions.length!==7) throw new Error('Internet-use region index contract mismatch');
+          if(build.internetUseRegionalPages!==7) throw new Error('build.json regional page count mismatch');
+          const indexedRegionCodes=new Set(index.countries.map(country=>country.region?.code));
+          const regionCodes=new Set();
+          let regionCountryTotal=0;
+          for(const region of regionIndex.regions){
+            if(!/^[A-Z]{3}$/.test(region.code)||!region.name||!region.url||!region.machineDataUrl||regionCodes.has(region.code)) throw new Error(`malformed region ${region.code||'unknown'}`);
+            regionCodes.add(region.code);
+            regionCountryTotal+=region.countries;
+            if(!indexedRegionCodes.has(region.code)) throw new Error(`region has no indexed countries ${region.code}`);
+            const human=`${base}${region.url}`;
+            if((sitemap.split(human).length-1)!==1) throw new Error(`region sitemap count mismatch ${region.code}`);
+            const html=await get(region.url);
+            const payload=await get(region.machineDataUrl,'json');
+            if(payload.schemaVersion!=='1.0'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.observationYear!==2024||payload.region?.code!==region.code||payload.region?.name!==region.name||payload.records?.length!==region.countries) throw new Error(`region JSON identity mismatch ${region.code}`);
+            if(!html.includes('./data.json')||!html.includes('Regional picture')||!html.includes('How to use this comparison')) throw new Error(`region page contract mismatch ${region.code}`);
+            for(const record of payload.records){
+              const country=index.countries.find(candidate=>candidate.code===record.code);
+              if(!country||country.region?.code!==region.code||record.year!==2024||record.value!==country.value||!html.includes(`../../country/${record.code.toLowerCase()}/`)) throw new Error(`region-country mismatch ${region.code}/${record.code}`);
+            }
+          }
+          if(regionCodes.size!==indexedRegionCodes.size||regionCountryTotal!==index.countries.length) throw new Error('regional coverage mismatch');
 
           const evidence=await get('/evidence/index.json','json');
           if(evidence.schemaVersion!=='1.2'||!Array.isArray(evidence.evidence)||!evidence.evidence.length) throw new Error('evidence index mismatch');
@@ -156,7 +181,39 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Run live mobile browser smoke
-        run: npx playwright test test/live-mobile-smoke.spec.js test/internet-use-country-live.spec.js --reporter=line
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright test test/live-mobile-smoke.spec.js test/internet-use-country-live.spec.js --reporter=line
+          node --input-type=module <<'NODE'
+          import { chromium } from '@playwright/test';
+          const base=process.env.BASE_URL.replace(/\/$/,'');
+          const regions=['eas','ecs','lcn','mea','nac','sas','ssf'];
+          const browser=await chromium.launch({headless:true});
+          try {
+            for(const width of [360,390,430]){
+              for(const slug of regions){
+                const page=await browser.newPage({viewport:{width,height:900}});
+                const consoleErrors=[]; const pageErrors=[];
+                page.on('console',msg=>{if(msg.type()==='error') consoleErrors.push(msg.text());});
+                page.on('pageerror',error=>pageErrors.push(String(error)));
+                const url=`${base}/indicators/internet-use/region/${slug}/`;
+                const response=await page.goto(url,{waitUntil:'networkidle',timeout:30000});
+                if(!response?.ok()) throw new Error(`regional HTTP failure ${width}px ${url}`);
+                const state=await page.evaluate(()=>({
+                  overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
+                  canonical:document.querySelector('link[rel="canonical"]')?.href,
+                  navVisible:Boolean(document.querySelector('nav')?.getBoundingClientRect().width),
+                  h1:document.querySelector('h1')?.textContent?.trim(),
+                  jsonLink:document.querySelector('a[href="./data.json"]')?.getAttribute('href')
+                }));
+                if(state.overflow>1||state.canonical!==url||!state.navVisible||!state.h1||state.jsonLink!=='./data.json'||consoleErrors.length||pageErrors.length) throw new Error(`regional mobile contract failure ${width}px ${slug}: ${JSON.stringify({state,consoleErrors,pageErrors})}`);
+                await page.close();
+              }
+            }
+          } finally { await browser.close(); }
+          console.log('REGIONAL MOBILE VERIFIED: 7 routes at 360/390/430 px');
+          NODE
       - name: Upload browser-smoke evidence on failure
         if: failure()
         uses: actions/upload-artifact@v4
