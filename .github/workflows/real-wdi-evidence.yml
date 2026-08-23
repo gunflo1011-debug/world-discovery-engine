@@ -33,7 +33,7 @@ jobs:
           from pathlib import Path
           root=Path('site/evidence')
           manifest=json.load(open(root/'real-wdi-population-manifest.json',encoding='utf-8'))
-          assert manifest['schemaVersion']=='1.3'
+          assert manifest['schemaVersion']=='1.4'
           assert manifest['count']==15 and len(manifest['items'])==15
           assert manifest['indicator']=={'code':'SP.POP.TOTL','name':'Population, total','referenceYear':2023,'unit':'people'}
           assert [a['vintage'] for a in manifest['archives']]==['2025-01-28','2025-07-02']
@@ -45,18 +45,22 @@ jobs:
           assert {i['code'] for i in manifest['items']}==expected
           for item in manifest['items']:
               page=root/item['slug']; d=json.load(open(page/'evidence.json',encoding='utf-8')); html=(page/'index.html').read_text(encoding='utf-8')
-              assert d['schemaVersion']=='1.3' and d['status']=='REAL'
+              assert d['schemaVersion']=='1.4' and d['status']=='REAL'
               assert d['entity']['code']==item['code'] and d['entity']['entityType']=='country'
+              assert d['entity']['name']==item['country']==item['archivedCountryName']
+              assert d['entity']['archivedNameVerifiedAcrossVintages'] is True and item['archivedNameVerifiedAcrossVintages'] is True
               assert d['indicator']['code']=='SP.POP.TOTL' and d['indicator']['name']=='Population, total' and d['referenceYear']==2023
               expected_type='NO_REVISION' if d['revision']['absolute']==0 else ('UPWARD_REVISION' if d['revision']['absolute']>0 else 'DOWNWARD_REVISION')
               assert d['finding']=={'type':expected_type,'isRevision':d['revision']['absolute']!=0}
               assert item['finding']==d['finding']
               assert f'Finding type: {expected_type}' in html
+              assert f'Archived country identity verified in both releases: {d["entity"]["name"]} ({d["entity"]["code"]})' in html
               for key,a in zip(('first','latest'),manifest['archives']):
                   x=d[key]
                   assert x['vintage']==a['vintage'] and x['sourceUrl']==a['url']
                   assert x['archiveFile']==a['archiveFile'] and x['archiveSha256']==a['archiveSha256'] and x['archiveBytes']==a['archiveBytes']
                   assert x['archivedIndicatorName']==a['archivedIndicatorName']=='Population, total'
+                  assert x['archivedCountryName']==d['entity']['name']==item['archivedCountryName']
               canonical=f"https://gunflo1011-debug.github.io/world-discovery-engine/evidence/{item['slug']}/"
               assert f'<link rel="canonical" href="{canonical}">' in html
               assert './evidence.json' in html and './evidence.csv' in html
@@ -72,12 +76,14 @@ jobs:
               with open(page/'evidence.csv',newline='',encoding='utf-8') as f: rows=list(csv.DictReader(f))
               assert len(rows)==2
               for row,key in zip(rows,('first','latest')):
-                  assert row['entity_code']==d['entity']['code'] and row['indicator_code']==d['indicator']['code']
+                  assert row['entity_code']==d['entity']['code'] and row['entity']==d['entity']['name']
+                  assert row['archived_country_name']==d[key]['archivedCountryName']==d['entity']['name']
+                  assert row['indicator_code']==d['indicator']['code']
                   assert row['archived_indicator_name']=='Population, total' and float(row['value'])==d[key]['value']
                   assert row['archive_sha256']==d[key]['archiveSha256']
           counts={t:sum(i['finding']['type']==t for i in manifest['items']) for t in ('UPWARD_REVISION','DOWNWARD_REVISION','NO_REVISION')}
           assert sum(counts.values())==15
-          print('Verified REAL population finding classifications:',counts)
+          print('Verified REAL population finding classifications and archived country identity:',counts)
           PY
       - name: Commit generated real evidence
         run: |
