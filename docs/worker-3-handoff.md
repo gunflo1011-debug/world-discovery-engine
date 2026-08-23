@@ -1,55 +1,59 @@
-# Worker 3 handoff — sources discovery refresh
+# Worker 3 handoff — citation-ready AI discovery
 
 ## New implementation
 
-Worker 3 refreshed `/sources/` because it had become materially stale: it still claimed that visible evidence examples were DEMO and that REAL evidence had not yet been promoted. That contradicted the current product, which now has provenance-gated REAL population-revision evidence and a CURRENT_VERIFIED `IT.NET.USER.ZS` Internet Use vertical.
+Worker 3 strengthened the existing AI-discovery layer instead of adding another parallel index. `scripts/build-ai-discovery.mjs` now makes `/ai-index.json` and `/llms.txt` materially more useful for Search/GEO/AI retrieval by carrying citation-ready provenance from already verified source data.
 
-The page now:
+Changes:
 
-- has an absolute canonical and updated search description;
-- exposes `Indicators` in primary navigation;
-- states the current production boundary accurately: REAL population revision evidence exists, Internet Use is CURRENT_VERIFIED same-year evidence, and Real-GDP revisions remain fail-closed where release-specific methodology comparability is not established;
-- removes stale claims that all visible evidence is DEMO;
-- adds a visible `Machine-readable access` section linking the REAL evidence index, `/ai-index.json`, `/llms.txt`, Internet Use JSON/CSV and the country machine index;
-- keeps WDI current metadata, WDI archive and licensing links visible;
-- adds source-faithful WebPage JSON-LD describing the source/provenance documentation page without inventing a Dataset owned by World Discovery Engine.
+- `/ai-index.json` schema is now `1.1`;
+- each REAL revision-evidence record now exposes an explicit `citation` object with recommended human and machine citation targets plus indicator/entity/reference-year identity;
+- each CURRENT_VERIFIED Internet Use country observation now exposes an explicit citation object containing publisher, dataset, World Bank WDI surface, metadata URL, retrieval URL/date, licence and required attribution;
+- Internet Use records now expose the indicator name in addition to the code;
+- the Internet Use collection now links its country machine index explicitly;
+- `generatedFrom` now links the human `/sources/` provenance hub;
+- `/llms.txt` now has a dedicated Citation and provenance section, a country-index link, explicit metadata/retrieval links and the exact ITU attribution carried by the verified source snapshot;
+- validation is stricter: indicator definition/name/unit, dataset/surface, attribution and retrieval date must exist before AI discovery can be generated.
 
-No source observations, evidence calculations or GDP gate were changed.
+No source observations, rankings, revision calculations, GDP gate, sitemap or robots behavior changed. The Internet Use scope remains a verified same-year subset, not a complete global ranking and not a historical revision product. Real-GDP revisions remain fail-closed.
 
 ## New commits
 
-- `b13eb0161bda363402671884e3538a5131df571d` — refresh `/sources/` for current REAL evidence and machine discovery
-- `3c1defe109314edf13de3fa0c89137ed70de5573` — direct sources discovery regression test
+- `cfa2f190ce9320072305b0e93871ca3df0079e93` — enrich AI discovery with citation-ready provenance
+- `088dff88f71e2420c6dab1376d30532fd36219dd` — test citation-ready AI discovery contract
 
 ## Direct test only
 
 Run once:
 
-`node --test test/sources-discovery.test.js`
+`node --test test/ai-discovery.test.js`
 
-The test verifies only Worker 3's new contract:
+The direct regression test now verifies:
 
-- absolute canonical and useful title;
-- production status mentions REAL population revision evidence + CURRENT_VERIFIED Internet Use;
-- GDP revision gate remains blocked;
-- old DEMO-only status text is absent;
-- visible links exist to `/evidence/index.json`, `/ai-index.json`, `/llms.txt`, Internet Use JSON/CSV and the country machine index;
-- Indicators navigation and source-page structured data remain present.
+- AI manifest schema `1.1` and existing trust policy;
+- REAL evidence count and citation targets stay aligned with `/evidence/index.json`;
+- CURRENT_VERIFIED Internet Use country records stay aligned with source value/year/entity;
+- citation publisher/dataset/surface/metadata/retrieval/licence/attribution match `site/indicators/internet-use/data.json` exactly;
+- country machine index is exposed;
+- `/sources/`, evidence index, Internet Use dataset, country index and AI manifest are all discoverable from `llms.txt`;
+- current ITU attribution and metadata URL survive generation.
 
 Worker 3 did not run full CI, Pages, live-site or mobile verification.
 
 ## Changed routes / outputs
 
-Changed human route:
+Generated machine outputs changed:
 
-- `/sources/`
+- `/ai-index.json` — schema `1.1`, citation-ready provenance fields
+- `/llms.txt` — citation/provenance guidance and country-index discovery
 
-Added test only:
+Builder/test changed:
 
-- `test/sources-discovery.test.js`
+- `scripts/build-ai-discovery.mjs`
+- `test/ai-discovery.test.js`
 
-No machine payload schema or source dataset changed in this run.
+No human route or source dataset changed in this run.
 
 ## Worker 4 release gate
 
-Run `node --test test/sources-discovery.test.js` once, then let the normal release gate verify `/sources/` as part of integration. Confirm that the page's machine-access links resolve after the normal build, especially generated `/ai-index.json` and `/llms.txt`. Do not re-open the Real-GDP revision gate and do not restore the stale DEMO-only status copy.
+Run `node --test test/ai-discovery.test.js` once and then execute the normal build/release gate. Confirm generated `/ai-index.json` reports schema `1.1`, its citation fields match the verified source payloads, and `/llms.txt` contains the sources hub, country index and current ITU attribution. Do not broaden this into a separate full Worker-3 release audit; Worker 4 remains integration/release owner.
