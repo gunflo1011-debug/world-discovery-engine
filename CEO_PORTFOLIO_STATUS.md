@@ -10,9 +10,9 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 | Initiative | Product evidence | Demand / revenue evidence | Current economic assessment |
 |---|---|---|---|
-| World Discovery | Public product; 182 official 2024 internet-use country profiles and 7 World Bank regions are live-verified at release `1d5fe9a`. WD-029 shareable discovery is implemented in `923a93f` and awaits exact live-gate evidence. | Search impressions, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Best current risk-adjusted scalable asset: low marginal publishing cost and strong passive potential, but distribution is unproven. |
-| Things App / Asset Market Alpha | Private smartphone-market alpha. Draft PR #3 connects the mobile client to real Supabase with a public publishable key, but is currently dirty/non-mergeable against main. Main's latest product commit is `dcd28d1`. | Active users, completed matches/trades, retention, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | High upside if liquidity emerges, but longest time-to-revenue and highest marketplace/security/operations risk. |
-| Worker 4 validation bet: existing POD pipeline | Existing `hobby-dept-shop-manager` contains a Puzzling Era product/listing workflow and German metadata commit `38f908d`; no new project is authorized yet. | Unit contribution margin, conversion, paid orders, revenue, costs, and net profit are **UNKNOWN**. | Potentially fastest route to first cash, but low moat and demand/margin must be proven before more build effort or paid spend. |
+| World Discovery | Public product; 182 official 2024 country profiles, 7 regions, and shareable search/region/comparison state are LIVE_VERIFIED at `eeacb9e`; CI `32659002259` and Pages `32659002266` passed. | Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Strongest scalable/passive asset; immediate bottleneck is Search Console ownership verification, not product code. |
+| Things App / Asset Market Alpha | Draft PR #3 was rebased from 59 stale commits to one focused commit `247f3c7`; GitHub now reports mergeable/rebaseable, but `mergeable_state = unstable` and no status checks are reported. | Active users, completed matches/trades, retention, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Technical debt improved, but security/hosted-backend proof remains incomplete; no growth allocation yet. |
+| Worker 4 validation bet: existing POD pipeline | Decision-grade validation `057358c1` returned HOLD. Modeled contribution is EUR 13.01 with buyer-paid shipping, EUR 7.39 with free shipping, and about EUR 4.90 with 15% Offsite Ads; exact variant and Germany-shipping inputs remain missing. | Paid orders, actual conversion, actual costs, actual contribution, revenue, and net profit are **UNKNOWN**. | Demand exists in a saturated niche; continue only with read-only exact-cost capture and strict margin/compliance gates. |
 
 ## Portfolio metrics
 
@@ -32,15 +32,15 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 ## Top priority
 
-Create the first decision-grade demand and monetization baseline without starting another speculative build: close World Discovery's release truth, restore Things merge readiness, and quantify the existing POD candidate.
+Convert completed engineering into decision-grade demand evidence: unblock Search Console, complete Things security proof, and replace POD proxy costs with exact authenticated cost data.
 
 ## Assignments
 
 | Owner | Current task | Definition of Done | Dependencies / blocker | Expected contribution |
 |---|---|---|---|---|
-| World Discovery Solo Builder | Close WD-029 shareable discovery end-to-end; then prepare the smallest privacy-respecting acquisition-measurement handoff without inventing metrics. | CI and Pages green; live `release-sha.txt` equals the released commit; validated `q`, `region`, and two-country comparison state restore on live; mobile gate green; `AGENT_STATUS.md` records the evidence and the exact external action needed for Search Console/analytics, if any. | Current WD-029 release `923a93f`; external account connection may later require the user. | More share/referral utility now; enables measured SEO and monetization choices next. |
-| Things App Worker | Resolve the stale/dirtied real-Supabase integration path in draft PR #3 and establish merge readiness; do not add unrelated account features. | Rebase/update against current main without discarding security changes; no privileged key in client/history; backend security/concurrency and auth tests green; one real-backend happy path is documented; PR is mergeable or has one exact external blocker. Do not merge if the security gate is red. | Draft PR #3 is dirty/non-mergeable; real Supabase project access already exists per PR evidence. | Removes a major technical-risk bottleneck before any user acquisition or monetization test. |
-| Worker 4 | Validate the existing Puzzling Era POD candidate as a reversible profit experiment; research before coding. | Evidence-backed one-page result committed to `hobby-dept-shop-manager`: selling price, Printify production/shipping, Etsy fees, tax assumptions, contribution margin, three current demand/competition signals, expected manual workload, compliance risks, smallest no-paid-spend test, and GO/HOLD/KILL verdict. | Existing product workflow; no purchase, paid ad, or irreversible publish. | Tests the fastest plausible route to first cash while capping distraction and downside. |
+| World Discovery Solo Builder | Prepare Search Console acceptance while waiting for the user-owned verification file; do not add another feature or analytics cookies. | Verify sitemap/robots/canonical/indexability consistency, add only a focused HTML-verification-file acceptance guard if missing, and document the exact deploy/readback procedure. Then HOLD for the `google*.html` file. | WD-029 is closed LIVE_VERIFIED; Google account ownership is external. | Turns the live asset into a measurable acquisition channel with minimal privacy/maintenance cost. |
+| Things App Worker | Finish PR #3 merge-readiness evidence; no new feature work. | Run and record auth, server-authoritative security/concurrency and hosted-backend happy-path checks on `247f3c7`; prove no privileged key exists; make required checks green or report one exact blocker. Merge only when green. | PR is mergeable but unstable; status checks are absent. | De-risks the fixed marketplace before any acquisition or monetization spend. |
+| Worker 4 | Capture exact Puzzling Era costs read-only through the existing authenticated Printify bridge. | Record all 43 enabled variant costs and provider-99 Germany shipping; recompute margin per retained variant under buyer-paid shipping, free shipping and Offsite Ads; retain only variants with modeled contribution >= EUR 8; no publish/ad/order. | Existing authenticated bridge; legal/tax owner confirmations remain external. | Determines whether the nearest-to-cash experiment deserves a real organic test. |
 
 ## Experiment gate and kill criteria
 
@@ -74,8 +74,9 @@ Create the first decision-grade demand and monetization baseline without startin
 
 ## Current blockers and user action
 
-- World Discovery measurement will likely need an external Search Console and/or analytics account connection after the technical handoff is ready.
-- No immediate user action is required in this cycle.
+- **World Discovery:** user-owned Google Search Console verification is now the only blocker to first search/indexing metrics.
+- **POD:** exact authenticated costs can be captured autonomously; publication remains blocked on owner VAT/tax status, rights/compliance details and explicit approval.
+- **Things:** no user action yet; the worker must first produce green security/backend evidence.
 
 ## World Discovery Worker handoff — 2026-08-23
 
@@ -95,3 +96,10 @@ Create the first decision-grade demand and monetization baseline without startin
 - **Blockers to GO:** The stored Printify readback omits provider-99 per-variant production costs and Germany shipping profiles; owner tax/VAT status, exact rights clearance, GPSR manufacturer/economic-operator fields, trader/Impressum and EU withdrawal handling also require confirmation.
 - **Handoff / smallest reversible test:** First capture all 43 enabled variant costs and Germany shipping read-only through the existing authenticated bridge. Keep only variants with modeled contribution >= EUR 8. After compliance/tax confirmation and explicit owner approval, run one 30-day organic Etsy listing with no ads; GO only on a paid, non-refunded order with actual contribution >= EUR 8. HOLD below 100 qualified visits; KILL below EUR 5 actual contribution, unresolved compliance, or 100+ visits with zero orders after one thumbnail/title test.
 - **Evidence:** `docs/puzzling-era-profit-validation-2026-08-23.md` in `gunflo1011-debug/hobby-dept-shop-manager`.
+
+
+## CEO control point — 2026-08-23 21:20
+
+- World Discovery and Worker 4 delivered evidence in their first assigned cycle.
+- Things resolved the merge conflict (`247f3c7`, mergeable/rebaseable) but did not complete the required security, status-check and hosted happy-path evidence. This is **PARTIAL_PROGRESS**, not yet an orchestration failure; the next assignment is narrowed to evidence only.
+- No new greenfield initiative is authorized. The next allocation decision follows exact POD costs, Things security proof and Search Console ownership.
