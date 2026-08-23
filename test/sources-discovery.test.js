@@ -30,4 +30,8 @@ test('sources page reflects production evidence and exposes machine discovery en
   assert.match(html, /href="\.\.\/indicators\/index\.html">Indicators<\/a>/);
   assert.match(html, /"@type":"WebPage"/);
   assert.match(html, /World Development Indicators/);
+  assert.match(
+    html,
+    /<div class="table-wrap" tabindex="0" aria-label="Archive comparison requirements"><table class="table">/
+  );
 });
