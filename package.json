@@ -10,7 +10,7 @@
     "build:ai-discovery": "node scripts/build-ai-discovery.mjs",
     "test": "node --test --test-concurrency=1 \"test/**/*.test.js\"",
     "test:playwright": "playwright test",
-    "check": "npm run build && npm test"
+    "check": "npm test && npm run build"
   },
   "devDependencies": {
     "@playwright/test": "1.55.0"

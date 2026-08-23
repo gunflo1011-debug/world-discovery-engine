@@ -3,21 +3,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { parseCsv } from '../src/csv.js';
 
 const execFileAsync = promisify(execFile);
 const htmlPath = new URL('../site/indicators/internet-use/index.html', import.meta.url);
 const jsonPath = new URL('../site/indicators/internet-use/data.json', import.meta.url);
 const csvPath = new URL('../site/indicators/internet-use/data.csv', import.meta.url);
 const generatorPath = new URL('../scripts/build-internet-use.mjs', import.meta.url);
-
-function parseCsv(text) {
-  const [header, ...rows] = text.trim().split(/\r?\n/);
-  const fields = header.split(',');
-  return rows.map((line) => {
-    const values = line.split(',');
-    return Object.fromEntries(fields.map((field, index) => [field, values[index]?.replace(/^"|"$/g, '')]));
-  });
-}
 
 function ranked(records) {
   const sorted = [...records].sort((a, b) => b.value - a.value || a.country.localeCompare(b.country));
