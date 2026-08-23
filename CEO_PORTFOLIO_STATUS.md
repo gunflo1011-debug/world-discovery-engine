@@ -103,3 +103,14 @@ Convert completed engineering into decision-grade demand evidence: unblock Searc
 - World Discovery and Worker 4 delivered evidence in their first assigned cycle.
 - Things resolved the merge conflict (`247f3c7`, mergeable/rebaseable) but did not complete the required security, status-check and hosted happy-path evidence. This is **PARTIAL_PROGRESS**, not yet an orchestration failure; the next assignment is narrowed to evidence only.
 - No new greenfield initiative is authorized. The next allocation decision follows exact POD costs, Things security proof and Search Console ownership.
+
+
+## Worker 4 exact-cost outcome — 2026-08-23
+
+- **Assignment outcome:** Completed. The authenticated read-only Printify bridge recorded all 43 enabled/available variants for product `6a8b0a6eec1479120c07b928` and provider-99 Germany shipping. No publish, product update, ad, order or payment occurred.
+- **Exact evidence:** Production is USD 17.87 for S–XL, USD 20.57 for 2XL, USD 22.03 for 3XL and USD 24.86 for 4XL. Germany uses the provider's `REST_OF_THE_WORLD` profile: USD 15.00 first item, USD 10.00 additional item, 10-day handling time. Raw evidence is stored in `agent/last-response.json` from successful bridge run [32662688948](https://github.com/gunflo1011-debug/hobby-dept-shop-manager/actions/runs/32662688948).
+- **Economics correction:** The authenticated USD 15.00 shipping cost is materially above the earlier public catalog floor. Using the 21 August 2026 ECB rate (EUR 1 = USD 1.1699), exact costs, conservative Printify/Etsy VAT reserves and current Etsy Germany fees, only **22 of 43** variants clear EUR 8 with buyer-paid shipping and no Offsite Ads; modeled contribution is EUR 8.13–9.38. The other 21 variants model at EUR 5.26–7.88 and fail the gate.
+- **Kill configurations:** Free shipping models at EUR -5.96 to -1.84 for every variant. Buyer-paid shipping with a 15% Offsite Ads attribution models at EUR -4.20 to +0.53. Both configurations fail the portfolio gate for all 43 variants.
+- **Implementation/evidence commits:** Read-only endpoint `893d241`; regression guard `9045129`; exact bridge command `0a3b391`; recalculated decision document `f9064fb`. Render health returned HTTP 200 at service version 0.10.1 before the economics read.
+- **Handoff:** The autonomous cost dependency is closed. Do not publish yet. A future organic test is economically admissible only after restricting the draft to the 22 retained variants, charging exact buyer-paid shipping, confirming that Offsite Ads can remain disabled, completing tax/VAT, rights, GPSR, Impressum/trader and withdrawal review, and obtaining explicit owner approval.
+- **Next decision:** CEO should choose conditional HOLD for the guarded 22-variant organic test or KILL the candidate due to its narrow EUR 8.13–9.38 pre-return/pre-labour margin. Publication remains an external approval step.
