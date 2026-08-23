@@ -15,14 +15,19 @@ function assertArrayPayload(payload, label) {
 function countryMap(countryPayload) {
   const countries = assertArrayPayload(countryPayload, 'country metadata');
   return new Map(countries
-    .filter((country) => country?.id && country?.name && country?.region?.id && country.region.id !== 'NA')
-    .map((country) => [country.id, { code: country.id, country: country.name }]));
+    .filter((country) => country?.id && country?.name && country?.region?.id && country?.region?.value && country.region.id !== 'NA')
+    .map((country) => [country.id, {
+      code: country.id,
+      country: country.name,
+      region: { code: country.region.id, name: country.region.value }
+    }]));
 }
 
-export function normalizeInternetUseSnapshot({ indicatorPayload, countryPayload, year, retrievedAt, retrievalUrl }) {
+export function normalizeInternetUseSnapshot({ indicatorPayload, countryPayload, year, retrievedAt, retrievalUrl, countryMetadataUrl }) {
   if (!Number.isInteger(year)) throw new Error('year must be an integer');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(retrievedAt)) throw new Error('retrievedAt must be YYYY-MM-DD');
   if (!/^https:\/\/api\.worldbank\.org\//.test(retrievalUrl)) throw new Error('retrievalUrl must be an official World Bank API URL');
+  if (!/^https:\/\/api\.worldbank\.org\//.test(countryMetadataUrl)) throw new Error('countryMetadataUrl must be an official World Bank API URL');
 
   const countries = countryMap(countryPayload);
   const observations = assertArrayPayload(indicatorPayload, 'indicator data');
@@ -46,7 +51,7 @@ export function normalizeInternetUseSnapshot({ indicatorPayload, countryPayload,
   if (records.length < 2) throw new Error('official same-year snapshot contains fewer than two country observations');
 
   return {
-    schemaVersion: '1.1',
+    schemaVersion: '1.2',
     status: 'CURRENT_VERIFIED',
     indicator: {
       code: INDICATOR_CODE,
@@ -62,6 +67,7 @@ export function normalizeInternetUseSnapshot({ indicatorPayload, countryPayload,
     },
     retrievedAt,
     retrievalUrl,
+    countryMetadataUrl,
     source: {
       publisher: 'International Telecommunication Union (ITU)',
       dataset: 'World Telecommunication/ICT Indicators Database',
@@ -81,7 +87,14 @@ export async function fetchInternetUseSnapshot({ year = DEFAULT_YEAR, retrievedA
   if (!indicatorResponse.ok) throw new Error(`World Bank indicator request failed: HTTP ${indicatorResponse.status}`);
   if (!countryResponse.ok) throw new Error(`World Bank country request failed: HTTP ${countryResponse.status}`);
   const [indicatorPayload, countryPayload] = await Promise.all([indicatorResponse.json(), countryResponse.json()]);
-  return normalizeInternetUseSnapshot({ indicatorPayload, countryPayload, year, retrievedAt, retrievalUrl: indicatorUrl });
+  return normalizeInternetUseSnapshot({
+    indicatorPayload,
+    countryPayload,
+    year,
+    retrievedAt,
+    retrievalUrl: indicatorUrl,
+    countryMetadataUrl: countriesUrl
+  });
 }
 
 function parseArgs(argv) {
