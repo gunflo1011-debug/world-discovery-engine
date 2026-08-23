@@ -45,6 +45,14 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   const max = Math.max(...rows.map((record) => record.value));
   const min = Math.min(...rows.map((record) => record.value));
   const germany = rows.find((record) => record.code === 'DEU');
+  const regions = new Map();
+  for (const record of data.records) {
+    assert.match(record.region.code, /^[A-Z]{3}$/);
+    assert.ok(record.region.name.trim());
+    if (!regions.has(record.region.code)) regions.set(record.region.code, { name: record.region.name.trim(), count: 0 });
+    assert.equal(regions.get(record.region.code).name, record.region.name.trim());
+    regions.get(record.region.code).count += 1;
+  }
 
   assert.equal(data.status, 'CURRENT_VERIFIED');
   assert.equal(data.indicator.code, 'IT.NET.USER.ZS');
@@ -63,6 +71,8 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
     assert.match(html, new RegExp(`>${record.country.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<`));
     assert.match(html, new RegExp(`>${record.value}%<`));
     assert.match(html, new RegExp(`data-code="${record.code.toLowerCase()}"`));
+    assert.match(html, new RegExp(`data-region="${record.region.code.toLowerCase()}"`));
+    assert.match(html, new RegExp(`href="\\.\\/country\\/${record.code.toLowerCase()}\\/"`));
   }
 
   assert.match(html, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/indicators\/internet-use\/"/);
@@ -83,12 +93,23 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
   assert.match(html, /"spatialCoverage":\[/);
   assert.match(html, /not a complete global ranking/i);
   assert.match(html, /id="country-search"[^>]+placeholder="Type Germany, DEU…"/);
-  assert.match(html, /id="country-status" aria-live="polite"/);
+  assert.match(html, /id="country-status" class="internet-tool-status" aria-live="polite"/);
+  assert.match(html, /id="region-filter"/);
+  assert.match(html, /aria-labelledby="region-directory-heading"/);
+  assert.match(html, /This directory works without JavaScript\./);
+  for (const [code, region] of regions) {
+    assert.match(html, new RegExp(`<option value="${code.toLowerCase()}">[^<]+ \\(${region.count}\\)<\\/option>`));
+    assert.match(html, new RegExp(`<details class="region-directory-item" id="region-${code.toLowerCase()}">`));
+    assert.match(html, new RegExp(`<span>${region.count} countries<\\/span>`));
+  }
   assert.match(html, /id="compare-a"/);
   assert.match(html, /id="compare-b"/);
   assert.match(html, /id="compare-result" aria-live="polite" hidden/);
   assert.match(html, /tools\.hidden=false/);
   assert.match(html, /row\.hidden=!match/);
+  assert.match(html, /region\.addEventListener\('change',applyFilter\)/);
+  assert.match(html, /const matchesRegion=!regionCode\|\|row\.dataset\.region===regionCode/);
+  assert.match(html, /region\.value=''/);
   assert.match(html, new RegExp(`Within this verified ${data.observationYear} subset`));
   assert.match(html, /percentage points/);
   assert.doesNotMatch(html, /current\/latest vertical/i);
