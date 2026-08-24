@@ -142,6 +142,19 @@ test.describe('mobile smoke tests', () => {
             await expect(jsonLink).toBeVisible();
             await expect(csvLink).toBeVisible();
 
+            const trust = page.locator('#comparison-trust');
+            await expect(trust).toBeVisible();
+            await expect(trust).toHaveAttribute('aria-label', 'Verify this comparison data');
+            const sourceProof = trust.locator('a[href="#source-provenance"]');
+            const methodologyProof = trust.locator('a[href="../../methodology/"]');
+            await expect(sourceProof).toHaveText('Source, license and retrieval');
+            await expect(methodologyProof).toHaveText('Validation methodology');
+            expect((await page.request.get(new URL(await methodologyProof.getAttribute('href'), `${BASE}${route}`).href)).ok()).toBeTruthy();
+            await sourceProof.focus();
+            await sourceProof.press('Enter');
+            await expect(page.locator('#source-provenance')).toBeFocused();
+            expect(new URL(page.url()).hash).toBe('#source-provenance');
+
             const jsonHref = await jsonLink.getAttribute('href');
             const csvHref = await csvLink.getAttribute('href');
             const jsonResponse = await page.request.get(new URL(jsonHref, `${BASE}${route}`).href);
