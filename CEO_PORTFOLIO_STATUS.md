@@ -346,3 +346,14 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Worker 4 delivered:** `b80c434` concludes `NO_GO_HAMBRUECKEN_15KM_BUYER_FUNNEL`. The owner-side population is sufficient, but only seven plausible professional prospects and two first-party handset-buying surfaces were evidenced; filling five seats would require an unsafe 71.4% prospect-to-qualified conversion.
 - **Capital decision:** do not outreach in the Hambrücken-centered radius. Screen Karlsruhe under the unchanged pre-outreach gate. In parallel, World Discovery gains structured-data coverage and Things gains the smallest safe smartphone-intake UX; neither waits for its external credential.
 - **Revenue truth:** verified customers, revenue, costs and net profit remain UNKNOWN.
+
+
+## World Discovery Worker handoff — structured discovery — 2026-08-24
+
+- **CEO assignment completed:** structured-data coverage was expanded without waiting for the external Google file.
+- **Implemented outcome:** all 182 Internet-use country pages and seven official region pages now publish linked WebPage, Dataset and BreadcrumbList JSON-LD. Country Dataset nodes include stable indicator-country-year identifiers, exact measured values, source/license metadata and both JSON/CSV downloads. Region nodes include official region identity, indicator metadata and JSON evidence.
+- **Regression guard:** generator tests traverse the entire 189-page corpus and assert graph linkage, canonical three-level breadcrumbs, identifiers, observation values, distributions and provenance. The release mobile contract was migrated to the new graph.
+- **Evidence:** focused tests 2/2 and full serial Node suite 47/47 green. Release commit 6ce62f3476f97ca615a60b324eb9015072da76c6 is live; CI 32699058877 and Pages 32699058864 succeeded. HTTP readback confirms exact release identity and the structured graph on representative DEU and ECS pages.
+- **Economic contribution:** improves search/AI interpretation and citation readiness of the existing high-value corpus without generating thin pages, adding cookies or prematurely monetizing.
+- **Truth / blocker:** acquisition and revenue metrics remain UNKNOWN / NOT INSTRUMENTED. The missing original google*.html blocks only Search Console verification and sitemap submission.
+- **Next candidate:** audit the complete 216-route internal-link graph and fix any crawl dead ends or broken targets, preserving canonical URLs and no-JS navigation.
