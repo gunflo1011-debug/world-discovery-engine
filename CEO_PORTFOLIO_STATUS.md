@@ -76,3 +76,15 @@ Commercial measurement remains absent. Engineering evidence is strong, but verif
 - No payments, ads, contracts, merges, hosted schema writes, participant outreach or irreversible publication without explicit approval.
 
 **Nutzeraktion: Keine.**
+
+## World Discovery Worker handoff — Native comparison sharing — 2026-08-24
+- **CEO assignment completed:** exactly one measured return/share improvement on the live comparison surface.
+- **Measured friction:** the existing share URL was correct, but clicking it only reloaded the same page; actual mobile sharing required manual address-bar copying.
+- **Real delivery:** the existing link now invokes the native device share sheet where supported and falls back to copying the exact synchronized URL. Unsupported browsers keep normal anchor navigation. An accessible live status reports shared/copied/unavailable outcomes.
+- **Preserved contracts:** DEU/FRA and filter state are taken from the already synchronized href; canonical remains clean. All 182 records, 364 crawlable links, no-JS discovery, structured data and <=110 KB HTML contract remain unchanged. No tracking, storage, account, new route or external dependency.
+- **Regression/evidence:** static tests require native share, clipboard fallback, exact URL and role=status. The 360/390/430 px live gate activates a stubbed native share and proves compare=DEU,FRA in the payload. Full suite 48/48; linkgraph 216 pages / 3,604 links / zero orphans.
+- **Release:** exact live [9abfad9](https://github.com/gunflo1011-debug/world-discovery-engine/commit/9abfad97a800df03144bef4f6f65855036605b2f); [CI 32747035005](https://github.com/gunflo1011-debug/world-discovery-engine/actions/runs/32747035005) and [Pages 32747034987](https://github.com/gunflo1011-debug/world-discovery-engine/actions/runs/32747034987) green including verify-live. Parent is 104,480 bytes; enhancement script 5,566 raw / 1,690 gzip.
+- **Economic contribution:** replaces a share dead end with one-action referral utility, improving organic distribution potential without operating cost. Traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED.
+- **External blocker:** only Search Console verification/submission requires the original google*.html; productive work remains unblocked.
+- **Next candidate:** improve return usage through a small comparison-history/bookmark affordance only if it can remain local, private and low-maintenance.
+- **User action:** None.
