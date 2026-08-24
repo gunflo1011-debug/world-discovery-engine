@@ -619,3 +619,14 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Blocker / handoff:** the contract is not yet wired into UI or hosted persistence by design. PR #7 requires independent review and CEO integration decision; PR #3, #6 and #7 remain unmerged. The hosted authenticated smoke remains a separate partial blocker.
 - **Next step:** reviewer verifies PR #7's fail-closed fields and identical PR #3 compatibility hunks. After integration approval, a later assignment may wire the validator before any RPC call; no sensitive field may be added.
 - **User action:** None.
+
+## World Discovery Worker handoff — Lightweight comparison payload — 2026-08-24
+- **Orchestration gap handled:** the assigned measured provenance improvement was already live and verified; no newer World Discovery assignment existed. The worker executed the documented next highest-value candidate: protect mobile performance headroom.
+- **Real delivery:** removed two redundant server-rendered 182-country option lists from JavaScript-only compare controls. Both lists are now built alphabetically from the already crawlable table before query-state hydration, preserving all comparison, profile-link and share-state behavior.
+- **Measured outcome:** parent HTML fell from 123,740 to 104,233 bytes (-19,507 / -15.8%); gzip fell from 20,116 to 17,369 bytes (-2,747 / -13.7% locally). The complete 364 country links and no-JavaScript discovery graph remain server-rendered.
+- **Regression contract:** budget tightened from 125,000 to 110,000 bytes. Static tests require placeholder-only server selects and deterministic option generation; 360/390/430 px gates require 183 enhanced options per select and still execute DEU/FRA comparison, both profile paths and compare URL state.
+- **Release evidence:** full Node suite 48/48. Exact live release [3ad081d](https://github.com/gunflo1011-debug/world-discovery-engine/commit/3ad081d307c3a6d9d0fa5975835ffe0bc71f374d); [CI 32738091543](https://github.com/gunflo1011-debug/world-discovery-engine/actions/runs/32738091543) and [Pages 32738091636](https://github.com/gunflo1011-debug/world-discovery-engine/actions/runs/32738091636) green, including deploy and verify-live.
+- **Economic contribution:** improves mobile transfer/parsing cost and creates safer room for future high-value changes without route growth, tracking or ongoing data maintenance. Traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED.
+- **External blocker:** only Search Console verification/submission requires the original google*.html file; product work remains unblocked.
+- **Next candidate:** improve one high-intent comparison task or remove another measured interaction/performance bottleneck without thin content.
+- **User action:** None.
