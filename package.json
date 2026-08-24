@@ -9,9 +9,10 @@
     "build": "node scripts/build-site.js && node scripts/build-internet-use-countries.mjs && node scripts/enrich-internet-use-country-csv.mjs && node scripts/enrich-internet-use-country-directory.mjs && node scripts/finalize-internet-country-discovery.mjs && node scripts/build-ai-discovery.mjs",
     "build:ai-discovery": "node scripts/build-ai-discovery.mjs",
     "validate:search-console": "node scripts/validate-search-console-verification.mjs",
+    "check:links": "node scripts/check-internal-links.mjs",
     "test": "node --test --test-concurrency=1 \"test/**/*.test.js\"",
     "test:playwright": "playwright test",
-    "check": "npm run build && npm test && npm run build"
+    "check": "npm run build && npm run check:links && npm test && npm run build && npm run check:links"
   },
   "devDependencies": {
     "@playwright/test": "1.55.0"
