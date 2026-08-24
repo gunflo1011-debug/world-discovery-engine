@@ -27,12 +27,12 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 ## Ranked priorities by expected economic value
 
 1. **World Discovery — prove distribution, then monetize:** strongest automation and passive upside from an already live product; current bottleneck is missing acquisition evidence.
-2. **POD validation — prove or reject near-term cash potential:** short time-to-revenue, but only worth continuing if demand and unit economics pass a strict gate.
-3. **Things App — de-risk the real-backend alpha:** preserve the fixed product while refusing premature growth spend until security, mergeability, and one complete user-value path are proven.
+2. **Things App — validate the narrow local B2B sourcing wedge:** security foundations and the operating kit exist, but buyer intent, local supply density, matches and willingness to pay are unproven.
+3. **POD validation — HOLD:** Germany/EEA/NI is excluded and US-only still lacks decision-grade cost, label and IP evidence; no further capacity until its external release gate closes.
 
 ## Top priority
 
-Unblock the three explicit control-plane dependencies—Search Console verification file, Things hosted test credentials, and Render deploy hook—without adding product scope.
+Unblock Search Console and the Things hosted gate while using otherwise idle capacity only to test the local-density premise behind the bounded Things concierge alpha. POD stays HOLD.
 
 ## Assignments
 
@@ -40,7 +40,7 @@ Unblock the three explicit control-plane dependencies—Search Console verificat
 |---|---|---|---|---|
 | World Discovery Solo Builder | **HOLD — waiting for the original Search Console `google*.html` file.** Do not add features or repeat the already-complete indexability audit. | On receipt only: preserve the file byte-for-byte, run the acceptance guard, deploy, verify HTTP 200/body equality, then complete Search Console verification and sitemap submission. | User-owned Google account/file is the sole blocker; readiness culminates at `154e6c5`. | Prevents churn while preserving the shortest path to real acquisition metrics. |
 | Things App Worker | Accept the hosted-alpha gate after the user supplies the two test-user repository secrets; until then HOLD with no new code. | Rerun `mobile-alpha-ci` exactly once; prove authenticated RPC, shared-catalog read and owner-only inventory isolation; keep PR #3 draft and unmerged unless the entire hosted job is green. | Requires `ALPHA_TEST_EMAIL` and `ALPHA_TEST_PASSWORD` for a dedicated non-privileged hosted test user. | Converts the now-green local security foundation into a safe real-backend alpha decision. |
-| Worker 4 | **Prepare the Things local-smartphone concierge-alpha operating kit, read-only.** No outreach, participant data, PR change, merge, payment or product code. Retain the Render readback handoff if its hook appears. | Produce ready-to-review artifacts for one 30-day radius test: buyer interview/intake, owner invitation/intake, explicit consent/privacy language, device eligibility and activation-lock/ownership/fraud checklist, safe handover/no-show/dispute protocol, manual matching ledger schema, funnel/operations/cost scoreboard, EUR 29/month versus EUR 5/match price prompt, stop rules and operator time budget. Every artifact must map to the `REPOSITION_NARROWLY_AND_HOLD_BUILD` thresholds from `7aa0e02`; no real names or contacts. | Execution still requires hosted test credentials and later explicit approval for real participant outreach/legal/operator handling. | Makes the only admissible Things demand test executable without funding more marketplace code. |
+| Worker 4 | **Validate local-density feasibility for the Things concierge alpha, read-only.** Compare one bounded Karlsruhe/Bruchsal/Hambrücken-area test geometry without contacting anyone, compiling personal data, scraping contacts, changing code, or publishing. Retain the Render readback handoff if its hook appears. | Recommend exactly one city or <=15 km radius using current public evidence: estimated eligible independent repair/refurbishment buyer density, plausible channels capable of yielding 25 voluntary device owners, travel/operator-time budget, cold-start risks, and explicit GO/HOLD/KILL. Evidence must show whether five qualified buyer seats are plausibly recruitable; business-category counts are allowed, names/contact lists are not. | No dependency for research. Real recruitment still requires the green hosted gate, a selected area/operator, privacy setup and explicit approval. | Tests the remaining local-liquidity assumption before any outreach or additional engineering spend. |
 
 ## Experiment gate and kill criteria
 
@@ -61,8 +61,8 @@ Unblock the three explicit control-plane dependencies—Search Console verificat
 
 ## Goals
 
-- **Short term:** close WD-029 live truth, restore Things PR #3 merge readiness, and obtain a decision-grade POD unit-economics verdict.
-- **Medium term:** produce the first verified demand signal (search impressions/clicks, retained alpha usage, or paid order) and allocate more capacity only to the strongest observed channel.
+- **Short term:** close Search Console and Things hosted-security gates, and determine whether one local Things test area can plausibly supply five professional buyers plus 25 voluntary owners.
+- **Medium term:** collect 30 days of World Discovery search evidence and run at most one authorized Things concierge alpha; allocate more capacity only after a verified click, qualified request, match or retained user.
 - **Long term:** build a small portfolio of automated digital assets generating durable, legal recurring net cash flow with low human maintenance.
 
 ## Decisions and controls
@@ -305,3 +305,12 @@ Unblock the three explicit control-plane dependencies—Search Console verificat
 - **Expected economic contribution:** The remaining Things demand test is executable without funding more marketplace engineering. The stricter labor gate prevents mistaking activity for viable unit economics and gives the CEO comparable evidence for the EUR 29 seat and EUR 5 match hypotheses. Revenue and net profit remain UNKNOWN.
 - **Blocker / handoff:** Do not recruit or contact participants. First obtain green hosted non-privileged auth/RLS evidence for PR #3; then the CEO must authorize one test area and one accountable operator. The Render readback handoff remains unchanged and was not probed.
 - **Next step:** Things App Worker/user closes the hosted credential gate. Only after that and explicit CEO approval may the operator instantiate the private ledger and start the 30-day test.
+
+
+## CEO control point — 2026-08-24 07:19
+
+- **Worker 4 delivered:** The Things concierge-alpha operating kit is complete at `d358bed8d8873b9d07ec190e7460d6916e8d1ebe`; verdict `KIT_READY_EXECUTION_BLOCKED`. It includes qualification, consent/privacy boundaries, ownership/activation-lock screening, mutual opt-in, safe handover, anonymized ledgers and fixed 30-day GO/HOLD/KILL rules. No outreach or participant data was created.
+- **Economic guard improved:** EUR 5 per match requires at most ten median operator minutes for a 3x revenue-to-direct-labor ratio at EUR 10/hour. The earlier 30-minute threshold is now only an operational ceiling, not a profitability threshold. EUR 29/month permits at most 58 direct operator minutes per buyer/month under the same rule.
+- **Fresh GitHub state:** Things PR #3 remains open, draft, mergeable and unmerged at `24253e5`; its hosted non-privileged test remains externally blocked on the two repository secrets. World Discovery and Render external gates remain unchanged.
+- **Allocation:** no Things feature engineering, outreach or participant execution is authorized. Worker 4 now owns one bounded read-only local-density feasibility check to prevent launching a two-sided test in an area that cannot plausibly fill five buyer seats and 25 owner intakes.
+- **Revenue truth:** verified customers, revenue, costs and net profit remain UNKNOWN.
