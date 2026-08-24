@@ -50,7 +50,7 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     env:
-      BASE_URL: https://gunflo1011-debug.github.io/world-discovery-engine
+      BASE_URL: https://worlddiscoverydata.com
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -140,7 +140,6 @@ jobs:
             const v=k=>row[cols.indexOf(k)];
             if(v('entity_code')!==country.code||v('indicator_code')!==index.indicator||Number(v('reference_year'))!==2024||Number(v('value'))!==Number(country.value)) throw new Error(`country CSV identity mismatch ${country.code}`);
           }
-
 
           const regionIndex=await get('/indicators/internet-use/region/index.json','json');
           if(regionIndex.schemaVersion!=='1.0'||regionIndex.status!=='CURRENT_VERIFIED'||regionIndex.indicator!==index.indicator||regionIndex.observationYear!==2024||!Array.isArray(regionIndex.regions)||regionIndex.regions.length!==7) throw new Error('Internet-use region index contract mismatch');
