@@ -170,6 +170,15 @@ test.describe('mobile smoke tests', () => {
             await expect(more).toHaveAttribute('aria-expanded', 'false');
             expect(await visibleRows(), `compact table row count mismatch for ${route}`).toBe(25);
 
+            const tableJump = page.locator('#country-table-jump');
+            await expect(tableJump).toBeVisible();
+            await tableJump.focus();
+            await tableJump.press('Enter');
+            await expect(page.locator('#internet-table')).toBeFocused();
+            expect(new URL(page.url()).hash).toBe('#internet-table');
+            await expect(page.locator('#internet-table thead th[scope="col"]')).toHaveCount(4);
+            await expect(page.locator('#internet-table tbody th[scope="row"]')).toHaveCount(payload.records.length);
+
             await more.click();
             await expect(more).toHaveText('Show top 25 countries');
             await expect(more).toHaveAttribute('aria-expanded', 'true');
