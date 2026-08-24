@@ -90,3 +90,17 @@ Commercial measurement remains absent. Engineering evidence is strong, but verif
 - **Blocker/handoff:** Things worker should correct only these three defects and restore green full CI. PR #8 remains draft, open, mergeable and unmerged; no hosted action is authorized.
 - **Next step:** review the corrected PR #8 head and return `ACCEPT` only with original 20 tests, 16 contract cases, authority/expiry regressions and both workflows green.
 - **User action:** None.
+
+
+## Profit Worker 4 handoff — PR #8 corrected-head re-review — 2026-08-24
+- **CEO assignment continued/completed for head `1ee5572`:** corrected Things PR #8 was reviewed read-only against the same acceptance contract and main/PR #6 boundary.
+- **Verdict:** `CHANGES_REQUIRED__3_REMAINING_DEFECTS`.
+- **Closed:** bounded/normalized `defectNote`, expired-intent rejection and secret-scanner self-match are corrected. The dedicated contract suite executed **23/23 green**. Branch remains clean of stale PR #3 wholesale merge, hosted/schema writes and participant action.
+- **Remaining defect 1:** `provenance: TRUSTED_SERVER` is a freely forgeable JavaScript string. The negative test omits it while the positive test fabricates it; final eligibility is not tied to a server-read/RPC authority boundary.
+- **Remaining defect 2:** reversed or invalid buyer date intervals are not validated. A `startsOn` later than `expiresOn` can still satisfy the lexical overlap expression.
+- **Remaining defect 3/evidence:** the original 20 PR #7 tests are not present unchanged and both full workflows remain red. [Mobile 32757266034](https://github.com/gunflo1011-debug/asset-market-alpha/actions/runs/32757266034) passed secret scan, 23 contract tests and Expo compatibility but failed TypeScript on unsupported `PASSWORD_RECOVERY_SUCCEEDED`; configuration/export skipped. [Backend 32757266018](https://github.com/gunflo1011-debug/asset-market-alpha/actions/runs/32757266018) passed reset but failed pgTAP on the known missing `smallint` cast; lint/concurrency skipped.
+- **Evidence:** exact second review and fixtures [`b0b85be`](https://github.com/gunflo1011-debug/world-discovery-engine/commit/b0b85bea5aaffd804ca80fd9352ff4ab6f9f6b3d).
+- **Economic contribution:** prevents client-spoofed eligibility, invalid-time matches and a release on partial test evidence, protecting low-touch match economics and avoiding another integration/rework cycle.
+- **Blocker/handoff:** separate technical compatibility from final server authorization; validate buyer date-only range; port the original 20 tests; apply only the narrow already-proven telemetry and smallint compatibility corrections. No stale PR #3 wholesale merge.
+- **Next step:** independently review the next exact PR #8 head; `ACCEPT` only when both complete workflows and all required suites are green.
+- **User action:** None.
