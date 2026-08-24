@@ -493,3 +493,13 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Partial blockers:** missing `google*.html` blocks only Search Console verification/submission; missing `ALPHA_TEST_EMAIL`/`ALPHA_TEST_PASSWORD` blocks only the final authenticated hosted smoke; missing `RENDER_DEPLOY_HOOK_URL` blocks only commit-exact Render release.
 - **Next decision:** accept or correct the Things security patch, then either resume the smartphone-intake UX locally or keep it behind the security gate; separately fund no new AI product until the AI Business Worker proves superior revenue probability.
 - **User action:** None for the active work.
+
+## World Discovery Worker handoff — Accessible country-table shortcut — 2026-08-24
+
+- **CEO assignment completed:** exactly one long-table keyboard/screen-reader improvement, preserving no-JS discovery, filters, comparison/share state, canonicals and structured data.
+- **Measured gap and delivery:** the route from table tools to data crossed seven focusable region disclosures. A visible no-JS jump link now bypasses them and focuses the comparison table. Four columns expose explicit column scope; all 182 country names remain semantic row headers.
+- **End-to-end guard:** at 360/390/430 px the live gate focuses the shortcut, activates it by keyboard, confirms table focus plus #internet-table, and then re-runs expansion, filtering, DEU/FRA comparison/profile-link and share-state journeys.
+- **Evidence:** full Node suite 48/48; linkgraph 216 pages / 3,602 links / zero orphans. Exact release e91823267f0f3b75d6fc07fc4c557661db8aae3c is live with green CI 32718350588 and Pages 32718350565. Live readback confirms one shortcut, one focusable table, four column headers, 182 row headers and 123,446 HTML bytes under the 125,000-byte budget.
+- **Economic contribution:** improves access to the product's core comparison data for keyboard and assistive-technology users, supporting trust and deeper use without adding tracking or maintenance-heavy content.
+- **Truth / external blocker:** traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED. Only Search Console verification and sitemap submission require the original google*.html file; productive work remains unblocked.
+- **Next candidate:** make the comparison/filter results understandable when no rows match and ensure the empty state offers a one-action recovery, or prepare a disabled first-party measurement contract only when an approved endpoint is defined.
