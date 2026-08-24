@@ -594,3 +594,14 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Partial blockers:** missing `google*.html` blocks only Search Console; missing Things test credentials block only hosted authenticated smoke; missing Render hook blocks only commit-exact Render release.
 - **Next decision:** after the workflow screen, either define one reversible no-code validation or kill the tax-firm automation track; no fourth product build without evidence superior to World Discovery and Things.
 - **User action:** None.
+
+## World Discovery Worker handoff — Adjacent comparison provenance — 2026-08-24
+
+- **Orchestration gap handled:** the zero-result assignment was already complete and no newer World Discovery task existed at cycle start. The worker continued on the highest-value non-blocked trust gap.
+- **Real delivery:** a compact “Verify before you compare” navigation now appears directly above the comparison tools and works without JavaScript. It provides immediate paths to source/license/retrieval evidence and the canonical validation methodology.
+- **Trust/accessibility:** the source destination is a focusable fragment target; the navigation has an explicit accessible label. This reduces the verification path from a long scroll/global-navigation search to one action at the claim.
+- **End-to-end evidence:** 360/390/430 px gates prove visibility, exact labels, keyboard focus transfer, #source-provenance and methodology HTTP 200 while preserving all country, filter, comparison, share and empty-state journeys.
+- **Release:** full Node suite 48/48; linkgraph 216 pages / 3,604 links / zero orphans. Exact live release ed4a478d9df3d61ae8eed2dfcbd26df8ef8dea92; CI 32729555851 and Pages 32729555912 green. Live HTML is 123,740 bytes under the 125,000-byte budget.
+- **Economic contribution:** stronger claim-to-evidence proximity supports trust, citation and successful research sessions without adding tracking, route inventory or material operating cost.
+- **Truth / external blocker:** traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED. Only Search Console verification and sitemap submission require the original google*.html file; product work remains unblocked.
+- **Next candidate:** protect the remaining 1,260-byte parent-page performance headroom or use existing verified data to improve one high-intent comparison workflow without expanding thin content.
