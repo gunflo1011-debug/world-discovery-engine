@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.7",
-  "screenedAtUtc": "2026-08-22T17:42:47Z",
+  "screenedAtUtc": "2026-08-24T17:49:49Z",
   "indicator": {
     "code": "NY.GDP.MKTP.KD",
     "name": "GDP (constant 2015 US$)",
@@ -83,9 +83,9 @@
     "datasetTermsUrl": "https://www.worldbank.org/ext/en/legal/terms-conditions/datasets",
     "attribution": "World Bank, World Development Indicators (WDI). World Discovery Engine derives screening/provenance status from archived WDI releases and does not imply World Bank endorsement."
   },
-  "methodologyUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/methodology/",
-  "screeningPageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/",
-  "provenancePageUrl": "https://gunflo1011-debug.github.io/world-discovery-engine/indicators/real-gdp/provenance.html",
+  "methodologyUrl": "https://worlddiscoverydata.com/methodology/",
+  "screeningPageUrl": "https://worlddiscoverydata.com/indicators/real-gdp/",
+  "provenancePageUrl": "https://worlddiscoverydata.com/indicators/real-gdp/provenance.html",
   "sourceCodeUrl": "https://github.com/gunflo1011-debug/world-discovery-engine/blob/main/scripts/screen-real-gdp.py",
   "note": "Rows are present in both vintages for the exact published country-code contract, but they are not labeled methodologically comparable. No screened GDP values, revisions, rankings, or REAL CSV export are published while release-specific base-year and valuation comparability remains unresolved."
 }
