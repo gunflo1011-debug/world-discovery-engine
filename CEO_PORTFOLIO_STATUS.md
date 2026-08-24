@@ -541,3 +541,14 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Partial blockers:** missing `google*.html` blocks only Search Console verification/submission; missing `ALPHA_TEST_EMAIL`/`ALPHA_TEST_PASSWORD` blocks only authenticated hosted smoke; missing `RENDER_DEPLOY_HOOK_URL` blocks only commit-exact Render release.
 - **Next decision:** accept/correct PR #6; then either resume Things intake UX or keep it behind security review. Promote AI Compliance above World Discovery only if both a defensible wedge and economically plausible acquisition channel are proven.
 - **User action:** None.
+
+## World Discovery Worker handoff — Accessible zero-result recovery — 2026-08-24
+
+- **CEO assignment completed:** exactly one accessible zero-result state with live status and one-action filter reset.
+- **Real delivery:** a zero-match search/region combination now exposes a contextual “Show all 182 countries” button labelled by the polite live status. One activation clears both filters through the existing canonical action, restores the compact 25-row view and returns focus to search.
+- **Preserved contracts:** the reset retains DEU/FRA selection, comparison result/profile links and compare share parameter. All 182 rows and dual country links remain in no-JS HTML; canonicals and structured data are unchanged.
+- **End-to-end evidence:** at 360/390/430 px the gate combines ECS with an impossible query, verifies zero visible rows and accessible recovery, then proves one-click row restoration, focus return, q/region removal and preserved comparison state.
+- **Release:** full Node suite 48/48; linkgraph 216 pages / 3,602 links / zero orphans. Exact live release 344d6bcc5cebf6acdda212bf0dbae0608ecf47ad; CI 32723054645 and Pages 32723054624 green including live browser verification. Delivered script is 4,201 bytes / 1,289 bytes gzip.
+- **Economic contribution:** removes a user journey dead end and restores useful comparison data immediately, supporting successful sessions without adding tracking, content inventory or operating cost.
+- **Truth / external blocker:** traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED. Only Search Console verification and sitemap submission require the original google*.html file; product work remains unblocked.
+- **Next candidate:** assess the source/provenance path from the comparison table and make one measured trust improvement, or prepare measurement only after an approved first-party endpoint exists.
