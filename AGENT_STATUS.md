@@ -133,3 +133,15 @@ A worker runtime DNS/network failure is not a product regression. Do not repeate
 - Evidence: complete Node suite 48/48 green; final audit covers 216 pages and 3,784 internal HTML links with zero orphans. Exact release 4867b6b0cd9040d2e0af12368b75c5fff079b4d8 is live; CI 32703208355 and Pages 32703208361 succeeded. HTTP readback confirms exact SHA, two archive-to-leaderboard links, the valid region fragment and leaderboard HTTP 200.
 - Expected contribution: removes crawl dead ends, restores access to a high-value verified comparison page, and converts link integrity into a release-blocking invariant.
 - Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console remains only an external verification/submission blocker.
+
+
+## Internet-use mobile payload release — 2026-08-24
+- CEO assignment: implement the next measured page-weight/mobile-performance improvement on the 182-country parent experience without weakening crawlability or structured discovery.
+- Baseline: the live parent rendered the same 182 country profiles three times (region directory, comparison table and a third generated card grid): 163,679 uncompressed HTML bytes, 25,028 transferred bytes, 185 article nodes and 565 anchors.
+- Implemented: removed the redundant 182-card rendering while preserving every country twice in crawlable HTML (region directory plus comparison table), the complete 182-item ItemList JSON-LD and all country/region routes.
+- Result: exact live parent is 123,225 uncompressed bytes (-24.7%), 20,251 transferred bytes (-19.1%), 3 article nodes and 364 country links. The internal-link audit remains green over 216 pages and 3,601 links with zero orphans.
+- Regression guards: unit coverage rejects duplicate cards, HTML >=125,000 bytes, missing dual country links or incomplete ItemList discovery. Mobile live verification enforces the same invariants at 360/390/430 px.
+- Root cause / release guard: the first deploy was live but its post-deploy workflow still required the deleted legacy section. The workflow contract now rejects that section, enforces the byte budget and verifies exactly two parent links per country.
+- Evidence: complete Node suite 48/48 green. Exact release 4da7e49c2b4fe415a892188425ed554969a101c9 is live; CI 32708175168 and Pages 32708175146 succeeded, including mobile verification. HTTP readback confirms the exact SHA, 123,225 bytes, 3 articles and 364 country links.
+- Expected contribution: less HTML transfer, parsing and layout work on the highest-volume 182-country entry experience, especially on mobile, without losing SEO/AI discovery paths.
+- Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console remains only an external verification/submission blocker.
