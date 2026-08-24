@@ -156,6 +156,31 @@ async function collectEvidence() {
   return records.sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
+async function internetUseDiscoveryRoutes() {
+  const [rawData, rawRegionIndex] = await Promise.all([
+    readFile(resolve(root, 'indicators', 'internet-use', 'data.json'), 'utf8'),
+    readFile(resolve(root, 'indicators', 'internet-use', 'region', 'index.json'), 'utf8')
+  ]);
+  const data = JSON.parse(rawData);
+  const regionIndex = JSON.parse(rawRegionIndex);
+
+  if (data?.status !== 'CURRENT_VERIFIED' || data?.coverage?.type !== 'official_same_year_snapshot') {
+    throw new Error('sitemap requires the accepted current internet-use snapshot');
+  }
+  if (!Array.isArray(data.records) || !data.records.every((record) => /^[A-Z]{3}$/.test(record.code))) {
+    throw new Error('sitemap requires valid internet-use country codes');
+  }
+  if (!Array.isArray(regionIndex?.regions) || !regionIndex.regions.every((region) => hasText(region.url))) {
+    throw new Error('sitemap requires the generated internet-use region index');
+  }
+
+  const countryRoutes = data.records.map((record) => `/indicators/internet-use/country/${record.code.toLowerCase()}/`);
+  const regionRoutes = regionIndex.regions.map((region) => region.url);
+  const routes = [...countryRoutes, ...regionRoutes];
+  if (new Set(routes).size !== routes.length) throw new Error('duplicate internet-use discovery route');
+  return routes;
+}
+
 async function existingStaticRoutes(routes) {
   const kept = [];
   for (const route of routes) {
@@ -171,7 +196,10 @@ async function existingStaticRoutes(routes) {
 }
 
 export async function buildSite() {
-  const evidence = await collectEvidence();
+  const [evidence, internetUseRoutes] = await Promise.all([
+    collectEvidence(),
+    internetUseDiscoveryRoutes()
+  ]);
   const staticRoutes = await existingStaticRoutes([
     '/',
     '/explore/',
@@ -189,7 +217,8 @@ export async function buildSite() {
   const indexableEvidence = evidence.filter((record) => !record.demo && !record.noindex && record.discovery.ready);
   const pagePaths = [
     ...staticRoutes,
-    ...indexableEvidence.map((record) => record.url)
+    ...indexableEvidence.map((record) => record.url),
+    ...internetUseRoutes
   ];
   const generatedAt = new Date().toISOString();
 
