@@ -214,6 +214,9 @@ test.describe('mobile smoke tests', () => {
             await page.locator('#compare-b').selectOption('FRA');
             await expect(page.locator('#compare-result')).toBeVisible();
             await expect(page.locator('#compare-result')).toContainText(/Germany|France/);
+            await expect(page.locator('#compare-result')).toContainText('Germany ranks #');
+            await expect(page.locator('#compare-result')).toContainText('France ranks #');
+            await expect(page.locator('#compare-result')).toContainText('Europe & Central Asia');
             const compareLinks = page.locator('#compare-profile-links');
             await expect(compareLinks).toBeVisible();
             await expect(compareLinks).toHaveAttribute('aria-label', 'Selected country profiles');
