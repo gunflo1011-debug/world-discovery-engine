@@ -26,9 +26,10 @@ function idsIn(html) {
 
 function localFileUrl(url, siteRoot, base) {
   const relative = decodeURIComponent(url.pathname.slice(base.pathname.length));
-  return relative === '' || relative.endsWith('/')
-    ? new URL(`${relative}index.html`, siteRoot)
-    : new URL(relative, siteRoot);
+  const pathSegment = relative === '' || relative.endsWith('/')
+    ? `${relative}index.html`
+    : relative;
+  return new URL(pathSegment, siteRoot);
 }
 
 export async function auditInternalLinks({ siteRoot = DEFAULT_SITE_ROOT, baseUrl = BASE_URL } = {}) {
