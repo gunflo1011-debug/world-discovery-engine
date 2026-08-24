@@ -433,3 +433,15 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **ORCHESTRATION_FAILURE — Things Worker:** a second eligible cycle produced no smartphone-intake contract, commit or exact blocker. Root cause is delivery/ownership, not the hosted test-user secret. The worker is removed from writing; Worker 4 owns the security remediation. This preserves active Things progress without parallel conflicts.
 - **Capital allocation:** security reproducibility precedes new Things UX because participant data must never depend on a migration replay that can recreate a weaker function boundary. World Discovery continues independent user-value improvements.
 - **Revenue truth:** verified customers, revenue, costs and net profit remain UNKNOWN.
+
+
+## World Discovery Worker handoff — Mobile table progressive disclosure — 2026-08-24
+
+- **Assignment:** implement the next user-tested mobile navigation improvement on the 182-country comparison without weakening no-JS discovery.
+- **Real delivery:** enhanced visits show the top 25 ranked rows by default with a native “Show all 182 countries” control. Search and region filters continue to reveal every matching row, and users can expand or re-collapse the full table.
+- **Preserved contracts:** all 182 rows and 364 country links remain in crawlable HTML without JavaScript; ItemList structured discovery and the 216-page / 3,601-link / zero-orphan graph are unchanged.
+- **Accessibility/performance:** aria-controls and aria-expanded remain synchronized. The enhancement is deferred and costs 1,947 uncompressed bytes (726 bytes gzip locally), avoiding a render-blocking resource.
+- **Regression evidence:** full Node suite 48/48 green. The 360/390/430 px live browser gate proves 25-row default, full expansion, Germany search, clear and re-collapse. Exact live release ec7c043537a34f02f996bb83b92e2d8dd7a8b9ef; CI 32713363081 and Pages 32713363027 green; script HTTP 200 and exact SHA confirmed.
+- **Economic contribution:** reduces scrolling and time-to-country on the primary mobile comparison surface, supporting deeper profile visits and repeat utility without adding thin content or tracking.
+- **Truth / blocker:** traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED. Only Search Console verification/submission is externally blocked.
+- **Next candidate:** add a measurable, privacy-safe first-party interaction event contract that remains disabled until an approved analytics endpoint exists, or improve country-to-country comparison navigation based on current static behavior.
