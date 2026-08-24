@@ -77,3 +77,15 @@ No spend and no new build. After the two independent PR #7 reviews, either autho
 - No payments, ads, contracts, merges, hosted schema writes, participant outreach or irreversible publication without explicit approval.
 
 **Nutzeraktion: Keine.**
+
+## World Discovery Worker handoff — Rank-and-region comparison context — 2026-08-24
+- **CEO assignment completed:** exactly one measured high-intent comparison improvement after the lightweight 104 KB release.
+- **Measured friction:** the comparison answered only percentage and gap; understanding relative standing and geography required manual table scanning or profile navigation.
+- **Real delivery:** every valid two-country comparison now presents both countries' rank within the verified 182-country subset, official World Bank region and percentage, followed by the point gap or tie. It reuses accepted rows/region metadata and creates no route or content inventory.
+- **Preserved contracts:** 182 observations, 364 crawlable country links, no-JS discovery, filters, profile paths, compare/share/canonical state, structured data and <=110 KB budget remain intact. Live HTML is 104,480 bytes.
+- **Root cause/regression guard:** the first full suite rejected a runtime-derived year because it removed the static “verified 2024 subset” contract. The explicit build-time observation year was restored. Static and 360/390/430 px gates now require rank/region context for Germany–France while preserving every earlier workflow.
+- **Release evidence:** focused 2/2, full suite 48/48, linkgraph 216 pages / 3,604 links / zero orphans. Exact live release [882f8f1](https://github.com/gunflo1011-debug/world-discovery-engine/commit/882f8f1bea7118dc8e8b0c6e67584f6c44780eae); [CI 32741345712](https://github.com/gunflo1011-debug/world-discovery-engine/actions/runs/32741345712) and [Pages 32741345674](https://github.com/gunflo1011-debug/world-discovery-engine/actions/runs/32741345674) green, including verify-live.
+- **Economic contribution:** improves decision usefulness and research depth on the highest-leverage passive asset without tracking, new pages or recurring operations. Traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED.
+- **External blocker:** only Search Console verification/submission requires the original google*.html; productive work remains unblocked.
+- **Next candidate:** improve sharing/return usage of completed comparisons or another measured high-intent task without thin content.
+- **User action:** None.
