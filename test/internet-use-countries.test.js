@@ -80,7 +80,10 @@ test('internet-use country builder creates source-faithful long-tail discovery p
     assert.doesNotMatch(html, /current\/latest observation/i);
     assert.match(html, new RegExp(`rel="canonical" href="https://gunflo1011-debug\\.github\\.io/world-discovery-engine/indicators/internet-use/country/${slug}/"`));
     assert.match(html, /rel="alternate" type="application\/json" href="\.\/data\.json"/);
+    assert.match(html, /rel="alternate" type="text\/csv" href="\.\/data\.csv"/);
     assert.match(html, /"@type":"WebPage"/);
+    assert.match(html, /"@type":"Dataset"/);
+    assert.match(html, /"@type":"BreadcrumbList"/);
     assert.match(html, /"@type":"PropertyValue"/);
     assert.match(html, /"propertyID":"IT\.NET\.USER\.ZS"/);
     assert.match(html, new RegExp(`"identifier":"${record.code}"`));
@@ -91,6 +94,20 @@ test('internet-use country builder creates source-faithful long-tail discovery p
     assert.match(html, /Full CSV →/);
     assert.match(html, /not claim a historical WDI revision/i);
     assert.match(html, /not to a complete worldwide ranking/i);
+
+    const structured = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    const webPage = structured['@graph'].find((entry) => entry['@type'] === 'WebPage');
+    const dataset = structured['@graph'].find((entry) => entry['@type'] === 'Dataset');
+    const breadcrumbs = structured['@graph'].find((entry) => entry['@type'] === 'BreadcrumbList');
+    assert.equal(webPage.mainEntity['@id'], dataset['@id']);
+    assert.equal(webPage.breadcrumb['@id'], breadcrumbs['@id']);
+    assert.equal(dataset.identifier, `IT.NET.USER.ZS-${record.code}-${record.year}`);
+    assert.equal(dataset.about.identifier, record.code);
+    assert.equal(dataset.variableMeasured.value, record.value);
+    assert.equal(dataset.license, data.source.license);
+    assert.deepEqual(dataset.distribution.map((item) => item.encodingFormat), ['application/json', 'text/csv']);
+    assert.deepEqual(breadcrumbs.itemListElement.map((item) => item.position), [1, 2, 3]);
+    assert.equal(breadcrumbs.itemListElement[2].item, machine.humanUrl);
   }
 
   const invalid = structuredClone(data);
