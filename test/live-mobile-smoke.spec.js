@@ -130,6 +130,11 @@ test.describe('mobile smoke tests', () => {
           }
 
           if (routeConfig.currentDataset) {
+            const htmlBytes = (await response.body()).byteLength;
+            expect(htmlBytes, `${route} HTML exceeded its mobile performance budget`).toBeLessThan(125_000);
+            expect(await page.locator('article').count(), `${route} rendered duplicate country cards`).toBeLessThan(10);
+            await expect(page.locator('#country-profiles')).toHaveCount(0);
+
             const jsonLink = page.locator('a[href$="data.json"]');
             const csvLink = page.locator('a[href$="data.csv"]');
             await expect(jsonLink, `visible JSON data link missing on ${route}`).toHaveCount(1);
@@ -152,6 +157,10 @@ test.describe('mobile smoke tests', () => {
             expect(payload.records.length, `JSON coverage is not materially broader for ${route}`).toBeGreaterThan(12);
             expect(payload.records.length, `JSON coverage count mismatch for ${route}`).toBe(payload.coverage?.countries);
             expect(payload.records.every(record => record.year === routeConfig.currentDataset.observationYear), `mixed observation years in ${route}`).toBeTruthy();
+            expect(
+              await page.locator('a[href^="./country/"]').count(),
+              `${route} must link every country from both the region directory and comparison table`
+            ).toBe(payload.records.length * 2);
 
             const csv = (await csvResponse.text()).trim();
             const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
