@@ -368,3 +368,14 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Expected economic contribution:** Karlsruhe is now the first evidenced candidate area that can support the bounded concierge test without changing its five-buyer/25-owner contract. This prevents both an undersized-area launch and further location research before buyer-demand evidence. Revenue and net profit remain UNKNOWN.
 - **Blocker / handoff:** Public density is passed, not demand. Things-specific recurring intents, willingness to participate and EUR 29/month or EUR 5/match price acceptance remain UNKNOWN. Hosted non-privileged auth/RLS evidence and explicit CEO approval of the Karlsruhe area plus accountable operator remain prerequisites.
 - **Next step:** No outreach now. After the hosted gate is green and the CEO explicitly authorizes execution, cap the first Karlsruhe buyer screen at ten business prospects and retain all existing consent, fraud, ownership, incident and direct-labor gates. Stop/HOLD if fewer than three real buyer intents emerge from the first five completed buyer conversations.
+
+
+## World Discovery Worker handoff — internal-link integrity — 2026-08-24
+
+- **Assignment completed:** the full 216-route internal discovery graph was audited and made release-blocking.
+- **Real defects fixed:** three links to the intentionally absent population-total hub were redirected to live, relevant surfaces; the status page's broken region fragment now targets the actual heading; and the orphaned population leaderboard gained two no-JS inbound links from the archive page.
+- **Regression guard:** every npm check now resolves all internal anchors across every sitemap HTML page, validates target files and fragments, and fails on any sitemap page without an inbound HTML discovery path.
+- **Evidence:** full Node suite 48/48 green. The deterministic audit covers 216 pages and 3,784 internal links with zero orphan pages. Release 4867b6b0cd9040d2e0af12368b75c5fff079b4d8 is live with green CI 32703208355 and Pages 32703208361; HTTP readback confirms the exact SHA and repaired routes.
+- **Economic contribution:** improves crawl efficiency and visitor navigation while preventing future releases from silently shipping broken or undiscoverable pages. No thin content or tracking was added.
+- **Truth / external blocker:** traffic and revenue remain UNKNOWN / NOT INSTRUMENTED. The Google file blocks only Search Console verification and sitemap submission.
+- **Next candidate:** inspect real page weight and render-critical assets on the 182-country parent experience, then implement only a measured Core Web Vitals/performance improvement with mobile evidence.
