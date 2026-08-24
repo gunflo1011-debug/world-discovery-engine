@@ -1,6 +1,6 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-23_
+_Last updated: 2026-08-24_
 
 ## Unternehmensziel
 
@@ -12,7 +12,7 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 |---|---|---|---|
 | World Discovery | Public product; 182 official 2024 country profiles, 7 regions, and shareable search/region/comparison state are LIVE_VERIFIED at `eeacb9e`; CI `32659002259` and Pages `32659002266` passed. | Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Strongest scalable/passive asset; immediate bottleneck is Search Console ownership verification, not product code. |
 | Things App / Asset Market Alpha | PR #3 is draft/mergeable at `24253e5`. Backend rebuild, pgTAP auth/RLS, lint and concurrency are green in run `32665950230`; local mobile checks are green in run `32665950216`. Hosted authenticated smoke is blocked only by absent non-privileged test-user secrets. | Active users, completed matches/trades, retention, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Core security risk is materially reduced; keep unmerged until the hosted RLS/user-isolation path is green. |
-| Worker 4 validation bet: existing POD pipeline | Supplier gate `a571a5c` returns **EEA_EXCLUDE**: useful textile facts exist, but finished-product manufacturer/contact, EU economic operator, final risk/warning and traceability/recall evidence are incomplete. The Germany-specific EUR 8.13–9.38 model is therefore not launchable. | Paid orders, actual conversion, actual contribution, revenue, and net profit are **UNKNOWN**. | Germany/EEA/NI configuration is stopped. A US-only test may be evaluated later only after the evidence bridge is reliably deployable and destination economics pass independently. |
+| Worker 4 validation bet: existing POD pipeline | Supplier gate `a571a5c` returns **EEA_EXCLUDE**. Render incident `fd94049` is root-caused; deterministic deploy trigger plus exact version/SHA readback are committed, while live remains stale at 0.10.1 pending a deploy-hook secret. | Paid orders, actual conversion, actual contribution, revenue, and net profit are **UNKNOWN**. | Germany/EEA/NI configuration is stopped. US-only evaluation remains blocked until the evidence bridge deploys commit-exactly. |
 
 ## Portfolio metrics
 
@@ -32,7 +32,7 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 ## Top priority
 
-Unblock the first real demand signal while closing the last autonomously verifiable POD supplier/compliance risk; do not add product scope while Search Console and hosted Things credentials remain external.
+Unblock the three explicit control-plane dependencies—Search Console verification file, Things hosted test credentials, and Render deploy hook—without adding product scope.
 
 ## Assignments
 
@@ -40,7 +40,7 @@ Unblock the first real demand signal while closing the last autonomously verifia
 |---|---|---|---|---|
 | World Discovery Solo Builder | **HOLD — waiting for the original Search Console `google*.html` file.** Do not add features or repeat the already-complete indexability audit. | On receipt only: preserve the file byte-for-byte, run the acceptance guard, deploy, verify HTTP 200/body equality, then complete Search Console verification and sitemap submission. | User-owned Google account/file is the sole blocker; readiness culminates at `154e6c5`. | Prevents churn while preserving the shortest path to real acquisition metrics. |
 | Things App Worker | Accept the hosted-alpha gate after the user supplies the two test-user repository secrets; until then HOLD with no new code. | Rerun `mobile-alpha-ci` exactly once; prove authenticated RPC, shared-catalog read and owner-only inventory isolation; keep PR #3 draft and unmerged unless the entire hosted job is green. | Requires `ALPHA_TEST_EMAIL` and `ALPHA_TEST_PASSWORD` for a dedicated non-privileged hosted test user. | Converts the now-green local security foundation into a safe real-backend alpha decision. |
-| Worker 4 | Resolve the stale Render evidence-service deployment as an incident; no further blind endpoint retries. | Trace GitHub source/branch → deploy trigger → Render build/version → health/readback; deploy committed service version `0.10.2` or identify one exact external platform blocker; make `/supplier-evidence` return authenticated HTTP 200; add a permanent commit/version/readback regression guard. No product mutation, publish, order or ad. | Four probes showed deployed `0.10.1`; two new-route probes returned HTTP 404 despite committed code. | Restores reliable evidence automation required for any future US-only re-costing or supplier verification. |
+| Worker 4 | **HOLD on deployment until `RENDER_DEPLOY_HOOK_URL` exists; then execute one exact release/readback cycle.** No blind endpoint retries or product changes. | Rerun `Render release readback` once; live `/healthz` must return version `0.10.2` and the exact Git SHA, then call authenticated `/supplier-evidence` once and record HTTP 200 or the exact failed workflow step. | Requires the secret Render deploy-hook URL in `hobby-dept-shop-manager` GitHub Actions. Repository fixes culminate at `fd94049`. | Closes reliable evidence automation before any US-only POD economics work. |
 
 ## Experiment gate and kill criteria
 
@@ -75,8 +75,8 @@ Unblock the first real demand signal while closing the last autonomously verifia
 ## Current blockers and user action
 
 - **World Discovery:** user-owned Google Search Console verification is now the only blocker to first search/indexing metrics.
-- **POD:** exact authenticated costs can be captured autonomously; publication remains blocked on owner VAT/tax status, rights/compliance details and explicit approval.
-- **Things:** no user action yet; the worker must first produce green security/backend evidence.
+- **POD:** add the Render service deploy-hook URL as GitHub Actions secret `RENDER_DEPLOY_HOOK_URL`; never send it in chat. Germany/EEA/NI remains excluded and no publication is authorized.
+- **Things:** add `ALPHA_TEST_EMAIL` and `ALPHA_TEST_PASSWORD` for a dedicated non-privileged hosted test user as GitHub Actions secrets; never send credentials in chat.
 
 ## World Discovery Worker handoff — 2026-08-23
 
