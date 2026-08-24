@@ -10,7 +10,7 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 | Initiative | Product evidence | Demand / revenue evidence | Current economic assessment |
 |---|---|---|---|
-| World Discovery | Public product; 182 official 2024 country profiles, 7 regions, shareable search/region/comparison state and a deterministic 216-route sitemap are LIVE_VERIFIED at `1d4f114`; CI `32694979243` and Pages `32694979238` passed. | Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Strongest scalable/passive asset; immediate bottleneck is Search Console ownership verification, not product code. |
+| World Discovery | Public product; 182 official 2024 country profiles, 7 regions, shareable search/region/comparison state and a deterministic 216-route sitemap are LIVE_VERIFIED at `1d4f114`; CI `32694979243` and Pages `32694979238` passed. | Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Strongest scalable/passive asset; Search Console is only the acquisition-measurement blocker while product and discovery work continue. |
 | Things App / Asset Market Alpha | PR #3 is draft/mergeable at `24253e5`. Backend rebuild, pgTAP auth/RLS, lint and concurrency are green in run `32665950230`; local mobile checks are green in run `32665950216`. Hosted authenticated smoke is blocked only by absent non-privileged test-user secrets. | Active users, completed matches/trades, retention, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Core security risk is materially reduced; keep unmerged until the hosted RLS/user-isolation path is green. |
 | Worker 4 validation bet: existing POD pipeline | Supplier gate `a571a5c` returns **EEA_EXCLUDE**. Render incident `fd94049` is root-caused; deterministic deploy trigger plus exact version/SHA readback are committed, while live remains stale at 0.10.1 pending a deploy-hook secret. | Paid orders, actual conversion, actual contribution, revenue, and net profit are **UNKNOWN**. | Germany/EEA/NI configuration is stopped. US-only evaluation remains blocked until the evidence bridge deploys commit-exactly. |
 
@@ -53,7 +53,7 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 
 ### Things App
 
-- The product remains fixed, but growth work is HOLD until PR #3 is mergeable, the server-authoritative security/concurrency gate is green, and one end-to-end alpha path is evidenced.
+- The product remains fixed and active. Continue safe UX, local/ephemeral tests, security, performance and value-path work; only hosted Auth/RLS evidence and merge authorization wait for the external test-user secrets.
 
 ### World Discovery
 
