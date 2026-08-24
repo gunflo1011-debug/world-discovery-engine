@@ -20,6 +20,22 @@
   more.setAttribute('aria-controls', 'internet-table');
   status.insertAdjacentElement('afterend', more);
 
+  const empty = document.createElement('div');
+  empty.id = 'country-empty';
+  empty.className = 'empty-state internet-tool-status';
+  empty.setAttribute('role', 'group');
+  empty.setAttribute('aria-labelledby', 'country-status');
+  empty.hidden = true;
+  const emptyHint = document.createElement('p');
+  emptyHint.textContent = 'Try another country name or reset both filters.';
+  const emptyReset = document.createElement('button');
+  emptyReset.className = 'filter';
+  emptyReset.type = 'button';
+  emptyReset.id = 'country-empty-reset';
+  emptyReset.textContent = `Show all ${rows.length} countries`;
+  empty.append(emptyHint, emptyReset);
+  more.insertAdjacentElement('afterend', empty);
+
   const compareLinks = document.createElement('nav');
   compareLinks.id = 'compare-profile-links';
   compareLinks.className = 'filter-row';
@@ -58,6 +74,7 @@
     more.textContent = expanded
       ? `Show top ${initialLimit} countries`
       : `Show all ${rows.length} countries`;
+    empty.hidden = !(filtering && matches.length === 0);
 
     if (!filtering && !expanded && rows.length > initialLimit) {
       status.textContent = `Showing the top ${initialLimit} of ${rows.length} countries by rank. Search or choose a region to narrow the table.`;
@@ -65,12 +82,14 @@
       status.textContent = `Showing all ${rows.length} countries.`;
     } else if (filtering && matches.length === 0) {
       more.hidden = true;
+      status.textContent = `No countries match these filters. Reset both filters to show all ${rows.length} countries.`;
     }
   };
 
   search.addEventListener('input', compact);
   region.addEventListener('change', compact);
   clear.addEventListener('click', compact);
+  emptyReset.addEventListener('click', () => clear.click());
   compareA?.addEventListener('change', renderCompareLinks);
   compareB?.addEventListener('change', renderCompareLinks);
   more.addEventListener('click', () => {
