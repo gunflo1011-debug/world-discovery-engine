@@ -47,5 +47,17 @@ if (!html.includes('../../internet-table.js')) {
   html = html.replace('</head>', '<script src="../../internet-table.js" defer></script></head>');
 }
 
+if (!html.includes('id="comparison-trust"')) {
+  const trust = '<nav id="comparison-trust" class="sourcebox" aria-label="Verify this comparison data"><strong>Verify before you compare:</strong> <a href="#source-provenance">Source, license and retrieval</a> · <a href="../../methodology/">Validation methodology</a></nav>';
+  html = html.replace('<div class="internet-tools" id="internet-tools" hidden>', `${trust}<div class="internet-tools" id="internet-tools" hidden>`);
+}
+
+if (!html.includes('id="source-provenance"')) {
+  html = html.replace(
+    '<section class="section"><div class="wrap"><h2>Source and provenance</h2>',
+    '<section class="section" id="source-provenance" tabindex="-1"><div class="wrap"><h2>Source and provenance</h2>'
+  );
+}
+
 await writeFile(htmlUrl, html, 'utf8');
 console.log(`Added ItemList discovery for ${records.length} country profiles without duplicating the crawlable HTML directory.`);
