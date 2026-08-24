@@ -94,5 +94,13 @@ jobs:
             echo 'No evidence changes to commit.'
           else
             git commit -m 'Publish validated multi-country WDI population evidence'
-            git push
+            for attempt in 1 2 3; do
+              git pull --rebase origin main
+              if git push; then
+                exit 0
+              fi
+              sleep $((attempt * 2))
+            done
+            echo 'Evidence publish failed after three fast-forward retries.' >&2
+            exit 1
           fi
