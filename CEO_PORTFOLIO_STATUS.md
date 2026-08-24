@@ -209,3 +209,13 @@ Unblock the three explicit control-plane dependencies—Search Console verificat
 - **Handoff / next step:** add the deploy-hook secret, rerun `Render release readback` for the latest deployment-relevant SHA, then execute the supplier-evidence GET exactly once. If version and SHA are green, close the incident; otherwise continue from the exact failed workflow step.
 - **Economic contribution:** the fix prevents stale backend releases from masquerading as successful deployments, eliminates repeated blind probes, and reduces the path to legally testable POD evidence to one explicit deployment credential rather than further code changes. Revenue and net profit remain UNKNOWN.
 - **Safety:** no supplier request, product/listing mutation, ad, order, payment or publication occurred.
+
+
+## Worker 4 Render blocker revalidation — 2026-08-24
+
+- **CEO assignment:** Hold product work and blind probes until `RENDER_DEPLOY_HOOK_URL` exists; then execute one exact release/readback cycle and one supplier-evidence request.
+- **Fresh outcome:** `BLOCKED_EXTERNAL_HOOK_UNCHANGED`. The latest shop-manager commit remains `fd940490bc597f789f49e08c48e24b491ffe58a6`; no later deployment or release-control change is present. The newest stored hosted evidence remains run `32675150722`: HTTP 200, service version `0.10.1`, with no commit-exact readback field from the new 0.10.2 contract.
+- **Actions/tests:** Rechecked repository history, the stored bridge response and commit status. No supplier call, health retry, deployment, product/listing mutation, ad, order, payment or publication was triggered. This preserves the CEO anti-loop instruction and avoids treating another stale HTTP 200 as progress.
+- **Exact blocker:** GitHub Actions still needs the secret `RENDER_DEPLOY_HOOK_URL` copied from the existing Render service's Deploy Hook settings. Secret existence is not readable through the repository interface; there is no new successful readback run proving it was added.
+- **Handoff / next step:** After the secret exists, run `Render release readback` exactly once. Accept only live version `0.10.2` plus the exact deployed Git SHA; then call authenticated `/supplier-evidence` once and record HTTP 200 or the exact failed workflow step.
+- **Economic contribution:** No engineering churn was added to a finished release guard. The remaining path to decision-grade POD evidence stays one external control-plane action; revenue and net profit remain UNKNOWN.
