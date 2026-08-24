@@ -210,6 +210,30 @@ test.describe('mobile smoke tests', () => {
             expect((await page.request.get(new URL(await franceProfile.getAttribute('href'), `${BASE}${route}`).href)).ok()).toBeTruthy();
             expect(new URL(page.url()).searchParams.get('compare')).toBe('DEU,FRA');
 
+            await page.locator('#region-filter').selectOption('ecs');
+            await page.locator('#country-search').fill('no-such-country-zz');
+            expect(await visibleRows(), `zero-result filter must hide every row on ${route}`).toBe(0);
+            await expect(page.locator('#country-status')).toHaveAttribute('aria-live', 'polite');
+            await expect(page.locator('#country-status')).toContainText(`No countries match these filters. Reset both filters to show all ${payload.records.length} countries.`);
+            const emptyState = page.locator('#country-empty');
+            const emptyReset = page.locator('#country-empty-reset');
+            await expect(emptyState).toBeVisible();
+            await expect(emptyState).toHaveAttribute('aria-labelledby', 'country-status');
+            await expect(emptyReset).toHaveText(`Show all ${payload.records.length} countries`);
+            expect(new URL(page.url()).searchParams.get('region')).toBe('ecs');
+            expect(new URL(page.url()).searchParams.get('compare')).toBe('DEU,FRA');
+
+            await emptyReset.click();
+            await expect(emptyState).toBeHidden();
+            await expect(page.locator('#country-search')).toBeFocused();
+            await expect(page.locator('#country-search')).toHaveValue('');
+            await expect(page.locator('#region-filter')).toHaveValue('');
+            expect(await visibleRows(), `one-action reset must restore compact rows on ${route}`).toBe(25);
+            expect(new URL(page.url()).searchParams.has('q')).toBeFalsy();
+            expect(new URL(page.url()).searchParams.has('region')).toBeFalsy();
+            expect(new URL(page.url()).searchParams.get('compare')).toBe('DEU,FRA');
+            await expect(compareLinks).toBeVisible();
+
             const csv = (await csvResponse.text()).trim();
             const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
             expect(lines.length - 1, `CSV record count mismatch for ${route}`).toBe(payload.records.length);
