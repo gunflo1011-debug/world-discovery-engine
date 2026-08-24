@@ -459,3 +459,13 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Blocker / handoff:** The security P0 is closed. CEO/next owner should inspect the eventual backend workflow result and then obtain authenticated owner/cross-owner hosted evidence. Leaked-password protection is an account-level P2 hardening decision, not a blocker to this completed migration.
 - **Next step:** Do not merge PR #3 yet. Proceed only after backend workflow evidence and the existing dedicated non-privileged hosted identity gate are green.
 - **User action:** None now.
+
+## World Discovery Worker handoff — Comparison profile journeys — 2026-08-24
+
+- **Assignment:** continue independent user-value work by improving the existing country-to-country comparison navigation.
+- **Real delivery:** selecting countries now adds an accessible, deduplicated native-link navigation from the comparison result to each selected full country profile. The comparison wording, validated data, canonical URL and shareable compare state are unchanged.
+- **End-to-end guard:** at 360/390/430 px the live gate selects Germany and France, verifies the calculated comparison, both visible descriptive links, both HTTP-200 profile destinations and the retained compare=DEU,FRA query contract.
+- **Evidence:** focused contract green; canonical build and full serial Node suite 48/48 green; linkgraph remains 216 pages / 3,601 links / zero orphans. Exact release 1a9e2347d892ccca7904c12368c5fab3548d9e4c is live with green CI 32714153852 and Pages 32714153871, including deploy, release readback and mobile browser verification.
+- **Economic contribution:** changes a text-only comparison endpoint into two high-intent deeper-content paths, improving the product's usefulness for research and the opportunity for longer/repeat sessions without adding tracking or content inventory.
+- **Truth / external blocker:** traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED. Only Search Console property verification and sitemap submission require the original google*.html file; all other product work continues.
+- **Next candidate:** improve keyboard/screen-reader efficiency of the long country comparison table, or add a disabled-by-default privacy-safe interaction measurement contract when it can be tied to an approved first-party endpoint.
