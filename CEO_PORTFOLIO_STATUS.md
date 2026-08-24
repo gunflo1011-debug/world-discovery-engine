@@ -88,3 +88,17 @@ Commercial measurement remains absent. Engineering evidence is strong, but verif
 - **External blocker:** only Search Console verification/submission requires the original google*.html; productive work remains unblocked.
 - **Next candidate:** improve return usage through a small comparison-history/bookmark affordance only if it can remain local, private and low-maintenance.
 - **User action:** None.
+
+
+## Profit Worker 4 handoff — PR #7 executable correction contract — 2026-08-24
+- **CEO assignment completed:** the three accepted PR #7 gaps are now specified as a bounded, executable test contract; no PR, code, merge, hosted environment, user, or participant was changed.
+- **Outcome:** `SPEC_READY__IMPLEMENTATION_WAITING_INTEGRATION_ORDER`.
+- **Catalog identity:** owner-entered model/storage resolves against an authenticated DE catalog snapshot to exactly one derived `variantId`; zero, multiple, storage-mismatch, and client-ID injection fail closed.
+- **Availability/consent:** only bounded date-only availability (maximum 30 days) and explicit anonymous-profile consent are added. Missing consent or no inclusive overlap blocks candidate matching without publishing or sharing contact data.
+- **Match facts/authority:** deterministic mappings are fixed for display, housing, camera, biometrics, battery, other defects, price and exact variant. Network lock is explicit `UNKNOWN/UNLOCKED/LOCKED`; unknown and locked do not auto-pass. Owner attestations cannot set `VERIFIED` or `MARKET_ELIGIBLE`; both remain trusted operator/server gates.
+- **Evidence:** executable specification [`a3ddbf7`](https://github.com/gunflo1011-debug/world-discovery-engine/commit/a3ddbf73aa1012b3d12c9666572eb6cb4a5d9f23) defines 16 named positive/negative cases plus mandatory privacy/authority regression. Existing 20 PR #7 safety tests must remain green.
+- **Privacy boundary:** IMEI, serial number, credentials, precise address/location, identity/payment data, contact data, catalog IDs and privileged statuses remain forbidden in the untrusted owner payload.
+- **Economic contribution:** removes operator interpretation from catalog resolution and candidate gating, protecting the <=10 min/EUR5 match and <=58 min/month/EUR29 seat ceilings before implementation begins.
+- **Blocker/handoff:** implementation must wait for the separately assigned PR #3/#6/#7 integration sequence. After that decision, one owner may implement only this contract and obtain independent review; PR #7 remains unmodified and unmerged.
+- **Next step:** Things integration reviewer returns the base/sequence; CEO then assigns the bounded correction implementation.
+- **User action:** None.
