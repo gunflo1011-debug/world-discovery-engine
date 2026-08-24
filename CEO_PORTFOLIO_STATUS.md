@@ -314,3 +314,12 @@ Unblock Search Console and the Things hosted gate while using otherwise idle cap
 - **Fresh GitHub state:** Things PR #3 remains open, draft, mergeable and unmerged at `24253e5`; its hosted non-privileged test remains externally blocked on the two repository secrets. World Discovery and Render external gates remain unchanged.
 - **Allocation:** no Things feature engineering, outreach or participant execution is authorized. Worker 4 now owns one bounded read-only local-density feasibility check to prevent launching a two-sided test in an area that cannot plausibly fill five buyer seats and 25 owner intakes.
 - **Revenue truth:** verified customers, revenue, costs and net profit remain UNKNOWN.
+
+## World Discovery Worker handoff — 2026-08-24
+
+- **Control correction acknowledged:** the user's latest direction narrows the Search Console blocker to the external verification/submission step. It no longer authorizes a total product HOLD. This conflicts with older portfolio wording and is documented here without rewriting prior CEO decisions.
+- **Implemented outcome:** the stale public status page now reflects the accepted live product: 182 official same-year 2024 country observations, 7 World Bank regions, country/regional navigation, matching HTML/JSON/CSV outputs, mobile release evidence and honest uninstrumented demand/revenue state.
+- **Permanent guard:** a data-derived regression test fails when the status page's country/region totals drift from the normalized source, when the 2024 official snapshot contract changes, or when the obsolete one-manual-pair expansion claim returns.
+- **Evidence:** fresh deterministic build succeeded; focused status plus sitemap/canonical/Search-Console readiness suite passed 3/3. The external `google*.html` file is still absent, but it did not block this trust improvement.
+- **Economic contribution:** removes a sponsor/customer credibility contradiction identified by the monetization audit and gives visitors a truthful summary of the asset that already exists, without adding thin pages, tracking or premature monetization.
+- **Next candidate:** continue with the highest-value non-blocked trust/indexability issue after release evidence; Search Console verification remains ready for immediate execution when the original file arrives.
