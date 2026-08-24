@@ -60,7 +60,21 @@ jobs:
           test -s data/screening/real-gdp-2025.json
           echo "GDP screener exited non-zero as required (rc=$rc). Validating exact blocker next."
       - name: Validate exact methodology blocker and publish synchronized public artifacts
-        run: python scripts/publish-gdp-screening-status.py
+        run: |
+          python scripts/publish-gdp-screening-status.py
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('site/indicators/real-gdp/index.html')
+          page=path.read_text(encoding='utf-8')
+          marker='<span class="pill">SCREENING · FAIL CLOSED</span>'
+          sentence='No GDP revision values are published while methodology comparability remains unresolved.'
+          if sentence not in page:
+              assert marker in page, 'GDP fail-closed insertion marker missing'
+              page=page.replace(marker, f'<p><strong>{sentence}</strong></p>{marker}', 1)
+              path.write_text(page, encoding='utf-8')
+          assert sentence in path.read_text(encoding='utf-8')
+          print('Verified explicit GDP fail-closed message in generated public page')
+          PY
       - name: Verify public outputs leak no screened GDP values and expose exact promotion contract
         run: |
           python - <<'PY'
@@ -104,6 +118,8 @@ jobs:
           assert d['screenedAtUtc'] in html and d['screenedAtUtc'] in page
           assert 'Presence is not a methodology-comparability claim.' in html
           assert 'this is not a methodology-comparability claim' in page
+          assert 'No GDP revision values are published while methodology comparability remains unresolved.' in page
+          assert re.search(r'no revision values(?: or rankings)? are published', page, re.I)
           assert 'bind' in html.lower() and 'sha-256' in html.lower()
           assert 'manual boolean flip' in page.lower()
           contract=', '.join(countries)
@@ -112,7 +128,7 @@ jobs:
               assert x['archiveSha256'] in html
               assert x['url'] in html
               assert f"{x['archiveBytes']:,} bytes" in html
-          print('Verified synchronized fail-closed GDP run with hash-bound promotion evidence contract')
+          print('Verified synchronized fail-closed GDP run with explicit public message and hash-bound promotion evidence contract')
           PY
       - name: Commit reproducible GDP screening artifacts
         run: |
