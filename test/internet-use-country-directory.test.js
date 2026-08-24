@@ -10,6 +10,7 @@ const countryBuilder = new URL('../scripts/build-internet-use-countries.mjs', im
 const directoryBuilder = new URL('../scripts/enrich-internet-use-country-directory.mjs', import.meta.url);
 const dataUrl = new URL('../site/indicators/internet-use/data.json', import.meta.url);
 const htmlUrl = new URL('../site/indicators/internet-use/index.html', import.meta.url);
+const tableScriptUrl = new URL('../site/internet-table.js', import.meta.url);
 
 function extractJsonLd(html) {
   return [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)]
@@ -23,10 +24,16 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
 
   const data = JSON.parse(await readFile(dataUrl, 'utf8'));
   const html = await readFile(htmlUrl, 'utf8');
+  const tableScript = await readFile(tableScriptUrl, 'utf8');
 
   assert.doesNotMatch(html, /id="country-profiles"/);
+  assert.match(html, /<script src="\.\.\/\.\.\/internet-table\.js" defer><\/script>/);
   assert.ok(Buffer.byteLength(html, 'utf8') < 125_000, 'parent HTML exceeds the mobile performance budget');
   assert.ok((html.match(/<article\b/g) || []).length < 10, 'country profiles must not be duplicated as 182 article cards');
+  assert.match(tableScript, /const initialLimit = 25;/);
+  assert.match(tableScript, /aria-controls/);
+  assert.match(tableScript, /Show all \$\{rows\.length\} countries/);
+  assert.match(tableScript, /search\.addEventListener\('input', compact\)/);
 
   for (const record of data.records) {
     const slug = record.code.toLowerCase();
