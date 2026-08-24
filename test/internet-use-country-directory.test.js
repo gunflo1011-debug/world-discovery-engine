@@ -16,7 +16,7 @@ function extractJsonLd(html) {
     .map((match) => JSON.parse(match[1]));
 }
 
-test('internet-use parent exposes crawlable country profiles and ItemList discovery', async () => {
+test('internet-use parent keeps crawlable country links and ItemList discovery without duplicate profile cards', async () => {
   await execFileAsync(process.execPath, [parentBuilder.pathname]);
   await execFileAsync(process.execPath, [countryBuilder.pathname]);
   await execFileAsync(process.execPath, [directoryBuilder.pathname]);
@@ -24,13 +24,14 @@ test('internet-use parent exposes crawlable country profiles and ItemList discov
   const data = JSON.parse(await readFile(dataUrl, 'utf8'));
   const html = await readFile(htmlUrl, 'utf8');
 
-  assert.match(html, /id="country-profiles"/);
-  assert.match(html, /href="\.\/country\/index\.json">Machine-readable country directory →<\/a>/);
+  assert.doesNotMatch(html, /id="country-profiles"/);
+  assert.ok(Buffer.byteLength(html, 'utf8') < 125_000, 'parent HTML exceeds the mobile performance budget');
+  assert.ok((html.match(/<article\b/g) || []).length < 10, 'country profiles must not be duplicated as 182 article cards');
 
   for (const record of data.records) {
     const slug = record.code.toLowerCase();
-    assert.match(html, new RegExp(`href="\\.\\/country\\/${slug}\\/"`));
-    assert.match(html, new RegExp(`${record.code} · ${record.value}%`));
+    const links = html.match(new RegExp(`href="\\.\\/country\\/${slug}\\/"`, 'g')) || [];
+    assert.equal(links.length, 2, `${record.code} must remain linked from the region directory and comparison table`);
   }
 
   const itemList = extractJsonLd(html).find((entry) => entry['@type'] === 'ItemList');
