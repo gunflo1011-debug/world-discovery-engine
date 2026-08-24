@@ -57,6 +57,13 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
   assert.match(tableScript, /\.\/country\/\$\{code\.toLowerCase\(\)\}\//);
   assert.match(tableScript, /Open \$\{countriesByCode\.get\(code\)\} profile/);
   assert.match(tableScript, /compareA\?\.addEventListener\('change', renderCompareLinks\)/);
+  assert.match(tableScript, /shareStatus\.setAttribute\('role', 'status'\)/);
+  assert.match(tableScript, /navigator\.share\(\{/);
+  assert.match(tableScript, /navigator\.clipboard\?\.writeText/);
+  assert.match(tableScript, /url: shareLink\.href/);
+  assert.match(tableScript, /Comparison shared\./);
+  assert.match(tableScript, /Comparison link copied\./);
+  assert.match(tableScript, /shareLink\?\.addEventListener\('click', shareComparison\)/);
 
   for (const record of data.records) {
     const slug = record.code.toLowerCase();
