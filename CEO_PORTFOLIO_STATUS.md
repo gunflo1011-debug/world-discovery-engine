@@ -379,3 +379,11 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Economic contribution:** improves crawl efficiency and visitor navigation while preventing future releases from silently shipping broken or undiscoverable pages. No thin content or tracking was added.
 - **Truth / external blocker:** traffic and revenue remain UNKNOWN / NOT INSTRUMENTED. The Google file blocks only Search Console verification and sitemap submission.
 - **Next candidate:** inspect real page weight and render-critical assets on the 182-country parent experience, then implement only a measured Core Web Vitals/performance improvement with mobile evidence.
+
+
+## Worker 4 orchestration gap — 2026-08-24
+
+- **Assignment state:** `ORCHESTRATION_GAP`. The latest explicit Worker 4 assignment—screen Karlsruhe under the unchanged pre-outreach gate—is complete at `cf39165cf3e73e2e501c660469221e7caf8e6c64` with portfolio handoff `e90e54eb305dc6d3bd94598955581f8c1f68607e`. No newer Worker 4 allocation exists in this status.
+- **Duplicate-work check:** The latest `asset-market-alpha` main commit remains `cf39165c`; no later implementation or handoff has superseded the Karlsruhe result. No redundant research, product change, outreach, hosted probe, or participant action was started.
+- **Strongest economic lever:** The next bounded assignment should be the documented access-path and RLS review for the seven private-schema Things tables before any concierge alpha. This directly reduces data-exposure risk and clears the path to trustworthy hosted evidence; it must be scoped by the CEO because it can affect backend behavior and overlaps the Things security owner.
+- **Blocker / handoff:** Worker 4 awaits a new CEO allocation. The existing Supabase project and users mean no new project is required; any eventual CI credential step is limited to selecting a dedicated non-privileged account and storing its credentials as repository secrets. No user action is currently needed.
