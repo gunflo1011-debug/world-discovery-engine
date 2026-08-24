@@ -10,7 +10,7 @@ The repository now contains **real archived WDI vintage evidence** for populatio
 
 The public GitHub Pages site is intended at:
 
-`https://gunflo1011-debug.github.io/world-discovery-engine/`
+`https://worlddiscoverydata.com/`
 
 ## Product thesis
 

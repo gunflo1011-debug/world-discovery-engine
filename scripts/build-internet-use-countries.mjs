@@ -4,7 +4,7 @@ const root = new URL('../site/indicators/internet-use/', import.meta.url);
 const dataUrl = new URL('data.json', root);
 const indexUrl = new URL('index.html', root);
 const countriesRoot = new URL('country/', root);
-const baseCanonical = 'https://gunflo1011-debug.github.io/world-discovery-engine/indicators/internet-use/';
+const baseCanonical = 'https://worlddiscoverydata.com/indicators/internet-use/';
 
 const esc = (value) => String(value)
   .replaceAll('&', '&amp;')
@@ -159,7 +159,7 @@ function countryPage(data, record, ranked) {
         '@type': 'BreadcrumbList',
         '@id': `${canonical}#breadcrumb`,
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'World Discovery Engine', item: 'https://gunflo1011-debug.github.io/world-discovery-engine/' },
+          { '@type': 'ListItem', position: 1, name: 'World Discovery Engine', item: 'https://worlddiscoverydata.com/' },
           { '@type': 'ListItem', position: 2, name: `Internet use by country — ${data.observationYear}`, item: baseCanonical },
           { '@type': 'ListItem', position: 3, name: record.country, item: canonical }
         ]

@@ -6,7 +6,7 @@ await import('./build-internet-use.mjs');
 await import('./build-internet-use-regions.mjs');
 
 const root = resolve(process.cwd(), 'site');
-const baseUrl = process.env.SITE_BASE_URL || 'https://gunflo1011-debug.github.io/world-discovery-engine/';
+const baseUrl = process.env.SITE_BASE_URL || 'https://worlddiscoverydata.com/';
 
 function extract(html, pattern) {
   return html.match(pattern)?.[1]?.trim() ?? null;

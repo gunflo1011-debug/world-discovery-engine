@@ -4,15 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { buildSite } from '../scripts/build-site.js';
 
-const baseUrl = process.env.SITE_BASE_URL || 'https://worlddiscoverydata.com/';
-
 test('static build includes only discovery-ready real evidence in sitemap and machine index', async () => {
   const result = await buildSite();
-
-  // buildSite imports generators that can rewrite generated HTML. Re-enforce the
-  // production-domain contract before asserting the release surface and before
-  // later tests inspect the same site directory.
-  await import('../scripts/migrate-custom-domain.mjs');
 
   assert.ok(result.pagePaths.includes('/'));
   assert.ok(result.pagePaths.includes('/explore/'));
@@ -34,14 +27,14 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.ok(result.evidence.every((record) => record.discovery.ready));
 
   const sitemap = await readFile(resolve(process.cwd(), 'site', 'sitemap.xml'), 'utf8');
-  assert.match(sitemap, new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}explore/`));
-  assert.match(sitemap, new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}archive/`));
-  assert.match(sitemap, new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}indicators/`));
-  assert.match(sitemap, new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}indicators/internet-use/`));
-  assert.match(sitemap, new RegExp(`${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}indicators/real-gdp/`));
-  assert.doesNotMatch(sitemap, /indicators\/population-total\//);
-  assert.doesNotMatch(sitemap, /evidence\/germany-gdp-growth-revision\//);
-  assert.doesNotMatch(sitemap, /evidence\/real-wdi-population-revision-2025\//);
+  assert.match(sitemap, /worlddiscoverydata\.com\/explore\//);
+  assert.match(sitemap, /worlddiscoverydata\.com\/archive\//);
+  assert.match(sitemap, /worlddiscoverydata\.com\/indicators\//);
+  assert.match(sitemap, /worlddiscoverydata\.com\/indicators\/internet-use\//);
+  assert.match(sitemap, /worlddiscoverydata\.com\/indicators\/real-gdp\//);
+  assert.doesNotMatch(sitemap, /worlddiscoverydata\.com\/indicators\/population-total\//);
+  assert.doesNotMatch(sitemap, /worlddiscoverydata\.com\/evidence\/germany-gdp-growth-revision\//);
+  assert.doesNotMatch(sitemap, /worlddiscoverydata\.com\/evidence\/real-wdi-population-revision-2025\//);
 
   const evidenceIndex = JSON.parse(await readFile(resolve(process.cwd(), 'site', 'evidence', 'index.json'), 'utf8'));
   assert.equal(evidenceIndex.schemaVersion, '1.2');

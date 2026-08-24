@@ -4,7 +4,7 @@ const root = new URL('../site/indicators/internet-use/', import.meta.url);
 const jsonUrl = new URL('data.json', root);
 const csvUrl = new URL('data.csv', root);
 const htmlUrl = new URL('index.html', root);
-const canonical = 'https://gunflo1011-debug.github.io/world-discovery-engine/indicators/internet-use/';
+const canonical = 'https://worlddiscoverydata.com/indicators/internet-use/';
 
 const esc = (value) => String(value)
   .replaceAll('&', '&amp;')

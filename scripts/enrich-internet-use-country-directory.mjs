@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 const root = new URL('../site/indicators/internet-use/', import.meta.url);
 const dataUrl = new URL('data.json', root);
 const htmlUrl = new URL('index.html', root);
-const canonical = 'https://gunflo1011-debug.github.io/world-discovery-engine/indicators/internet-use/';
+const canonical = 'https://worlddiscoverydata.com/indicators/internet-use/';
 
 function validate(data) {
   if (data?.status !== 'CURRENT_VERIFIED') throw new Error('country directory requires CURRENT_VERIFIED data');

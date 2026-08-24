@@ -27,7 +27,7 @@ test('builds seven substantial regional discovery pages and matching JSON', asyn
     assert.equal(payload.region.name, region.name);
     assert.equal(payload.records.length, expected.length);
     assert.ok(payload.records.every((record) => expected.some((item) => item.code === record.code)));
-    assert.match(html, new RegExp(`<link rel="canonical" href="https://gunflo1011-debug\\.github\\.io/world-discovery-engine/indicators/internet-use/region/${slug}/">`));
+    assert.match(html, new RegExp(`<link rel="canonical" href="https://worlddiscoverydata\\.com/indicators/internet-use/region/${slug}/">`));
     assert.match(html, /<h2>Regional picture<\/h2>/);
     assert.match(html, /<h2>How to use this comparison<\/h2>/);
     assert.match(html, /Region membership comes from the official World Bank country metadata/);
@@ -43,7 +43,7 @@ test('builds seven substantial regional discovery pages and matching JSON', asyn
     assert.equal(dataset.variableMeasured.propertyID, source.indicator.code);
     assert.equal(dataset.license, source.source.license);
     assert.deepEqual(breadcrumbs.itemListElement.map((item) => item.position), [1, 2, 3]);
-    assert.equal(breadcrumbs.itemListElement[1].item, 'https://gunflo1011-debug.github.io/world-discovery-engine/indicators/internet-use/');
+    assert.equal(breadcrumbs.itemListElement[1].item, 'https://worlddiscoverydata.com/indicators/internet-use/');
     assert.equal(breadcrumbs.itemListElement[1].name, `Internet use by country — ${source.observationYear}`);
     assert.equal(breadcrumbs.itemListElement[1].position, 2);
     for (const record of expected) assert.match(html, new RegExp(`href="\\.\\.\/\\.\\.\/country\/${record.code.toLowerCase()}\/"`));

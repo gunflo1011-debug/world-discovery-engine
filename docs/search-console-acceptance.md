@@ -5,7 +5,7 @@ This procedure establishes the first decision-grade acquisition signal without a
 ## Property and file handoff
 
 1. Create a **URL-prefix** property for:
-   `https://gunflo1011-debug.github.io/world-discovery-engine/`
+   `https://worlddiscoverydata.com/`
 2. Choose **HTML file** verification.
 3. Download the generated `google*.html` file.
 4. Do not rename, edit, wrap, reformat, or paste the token into another file.
@@ -35,7 +35,7 @@ The validator rejects renamed files, path traversal, HTML wrappers, mismatched t
 
 Before clicking Verify in Search Console:
 
-1. Fetch `https://gunflo1011-debug.github.io/world-discovery-engine/googleTOKEN.html`.
+1. Fetch `https://worlddiscoverydata.com/googleTOKEN.html`.
 2. Require HTTP 200.
 3. Require the body to equal exactly:
    `google-site-verification: googleTOKEN.html`
@@ -44,7 +44,7 @@ Before clicking Verify in Search Console:
 5. Click **Verify** in Search Console.
 6. Keep the file deployed; removing it can cause ownership verification to be lost.
 7. Submit:
-   `https://gunflo1011-debug.github.io/world-discovery-engine/sitemap.xml`
+   `https://worlddiscoverydata.com/sitemap.xml`
 
 ## Measurement baseline
 

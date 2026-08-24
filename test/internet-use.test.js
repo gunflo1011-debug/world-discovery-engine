@@ -75,7 +75,7 @@ test('internet-use generator keeps human, JSON and CSV outputs on one verified s
     assert.match(html, new RegExp(`href="\\.\\/country\\/${record.code.toLowerCase()}\\/"`));
   }
 
-  assert.match(html, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/indicators\/internet-use\/"/);
+  assert.match(html, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/indicators\/internet-use\/"/);
   assert.match(html, /href="\.\/data\.json"/);
   assert.match(html, /href="\.\/data\.csv"/);
   assert.match(html, /International Telecommunication Union \(ITU\)/);

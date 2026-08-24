@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 const siteRoot = new URL('../site/', import.meta.url);
-const baseUrl = 'https://gunflo1011-debug.github.io/world-discovery-engine';
+const baseUrl = 'https://worlddiscoverydata.com';
 
 function absolute(path) {
   return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;

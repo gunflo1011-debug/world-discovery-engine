@@ -68,7 +68,7 @@ test('internet-use country builder creates source-faithful long-tail discovery p
     assert.equal(machine.provenance.license, data.source.license);
     assert.equal(machine.scope.completeGlobalRanking, false);
     assert.equal(machine.scope.historicalRevisionProduct, false);
-    assert.equal(machine.humanUrl, `https://gunflo1011-debug.github.io/world-discovery-engine/indicators/internet-use/country/${slug}/`);
+    assert.equal(machine.humanUrl, `https://worlddiscoverydata.com/indicators/internet-use/country/${slug}/`);
 
     assert.match(parentHtml, new RegExp(`href="\\./country/${slug}/">${escapeRegex(record.country)}<`));
     assert.match(html, new RegExp(`<h1>${escapeRegex(record.country)} internet use rate: ${record.value}%</h1>`));
@@ -78,7 +78,7 @@ test('internet-use country builder creates source-faithful long-tail discovery p
     assert.match(html, /reports the 2024 observation from the same validated same-year dataset/i);
     assert.doesNotMatch(html, /verified launch slice/i);
     assert.doesNotMatch(html, /current\/latest observation/i);
-    assert.match(html, new RegExp(`rel="canonical" href="https://gunflo1011-debug\\.github\\.io/world-discovery-engine/indicators/internet-use/country/${slug}/"`));
+    assert.match(html, new RegExp(`rel="canonical" href="https://worlddiscoverydata\\.com/indicators/internet-use/country/${slug}/"`));
     assert.match(html, /rel="alternate" type="application\/json" href="\.\/data\.json"/);
     assert.match(html, /rel="alternate" type="text\/csv" href="\.\/data\.csv"/);
     assert.match(html, /"@type":"WebPage"/);

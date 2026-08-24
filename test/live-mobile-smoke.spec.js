@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = process.env.BASE_URL || 'https://gunflo1011-debug.github.io/world-discovery-engine';
+const BASE = process.env.BASE_URL || 'https://worlddiscoverydata.com';
 const routes = [
   { path: '/index.html' },
   { path: '/indicators/' },

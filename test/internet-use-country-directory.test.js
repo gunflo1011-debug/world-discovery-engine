@@ -79,6 +79,6 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
 
   const urls = new Set(itemList.itemListElement.map((item) => item.url));
   for (const record of data.records) {
-    assert.ok(urls.has(`https://gunflo1011-debug.github.io/world-discovery-engine/indicators/internet-use/country/${record.code.toLowerCase()}/`));
+    assert.ok(urls.has(`https://worlddiscoverydata.com/indicators/internet-use/country/${record.code.toLowerCase()}/`));
   }
 });

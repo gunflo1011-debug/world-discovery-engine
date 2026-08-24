@@ -5,7 +5,7 @@ const sitemapUrl = new URL('sitemap.xml', siteRoot);
 const buildUrl = new URL('build.json', siteRoot);
 const countryIndexUrl = new URL('indicators/internet-use/country/index.json', siteRoot);
 const regionIndexUrl = new URL('indicators/internet-use/region/index.json', siteRoot);
-const baseUrl = process.env.SITE_BASE_URL || 'https://gunflo1011-debug.github.io/world-discovery-engine/';
+const baseUrl = process.env.SITE_BASE_URL || 'https://worlddiscoverydata.com/';
 
 const [sitemap, rawBuild, rawIndex, rawRegionIndex] = await Promise.all([
   readFile(sitemapUrl, 'utf8'),
