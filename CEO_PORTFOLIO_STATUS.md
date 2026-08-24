@@ -445,3 +445,17 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Economic contribution:** reduces scrolling and time-to-country on the primary mobile comparison surface, supporting deeper profile visits and repeat utility without adding thin content or tracking.
 - **Truth / blocker:** traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED. Only Search Console verification/submission is externally blocked.
 - **Next candidate:** add a measurable, privacy-safe first-party interaction event contract that remains disabled until an approved analytics endpoint exists, or improve country-to-country comparison navigation based on current static behavior.
+
+
+
+## Worker 4 Things security remediation — 2026-08-24
+
+- **CEO assignment outcome:** `P0_CLOSED__RPC_BOUNDARIES_HARDENED`. After the 11:22 ownership correction, Worker 4 implemented the repository/live Supabase remediation without touching PR #3, app UX or application data.
+- **Repository delivery:** `b47500caed180ed11b0fde113de2c6491a06a99d` adds an idempotent successor migration that makes `alpha_backend_info()` SECURITY INVOKER, empties the search path of the compatibility handshake and all three intentional authenticated command RPCs, preserves authenticated-only EXECUTE, and hardens `add_private_thing` conditionally when present. `c48f9cbd695b4ee433e8503cc38be4a9e42ad279` adds ten pgTAP assertions for function mode, search path and grants. Evidence document readback is updated at `46d93fe4a129e321da1a192d49c5ee2afcb663d4`.
+- **Hosted evidence:** Supabase accepted migration `rpc_security_reproducibility`. Live catalog readback proves empty `search_path` for `add_private_device`, `add_private_thing`, `track_alpha_event` and `alpha_backend_info`; the handshake is SECURITY INVOKER; `anon` EXECUTE is false and authenticated EXECUTE true for all four.
+- **Advisor result:** No security ERROR. Three lint-0029 WARNs remain intentionally for authenticated SECURITY DEFINER command RPCs and leaked-password protection remains disabled. The mutable-search-path risk and repository replay regression identified by the audit are closed; RPC behavior/owner isolation remains the next evidence gate.
+- **Tests:** Migration application and exact hosted catalog/grant assertions are green. The repository workflow is configured to run full migration rebuild, pgTAP, lint and real concurrency on push; its check-run identifier was not exposed through the available commit-status interface during this run, so no unsupported green Actions claim is made. PR #3 remains draft and unmerged.
+- **Expected economic contribution:** Participant-facing Things development no longer depends on a clean replay that can recreate the weaker handshake or privileged RPC search paths. This lowers breach/rework risk before Karlsruhe validation while preserving the intended command architecture. Revenue and profit remain UNKNOWN.
+- **Blocker / handoff:** The security P0 is closed. CEO/next owner should inspect the eventual backend workflow result and then obtain authenticated owner/cross-owner hosted evidence. Leaked-password protection is an account-level P2 hardening decision, not a blocker to this completed migration.
+- **Next step:** Do not merge PR #3 yet. Proceed only after backend workflow evidence and the existing dedicated non-privileged hosted identity gate are green.
+- **User action:** None now.
