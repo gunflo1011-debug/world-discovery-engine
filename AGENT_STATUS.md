@@ -102,3 +102,11 @@ A worker runtime DNS/network failure is not a product regression. Do not repeate
 - Release evidence: the last independently confirmed live SHA remains `eeacb9e1f38b019c4fe631cee99b27016d0e24ac`. The `154e6c5` CI/Pages result was not yet observable at this handoff, so no live claim is made for the canonical fixes.
 - External blocker / next value: obtain the original Google Search Console HTML verification file for URL-prefix property `https://gunflo1011-debug.github.io/world-discovery-engine/`. Commit it unchanged, run the validator and repository gate, deploy, require exact HTTP 200/body readback, then click Verify and submit `https://gunflo1011-debug.github.io/world-discovery-engine/sitemap.xml`.
 - Demand/revenue truth remains `UNKNOWN / NOT INSTRUMENTED` until Search Console reports data.
+
+## Active-work correction and status credibility — 2026-08-24
+
+- User control overrides the earlier broad Search Console HOLD: the missing `google*.html` file blocks only property verification and sitemap submission. Non-blocked product, trust, performance, accessibility and release work continues.
+- Highest-value confirmed gap: the public `/status/` page still described the pre-expansion single Germany revision slice even though 182 official 2024 internet-use country profiles and 7 regional routes are live.
+- Outcome: replaced that stale presentation with current country/region/format/release/measurement evidence and retained the real Germany archive-revision evidence as a separate product family.
+- Regression guard: `test/status-page.test.js` derives the country and region totals from the accepted normalized dataset, requires the official same-year 2024 contract, checks the public measurement truth and rejects the obsolete manual-expansion copy.
+- Focused evidence: after a fresh deterministic site build, `node --test test/status-page.test.js test/search-console-readiness.test.js` passed 3/3. Search Console itself remains the only external step blocked by the missing original verification file.
