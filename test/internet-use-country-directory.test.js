@@ -30,6 +30,11 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
   assert.match(html, /<script src="\.\.\/\.\.\/internet-table\.js" defer><\/script>/);
   assert.match(html, /id="country-table-jump" href="#internet-table"/);
   assert.match(html, /id="internet-table" tabindex="-1"/);
+  assert.match(html, /id="comparison-trust" class="sourcebox" aria-label="Verify this comparison data"/);
+  assert.match(html, /href="#source-provenance">Source, license and retrieval<\/a>/);
+  assert.match(html, /href="\.\.\/\.\.\/methodology\/">Validation methodology<\/a>/);
+  assert.match(html, /id="source-provenance" tabindex="-1"/);
+  assert.equal((html.match(/id="comparison-trust"/g) || []).length, 1);
   assert.equal((html.match(/<th scope="col">/g) || []).length, 4);
   assert.ok(Buffer.byteLength(html, 'utf8') < 125_000, 'parent HTML exceeds the mobile performance budget');
   assert.ok((html.match(/<article\b/g) || []).length < 10, 'country profiles must not be duplicated as 182 article cards');
