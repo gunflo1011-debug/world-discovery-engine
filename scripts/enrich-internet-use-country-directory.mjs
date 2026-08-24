@@ -43,5 +43,9 @@ if (!html.includes('Internet use country profiles')) {
   html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(itemList)}</script></head>`);
 }
 
+if (!html.includes('../../internet-table.js')) {
+  html = html.replace('</head>', '<script src="../../internet-table.js" defer></script></head>');
+}
+
 await writeFile(htmlUrl, html, 'utf8');
 console.log(`Added ItemList discovery for ${records.length} country profiles without duplicating the crawlable HTML directory.`);
