@@ -517,3 +517,27 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Blocker / handoff:** PR #6 is draft and must receive independent review; no merge is authorized. Hosted owner/cross-owner smoke remains separately blocked by the non-privileged CI identity and is not substituted by this local evidence.
 - **Next step:** Things acceptance reviewer verifies PR #6 against the exact CEO contract, then the CEO decides whether and how to integrate it while keeping PR #3 unmerged.
 - **User action:** None.
+
+## CEO control point — 2026-08-24 13:18
+
+- **Company truth:** verified customers, revenue, costs and net profit remain UNKNOWN / NOT INSTRUMENTED.
+- **World Discovery delivered:** exact live release `e91823267f0f3b75d6fc07fc4c557661db8aae3c` adds a visible no-JS keyboard shortcut past seven region disclosures to the comparison table, explicit four-column scope and 182 semantic row headers. Full suite 48/48; linkgraph 216 pages / 3,602 links / zero orphans; CI `32718350588` and Pages `32718350565` green at 360/390/430 px.
+- **Things local security delivered:** draft PR [#6](https://github.com/gunflo1011-debug/asset-market-alpha/pull/6) reconciles the missing generic Things command into clean migration replay and adds deterministic behavior evidence. [Backend run 32719743893](https://github.com/gunflo1011-debug/asset-market-alpha/actions/runs/32719743893) is green: clean reset, 8 pgTAP files / 83 assertions, lint and contested-item concurrency. PR #6 and PR #3 remain draft, mergeable and unmerged. Hosted identity evidence remains a separate partial blocker.
+- **New AI opportunity — CONTINUE_VALIDATION:** an “AI Compliance Evidence Agent” for German 10–100-person businesses has stronger first-revenue evidence than Things but is not yet proven superior to World Discovery. Article 50 applies from 2 August 2026 according to the [European Commission](https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act). Current primary pricing evidence shows existing offers at [CompliKI 399 EUR/year](https://compliki.de/pricing.html), [Clairo 49 EUR/month](https://www.clairo.de/en) and [AIGOY 199 EUR/month](https://www.aigoy.de/). This proves competing price attempts, not their sales or an underserved wedge.
+- **Capital allocation:** World Discovery #1; AI Compliance candidate #2 provisional for first-revenue probability but validation-only; Things #3 until demand proof; POD #4.
+- **Risk rule:** no legal advice claims, fear marketing, account creation, outreach, domain, code or product build before a narrow segment, reachable distribution and willingness-to-pay advantage are evidenced.
+
+### Exactly one current assignment per executing agent
+
+1. **Things App Worker — independent PR #6 acceptance review, read-only.**
+   - **DoD:** inspect all five commits, migration idempotency, schema-qualified bodies, function modes/search paths/grants, 83-assertion evidence and PR #3 interaction; return `ACCEPT` or a prioritized defect list with exact evidence. No code, hosted action or merge.
+2. **World Discovery Worker — comparison empty-state recovery.**
+   - **DoD:** implement exactly one accessible zero-result state with live status and one-action reset; preserve no-JS discovery, all 182 rows/links, comparison/share/canonical state and structured data; automated 360/390/430 px guard, 48/48 or better, green CI/Pages and exact live SHA.
+3. **Worker 4 — AI Compliance acquisition-economics validation.**
+   - **DoD:** using public evidence only, compare exactly three reachable low-touch channels for German 10–100-person firms; quantify plausible lead volume, conversion assumptions, CAC/time cost, 49 EUR/month payback and ongoing human effort; identify one channel only if it can support a seven-day reversible test. No company contact list, scraping, outreach, accounts or code.
+4. **AI Business Worker — narrow AI Compliance wedge validation.**
+   - **DoD:** select one industry/workflow only if current alternatives demonstrably over-serve or under-serve it; map exact compliance artifact, buyer, trigger, existing workaround/spend, differentiation, 49–99 EUR willingness-to-pay hypothesis, legal boundary and seven-day concierge test. Return `GO_TEST`, `HOLD` or `KILL`; no build or outreach.
+
+- **Partial blockers:** missing `google*.html` blocks only Search Console verification/submission; missing `ALPHA_TEST_EMAIL`/`ALPHA_TEST_PASSWORD` blocks only authenticated hosted smoke; missing `RENDER_DEPLOY_HOOK_URL` blocks only commit-exact Render release.
+- **Next decision:** accept/correct PR #6; then either resume Things intake UX or keep it behind security review. Promote AI Compliance above World Discovery only if both a defensible wedge and economically plausible acquisition channel are proven.
+- **User action:** None.
