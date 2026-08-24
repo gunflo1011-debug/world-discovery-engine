@@ -61,7 +61,7 @@ jobs:
                   assert x['archiveFile']==a['archiveFile'] and x['archiveSha256']==a['archiveSha256'] and x['archiveBytes']==a['archiveBytes']
                   assert x['archivedIndicatorName']==a['archivedIndicatorName']=='Population, total'
                   assert x['archivedCountryName']==d['entity']['name']==item['archivedCountryName']
-              canonical=f"https://gunflo1011-debug.github.io/world-discovery-engine/evidence/{item['slug']}/"
+              canonical=f"https://worlddiscoverydata.com/evidence/{item['slug']}/"
               assert f'<link rel="canonical" href="{canonical}">' in html
               assert './evidence.json' in html and './evidence.csv' in html
               if expected_type=='NO_REVISION':
