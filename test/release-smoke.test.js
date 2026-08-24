@@ -4,7 +4,7 @@ import { readFile, access } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 
 const siteRoot = resolve(process.cwd(), 'site');
-const baseUrl = 'https://gunflo1011-debug.github.io/world-discovery-engine/';
+const baseUrl = 'https://worlddiscoverydata.com/';
 
 async function readSite(path) {
   return readFile(resolve(siteRoot, path), 'utf8');
@@ -55,7 +55,7 @@ test('GDP screening remains fail-closed and machine-readable', async () => {
   assert.match(page, /NY\.GDP\.MKTP\.KD/);
   assert.match(page, /SCREENING · FAIL CLOSED/);
   assert.match(page, /No GDP revision values are published/i);
-  assert.match(page, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/indicators\/real-gdp\/"/);
+  assert.match(page, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/indicators\/real-gdp\/"/);
 
   const status = JSON.parse(await readSite('indicators/real-gdp/status.json'));
   assert.equal(status.indicator.code, 'NY.GDP.MKTP.KD');
@@ -72,7 +72,7 @@ test('GDP screening remains fail-closed and machine-readable', async () => {
 
 test('indicator registry is canonical and does not advertise a missing population hub', async () => {
   const page = await readSite('indicators/index.html');
-  assert.match(page, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/indicators\/"/);
+  assert.match(page, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/indicators\/"/);
   assert.match(page, /Population, total/);
   assert.match(page, /Real GDP/);
   assert.doesNotMatch(page, /href="\.\/population-total\/index\.html"/);
@@ -111,10 +111,10 @@ test('demo and legacy duplicate pages are explicitly noindex', async () => {
 
   const legacy = await readSite('evidence/real-wdi-population-revision-2025/index.html');
   assert.match(legacy, /name="robots" content="noindex,follow"/);
-  assert.match(legacy, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/evidence\/germany-population-revision-2025\/"/);
+  assert.match(legacy, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/evidence\/germany-population-revision-2025\/"/);
   await assertExists('evidence/germany-population-revision-2025/index.html');
 
   const canonicalEvidence = await readSite('evidence/germany-population-revision-2025/index.html');
-  assert.match(canonicalEvidence, /rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/evidence\/germany-population-revision-2025\/"/);
+  assert.match(canonicalEvidence, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/evidence\/germany-population-revision-2025\/"/);
   assert.doesNotMatch(canonicalEvidence, /name="robots" content="[^"]*noindex/i);
 });
