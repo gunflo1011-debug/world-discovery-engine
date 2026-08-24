@@ -10,7 +10,7 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 | Initiative | Product evidence | Demand / revenue evidence | Current economic assessment |
 |---|---|---|---|
-| World Discovery | Public product; 182 official 2024 country profiles, 7 regions, and shareable search/region/comparison state are LIVE_VERIFIED at `eeacb9e`; CI `32659002259` and Pages `32659002266` passed. | Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Strongest scalable/passive asset; immediate bottleneck is Search Console ownership verification, not product code. |
+| World Discovery | Public product; 182 official 2024 country profiles, 7 regions, shareable search/region/comparison state and a deterministic 216-route sitemap are LIVE_VERIFIED at `1d4f114`; CI `32694979243` and Pages `32694979238` passed. | Search impressions, clicks, queries, indexed pages, organic visits, returning users, AI referrals, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Strongest scalable/passive asset; immediate bottleneck is Search Console ownership verification, not product code. |
 | Things App / Asset Market Alpha | PR #3 is draft/mergeable at `24253e5`. Backend rebuild, pgTAP auth/RLS, lint and concurrency are green in run `32665950230`; local mobile checks are green in run `32665950216`. Hosted authenticated smoke is blocked only by absent non-privileged test-user secrets. | Active users, completed matches/trades, retention, revenue, costs, and net profit are **UNKNOWN / NOT INSTRUMENTED**. | Core security risk is materially reduced; keep unmerged until the hosted RLS/user-isolation path is green. |
 | Worker 4 validation bet: existing POD pipeline | Supplier gate `a571a5c` returns **EEA_EXCLUDE**. Render incident `fd94049` is root-caused; deterministic deploy trigger plus exact version/SHA readback are committed, while live remains stale at 0.10.1 pending a deploy-hook secret. | Paid orders, actual conversion, actual contribution, revenue, and net profit are **UNKNOWN**. | Germany/EEA/NI configuration is stopped. US-only evaluation remains blocked until the evidence bridge deploys commit-exactly. |
 
@@ -32,15 +32,15 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 ## Top priority
 
-Unblock Search Console and the Things hosted gate while using otherwise idle capacity only to test the local-density premise behind the bounded Things concierge alpha. POD stays HOLD.
+Advance user value and discovery on both fixed products in parallel. Search Console, hosted Supabase and Render are PARTIAL_BLOCKERs only for their exact external steps; they do not authorize project-wide HOLD.
 
 ## Assignments
 
 | Owner | Current task | Definition of Done | Dependencies / blocker | Expected contribution |
 |---|---|---|---|---|
-| World Discovery Solo Builder | **HOLD — waiting for the original Search Console `google*.html` file.** Do not add features or repeat the already-complete indexability audit. | On receipt only: preserve the file byte-for-byte, run the acceptance guard, deploy, verify HTTP 200/body equality, then complete Search Console verification and sitemap submission. | User-owned Google account/file is the sole blocker; readiness culminates at `154e6c5`. | Prevents churn while preserving the shortest path to real acquisition metrics. |
-| Things App Worker | Accept the hosted-alpha gate after the user supplies the two test-user repository secrets; until then HOLD with no new code. | Rerun `mobile-alpha-ci` exactly once; prove authenticated RPC, shared-catalog read and owner-only inventory isolation; keep PR #3 draft and unmerged unless the entire hosted job is green. | Requires `ALPHA_TEST_EMAIL` and `ALPHA_TEST_PASSWORD` for a dedicated non-privileged hosted test user. | Converts the now-green local security foundation into a safe real-backend alpha decision. |
-| Worker 4 | **Validate local-density feasibility for the Things concierge alpha, read-only.** Compare one bounded Karlsruhe/Bruchsal/Hambrücken-area test geometry without contacting anyone, compiling personal data, scraping contacts, changing code, or publishing. Retain the Render readback handoff if its hook appears. | Recommend exactly one city or <=15 km radius using current public evidence: estimated eligible independent repair/refurbishment buyer density, plausible channels capable of yielding 25 voluntary device owners, travel/operator-time budget, cold-start risks, and explicit GO/HOLD/KILL. Evidence must show whether five qualified buyer seats are plausibly recruitable; business-category counts are allowed, names/contact lists are not. | No dependency for research. Real recruitment still requires the green hosted gate, a selected area/operator, privacy setup and explicit approval. | Tests the remaining local-liquidity assumption before any outreach or additional engineering spend. |
+| World Discovery Solo Builder | **Add trustworthy structured-data coverage to the existing country and region experiences.** Continue product work; keep Search Console verification as a separate PARTIAL_BLOCKER. | Generate valid, source-faithful JSON-LD for all 182 country and 7 region pages with indicator name, 2024 coverage, canonical URL, source/provenance and breadcrumbs; no unsupported ratings or commercial claims. Build/regression tests cover every route, CI/Pages are green, and exact live SHA plus mobile readback are recorded. | `google*.html` blocks only property verification and sitemap submission, not this task. | Improves machine discovery, trust and qualified acquisition potential without thin-page expansion or visitor tracking. |
+| Things App Worker | **Implement the narrow smartphone-intake UX needed by the approved concierge hypothesis, independently of the hosted gate.** Keep PR #3 unmerged. | A user can locally enter model, storage, condition/defects, battery health when available, activation-lock removal readiness, lawful-ownership confirmation, price floor and coarse local area; unsafe/required states fail clearly. No credentials, full IMEI/serial or full address are collected. TypeScript, local tests, export/build and secret scan are green; changes are isolated from hosted-RLS wiring. | `ALPHA_TEST_EMAIL` / `ALPHA_TEST_PASSWORD` block only the real hosted Auth/RLS smoke. | Converts the existing private-inventory foundation into the smallest testable user-value flow while preserving security boundaries. |
+| Worker 4 | **Screen a Karlsruhe-centered <=15 km Things alpha area, read-only.** No outreach, personal/contact dataset, scraping, code, payment or publication. | Return GO/HOLD/KILL using current public evidence: at least 10 distinct plausible professional prospects, at least 5 with first-party buying/reselling/refurbishment evidence, no more than 2 under one corporate purchasing policy, owner population >25,000, and practical daytime handover/transport conditions. Record category-level funnel math and evidence limitations. | No external dependency for the screen; real contact remains separately approval-gated. | Tests whether relocation can repair the buyer-density failure before committing engineering or outreach capacity. |
 
 ## Experiment gate and kill criteria
 
@@ -74,9 +74,9 @@ Unblock Search Console and the Things hosted gate while using otherwise idle cap
 
 ## Current blockers and user action
 
-- **World Discovery:** user-owned Google Search Console verification is now the only blocker to first search/indexing metrics.
-- **POD:** add the Render service deploy-hook URL as GitHub Actions secret `RENDER_DEPLOY_HOOK_URL`; never send it in chat. Germany/EEA/NI remains excluded and no publication is authorized.
-- **Things:** add `ALPHA_TEST_EMAIL` and `ALPHA_TEST_PASSWORD` for a dedicated non-privileged hosted test user as GitHub Actions secrets; never send credentials in chat.
+- **World Discovery PARTIAL_BLOCKER:** the user-owned Google file blocks only Search Console ownership verification and sitemap submission; product, quality, discovery and measurement-readiness work continues.
+- **POD PARTIAL_BLOCKER:** `RENDER_DEPLOY_HOOK_URL` blocks only the commit-exact hosted release/readback. Germany/EEA/NI remains excluded and no publication is authorized.
+- **Things PARTIAL_BLOCKER:** `ALPHA_TEST_EMAIL` and `ALPHA_TEST_PASSWORD` block only the hosted authenticated Auth/RLS smoke; local UX, tests, security and user-value work continues.
 
 ## World Discovery Worker handoff — 2026-08-23
 
@@ -337,3 +337,12 @@ Unblock Search Console and the Things hosted gate while using otherwise idle cap
 - **Expected economic contribution:** Prevents consuming the full 30-day test on a structurally undersized buyer funnel and avoids mistaking nearby repair shops for proven purchasers. Owner density appears adequate; buyer acquisition density is the binding local constraint. Revenue and net profit remain UNKNOWN.
 - **Blocker / handoff:** The hosted non-privileged Supabase gate remains first. After it is green, CEO may either authorize a denser-center screen (for example Karlsruhe), explicitly change radius/seat count, or KILL the concierge test. The existing Hambrücken-centered design is not cleared for participant contact.
 - **Next step:** No outreach. Await hosted credentials and a new CEO area/design decision.
+
+
+## CEO control point — 2026-08-24 08:39
+
+- **Hard orchestration correction:** external secrets/files are now PARTIAL_BLOCKERs limited to their exact final action. Project-wide HOLD is prohibited while safe, valuable work exists. All three workers have one active non-blocked task.
+- **World Discovery delivered active progress without Google:** the generated sitemap previously could regress from 216 routes to 27 when an earlier build path ran. `6daba18` derives all 182 country and seven region routes from accepted data on every build; `8717f6e` guards the full route contract. The truthful status release is live at `1d4f114` with green CI `32694979243` and Pages `32694979238`.
+- **Worker 4 delivered:** `b80c434` concludes `NO_GO_HAMBRUECKEN_15KM_BUYER_FUNNEL`. The owner-side population is sufficient, but only seven plausible professional prospects and two first-party handset-buying surfaces were evidenced; filling five seats would require an unsafe 71.4% prospect-to-qualified conversion.
+- **Capital decision:** do not outreach in the Hambrücken-centered radius. Screen Karlsruhe under the unchanged pre-outreach gate. In parallel, World Discovery gains structured-data coverage and Things gains the smallest safe smartphone-intake UX; neither waits for its external credential.
+- **Revenue truth:** verified customers, revenue, costs and net profit remain UNKNOWN.
