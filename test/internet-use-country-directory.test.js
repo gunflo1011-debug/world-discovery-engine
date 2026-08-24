@@ -28,6 +28,9 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
 
   assert.doesNotMatch(html, /id="country-profiles"/);
   assert.match(html, /<script src="\.\.\/\.\.\/internet-table\.js" defer><\/script>/);
+  assert.match(html, /id="country-table-jump" href="#internet-table"/);
+  assert.match(html, /id="internet-table" tabindex="-1"/);
+  assert.equal((html.match(/<th scope="col">/g) || []).length, 4);
   assert.ok(Buffer.byteLength(html, 'utf8') < 125_000, 'parent HTML exceeds the mobile performance budget');
   assert.ok((html.match(/<article\b/g) || []).length < 10, 'country profiles must not be duplicated as 182 article cards');
   assert.match(tableScript, /const initialLimit = 25;/);
@@ -44,6 +47,7 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
     const links = html.match(new RegExp(`href="\\.\\/country\\/${slug}\\/"`, 'g')) || [];
     assert.equal(links.length, 2, `${record.code} must remain linked from the region directory and comparison table`);
   }
+  assert.equal((html.match(/<th scope="row">/g) || []).length, data.records.length);
 
   const itemList = extractJsonLd(html).find((entry) => entry['@type'] === 'ItemList');
   assert.ok(itemList, 'missing country ItemList JSON-LD');
