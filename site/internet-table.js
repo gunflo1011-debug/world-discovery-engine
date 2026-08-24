@@ -8,6 +8,7 @@
   const compareA = document.getElementById('compare-a');
   const compareB = document.getElementById('compare-b');
   const compareResult = document.getElementById('compare-result');
+  const shareLink = document.getElementById('share-view');
   if (!table || !tools || !status || !search || !region || !clear) return;
 
   const rows = [...table.tBodies[0].rows];
@@ -42,6 +43,43 @@
   compareLinks.setAttribute('aria-label', 'Selected country profiles');
   compareLinks.hidden = true;
   compareResult?.insertAdjacentElement('afterend', compareLinks);
+
+  const shareStatus = document.createElement('span');
+  shareStatus.id = 'share-status';
+  shareStatus.className = 'muted';
+  shareStatus.setAttribute('role', 'status');
+  shareStatus.setAttribute('aria-live', 'polite');
+  shareLink?.insertAdjacentElement('afterend', shareStatus);
+
+  const copyShareUrl = async () => {
+    if (!navigator.clipboard?.writeText) return false;
+    await navigator.clipboard.writeText(shareLink.href);
+    shareStatus.textContent = 'Comparison link copied.';
+    return true;
+  };
+
+  const shareComparison = async (event) => {
+    if (!shareLink || (!navigator.share && !navigator.clipboard?.writeText)) return;
+    event.preventDefault();
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: document.title,
+          text: 'Compare verified 2024 internet-use observations by country.',
+          url: shareLink.href,
+        });
+        shareStatus.textContent = 'Comparison shared.';
+      } else {
+        await copyShareUrl();
+      }
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      try {
+        if (await copyShareUrl()) return;
+      } catch {}
+      shareStatus.textContent = 'Sharing unavailable. Open the link to copy it manually.';
+    }
+  };
 
   const countriesByCode = new Map(rows.map((row) => [
     row.dataset.code.toUpperCase(),
@@ -92,6 +130,7 @@
   emptyReset.addEventListener('click', () => clear.click());
   compareA?.addEventListener('change', renderCompareLinks);
   compareB?.addEventListener('change', renderCompareLinks);
+  shareLink?.addEventListener('click', shareComparison);
   more.addEventListener('click', () => {
     expanded = !expanded;
     compact();
