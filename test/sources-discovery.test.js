@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const pageUrl = new URL('../site/sources/index.html', import.meta.url);
+const baseUrl = process.env.SITE_BASE_URL || 'https://worlddiscoverydata.com/';
 
 test('sources page reflects production evidence and exposes machine discovery entry points', async () => {
   const html = await readFile(pageUrl, 'utf8');
 
-  assert.match(html, /<link rel="canonical" href="https:\/\/gunflo1011-debug\.github\.io\/world-discovery-engine\/sources\/">/);
+  assert.match(html, new RegExp(`<link rel="canonical" href="${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}sources/">`));
   assert.match(html, /<title>Sources, provenance & machine access — World Discovery Engine<\/title>/);
   assert.match(html, /verified REAL population-revision evidence is published/);
   assert.match(html, /CURRENT_VERIFIED same-year observations/);
