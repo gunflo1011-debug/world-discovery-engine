@@ -145,3 +145,13 @@ A worker runtime DNS/network failure is not a product regression. Do not repeate
 - Evidence: complete Node suite 48/48 green. Exact release 4da7e49c2b4fe415a892188425ed554969a101c9 is live; CI 32708175168 and Pages 32708175146 succeeded, including mobile verification. HTTP readback confirms the exact SHA, 123,225 bytes, 3 articles and 364 country links.
 - Expected contribution: less HTML transfer, parsing and layout work on the highest-volume 182-country entry experience, especially on mobile, without losing SEO/AI discovery paths.
 - Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console remains only an external verification/submission blocker.
+
+
+## Mobile table progressive-disclosure release — 2026-08-24
+- CEO assignment: reduce mobile interaction cost of the 182-row Internet-use comparison while preserving the complete no-JavaScript crawl graph.
+- Implemented: JavaScript-enhanced visits now start with the top 25 ranked countries and an accessible “Show all 182 countries” control. Expanding restores all rows; search and region filters always expose every matching result; clearing filters preserves the user's expanded/collapsed choice.
+- Accessibility/discovery: the control is a native button with aria-controls and synchronized aria-expanded. Without JavaScript all 182 rows and both HTML discovery links per country remain present. The compact script is deferred and 1,947 bytes uncompressed / 726 bytes gzip locally.
+- Regression guards: focused tests assert the deferred asset and progressive-disclosure contract. The live browser gate exercises 25-row default, 182-row expansion, one-row Germany search, clear, and re-collapse at 360/390/430 px.
+- Evidence: canonical build plus complete serial Node suite 48/48 green; internal-link audit remains 216 pages / 3,601 links / zero orphans. Exact release ec7c043537a34f02f996bb83b92e2d8dd7a8b9ef is live; CI 32713363081 and Pages 32713363027 succeeded, including deploy, live contract and browser-smoke jobs. HTTP readback confirms exact SHA, script HTTP 200, 123,278-byte parent and all 364 country links.
+- Expected contribution: dramatically shortens the default mobile comparison from 182 to 25 visible rows while retaining complete filtering, expansion, SEO and AI discovery paths.
+- Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console remains only an external verification/submission blocker.
