@@ -112,3 +112,14 @@ A worker runtime DNS/network failure is not a product regression. Do not repeate
 - First release attempt exposed a fresh-checkout build-order defect: an earlier build test could reset the sitemap to 27 routes before the canonical audit. Root cause is fixed in `buildSite()`, which now always derives all 182 country and 7 region routes from the accepted data/index contracts; downstream finalization is idempotent.
 - Focused evidence: `node --test test/build-site.test.js test/search-console-readiness.test.js test/status-page.test.js` passed 4/4 with the complete 216-route sitemap. Search Console itself remains the only external step blocked by the missing original verification file.
 - Release evidence: CI `32694979243` and Pages `32694979238` passed for exact live commit `1d4f114bf18f8f1bf00b370aa15c5d24ad8e9087`; HTTP readback confirms the 182-country headline and complete 216-route statement.
+
+
+## Structured discovery release — 2026-08-24
+- CEO assignment: expand structured-data coverage while the external Search Console action remains only a partial blocker.
+- Implemented: all 182 country profiles and 7 region pages now emit one linked JSON-LD graph containing WebPage, Dataset and BreadcrumbList entities. Country datasets expose stable indicator/country/year identifiers, exact PropertyValue observations, official provenance/license and JSON+CSV DataDownload distributions; regions expose region identity, indicator metadata and JSON distribution.
+- Regression coverage: the country and region builders validate entity linkage, identifiers, values, licenses, distributions and three-level canonical breadcrumbs across the complete generated corpus. The live mobile contract now verifies the graph instead of the obsolete single-WebPage shape.
+- Tests: focused 2/2 green; complete serial Node suite 47/47 green.
+- Release truth: exact commit 6ce62f3476f97ca615a60b324eb9015072da76c6 is live. CI 32699058877 and Pages 32699058864 succeeded. HTTP readback confirms the exact SHA and WebPage/Dataset/BreadcrumbList graphs for DEU and ECS.
+- Expected contribution: stronger machine comprehension and citation/discovery context for 189 high-value country/region entry pages, with no thin pages or visitor tracking.
+- Measurement truth: search impressions, organic visits, returning users, AI referrals, revenue and profit remain UNKNOWN / NOT INSTRUMENTED.
+- External blocker: only Google Search Console verification/submission; product work continues.
