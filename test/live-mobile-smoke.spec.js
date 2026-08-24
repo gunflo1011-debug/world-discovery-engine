@@ -186,6 +186,21 @@ test.describe('mobile smoke tests', () => {
             await more.click();
             expect(await visibleRows(), `re-collapsed table row count mismatch for ${route}`).toBe(25);
 
+            await page.locator('#compare-a').selectOption('DEU');
+            await page.locator('#compare-b').selectOption('FRA');
+            await expect(page.locator('#compare-result')).toBeVisible();
+            await expect(page.locator('#compare-result')).toContainText(/Germany|France/);
+            const compareLinks = page.locator('#compare-profile-links');
+            await expect(compareLinks).toBeVisible();
+            await expect(compareLinks).toHaveAttribute('aria-label', 'Selected country profiles');
+            const germanyProfile = compareLinks.locator('a[href="./country/deu/"]');
+            const franceProfile = compareLinks.locator('a[href="./country/fra/"]');
+            await expect(germanyProfile).toHaveText('Open Germany profile →');
+            await expect(franceProfile).toHaveText('Open France profile →');
+            expect((await page.request.get(new URL(await germanyProfile.getAttribute('href'), `${BASE}${route}`).href)).ok()).toBeTruthy();
+            expect((await page.request.get(new URL(await franceProfile.getAttribute('href'), `${BASE}${route}`).href)).ok()).toBeTruthy();
+            expect(new URL(page.url()).searchParams.get('compare')).toBe('DEU,FRA');
+
             const csv = (await csvResponse.text()).trim();
             const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
             expect(lines.length - 1, `CSV record count mismatch for ${route}`).toBe(payload.records.length);
