@@ -2,7 +2,7 @@ import { access, readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 
-const BASE_URL = 'https://worlddiscoverydata.com/';
+const BASE_URL = process.env.SITE_BASE_URL || 'https://worlddiscoverydata.com/';
 const DEFAULT_SITE_ROOT = new URL('../site/', import.meta.url);
 
 const decodeHtml = (value) => value
