@@ -37,6 +37,10 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
   assert.match(tableScript, /aria-controls/);
   assert.match(tableScript, /Show all \$\{rows\.length\} countries/);
   assert.match(tableScript, /search\.addEventListener\('input', compact\)/);
+  assert.match(tableScript, /empty\.setAttribute\('aria-labelledby', 'country-status'\)/);
+  assert.match(tableScript, /No countries match these filters\. Reset both filters/);
+  assert.match(tableScript, /emptyReset\.textContent = `Show all \$\{rows\.length\} countries`/);
+  assert.match(tableScript, /emptyReset\.addEventListener\('click', \(\) => clear\.click\(\)\)/);
   assert.match(tableScript, /aria-label', 'Selected country profiles'/);
   assert.match(tableScript, /\.\/country\/\$\{code\.toLowerCase\(\)\}\//);
   assert.match(tableScript, /Open \$\{countriesByCode\.get\(code\)\} profile/);
