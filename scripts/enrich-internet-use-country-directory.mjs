@@ -5,12 +5,6 @@ const dataUrl = new URL('data.json', root);
 const htmlUrl = new URL('index.html', root);
 const canonical = 'https://gunflo1011-debug.github.io/world-discovery-engine/indicators/internet-use/';
 
-const esc = (value) => String(value)
-  .replaceAll('&', '&amp;')
-  .replaceAll('<', '&lt;')
-  .replaceAll('>', '&gt;')
-  .replaceAll('"', '&quot;');
-
 function validate(data) {
   if (data?.status !== 'CURRENT_VERIFIED') throw new Error('country directory requires CURRENT_VERIFIED data');
   if (data?.indicator?.code !== 'IT.NET.USER.ZS') throw new Error('unexpected indicator code');
@@ -40,24 +34,14 @@ const itemList = {
   }))
 };
 
-const directory = `<section class="section section-soft" id="country-profiles"><div class="wrap"><h2>Browse country profiles</h2><p>Open a country page for the exact ${data.observationYear} observation, same-dataset rank context and country-level JSON/CSV evidence. These profiles cover only the countries in this verified same-year dataset.</p><div class="grid">${records.map((record) => `<article class="card"><span class="pill">${esc(record.code)} · ${record.value}%</span><h3><a href="./country/${record.code.toLowerCase()}/">${esc(record.country)}</a></h3><p>${record.value}% in ${record.year}. View provenance, peer context and machine-readable country evidence.</p></article>`).join('')}</div><p><a href="./country/index.json">Machine-readable country directory →</a></p></div></section>`;
-
-if (!html.includes('id="country-profiles"')) {
-  const preferredMarker = '<section class="section"><div class="wrap"><h2>How to read this indicator</h2>';
-  const fallbackMarker = '</main>';
-
-  if (html.includes(preferredMarker)) {
-    html = html.replace(preferredMarker, `${directory}${preferredMarker}`);
-  } else if (html.includes(fallbackMarker)) {
-    html = html.replace(fallbackMarker, `${directory}${fallbackMarker}`);
-  } else {
-    throw new Error('internet-use insertion marker not found and no fallback location available');
-  }
-}
+// Country links already exist twice in crawlable HTML: the region directory and
+// the comparison table. Remove the legacy third 182-card rendering when this
+// enrichment is run against an older generated artifact.
+html = html.replace(/<section\b[^>]*\bid="country-profiles"[^>]*>[\s\S]*?<\/section>/, '');
 
 if (!html.includes('Internet use country profiles')) {
   html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(itemList)}</script></head>`);
 }
 
 await writeFile(htmlUrl, html, 'utf8');
-console.log(`Added crawlable country directory and ItemList discovery for ${records.length} internet-use profiles.`);
+console.log(`Added ItemList discovery for ${records.length} country profiles without duplicating the crawlable HTML directory.`);
