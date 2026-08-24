@@ -182,3 +182,12 @@ A worker runtime DNS/network failure is not a product regression. Do not repeate
 - Evidence: full serial Node suite 48/48 green; internal-link audit 216 pages / 3,602 links / zero orphans. Exact release 344d6bcc5cebf6acdda212bf0dbae0608ecf47ad is live; CI 32723054645 and Pages 32723054624 succeeded including deploy, exact-SHA contract and mobile browser smoke. HTTP readback confirms the recovery code; the deferred enhancement is 4,201 bytes / 1,289 bytes gzip.
 - Expected contribution: prevents a filter dead end and returns visitors to useful country data in one action, improving task completion without routes, cookies, tracking or thin content.
 - Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console verification/submission remains the only external blocker.
+
+## Adjacent comparison provenance release — 2026-08-24
+- Orchestration state: the latest explicit World Discovery assignment (zero-result recovery) was complete and no newer assignment existed at cycle start. Continued autonomously with the highest-value non-blocked trust gap.
+- Baseline: source/license/retrieval evidence sat below the complete comparison experience and quick-answer section, while methodology was available only through global navigation. Neither was presented at the moment users interpreted the comparison.
+- Implemented: one compact, no-JavaScript “Verify before you compare” navigation now sits directly above the comparison tools. It links to a focusable source/license/retrieval section and the canonical validation methodology page.
+- Regression guards: generation is idempotent and asserts one labelled trust navigation, exact destinations and a focusable source target. The 360/390/430 px browser gate proves visibility, descriptive labels, keyboard focus transfer, #source-provenance state and methodology HTTP 200 while all existing dataset, comparison, filter and accessibility journeys continue.
+- Evidence: focused static test and complete serial Node suite 48/48 green; internal-link audit 216 pages / 3,604 links / zero orphans. Exact release ed4a478d9df3d61ae8eed2dfcbd26df8ef8dea92 is live; CI 32729555851 and Pages 32729555912 succeeded including exact-SHA and mobile-browser gates. Live HTML is 123,740 bytes, below the 125,000-byte budget.
+- Expected contribution: puts verification one action from the core claim, improving trust and reducing abandonment without tracking, new routes or thin content.
+- Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console verification/submission remains the only external blocker.
