@@ -40,6 +40,9 @@ test('internet-use parent keeps crawlable country links and ItemList discovery w
   assert.match(html, /<select id="compare-b"><option value="">Choose a country<\/option><\/select>/);
   assert.match(html, /const compareEntries=\[\.\.\.byCode\.entries\(\)\]\.sort/);
   assert.match(html, /option\.value=code\.toUpperCase\(\)/);
+  assert.match(html, /rank:Number\(row\.dataset\.rank\)/);
+  assert.match(html, /region:\[\.\.\.region\.options\]\.find/);
+  assert.match(html, /ranks #"\+left\.rank\+" of "\+rows\.length/);
   assert.ok(Buffer.byteLength(html, 'utf8') < 110_000, 'parent HTML exceeds the mobile performance budget');
   assert.ok((html.match(/<article\b/g) || []).length < 10, 'country profiles must not be duplicated as 182 article cards');
   assert.match(tableScript, /const initialLimit = 25;/);
