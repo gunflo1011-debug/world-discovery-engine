@@ -47,10 +47,15 @@ test.describe('internet-use country profile live smoke', () => {
       await expect(page.getByRole('link', { name: /Back to Internet use by country/i })).toBeVisible();
 
       const structured = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
-      expect(structured['@type']).toBe('WebPage');
-      expect(structured.mainEntity?.['@type']).toBe('PropertyValue');
-      expect(structured.mainEntity?.propertyID).toBe(sentinel.indicator);
-      expect(structured.about?.identifier).toBe(sentinel.code);
+      const webPage = structured['@graph'].find((entry) => entry['@type'] === 'WebPage');
+      const dataset = structured['@graph'].find((entry) => entry['@type'] === 'Dataset');
+      const breadcrumbs = structured['@graph'].find((entry) => entry['@type'] === 'BreadcrumbList');
+      expect(webPage.mainEntity?.['@id']).toBe(dataset['@id']);
+      expect(webPage.breadcrumb?.['@id']).toBe(breadcrumbs['@id']);
+      expect(dataset.variableMeasured?.propertyID).toBe(sentinel.indicator);
+      expect(dataset.about?.identifier).toBe(sentinel.code);
+      expect(dataset.distribution.map((item) => item.encodingFormat)).toEqual(['application/json', 'text/csv']);
+      expect(breadcrumbs.itemListElement.map((item) => item.position)).toEqual([1, 2, 3]);
 
       await page.locator('body').click({ position: { x: 1, y: 1 } });
       await page.keyboard.press('Tab');
