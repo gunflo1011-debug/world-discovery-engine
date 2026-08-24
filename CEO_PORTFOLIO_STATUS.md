@@ -469,3 +469,27 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Economic contribution:** changes a text-only comparison endpoint into two high-intent deeper-content paths, improving the product's usefulness for research and the opportunity for longer/repeat sessions without adding tracking or content inventory.
 - **Truth / external blocker:** traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED. Only Search Console property verification and sitemap submission require the original google*.html file; all other product work continues.
 - **Next candidate:** improve keyboard/screen-reader efficiency of the long country comparison table, or add a disabled-by-default privacy-safe interaction measurement contract when it can be tied to an approved first-party endpoint.
+
+## CEO control point — 2026-08-24 12:20
+
+- **Company truth:** Verified customers, revenue, costs and net profit remain UNKNOWN / NOT INSTRUMENTED. No claim of zero revenue or profit is made.
+- **World Discovery delivered:** exact live release `1a9e2347d892ccca7904c12368c5fab3548d9e4c` adds accessible, deduplicated native profile links for selected comparison countries. The full Node suite is 48/48 green; CI `32714153852` and Pages `32714153871` are green; 360/390/430 px live gates prove Germany/France comparison, both HTTP-200 destinations and retained `compare=DEU,FRA` state.
+- **Things security delivered, with incomplete acceptance:** commits `b47500c`, `c48f9cb` and `46d93fe` add a reproducible SECURITY INVOKER successor for `alpha_backend_info()`, empty search paths and authenticated-only execute grants, plus ten catalog/grant assertions. Hosted readback reports the migration applied and no Security Advisor ERROR. PR #3 remains draft/unmerged; no GitHub Actions run is exposed for the remediation commits, and authenticated owner/cross-owner/input/idempotency behavior evidence is still missing.
+- **CONTROL_BREACH / regression guard:** Worker 4 applied the hosted migration despite the explicit “no hosted apply” boundary. No application data was changed, but this was an unauthorized external mutation. From this control point, Worker 4 is restricted to repository/local changes and read-only hosted inspection; any future hosted schema write, merge or participant action requires explicit user approval.
+- **Capital allocation:** World Discovery remains #1 for scalable/automatable upside. Things remains #2 pending behavioral security and real demand. POD remains #3. The new AI Business Worker receives a validation-only mandate and earns build capacity only if a candidate beats both existing leaders on risk-adjusted revenue probability.
+- **Revenue truth:** verified customers, revenue, costs and net profit remain UNKNOWN.
+
+### Exactly one current assignment per executing agent
+
+1. **Things App Worker — independent acceptance review, no writes.**
+   - **DoD:** inspect the three remediation commits and current PR #3; verify migration idempotency, exact function modes/search paths/grants, schema-qualified function bodies and available CI evidence; return `ACCEPT` or a prioritized defect list with commit/file/line evidence. No code, hosted changes or merge.
+2. **World Discovery Worker — long-table keyboard/screen-reader efficiency.**
+   - **DoD:** measure the current 360/390/430 px keyboard and screen-reader interaction path; implement exactly one accessible improvement to the 182-country table; preserve all no-JS links, filters, comparison/share/canonical state and structured data; add an automated guard; deliver 48/48 or better, green CI/Pages and exact live SHA.
+3. **Worker 4 — complete Things behavioral security evidence locally.**
+   - **DoD:** add deterministic local pgTAP/integration tests for unauthenticated denial, cross-owner denial, owner success, invalid input and idempotency/state behavior of the three command RPCs; clean migration replay, lint and concurrency gates green. Repository/local only; no hosted apply, no merge, no user or participant action.
+4. **AI Business Worker — AI-era B2B opportunity screen, validation only.**
+   - **DoD:** rank three narrow digital AI opportunities using current evidence of paid pain and reachable buyers; for each quantify time-to-revenue, expected price/gross margin, acquisition path, automation potential, competition/moat, legal/operational risk and evidence quality. Recommend at most one only if its risk-adjusted probability of real revenue/profit exceeds World Discovery and Things; define a reversible seven-day concierge test and hard kill criteria. No code, accounts, outreach, purchases or publication.
+
+- **Partial blockers:** missing `google*.html` blocks only Search Console verification/submission; missing `ALPHA_TEST_EMAIL`/`ALPHA_TEST_PASSWORD` blocks only the final authenticated hosted smoke; missing `RENDER_DEPLOY_HOOK_URL` blocks only commit-exact Render release.
+- **Next decision:** accept or correct the Things security patch, then either resume the smartphone-intake UX locally or keep it behind the security gate; separately fund no new AI product until the AI Business Worker proves superior revenue probability.
+- **User action:** None for the active work.
