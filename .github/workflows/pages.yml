@@ -114,7 +114,8 @@ jobs:
           if(!Array.isArray(source.records)||!Array.isArray(index.countries)||index.countries.length!==source.records.length) throw new Error('Internet-use country count mismatch');
           if(build.internetUseCountryProfiles!==index.countries.length) throw new Error('build.json country count mismatch');
           const parent=await get('/indicators/internet-use/');
-          if(!parent.includes('id="country-profiles"')||!parent.includes('./country/index.json')) throw new Error('country directory missing from parent page');
+          if(parent.includes('id="country-profiles"')) throw new Error('duplicate country-card directory returned to parent page');
+          if(Buffer.byteLength(parent,'utf8')>=125000) throw new Error('internet-use parent exceeds HTML performance budget');
           const jsonLd=[...parent.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(m=>JSON.parse(m[1]));
           const itemList=jsonLd.find(x=>x['@type']==='ItemList');
           if(!itemList||itemList.numberOfItems!==index.countries.length||itemList.itemListElement?.length!==index.countries.length) throw new Error('country ItemList mismatch');
@@ -123,6 +124,8 @@ jobs:
           for(const country of index.countries){
             if(!/^[A-Z]{3}$/.test(country.code)||!country.url||!country.machineDataUrl||!country.machineCsvUrl) throw new Error(`malformed country ${country.code||'unknown'}`);
             if(seen.has(country.code)) throw new Error(`duplicate country ${country.code}`); seen.add(country.code);
+            const parentHref=`href="./country/${country.code.toLowerCase()}/"`;
+            if(parent.split(parentHref).length-1!==2) throw new Error(`parent discovery count mismatch ${country.code}`);
             const human=`${base}${country.url}`;
             if((sitemap.split(human).length-1)!==1) throw new Error(`sitemap count mismatch ${country.code}`);
             if(!listed.has(human)) throw new Error(`ItemList missing ${country.code}`);
