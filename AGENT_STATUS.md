@@ -155,3 +155,12 @@ A worker runtime DNS/network failure is not a product regression. Do not repeate
 - Evidence: canonical build plus complete serial Node suite 48/48 green; internal-link audit remains 216 pages / 3,601 links / zero orphans. Exact release ec7c043537a34f02f996bb83b92e2d8dd7a8b9ef is live; CI 32713363081 and Pages 32713363027 succeeded, including deploy, live contract and browser-smoke jobs. HTTP readback confirms exact SHA, script HTTP 200, 123,278-byte parent and all 364 country links.
 - Expected contribution: dramatically shortens the default mobile comparison from 182 to 25 visible rows while retaining complete filtering, expansion, SEO and AI discovery paths.
 - Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console remains only an external verification/submission blocker.
+
+## Comparison-to-profile navigation release — 2026-08-24
+- CEO assignment: continue independent user-value improvements; selected the existing country comparison's text-only result as the next direct navigation gap.
+- Implemented: once one or two valid countries are selected, an accessible “Selected country profiles” navigation appears immediately after the comparison result with deduplicated native links to the selected full country profiles. URL sharing and comparison calculation remain unchanged.
+- Accessibility/discovery: the links are real anchors with descriptive country names and an explicit navigation label. The enhancement is additive; without JavaScript the complete two-links-per-country crawl graph remains unchanged.
+- Regression guards: focused coverage checks the generated link contract. The 360/390/430 px live browser gate selects DEU and FRA, verifies the comparison result, both visible profile links, HTTP 200 destinations and preserved compare=DEU,FRA URL state.
+- Evidence: canonical build and serial Node suite 48/48 green; internal-link audit remains 216 pages / 3,601 links / zero orphans. Exact release 1a9e2347d892ccca7904c12368c5fab3548d9e4c is live; CI 32714153852 and Pages 32714153871 succeeded, including live release-contract and mobile-browser jobs. HTTP readback confirms the exact SHA, the enhanced script and both profile routes.
+- Expected contribution: converts a comparison dead end into two high-intent profile journeys, supporting deeper sessions and repeat research without tracking, cookies or thin content.
+- Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console verification and sitemap submission remain the only externally blocked actions.
