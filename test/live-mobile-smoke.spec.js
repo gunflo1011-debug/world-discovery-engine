@@ -131,7 +131,7 @@ test.describe('mobile smoke tests', () => {
 
           if (routeConfig.currentDataset) {
             const htmlBytes = (await response.body()).byteLength;
-            expect(htmlBytes, `${route} HTML exceeded its mobile performance budget`).toBeLessThan(125_000);
+            expect(htmlBytes, `${route} HTML exceeded its mobile performance budget`).toBeLessThan(110_000);
             expect(await page.locator('article').count(), `${route} rendered duplicate country cards`).toBeLessThan(10);
             await expect(page.locator('#country-profiles')).toHaveCount(0);
 
@@ -208,6 +208,8 @@ test.describe('mobile smoke tests', () => {
             await more.click();
             expect(await visibleRows(), `re-collapsed table row count mismatch for ${route}`).toBe(25);
 
+            await expect(page.locator('#compare-a option')).toHaveCount(payload.records.length + 1);
+            await expect(page.locator('#compare-b option')).toHaveCount(payload.records.length + 1);
             await page.locator('#compare-a').selectOption('DEU');
             await page.locator('#compare-b').selectOption('FRA');
             await expect(page.locator('#compare-result')).toBeVisible();
