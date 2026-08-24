@@ -409,3 +409,18 @@ Advance user value and discovery on both fixed products in parallel. Search Cons
 - **Economic contribution:** reduces mobile transfer, HTML parsing and layout work on the main discovery surface while retaining SEO and AI citation paths. Traffic, revenue and profit remain UNKNOWN / NOT INSTRUMENTED.
 - **External blocker:** only Google Search Console verification and sitemap submission; it does not block further product work.
 - **Next candidate:** measure accessibility and interaction cost of the 182-row comparison at mobile widths, then implement only a user-tested navigation improvement that preserves the no-JS crawl graph.
+
+
+
+## Worker 4 Things Supabase access/RLS audit — 2026-08-24
+
+- **Assignment outcome:** `DIRECT_PRIVATE_EXPOSURE_REFUTED__DEFENSE_IN_DEPTH_HARDENING_REQUIRED`. The bounded read-only audit is committed in `asset-market-alpha` at `78c2a1e787343bbe9818195b602e95cd0dbd24d2`, file `docs/things-supabase-access-rls-audit-2026-08-24.md`. No schema, policy, grant, hosted data, user, secret, PR, app UX or deployment was changed.
+- **Material correction:** The seven `private` tables without RLS are not directly client-reachable in the current configuration. PostgREST exposes only `public` and `graphql_public`; private table and private RPC profile probes fail HTTP 406/`PGRST106`; `anon` has no `private` USAGE and no direct `items` read; no client role has grants on the eight private tables. The earlier conclusion that disabled RLS alone made these tables a critical exposure is therefore refuted.
+- **Access-path evidence:** `authenticated` has `private.USAGE` only for four explicitly granted lifecycle RPCs and no table privileges. Those private SECURITY DEFINER functions use `search_path = ''`, schema-qualified relations and owner/participant/state checks. Public owner-sensitive tables retain FORCE RLS and owner-bound policies.
+- **Findings:** Supabase Security Advisor reports no ERROR. WARN 0029 remains for the intentional authenticated SECURITY DEFINER RPCs `add_private_device`, `add_private_thing` and `track_alpha_event`; these need empty-search-path hardening and owner/cross-owner regression evidence, not blind revocation. Leaked-password protection is also disabled.
+- **Repository/live drift:** Production migration history contains `alpha_backend_info_invoker`, so live `alpha_backend_info()` is SECURITY INVOKER. The repository snapshot lacks that successor and can recreate the earlier SECURITY DEFINER version on clean replay. This is the highest-priority remediation before merge/replay.
+- **Tests/evidence:** Three real publishable-key Data API probes failed closed as expected; schema privilege queries confirm no CREATE rights for `anon`, `authenticated` or `service_role`; table/policy/function/execute-grant review and live migration readback completed. Current Supabase guidance was checked for exposed-schema, grants and RLS separation.
+- **Expected economic contribution:** Corrects a false critical alarm without weakening controls, prevents a potentially breaking blind RLS rollout and identifies the actual pre-alpha risk: migration drift plus three privileged RPC boundaries. Revenue and net profit remain UNKNOWN.
+- **Blocker / handoff:** PR #3 is not merge-ready. Things owner should first add the missing invoker migration/drift regression, then harden and test the three RPC boundaries. Hosted authenticated smoke still waits for a dedicated non-privileged CI identity; no personal account should be used.
+- **Next step:** Things App Worker/CEO owns the repository remediation. Worker 4 does not alter schema or PR #3 under this read-only assignment.
+- **User action:** None now.
