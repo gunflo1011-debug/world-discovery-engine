@@ -5,7 +5,7 @@ import test from "node:test";
 
 import { validateSearchConsoleVerification } from "../scripts/validate-search-console-verification.mjs";
 
-const BASE_URL = "https://gunflo1011-debug.github.io/world-discovery-engine/";
+const BASE_URL = process.env.SITE_BASE_URL || "https://worlddiscoverydata.com/";
 const SITE_ROOT = new URL("../site/", import.meta.url);
 
 function canonicalHref(html) {
