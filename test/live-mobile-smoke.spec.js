@@ -162,6 +162,30 @@ test.describe('mobile smoke tests', () => {
               `${route} must link every country from both the region directory and comparison table`
             ).toBe(payload.records.length * 2);
 
+            const tableRows = page.locator('#internet-table tbody tr');
+            const visibleRows = () => tableRows.evaluateAll((items) => items.filter((item) => !item.hidden).length);
+            const more = page.locator('#country-more');
+            await expect(more).toBeVisible();
+            await expect(more).toHaveText(`Show all ${payload.records.length} countries`);
+            await expect(more).toHaveAttribute('aria-expanded', 'false');
+            expect(await visibleRows(), `compact table row count mismatch for ${route}`).toBe(25);
+
+            await more.click();
+            await expect(more).toHaveText('Show top 25 countries');
+            await expect(more).toHaveAttribute('aria-expanded', 'true');
+            expect(await visibleRows(), `expanded table row count mismatch for ${route}`).toBe(payload.records.length);
+
+            await page.locator('#country-search').fill('Germany');
+            await expect(more).toBeHidden();
+            expect(await visibleRows(), `filtered table row count mismatch for ${route}`).toBe(1);
+            await expect(page.locator('#country-status')).toContainText('Showing 1 country');
+
+            await page.locator('#country-clear').click();
+            await expect(more).toBeVisible();
+            expect(await visibleRows(), `cleared expanded table row count mismatch for ${route}`).toBe(payload.records.length);
+            await more.click();
+            expect(await visibleRows(), `re-collapsed table row count mismatch for ${route}`).toBe(25);
+
             const csv = (await csvResponse.text()).trim();
             const lines = csv.split(/\r?\n/).filter(Boolean).map(parseCsvLine);
             expect(lines.length - 1, `CSV record count mismatch for ${route}`).toBe(payload.records.length);
