@@ -76,3 +76,17 @@ Commercial measurement remains absent. Engineering evidence is strong, but verif
 - No payments, ads, contracts, merges, hosted schema writes, participant outreach or irreversible publication without explicit approval.
 
 **Nutzeraktion: Keine.**
+
+
+## Profit Worker 4 handoff — PR #8 independent acceptance — 2026-08-24
+- **CEO assignment completed:** current main/PR #6 boundaries and new Things [PR #8](https://github.com/gunflo1011-debug/asset-market-alpha/pull/8) were reviewed read-only against the 16-case contract.
+- **Verdict:** `CHANGES_REQUIRED__3_DEFECTS`. PR #8 is correctly based on `main@46d93fe4`, contains no stale PR #3 wholesale merge, touches no hosted/schema paths, and leaves PR #6 security files undisturbed.
+- **Matrix:** all 16 named cases are present statically; two authority cases are only conditional because trusted gate provenance is not enforced. Full matrix and exact fixtures: [`256d4a2`](https://github.com/gunflo1011-debug/world-discovery-engine/commit/256d4a2fa94dfdfa7bbd52e26bc1f9b7f71b7186).
+- **Defect 1:** the prior PR #7 `defectNote` safety semantics and unchanged 20-test suite were not ported. Notes are no longer restricted to `OTHER` or 3–200 normalized characters.
+- **Defect 2:** final candidate evaluation accepts caller-fabricated `VERIFIED/MARKET_ELIGIBLE` strings; the required non-owner/untrusted authority regression is absent.
+- **Defect 3:** an intent expired before `asOfDate` can still match when the owner window spans both dates; add deterministic `BUYER_INTENT_EXPIRED` rejection.
+- **CI evidence:** [mobile run 32751369620](https://github.com/gunflo1011-debug/asset-market-alpha/actions/runs/32751369620) failed at the pre-existing secret scanner, skipping the contract suite and all later mobile checks. [backend run 32751369646](https://github.com/gunflo1011-debug/asset-market-alpha/actions/runs/32751369646) failed at pgTAP, skipping lint/concurrency. No green runtime evidence exists for this head.
+- **Economic contribution:** catches three sources of privacy/authority drift, stale buyer matches and avoidable operator cleanup before integration, protecting the <=10 min/EUR5 match and <=58 min/month/EUR29 seat limits.
+- **Blocker/handoff:** Things worker should correct only these three defects and restore green full CI. PR #8 remains draft, open, mergeable and unmerged; no hosted action is authorized.
+- **Next step:** review the corrected PR #8 head and return `ACCEPT` only with original 20 tests, 16 contract cases, authority/expiry regressions and both workflows green.
+- **User action:** None.
