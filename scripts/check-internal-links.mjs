@@ -2,7 +2,7 @@ import { access, readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 
-const BASE_URL = 'https://gunflo1011-debug.github.io/world-discovery-engine/';
+const BASE_URL = 'https://worlddiscoverydata.com/';
 const DEFAULT_SITE_ROOT = new URL('../site/', import.meta.url);
 
 const decodeHtml = (value) => value
@@ -25,6 +25,9 @@ function idsIn(html) {
 }
 
 function localFileUrl(url, siteRoot, base) {
+  if (url.origin !== base.origin || !url.pathname.startsWith(base.pathname)) {
+    throw new Error(`URL outside configured site base: ${url.href}`);
+  }
   const relative = decodeURIComponent(url.pathname.slice(base.pathname.length));
   const pathSegment = relative === '' || relative.endsWith('/')
     ? `${relative}index.html`
@@ -40,6 +43,9 @@ export async function auditInternalLinks({ siteRoot = DEFAULT_SITE_ROOT, baseUrl
 
   for (const location of locations) {
     const url = new URL(location);
+    if (url.origin !== base.origin || !url.pathname.startsWith(base.pathname)) {
+      throw new Error(`sitemap URL outside configured base ${base.href}: ${location}`);
+    }
     sitemapByPath.set(url.pathname, location);
     if (url.pathname.endsWith('/')) sitemapByPath.set(`${url.pathname}index.html`, location);
   }
