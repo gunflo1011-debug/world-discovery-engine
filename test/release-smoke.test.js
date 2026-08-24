@@ -54,7 +54,7 @@ test('GDP screening remains fail-closed and machine-readable', async () => {
   const page = await readSite('indicators/real-gdp/index.html');
   assert.match(page, /NY\.GDP\.MKTP\.KD/);
   assert.match(page, /SCREENING · FAIL CLOSED/);
-  assert.match(page, /No GDP revision values are published/i);
+  assert.match(page, /no revision values(?: or rankings)? are published/i);
   assert.match(page, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/indicators\/real-gdp\/"/);
 
   const status = JSON.parse(await readSite('indicators/real-gdp/status.json'));
