@@ -123,3 +123,13 @@ A worker runtime DNS/network failure is not a product regression. Do not repeate
 - Expected contribution: stronger machine comprehension and citation/discovery context for 189 high-value country/region entry pages, with no thin pages or visitor tracking.
 - Measurement truth: search impressions, organic visits, returning users, AI referrals, revenue and profit remain UNKNOWN / NOT INSTRUMENTED.
 - External blocker: only Google Search Console verification/submission; product work continues.
+
+
+## Complete internal-link integrity release — 2026-08-24
+- Assignment: audit the complete 216-route internal discovery graph after the structured-data release.
+- Real findings: three archive/leaderboard links targeted the intentionally absent /indicators/population-total/ route; the status region-directory link targeted a missing fragment; /leaderboard/ had no inbound HTML path from another sitemap page.
+- Fix: archive population calls-to-action now reach the verified leaderboard, the leaderboard's obsolete hub card reaches the live indicator registry, and the status link targets the real region-directory heading. The archive links make the leaderboard discoverable without JavaScript.
+- Permanent gate: scripts/check-internal-links.mjs resolves every internal anchor from every sitemap HTML page, checks target files and fragments, and rejects sitemap pages without inbound HTML discovery. npm check runs it after both builds.
+- Evidence: complete Node suite 48/48 green; final audit covers 216 pages and 3,784 internal HTML links with zero orphans. Exact release 4867b6b0cd9040d2e0af12368b75c5fff079b4d8 is live; CI 32703208355 and Pages 32703208361 succeeded. HTTP readback confirms exact SHA, two archive-to-leaderboard links, the valid region fragment and leaderboard HTTP 200.
+- Expected contribution: removes crawl dead ends, restores access to a high-value verified comparison page, and converts link integrity into a release-blocking invariant.
+- Measurement/revenue truth: UNKNOWN / NOT INSTRUMENTED. Search Console remains only an external verification/submission blocker.
