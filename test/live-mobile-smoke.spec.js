@@ -53,6 +53,14 @@ test.describe('mobile smoke tests', () => {
 
         try {
           await page.setViewportSize({ width, height: 900 });
+          if (routeConfig.currentDataset) {
+            await page.addInitScript(() => {
+              Object.defineProperty(navigator, 'share', {
+                configurable: true,
+                value: async (payload) => { window.__worldDiscoverySharedPayload = payload; },
+              });
+            });
+          }
           const response = await page.goto(`${BASE}${route}`, { waitUntil: 'networkidle', timeout: 30000 });
           expect(response?.ok(), `HTTP response for ${route}`).toBeTruthy();
 
@@ -227,6 +235,13 @@ test.describe('mobile smoke tests', () => {
             expect((await page.request.get(new URL(await germanyProfile.getAttribute('href'), `${BASE}${route}`).href)).ok()).toBeTruthy();
             expect((await page.request.get(new URL(await franceProfile.getAttribute('href'), `${BASE}${route}`).href)).ok()).toBeTruthy();
             expect(new URL(page.url()).searchParams.get('compare')).toBe('DEU,FRA');
+
+            const shareLink = page.locator('#share-view');
+            await shareLink.click();
+            await expect(page.locator('#share-status')).toHaveText('Comparison shared.');
+            const sharedPayload = await page.evaluate(() => window.__worldDiscoverySharedPayload);
+            expect(sharedPayload.title).toBe(await page.title());
+            expect(new URL(sharedPayload.url).searchParams.get('compare')).toBe('DEU,FRA');
 
             await page.locator('#region-filter').selectOption('ecs');
             await page.locator('#country-search').fill('no-such-country-zz');
