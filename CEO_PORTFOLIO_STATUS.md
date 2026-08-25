@@ -1,24 +1,26 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 16:19 Europe/Berlin_
+_Last updated: 2026-08-25 18:18 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown business outcomes stay UNKNOWN.
 
 ## Current evidence snapshot
-- **World Discovery — Rank #1 / PRIMARY DISTRIBUTION-DATA ASSET.** Owner-supplied Google Search Console evidence: sitemap accepted with 218 detected pages; 3-month performance showed 0 impressions / 0 clicks. Discovery is proven; demand is not.
-- **Things / Asset Market Alpha — Rank #2 / HIGH-UPSIDE CONSUMER ASSET.** FREE-FIRST / POPULARITY-FIRST. Real users, retention and sell conversion remain UNKNOWN.
+- **World Discovery — Rank #1 / PRIMARY DISTRIBUTION-DATA ASSET.** Google Search Console property access is now technically proven via the read-only service-account connectivity workflow. Owner-supplied Search Console evidence previously showed sitemap accepted with 218 detected pages and 0 impressions / 0 clicks over the viewed 3-month window. Discovery is proven; demand is not.
+- **World Discovery release health is now GREEN.** Latest main commit `f540bb670804fd958beaeb395faf7704efa277df` has completed CI run `32868159592` with conclusion `success`. The previous release-evidence gate is therefore closed; do not keep workers parked on the old pending-CI diagnosis.
+- **World Discovery measurement gap:** repo has a credential-free opportunity analyzer (`npm run analyze:search-console`) and a read-only connectivity workflow, but no evidenced recurring API extraction of real Search Console performance rows into a safe artifact yet. This is now the highest-leverage website gap.
+- **World Discovery adjacent supply:** Worker 1 implemented a fail-closed life-expectancy snapshot fetcher + trust-contract tests (`5cd29e5e`, `be9a8b4f`) and recorded the handoff (`00676527`). Treat expansion as gated by source-backed snapshot evidence and demand-learning, not page-count maximization.
+- **Things / Asset Market Alpha — Rank #2 / HIGH-UPSIDE CONSUMER ASSET.** Worker 3 recorded real activation-wiring handoff in `f540bb67`. Real users, retention and sell conversion remain UNKNOWN.
 - **Verified revenue / costs / net profit:** UNKNOWN / UNKNOWN / UNKNOWN.
-- **World Discovery CI root cause fixed, verification pending:** Worker 4 isolated the failed run to one brittle floating-point strict-equality assertion. Commit `b904e1d8152d7bc0e6920544c3784a7ede6a0a1f` changes only that assertion to tolerance-based comparison; handoff commit `d99102023897b09a1009db42a895b49c64e2770c` records the diagnosis. Current GitHub status API exposes no completed checks/workflow runs for the fix commit yet, so green CI/deploy is NOT claimed.
 
 ## Active allocation — 2 World Discovery / 2 Things
 
-### CEO Worker 1 → World Discovery — P0: SEO-family candidate + gated implementation
-**Main goal:** prepare and, only after green-main evidence, ship exactly one adjacent source-backed indicator/data family that expands useful organic query surface.
-**Execution chain:** verify current CI/deploy gate -> identify one candidate using existing trustworthy source/year/unit methodology -> inspect data coverage and route usefulness -> if green gate exists, implement pages + methodology/source display + internal links + canonicals + sitemap -> build/link/regression tests -> commit; if gate is still pending, stop before merge and leave a precise candidate/source handoff.
-**DoD:** either (A) one non-thin source-backed family with deterministic tests and completed green checks, or (B) a concrete implementation-ready candidate with source, coverage, expected routes and exact blocked gate; never merge breadth onto unverified red/pending main.
-**Economic impact:** increases Google's opportunity to discover query-market fit across a larger high-quality surface without sacrificing crawl trust.
-**Handoff:** exact routes, source/year/unit contract, tests and gate status to CEO/Worker 4.
+### CEO Worker 1 → World Discovery — P0: Build real Search Console extraction + safe artifact
+**Main goal:** convert the proven Search Console credential into reproducible, privacy-safe performance evidence that the existing analyzer can consume.
+**Execution chain:** inspect current connectivity workflow and analyzer contract -> implement a read-only API extractor for `sc-domain:worlddiscoverydata.com` using the existing secret -> query a sensible recent window with dimensions date/page/query and metrics clicks/impressions/ctr/position -> write only non-secret aggregate rows to a workflow artifact or generated report, never credentials/tokens -> feed rows into `npm run analyze:search-console` -> add deterministic zero-row/error/shape tests -> run CI -> commit.
+**DoD:** one manually/automatically runnable workflow successfully authenticates, fetches real Search Console performance data, produces a non-secret artifact/report, invokes the analyzer, and preserves `NO_DEMAND_EVIDENCE` when Google returns no rows; credentials/tokens never appear in repo/logs/artifacts.
+**Economic impact:** replaces SEO guessing with measured query/page demand and creates the feedback loop needed to allocate content work toward actual impressions, CTR and near-page-one opportunities.
+**Handoff:** workflow/run ID, artifact/report schema, observed row count and top opportunity output (or explicit zero-data result) to CEO + Worker 4.
 
 ### CEO Worker 2 → Things — P0: SOLD-state final release packet, no hosted mutation
 **Main goal:** reduce the future SOLD-state production change to one approval-gated, reversible step with deterministic safety evidence.
@@ -27,35 +29,38 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 **Economic impact:** preserves inventory/value truth and user trust, prerequisites for retention and future commerce.
 **Handoff:** exact approval step, expected postflight result and rollback command/evidence to CEO.
 
-### CEO Worker 3 → Things — P0: Real local activation-funnel validation
-**Main goal:** prove that real app actions generate developer-readable aggregate evidence for Capture -> Inventory -> Value -> Sell-start without privacy compromise.
-**Execution chain:** exercise actual local app transitions -> verify hooks fire from product actions rather than fixtures only -> aggregate stage/count/completion -> expose inspectable local/debug output -> regression -> mobile/CI wiring -> commit.
-**DoD:** a real local app path deterministically yields an inspectable aggregate funnel; no IDs, names, prices, free text, device/location data or network analytics; fixture/test counts are never presented as real-user metrics.
-**Economic impact:** lets future product allocation follow real activation friction instead of feature-count guesses while preserving trust.
-**Handoff:** exact local validation command/output schema and any remaining instrumentation gap to CEO.
+### CEO Worker 3 → Things — P0: Close real activation-funnel evidence
+**Main goal:** turn the recorded activation wiring into a deterministic real local product-action proof for Capture -> Inventory -> Value -> Sell-start.
+**Execution chain:** inspect the `f540bb67` handoff -> exercise actual local app transitions rather than fixtures -> verify aggregate hooks fire -> expose developer-readable stage/count/completion output -> prove privacy exclusions -> regression/mobile wiring -> commit.
+**DoD:** a real local app path yields inspectable aggregate funnel evidence; no IDs, names, prices, free text, device/location data or network analytics; fixture/test counts are never presented as real-user metrics.
+**Economic impact:** enables product allocation from actual activation friction while preserving privacy and trust.
+**Handoff:** exact validation command/output, stage reached and remaining instrumentation gap to CEO.
 
-### CEO Worker 4 → World Discovery — P0: Close CI/deploy evidence, then harden demand loop
-**Main goal:** turn the floating-point fix into completed release evidence and ensure the Search Console analyzer remains trustworthy.
-**Execution chain:** monitor `b904e1d8`/current main for actual workflow execution -> require completed `npm run check` success -> require Pages deploy success if triggered -> verify Search Console analyzer regression and zero-data `NO_DEMAND_EVIDENCE` -> if no workflow triggers, diagnose trigger/ref configuration rather than claiming success -> make only the minimal safe fix if needed.
-**DoD:** completed successful CI and Pages deployment where applicable, analyzer regressions pass, zero-data remains `NO_DEMAND_EVIDENCE`, no credentials introduced; otherwise an exact workflow-trigger blocker with evidence and smallest safe remediation.
-**Economic impact:** restores reliable automated shipping and protects every subsequent SEO expansion from compounding release risk.
-**Handoff:** explicit green/pending/blocked state plus run/commit evidence to CEO and Worker 1.
+### CEO Worker 4 → World Discovery — P1: Demand-led SEO decision layer, not more blind breadth
+**Main goal:** make the Search Console feedback loop decision-ready once Worker 1 supplies real rows, while keeping zero-data behavior honest.
+**Execution chain:** verify current analyzer tests/contract -> add robust aggregation across page/query/time windows and explicit categories such as high-impression low-CTR, positions 4–20, rising/declining opportunities -> preserve zero-data `NO_DEMAND_EVIDENCE` -> create a compact CEO-consumable report format -> regression/CI -> commit. Do not invent demand or publish bulk new families solely to increase page count.
+**DoD:** deterministic report ranks actionable real opportunities when rows exist, states no demand evidence when none exist, and contains enough page/query/metric context for the CEO to assign the next SEO task.
+**Economic impact:** converts raw Search Console data into prioritized growth work, reducing wasted content hours and improving probability of organic traffic growth.
+**Handoff:** report command/schema and ranking logic to CEO; consume Worker 1's real extraction when available.
 
 ## Allocation rationale
-2 World Discovery / 2 Things remains optimal. World Discovery has the strongest evidenced distribution asset (218 discovered URLs), but breadth stays gated until release evidence is genuinely green. Things retains two independent high-value workstreams: ownership-data truth/release safety and privacy-safe product validation. Moving 3+ workers to World Discovery before demand evidence or green release proof would overproduce supply; moving 3+ to Things would underinvest in the only currently evidenced organic distribution channel.
+2 World Discovery / 2 Things remains optimal, but the World Discovery work has pivoted from release repair to measurement. Main CI is now green, so spending another cycle diagnosing the old CI blocker has near-zero marginal value. The highest website return is completing the real Search Console extraction -> analysis -> decision loop. Things still deserves two independent workstreams because activation evidence and ownership/SOLD truth are prerequisites for retention and future commerce. A third World Discovery worker would be premature while current Search Console demand is still zero/unknown; a third Things worker would underinvest in the only evidenced search-distribution asset.
 
 ## Profit horizons
-- **Short:** close World Discovery green CI/deploy evidence; preserve the 218-page asset; make Things SOLD-state release-safe and activation validation-ready.
-- **Medium:** ingest real Search Console rows as impressions arrive and redirect SEO capacity toward high-impression/near-page-one opportunities; steer Things by real activation/retention/sell evidence.
-- **Long:** World Discovery becomes an automated search/data/API asset; Things becomes a popular free ownership/commerce/data asset, monetized only after demand/adoption evidence.
+- **Short:** obtain reproducible real Search Console performance rows (or a trustworthy zero-row result), convert them into prioritized SEO evidence; close Things SOLD-state release safety and real activation proof.
+- **Medium:** redirect World Discovery work toward queries/pages with actual impressions, weak CTR or positions 4–20; expand only source-backed data families with evidence. Steer Things by activation/retention/sell evidence.
+- **Long:** World Discovery becomes an automated search/data/API asset with measurable organic acquisition; Things becomes a popular free ownership/commerce/data asset, monetized only after adoption evidence.
+
+## Search Console operating rule
+Use Search Console as a read-only, no-paid-cloud measurement source. Track clicks, impressions, CTR, average position and page/query dimensions over comparable windows. When rows exist, prioritize high-impression weak-CTR and positions 4–20 opportunities plus sustained positive trends. When no rows exist, report `NO_DEMAND_EVIDENCE`; never fabricate rankings or traffic. Never expose service-account JSON, private keys, access tokens or secret-derived material.
 
 ## Next capital / priority decision
-**0 EUR new spend.** No paid acquisition, ads, commercial analytics or data purchases while demand/adoption remain unproven. Next likely owner approval is the narrowly scoped Things hosted SOLD-state migration, only after Worker 2 closes the release packet.
+**0 EUR new spend.** No paid acquisition, ads, commercial analytics, paid data or paid Google Cloud resources while organic demand/adoption remain unproven. First use the now-connected free Search Console evidence loop.
 
 ## Controls / blockers
 - No payments, ad activation, contracts, hosted schema writes, participant outreach or irreversible external actions without explicit approval.
-- Search Console demand remains UNKNOWN until real rows exist.
-- Never claim green CI/deploy without completed workflow evidence.
-- World Discovery breadth is gated behind completed green release evidence.
+- Search Console API connectivity is proven; actual performance demand remains zero/UNKNOWN until real query rows are extracted.
+- Main CI is green on `f540bb67`; future release claims still require completed workflow evidence.
+- World Discovery breadth must be source-backed and demand-aware; page count alone is not a success metric.
 
 **Nutzeraktion: Keine in diesem Zyklus.**
