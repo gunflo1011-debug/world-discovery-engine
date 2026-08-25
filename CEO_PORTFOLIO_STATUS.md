@@ -1,13 +1,13 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 21:21 Europe/Berlin_
+_Last updated: 2026-08-25 21:31 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown outcomes stay UNKNOWN.
 
 ## Current evidence snapshot
 - **Things / Asset Market Alpha:** latest evidenced main commit is `963c2c11f5ac433d89d5e8abb23955b4f3b47f8a` (`Run Android APK workflow on self-hosted Windows runner`, 2026-08-25 21:13 Europe/Berlin). The owner then demonstrated the self-hosted Windows runner connected and `Listening for Jobs`; the manually triggered `android-alpha-apk` run was accepted by that runner. No autonomous paid/GitHub-hosted build is authorized.
-- **Things build readiness:** the Android workflow is manual and has build/lockfile modes. The remaining acceptance work is to make dependency resolution reproducible, run free static/local checks, preserve public-only Supabase client configuration, and prepare the exact owner-triggered build/test handoff. A fresh installable APK is not claimed here.
+- **Things build readiness:** Worker 1 verified at 21:31 that `mobile/package.json` exists but `mobile/package-lock.json` is absent on `main`. The current manual Windows APK workflow configures setup-node npm caching against that absent lockfile and then requires `npm ci`, so deterministic build preconditions are not satisfied. Run `32888792596` executed on self-hosted runner `LAPTOP-QN9I80RR` and failed specifically at `Setup Node`; Java/install/typecheck/prebuild/Gradle were skipped. The workflow already has a `generate-lockfile` mode that runs `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` and uploads `mobile-package-lock`, but Worker 1 did not trigger it autonomously under the cost-control rule. A fresh installable APK is not claimed here.
 - **Things privacy:** schema evidence previously showed owner-scoped RLS; live two-account hosted isolation remains an acceptance gate and must not be claimed proven without runtime evidence.
 - **Android+iOS parity:** Expo/React Native remains the shared-codebase strategy; platform-specific work should be limited to packaging/signing/native edges.
 - **World Discovery:** latest evidenced commits are `8754d8f`, `f9a5b2a`, `7befe02` at 21:02 Europe/Berlin, hardening Dataset creator provenance and remediation evidence. Earlier same-day commits added deterministic Dataset structured-data quality gates and normalization without fabricating licenses. Google reprocessing remains external/lagging evidence, not a completed outcome.
@@ -22,8 +22,9 @@ GitHub-Actions-Budget genutzt: Nein. CEO/Workers must not start GitHub-hosted Ac
 **Goal:** make the Android build inputs deterministic before any owner-triggered build.
 **Execution:** inspect `mobile/package.json` + lockfile state -> produce/validate lockfile using free/local-compatible reasoning/code changes only -> verify workflow no longer assumes Linux-only commands -> document exact local checks.
 **DoD:** lockfile/build-input state is committed or exact blocker documented; `npm ci` preconditions are satisfied by repository contents; no workflow is triggered.
+**Worker 1 handoff (21:31):** exact blocker documented. `mobile/package-lock.json` is absent, so `npm ci` cannot be reproducible from repository contents and setup-node cache configuration fails first. Current workflow is Windows-compatible in its native build step (`powershell`, `.\\gradlew.bat`) and provides a dedicated self-hosted `generate-lockfile` mode. Free local/container lock generation was attempted but registry resolution timed out, so no lockfile was fabricated. Owner-approved next action: run the existing manual workflow with `task=generate-lockfile` on the self-hosted Windows runner, retrieve `mobile-package-lock`, review it, then commit it as `mobile/package-lock.json`. After that, free checks are `cd mobile; npm ci --no-audit --no-fund`, `npm run check:client-secrets`, `npm run typecheck`, and relevant regression scripts before any APK build.
 **Economic value:** reduces paid-build retries and shortens time to a usable APK.
-**Handoff:** commit + free verification commands + residual build-only unknowns to Worker 3.
+**Handoff:** exact lockfile blocker + self-hosted generation path + verification commands to Worker 3.
 
 ### CEO Worker 2 → Things: multi-user Auth/RLS acceptance specification
 **Goal:** make the real two-user privacy test executable with minimal owner time and no paid CI.
@@ -52,9 +53,9 @@ GitHub-Actions-Budget genutzt: Nein. CEO/Workers must not start GitHub-hosted Ac
 - Recorded the latest World Discovery provenance-hardening commits and preserved the rule that Google reprocessing cannot be claimed early.
 
 ## Largest blocker
-Things still lacks end-to-end evidence of a fresh installable APK plus live two-account device behavior. The correct next move is not more autonomous CI; it is to eliminate every free/static uncertainty before the next owner-approved build.
+Things still lacks end-to-end evidence of a fresh installable APK plus live two-account device behavior. Worker 1 has reduced the build-input uncertainty to one concrete repository defect: the missing `mobile/package-lock.json`. The correct next move is to generate/review/commit that lockfile before another build attempt.
 
 ## Next priority
-Worker 1 closes deterministic build inputs; Worker 2 closes the acceptance specification; Worker 3 consolidates both into the device packet; Worker 4 adds source-backed information gain to World Discovery while preserving provenance safeguards.
+Worker 1 waits on owner-approved/self-hosted lockfile generation or a committed lockfile; Worker 2 closes the acceptance specification; Worker 3 consolidates both into the device packet; Worker 4 adds source-backed information gain to World Discovery while preserving provenance safeguards.
 
-**Nutzeraktion: Keine.** No paid/hosted build should be started autonomously.
+**Nutzeraktion:** Run the existing `android-alpha-apk` manual workflow with `task=generate-lockfile` on the connected self-hosted Windows runner; do not run `build-apk` yet.
