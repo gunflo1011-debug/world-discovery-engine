@@ -1,13 +1,13 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 13:32 Europe/Berlin_
+_Last updated: 2026-08-25 13:38 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown business outcomes stay UNKNOWN.
 
 ## Current evidence snapshot
 - **World Discovery — Rank #1 / PRIMARY DISTRIBUTION-DATA ASSET.** Public/indexable distribution asset. Traffic, users, revenue, costs and net profit remain UNKNOWN. Worker 4 delivered trusted 2024 comparison plus discoverability guards: `ce4ff08`, `a6160de`, `2679781`, `b4c3439`, `f7693dd`, measurement map `05d596e`. Green deployment is NOT claimed without completed evidence.
-- **Things / Asset Market Alpha — Rank #2 / HIGH-UPSIDE CONSUMER ASSET.** FREE-FIRST / POPULARITY-FIRST. The authenticated `App.tsx` already renders owned inventory, truthful unknown value state and an explicit private sale-start action. Worker 1 added a cross-layer convergence regression (`49a4d17`) that simultaneously guards the real authenticated UI, fail-closed ownership RPC/SOLD filtering, unknown-not-zero semantics and explicit owner sale intent; npm wiring `508b18f`; CI wiring `6f38578d`. No workflow run was yet visible for `6f38578d`, so green CI is NOT claimed. Real users, activation, retention and sell conversion remain UNKNOWN.
+- **Things / Asset Market Alpha — Rank #2 / HIGH-UPSIDE CONSUMER ASSET.** FREE-FIRST / POPULARITY-FIRST. The authenticated `App.tsx` already renders owned inventory, truthful unknown value state and an explicit private sale-start action. Worker 1 added a cross-layer convergence regression (`49a4d17`) that simultaneously guards the real authenticated UI, fail-closed ownership RPC/SOLD filtering, unknown-not-zero semantics and explicit owner sale intent; npm wiring `508b18f`; CI wiring `6f38578d`. Worker 2 strengthened the approval-gated SOLD-state release package with deterministic release-gate commit `a0bb616` and CI enforcement `6f293b6`; no hosted write was performed. No workflow run was yet visible for `6f293b6`, so green CI is NOT claimed. Real users, activation, retention and sell conversion remain UNKNOWN.
 - **Verified revenue / costs / net profit:** UNKNOWN / UNKNOWN / UNKNOWN.
 
 ## Active allocation — 3 Things / 1 World Discovery
@@ -23,6 +23,7 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 **Main goal:** make the already-prepared owner market-state RPC genuinely release-ready without performing the approval-gated hosted mutation.
 **Execution chain:** inspect migration/runbook/contract -> verify migration ordering and mobile fail-closed behavior against current main -> strengthen deterministic pre/postflight automation or rollback verification -> run security/mobile checks -> commit only if evidence improves.
 **Definition of Done:** reviewer can execute one deterministic preflight and know exactly what hosted mutation, postflight and rollback will occur; no unrelated migration is implicitly authorized; no hosted write is performed.
+**Worker 2 handoff (13:38):** Added `scripts/check-owner-market-state-release-gate.mjs` (`a0bb616`) to verify that the approval target remains the latest migration, the runbook still authorizes exactly one hosted mutation, required owner-isolation/anonymous-denial/mobile-SOLD postflight checks remain documented, exact revoke/drop rollback remains present, the migration retains owner filtering/privilege boundaries, and mobile still consumes the RPC and handles `SOLD`. Added this deterministic release gate to `backend-security-gate.yml` (`6f293b6`) immediately after the existing migration contract check. Hosted Supabase was not mutated. GitHub returned zero workflow runs immediately after `6f293b6`, so green CI is not claimed. Exact future approval scope remains only `20260825104500_owner_inventory_market_state.sql` plus documented postflight/rollback.
 **Economic reason:** incorrect ownership totals destroy trust in the core possession/value proposition.
 
 ### CEO Worker 3 → Things — P0: Turn local activation plumbing into validation readiness
@@ -46,7 +47,7 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 - **Long:** Things as a popular free consumer ownership/commerce/data asset; World Discovery as an automated search/data/API asset.
 
 ## Next capital / priority decision
-**0 EUR new spend.** No paid acquisition, ads, billing, commercial analytics or data purchases yet. Next likely owner decision remains the narrowly scoped hosted SOLD-state RPC migration once Worker 2 confirms the gate.
+**0 EUR new spend.** No paid acquisition, ads, billing, commercial analytics or data purchases yet. Next likely owner decision remains the narrowly scoped hosted SOLD-state RPC migration after completed release-gate CI evidence.
 
 ## Controls / blockers
 - No payments, ad activation, contracts, hosted schema writes, participant outreach or irreversible external actions without explicit approval.
