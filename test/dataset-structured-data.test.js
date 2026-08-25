@@ -48,6 +48,14 @@ test('real WDI population Dataset generator emits source-backed CC BY 4.0 URL li
   assert.match(source, /"creator":\{"@type":"Organization","name":"World Discovery Engine"\}/);
 });
 
+test('Dataset normalizer never fabricates creator attribution', async () => {
+  const source = await readFile(new URL('../scripts/normalize-dataset-structured-data.mjs', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /if\s*\(!dataset\.creator\)\s*dataset\.creator\s*=/);
+  assert.match(source, /Creator attribution is provenance/);
+  assert.match(source, /if\s*\(!eligible\)\s*\{/);
+  assert.match(source, /dataset\['@type'\]\s*=\s*'CreativeWork'/);
+});
+
 test('generic revision evidence does not claim Dataset eligibility without license provenance', async () => {
   const source = await readFile(new URL('../src/evidence-page.js', import.meta.url), 'utf8');
   assert.match(source, /'@type': 'WebPage'/);
