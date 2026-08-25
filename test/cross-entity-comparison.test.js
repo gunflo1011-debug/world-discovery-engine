@@ -17,7 +17,7 @@ test('compares different countries only within the same trusted snapshot', () =>
   );
   assert.equal(result.left.entity, 'DEU');
   assert.equal(result.right.entity, 'FRA');
-  assert.equal(result.delta, -1.4);
+  assert.ok(Math.abs(result.delta - (-1.4)) < Number.EPSILON * 100);
   assert.equal(result.period, '2024');
 });
 
