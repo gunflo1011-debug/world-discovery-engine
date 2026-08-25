@@ -26,18 +26,24 @@ export function renderRevisionEvidencePage(evidence, { baseUrl = 'https://exampl
   const title = `${entity}: ${indicator} revision for ${evidence.period}`;
   const description = `${indicator} for ${entity} was first published as ${formatNumber(evidence.firstPublished.value)} and is now ${formatNumber(evidence.latestPublished.value)} (${pct === null ? 'percentage change unavailable' : `${formatNumber(pct)}% revision`}).`;
 
+  // Generic revision evidence does not carry a source-license contract. Mark it as
+  // a WebPage rather than fabricating Dataset licensing/creator metadata. Source-
+  // backed dataset generators may emit Dataset markup only when those fields are
+  // explicitly known.
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Dataset',
+    '@type': 'WebPage',
     name: title,
     description,
     url: canonical,
     dateModified: evidence.latestPublished.vintage,
-    creator: { '@type': 'Organization', name: 'World Discovery Engine' },
-    variableMeasured: indicator,
-    temporalCoverage: String(evidence.period),
-    measurementTechnique: 'Deterministic comparison of comparable publication vintages',
-    isBasedOn: evidence.provenance.sourceUrl || undefined
+    mainEntity: {
+      '@type': 'CreativeWork',
+      name: `${indicator} revision evidence for ${entity}`,
+      about: indicator,
+      temporalCoverage: String(evidence.period),
+      isBasedOn: evidence.provenance.sourceUrl || undefined
+    }
   };
 
   const rows = evidence.events.map((event) => `<tr><td>${esc(event.fromVintage)}</td><td>${esc(event.toVintage)}</td><td>${formatNumber(event.fromValue)}</td><td>${formatNumber(event.toValue)}</td><td>${formatNumber(event.absoluteRevision)}</td><td>${event.percentageRevision == null ? 'n/a' : `${formatNumber(event.percentageRevision)}%`}</td></tr>`).join('');
