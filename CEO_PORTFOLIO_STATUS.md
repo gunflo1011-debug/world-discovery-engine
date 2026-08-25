@@ -1,6 +1,6 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 09:18 Europe/Berlin_
+_Last updated: 2026-08-25 09:40 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown business outcomes stay UNKNOWN.
@@ -60,6 +60,9 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 **DoD:** one new non-CEO World Discovery commit beyond `fd8170a` with a user/product-facing or generated comparison surface and executable regression; provenance/year/unit/methodology gates remain fail-closed. If CI status contexts remain absent, report exact local/test evidence rather than claiming green CI.
 **Economic reason:** comparison utility can increase search usefulness, engagement and differentiation while reusing the restored primitive instead of expanding data breadth blindly.
 **Handoff:** next CEO decides whether to expand this surface or return to GDP/life-expectancy data-family growth based on delivery and any demand evidence.
+
+## Worker handoffs since CEO control point
+- **2026-08-25 09:40 — CEO Worker 2:** delivered deterministic Things sold-item trust surface in `asset-market-alpha`: `93309a7` adds `soldItemSurface.ts`, `e64e53e` adds executable regression, `7249098` wires `test:sold-item-surface` into mobile scripts. Contract explicitly marks completed-sale items `SOLD`, `countedAsOwned: false`, `countedInInventoryValue: false`, and exposes recalculated owned count/value. Existing `App.tsx` still has no persisted sold-state field or completed-sale endpoint, so this is a UI-ready post-sale state contract rather than a fabricated hosted sale. GitHub Actions for the regression commit failed before executing any step (`steps: []`, runner_id 0), so no green CI is claimed; this appears infrastructure/runner-side rather than a test assertion failure. Next integration should bind this surface only when a real completed-sale persistence path exists, then render sold/history separately from owned inventory.
 
 ## Why this allocation beats alternatives
 - **3 Things / 1 World Discovery** remains optimal because all three Things packages delivered concrete complementary assets in one cycle, and Things still needs integration from primitives into a coherent core-loop experience.
