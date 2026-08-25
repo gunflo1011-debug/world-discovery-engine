@@ -30,8 +30,9 @@ function metaDescription(html) {
 
 function normalizeDataset(dataset, html, fallbackDescription) {
   if (!dataset.description && fallbackDescription) dataset.description = fallbackDescription;
-  if (!dataset.creator) dataset.creator = { '@type': 'Organization', name: 'World Discovery Engine' };
 
+  // Creator attribution is provenance, not presentation metadata. Never invent it.
+  // A Dataset without an explicit source-backed creator is downgraded below.
   if (typeof dataset.license === 'object' && typeof dataset.license?.url === 'string') {
     dataset.license = dataset.license.url;
   }
