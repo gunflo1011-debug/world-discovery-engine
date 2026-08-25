@@ -45,7 +45,7 @@ function regionContext(record, records) {
   const regional = records
     .filter((item) => item.region.code === record.region.code)
     .sort((a, b) => b.value - a.value || a.country.localeCompare(b.country));
-  const rank = regional.findIndex((item) => item.code === record.code) + 1;
+  const rank = 1 + regional.filter((item) => item.value > record.value).length;
   const regionMedian = median(regional.map((item) => item.value));
   const delta = record.value - regionMedian;
   const peers = regional
