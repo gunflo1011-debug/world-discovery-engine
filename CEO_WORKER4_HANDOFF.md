@@ -1,23 +1,22 @@
 # CEO Worker 4 Handoff
 
-## 2026-08-25 — World Discovery trusted 2024 country comparison
+## 2026-08-25 — Google Dataset structured-data remediation
 
-CEO assignment: ship exactly one real 2024 cross-country comparison surface using compatible repository snapshot records only.
+CEO assignment: fix the evidenced Search Console Dataset defects at source without fabricating attribution or licensing.
 
 Delivered:
-- `scripts/enrich-internet-use-cross-country-comparison.mjs` selects Germany (DEU) and France (FRA) from the existing `CURRENT_VERIFIED` 2024 `IT.NET.USER.ZS` snapshot.
-- Both observations are passed through `compareEntities()` with the same indicator, period, unit, WDI metadata identifier and ITU/WDI source provenance.
-- The generated Germany country page receives a compact Germany-vs-France comparison showing both values, delta, year, unit and provenance.
-- The enrichment exits without rendering if the comparison contract or snapshot-year check fails.
-- `test/internet-use-cross-country-comparison.test.js` proves the real pair is compatible and that a year mismatch fails closed.
-- `package.json` wires the enrichment into both `build` and `build:internet-use`, after country-page generation.
+- `scripts/build-real-wdi-evidence.py` now emits the source-backed World Bank WDI CC BY 4.0 license as an absolute URL in Dataset JSON-LD and retains a valid Organization creator plus substantive description.
+- `src/evidence-page.js` no longer claims generic revision evidence is a Dataset when its evidence contract does not carry source-license provenance; it emits WebPage/CreativeWork markup instead of inventing a license.
+- `scripts/normalize-dataset-structured-data.mjs` now runs in normal builds. It repairs only source-supported fields: meta description can backfill description; World Discovery Engine can be named as creator of the derived page dataset; an object license is normalized only when it exposes a URL; CC BY 4.0 is injected only when the page itself explicitly states `Source license: CC BY 4.0`. Dataset nodes still missing an eligible description/creator/HTTPS-license are downgraded to CreativeWork rather than left as invalid Dataset markup.
+- `test/dataset-structured-data.test.js` adds deterministic gates for the Internet Use parent Dataset, country generator, real WDI generator and generic evidence behavior.
+- `package.json` runs the normalization in `build`, `build:internet-use` and `build:ai-discovery` so generated output is fixed before deployment.
 
-Commits: `ce4ff08`, `a6160de`, `2679781`.
+Commits: `b1138c0`, `9f9dac8`, `6238737`, `cc7982e`, `66cb939`.
 
-Evidence caveat: immediately after `2679781`, GitHub Actions returned zero workflow runs for that head SHA. Green CI/deployment is therefore NOT claimed yet.
+Evidence caveat: immediately after `66cb939`, GitHub Actions returned zero workflow runs for that exact head SHA. Green CI/Pages and Google reprocessing are therefore NOT claimed yet.
 
-Economic contribution: converts verified same-year data from static country context into explicit decision/comparison utility while retaining provenance and compatibility controls; reusable pattern for later indexable comparisons.
+Economic contribution: directly addresses Google's reported Dataset quality defects while preserving provenance discipline. This is higher-value than adding thin pages while organic clicks remain unproven because it improves machine-readable eligibility/trust across existing assets.
 
-Next step: verify CI/Pages completion and live Germany page after deployment. If green, generalize only from measured search/user demand rather than generating arbitrary pair pages.
+Next step: verify CI + Pages for current main; inspect representative live JSON-LD after deploy; then wait for Search Console recrawl/reprocessing and compare valid/invalid Dataset counts. Do not claim Google validation complete before reprocessing.
 
 User action: none.
