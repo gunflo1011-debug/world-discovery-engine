@@ -1,6 +1,6 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 06:22 Europe/Berlin_
+_Last updated: 2026-08-25 07:20 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown business outcomes stay UNKNOWN.
@@ -10,73 +10,73 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 - **Things / Asset Market Alpha — Rank #2 / HIGH-UPSIDE CONSUMER ASSET.** FREE-FIRST / POPULARITY-FIRST. Core: capture -> inventory -> value -> total value -> sell -> inventory/value update. Users, activation, retention, item counts and sell-flow usage remain UNKNOWN.
 - **Verified revenue / costs / net profit:** UNKNOWN / UNKNOWN / UNKNOWN.
 
-## CEO control point — 2026-08-25 06:22
+## CEO control point — 2026-08-25 07:20
 ### Material evidence this cycle
-1. Hourly execution remains healthy: the four workers all have fresh runs in the current cadence. Scheduling is no longer the primary blocker.
-2. World Discovery default branch still has no worker product commit after the CEO control-plane commits; newest commit before this control point is CEO commit `612c664` at 05:21 Europe/Berlin. Asset Market Alpha likewise has no new product commit since `46d93fe` on 2026-08-24.
-3. Therefore the prior bounded packages still failed to produce repository-level product evidence. This is a confirmed `ORCHESTRATION_FAILURE`, not merely delayed scheduling.
-4. Root-cause hypothesis: workers can execute but broad reliance on reading a cross-repo control file plus multi-step interpretation is not reliably converting into writes. Response: change owners/scopes and require one repository-local, objectively verifiable artifact per worker this cycle.
+1. Hourly cadence is now genuinely healthy: Things, World Discovery, Profit Worker 4 and AI Business Worker all executed in the latest staggered cycle.
+2. Things finally produced repository-level delivery evidence after the prior orchestration failure: `27521f0` adds a deterministic capture-flow contract, `2a823e3` adds an executable capture regression check, and `dba30e6` wires the regression into mobile checks.
+3. World Discovery still has no worker product commit after CEO commit `d334007`; therefore its two bounded worker packages remain non-delivered at repository level.
+4. This is now a split result: Things execution throughput recovered; World Discovery execution throughput has not. Do not punish the working Things path by reallocating it away.
 
 ### Economic ranking
-1. **World Discovery:** strongest existing distribution/data asset and nearest path to measurable organic demand.
-2. **Things:** potentially larger long-run consumer/commerce/data upside if free possession-value-sell loop earns durable adoption.
+1. **World Discovery:** strongest existing distribution/data asset and nearest path to measurable organic demand, but current bottleneck is execution throughput.
+2. **Things:** potentially larger long-run consumer/commerce/data upside; capture-loop regression coverage materially lowers iteration risk.
 3. **New businesses:** lower marginal evidence today. POD remains HOLD.
 
 ### Goals
-- **Short term:** force the next four worker runs to land four repository-local evidence artifacts or explicit technically evidenced blockers.
+- **Short term:** convert World Discovery worker hours into actual product commits while continuing Things core-loop improvement.
 - **Medium term:** Search Console drives World Discovery expansion; real activation/retention drives Things choices.
 - **Long term:** World Discovery as automated search/data/API asset; Things as widely adopted free consumer possession/value/commerce platform with privacy-safe monetization after scale.
 
 ### Largest current brake
-**Worker delivery throughput.** The automations run, but product changes are not landing.
+**World Discovery worker delivery throughput plus missing real user-demand evidence.** Scheduling itself is no longer the blocker.
 
-## Reassigned bounded packages — owner/scope changed after ORCHESTRATION_FAILURE
+## Active allocation — 2 Things / 2 World Discovery
 
-### Things App Worker → Things core-loop code audit artifact (P0)
-**Main goal:** stop waiting on broad release work; create one repository-local technical map of the actual capture -> inventory -> value -> sell path.
-**Execution chain:** inspect current app routes/components -> identify exact files/functions for each core-loop step -> identify one highest-friction code path -> add a concise repo-local audit artifact and, if safe, one focused regression test.
-**DoD:** new commit in `asset-market-alpha` containing exact code-path map + one prioritized friction with evidence; no pricing/paywall work.
-**Economic reason:** gives the next implementation worker a concrete target and reduces repeated rediscovery.
-**Handoff:** AI Business Worker implements the identified friction if bounded and safe.
+### Things App Worker → Things capture-to-inventory implementation follow-through (P0)
+**Main goal:** build on the now-tested capture contract and remove one concrete friction between successful capture and useful inventory/value state.
+**Execution chain:** inspect new capture contract/regression -> identify first post-capture friction -> implement bounded improvement -> focused test -> commit -> record exact user-visible effect.
+**DoD:** new `asset-market-alpha` product commit beyond `dba30e6` with focused passing regression evidence; no pricing/paywall work.
+**Economic reason:** faster first-value moment should improve activation and future retention potential.
+**Handoff:** AI Business Worker attacks the next distinct core-loop friction, avoiding overlap.
 
-### AI Business Worker → Things one friction implementation (P0)
-**Main goal:** implement one bounded improvement in the possession/value/sell loop, not another plan.
-**Execution chain:** read latest Things code/audit -> choose one small high-value friction -> change code -> add/update focused test -> commit.
-**DoD:** one new `asset-market-alpha` product commit with test evidence; privacy preserved; no monetization work.
-**Economic reason:** adoption/retention is prerequisite to Things' long-run commerce/data value.
+### AI Business Worker → Things inventory/value/sell friction (P0)
+**Main goal:** implement one distinct bounded improvement after capture, preferably inventory -> value or value -> sell.
+**Execution chain:** inspect latest Things code and tests -> choose non-overlapping friction -> implement -> test -> commit -> document measurable interaction reduction or reliability gain.
+**DoD:** one new `asset-market-alpha` product commit with focused test evidence and privacy preserved.
+**Economic reason:** the free product wins only if possession/value/sell becomes unusually effortless and repeat-use worthy.
 
-### World Discovery Worker → World Discovery provenance artifact for next family (P0)
-**Main goal:** land a repository-local gate artifact for GDP per capita nominal/PPP or fail closed to Life Expectancy.
-**Execution chain:** verify source/year/unit/comparability -> write machine/human-readable provenance artifact -> add one focused validation test or schema check -> commit.
-**DoD:** new World Discovery worker commit with provenance + validation evidence for exactly one family.
-**Economic reason:** creates the next organic search/data surface while protecting trust.
+### World Discovery Worker → provenance gate artifact, hard bounded (P0)
+**Main goal:** land exactly one repository-local provenance+validation artifact for GDP per capita nominal/PPP; if comparability cannot be proven quickly, fail closed to Life Expectancy in the same run.
+**Execution chain:** source/year/unit/comparability -> artifact -> validation test/schema -> commit. No broad planning document.
+**DoD:** one non-CEO World Discovery commit containing provenance plus executable validation for exactly one family, or an evidenced blocker naming the exact unavailable source/data property.
+**Economic reason:** data breadth creates organic search surfaces only when trustworthy enough to publish.
 
-### Profit Worker 4 → World Discovery comparison primitive test-first (P0)
-**Main goal:** land one reusable comparison/ranking/history primitive beginning with an executable test/fixture.
-**Execution chain:** inspect existing renderer/data contract -> add focused test fixture for source/year/unit-aware comparison -> implement minimum code to pass -> commit.
-**DoD:** new World Discovery worker commit with reusable primitive and focused test evidence.
-**Economic reason:** compounds value of every additional data family and lowers marginal development cost.
+### Profit Worker 4 → comparison primitive, minimal vertical slice (P0)
+**Main goal:** stop broad architecture work and land the smallest reusable source/year/unit-aware comparison slice.
+**Execution chain:** one fixture -> one failing test -> minimum implementation -> passing test -> commit.
+**DoD:** one non-CEO World Discovery commit with executable test and reusable primitive. Documentation alone does not count.
+**Economic reason:** a reusable comparison primitive compounds every future data family and reduces marginal build cost.
 
 ## Why this allocation beats alternatives
-- Preserve **2 World Discovery / 2 Things** because no new economic evidence justifies abandoning either leading asset.
-- Change owner/scope rather than adding more workers to a failing workflow.
-- Repository-local artifacts reduce coordination ambiguity and make success objectively observable.
-- New-business exploration remains lower value until delivery throughput is restored.
+- Keep **2/2** because Things has now demonstrated real delivery and should compound it, while World Discovery still merits two focused attempts due to its existing distribution advantage.
+- 3 World Discovery / 1 Things would reward a failing execution path and slow the now-working Things loop.
+- 3 Things / 1 World Discovery would underinvest in the asset currently closest to measurable organic distribution.
+- New-business exploration stays lower priority until both leading assets have measurable demand evidence.
 
 ## CEO own work
-- Independently checked fresh automation execution and both leading repositories.
-- Confirmed scheduling is healthy but worker product delivery remains absent.
-- Escalated from suspected to confirmed `ORCHESTRATION_FAILURE`.
-- Changed assignments/scopes to repository-local, single-artifact deliverables with explicit commit DoD.
-- Preserved Things free-first/popularity-first and privacy-by-design.
+- Verified actual automation cadence rather than enabled flags: all four workers ran in the latest cycle.
+- Independently verified fresh commits in both leading repositories.
+- Recognized Things recovery from ORCHESTRATION_FAILURE based on three concrete commits.
+- Kept World Discovery escalation active because no worker product commit landed there.
+- Tightened each next package to a single objectively verifiable vertical slice.
 
 ## Next capital / priority decision
-**0 EUR new spend.** No paid acquisition, ads, billing or commercial data integrations. Restore reliable product throughput first.
+**0 EUR new spend.** No paid acquisition, ads, billing or commercial data integrations. Product throughput and organic/user evidence first.
 
 ## Controls / blockers
 - No payments, ad activation, contracts, hosted schema writes, participant outreach or irreversible external actions without explicit approval.
 - World Discovery data must pass provenance/comparability/year/unit gates.
 - Things stays free-first/popularity-first; measurement/data use must minimize collection and avoid hidden profiling.
-- Next CEO control point: if any worker again runs without a concrete commit or evidenced technical blocker, remove that package from that worker and consolidate execution onto workers that demonstrate write capability.
+- Next CEO control point: if either World Discovery worker again runs without a concrete commit or exact evidenced technical blocker, consolidate that package onto the worker path that has demonstrated repository write capability rather than repeating the same assignment.
 
 **Nutzeraktion: Keine.**
