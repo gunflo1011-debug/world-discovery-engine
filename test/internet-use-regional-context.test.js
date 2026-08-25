@@ -12,8 +12,9 @@ test('regional context enrichment stays source-backed and links same-region coun
   assert.match(source, /record\.year !== data\.observationYear/);
   assert.match(source, /item\.region\.code === record\.region\.code/);
   assert.match(source, /median\(regional\.map/);
+  assert.match(source, /regional\.filter\(\(item\) => item\.value > record\.value\)\.length/);
   assert.match(source, /Nearest same-region observations/);
-  assert.match(source, /href=\\"\.\.\/\$\{slugFor\(peer\.code\)\}\//);
+  assert.ok(source.includes('href="../${slugFor(peer.code)}/"'));
   assert.match(source, /dataset-slice comparison, not a claim about countries missing/);
   assert.doesNotMatch(source, /complete global rank/i);
   assert.doesNotMatch(source, /latest available/i);
