@@ -1,14 +1,14 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 21:38 Europe/Berlin_
+_Last updated: 2026-08-25 21:47 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown outcomes stay UNKNOWN.
 
 ## Current evidence snapshot
-- **Things / Asset Market Alpha:** latest evidenced build-path main commit before worker QA is `963c2c11f5ac433d89d5e8abb23955b4f3b47f8a`. Worker 2 has now added static two-user privacy acceptance coverage in commits `3311a2d3b1a6cc39475a4c7f837a3c34cdbc0b89` and `9626f6960e18d4072e0c12ac42bd427290f691e9`; no workflow was intentionally started.
+- **Things / Asset Market Alpha:** current evidenced main is `9626f6960e18d4072e0c12ac42bd427290f691e9`; Worker 3 refreshed the owner-ready device acceptance packet in commit `2c000538a92eecc2b11b1b70342bd39b1b987cce` without starting a workflow.
 - **Things build readiness:** `mobile/package-lock.json` remains absent; deterministic APK build remains blocked until the owner-approved self-hosted `generate-lockfile` path is run and the lockfile reviewed/committed.
-- **Things privacy:** core schema has FORCE RLS on `items` and `condition_snapshots`, owner-only SELECT/INSERT policies, and no anon private-row grant. App auth has normal signup/signin/logout/session restore. Worker 2 now provides an exact A/B runtime matrix, but live two-account hosted isolation remains UNPROVEN until executed through normal accounts.
+- **Things privacy:** core schema has FORCE RLS on `items` and `condition_snapshots`, owner-only SELECT/INSERT policies, and no anon private-row grant. App auth has normal signup/signin/logout/session restore. Worker 2 provides an exact A/B runtime matrix, but live two-account hosted isolation remains UNPROVEN until executed through normal accounts.
 - **Android+iOS parity:** Expo/React Native remains the shared-codebase strategy; platform-specific work should be limited to packaging/signing/native edges.
 - **World Discovery:** provenance-hardening remains in place; Google reprocessing is external/lagging evidence.
 - **Verified revenue / costs / net profit:** UNKNOWN / UNKNOWN / UNKNOWN.
@@ -37,8 +37,9 @@ GitHub-Actions-Budget genutzt: Nein. CEO/Workers must not start GitHub-hosted Ac
 **Goal:** minimize steps between owner-approved build and meaningful device feedback.
 **Execution:** consume Worker 1/2 handoffs -> maintain install/test checklist -> map Capture → Inventory → Value → Sell → persistence/relaunch → account switch -> define bug evidence fields and expected outcomes.
 **DoD:** one current packet tied to exact commit, with build artifact placeholder, install path, two-account recipe, expected outcomes, known limitations; no claim of physical-device success before evidence.
+**Worker 3 handoff (21:47):** DONE repository-side for current evidence. Commit `2c000538` refreshes `CEO_WORKER3_DEVICE_ACCEPTANCE.md` against target main `9626f696`, incorporates Worker 2's exact A1-A5/B1-B4/ANON matrix, adds the pre-build lockfile/static gate, exact APK identity/integrity fields, S1-S9 core smoke, offline/retry sanity, redacted evidence schema, STOP on cross-account/anonymous leakage, and explicit PASS/BLOCKED/FAIL semantics. No workflow was started and no physical-device or live two-user PASS is claimed.
 **Economic value:** converts the scarce build event into maximum product-learning value.
-**Handoff:** incorporate Worker 2 commits `3311a2d3` / `9626f696` and preserve the rule that static RLS evidence is not live two-user evidence.
+**Handoff:** packet is ready immediately after Worker 1 closes the deterministic lockfile/APK gate; live two-user acceptance still requires two normal disposable accounts.
 
 ### CEO Worker 4 → World Discovery: source-backed Dataset quality + useful-page differentiation
 **Goal:** turn Google's evidenced Dataset issues into durable quality improvements while avoiding thin/duplicate content.
@@ -46,9 +47,9 @@ GitHub-Actions-Budget genutzt: Nein. CEO/Workers must not start GitHub-hosted Ac
 **DoD:** no fabricated creator/license; representative generated Dataset metadata is source-backed; quality checks cover required fields; at least one concrete information-gain/internal-link improvement is committed or exact blocker documented; no paid workflow triggered.
 
 ## Largest blocker
-Things still lacks end-to-end evidence of a fresh installable APK plus live two-account device behavior. Build input is blocked by the missing lockfile; privacy runtime evidence is now specified precisely but not yet executed.
+Things still lacks end-to-end evidence of a fresh installable APK plus live two-account device behavior. Build input is blocked by the missing lockfile; the owner-ready device acceptance packet and privacy runtime matrix are now repository-ready.
 
 ## Next priority
-Worker 1 waits on owner-approved self-hosted lockfile generation; Worker 3 consumes Worker 2's exact A/B matrix into the device packet; Worker 2 should not duplicate runtime claims until two normal accounts and a current build are available.
+Worker 1 waits on owner-approved self-hosted lockfile generation. Once lockfile and APK are available, Worker 3 executes/coordinates the packet against the exact APK commit; Worker 2 should not duplicate runtime claims until two normal accounts and a current build are available.
 
 **Nutzeraktion:** Run the existing `android-alpha-apk` manual workflow with `task=generate-lockfile` on the connected self-hosted Windows runner; do not run `build-apk` yet.
