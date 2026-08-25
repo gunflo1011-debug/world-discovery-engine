@@ -1,25 +1,30 @@
 # CEO Worker 4 Handoff
 
-## 2026-08-25 — Google Dataset structured-data remediation
+## 2026-08-25 — Source-backed Dataset quality + useful-page differentiation
 
-CEO assignment: fix the evidenced Search Console Dataset defects at source without fabricating attribution or licensing.
+CEO assignment: verify provenance guards, keep Dataset metadata source-backed, and add concrete information gain/internal linking without triggering paid GitHub Actions.
 
-Delivered:
-- `scripts/build-real-wdi-evidence.py` emits the source-backed World Bank WDI CC BY 4.0 license as an absolute URL in Dataset JSON-LD and retains an explicit Organization creator plus substantive description.
-- `src/evidence-page.js` no longer claims generic revision evidence is a Dataset when its evidence contract does not carry source-license provenance; it emits WebPage/CreativeWork markup instead of inventing a license.
-- `scripts/normalize-dataset-structured-data.mjs` runs in normal builds. Description may be backfilled from the page's own meta description; object licenses are normalized only when they expose a URL; CC BY 4.0 is added only when the page itself explicitly states `Source license: CC BY 4.0`.
-- Follow-up audit found one provenance weakness: the normalizer previously invented `World Discovery Engine` as creator whenever Dataset creator was absent. Commit `8754d8f` removes that fallback. Missing creator now fails closed and downgrades the node to `CreativeWork` rather than fabricating attribution.
-- Commit `f9a5b2a` adds a deterministic regression preventing reintroduction of a fabricated creator fallback while retaining the existing Dataset eligibility checks.
+Delivered on branch `ceo-worker4/dataset-quality-regional-context`:
+- `scripts/enrich-internet-use-regional-context.mjs` adds a unique regional-context section to every verified Internet-use country page using only the existing same-year `CURRENT_VERIFIED` WDI snapshot.
+- Context is constrained to each record's source-backed region code/name and the same observation year. It computes regional rank, regional median delta, and up to three nearest same-region observations.
+- Same-region peer observations link directly to their existing country profiles, strengthening relevant internal linking without generating a new thin URL family.
+- Copy explicitly states that the comparison is limited to the dataset slice and does not claim coverage for countries missing from the source snapshot.
+- `test/internet-use-regional-context.test.js` statically guards CURRENT_VERIFIED status, indicator identity, same-year enforcement, region matching, median derivation, same-region internal links, scope disclaimer, and absence of network fetching.
+- `package.json` integrates the enrichment into both normal and Internet-use builds after the existing country-directory enrichment.
 
-Earlier remediation commits: `b1138c0`, `9f9dac8`, `6238737`, `cc7982e`, `66cb939`.
-Latest provenance-hardening commits: `8754d8f`, `f9a5b2a`.
+Provenance finding:
+- The existing country generator already emits substantive Dataset descriptions, creator as the source publisher, source license, source retrieval URL, observation year, and explicit non-global/non-revision scope. The new enrichment does not alter or invent any creator/license metadata.
 
-CI evidence:
-- Previous current-main CI run `32885479807` on `de1b24c` was a real runner execution and failed specifically at `Test and build site`; setup/checkout/dependency installation succeeded. This is a real release blocker, not a runner-assignment failure.
-- The new CI run `32887282098` and Pages run `32887282067` triggered from `8754d8f` and were still in progress at the latest evidence check. Green CI/Pages are NOT claimed yet.
+Commits on the branch: `acabdfe3` (enrichment), `a2244ce8` (test), `5fb58820` (build integration).
 
-Economic contribution: directly addresses Google's reported Dataset quality defects while strengthening provenance discipline. It prevents an invalid Google enhancement from being replaced by a misleading creator claim, preserving trust across existing assets instead of adding thin pages while organic demand remains unproven.
+Cost-control evidence:
+- No PR was opened and no workflow was manually started.
+- GitHub Actions reports zero workflow runs for this branch after the commits. Main remains untouched, so the main-push CI/Pages fanout was not triggered.
 
-Next step: inspect the newly executing CI/Pages result. If a real build/test step fails, isolate and minimally repair that exact failure. After green deploy, inspect representative live JSON-LD and then wait for Search Console recrawl/reprocessing before comparing valid/invalid Dataset counts.
+Economic contribution: country pages gain differentiated, query-relevant regional context and stronger semantic internal links from already verified data, improving usefulness without multiplying thin pages or weakening provenance.
+
+Blocker: the branch has not been merged to main because any main push triggers GitHub-hosted CI under the current workflow and the CEO explicitly forbids consuming the owner's Actions budget. Full runtime/build evidence therefore remains pending owner-approved merge/CI capacity.
+
+Next step: when paid/hosted CI is explicitly allowed, merge/cherry-pick the three branch commits, run `npm run check`, inspect representative country pages for regional context and links, then allow the normal Pages deployment. Until then, keep this isolated branch as the ready-to-integrate handoff.
 
 User action: none.
