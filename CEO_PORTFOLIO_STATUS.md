@@ -1,6 +1,6 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 16:04 Europe/Berlin_
+_Last updated: 2026-08-25 16:19 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown business outcomes stay UNKNOWN.
@@ -9,53 +9,53 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 - **World Discovery — Rank #1 / PRIMARY DISTRIBUTION-DATA ASSET.** Owner-supplied Google Search Console evidence: sitemap accepted with 218 detected pages; 3-month performance showed 0 impressions / 0 clicks. Discovery is proven; demand is not.
 - **Things / Asset Market Alpha — Rank #2 / HIGH-UPSIDE CONSUMER ASSET.** FREE-FIRST / POPULARITY-FIRST. Real users, retention and sell conversion remain UNKNOWN.
 - **Verified revenue / costs / net profit:** UNKNOWN / UNKNOWN / UNKNOWN.
-- **Worker 4 CI diagnosis/fix:** failed run `32851579788` was a real executed test failure, not runner infrastructure. Build + internal-link audit passed; Search Console analyzer regressions passed, including zero-data `NO_DEMAND_EVIDENCE`. Exactly one of 66 Node tests failed: `test/cross-entity-comparison.test.js` used strict equality for decimal subtraction and received JavaScript IEEE-754 result `-1.4000000000000057` instead of literal `-1.4`. Worker 4 fixed only the brittle assertion with a numeric tolerance in commit `b904e1d8152d7bc0e6920544c3784a7ede6a0a1f`. Fresh workflow evidence is still pending; do not claim green yet.
+- **World Discovery CI root cause fixed, verification pending:** Worker 4 isolated the failed run to one brittle floating-point strict-equality assertion. Commit `b904e1d8152d7bc0e6920544c3784a7ede6a0a1f` changes only that assertion to tolerance-based comparison; handoff commit `d99102023897b09a1009db42a895b49c64e2770c` records the diagnosis. Current GitHub status API exposes no completed checks/workflow runs for the fix commit yet, so green CI/deploy is NOT claimed.
 
 ## Active allocation — 2 World Discovery / 2 Things
 
-### CEO Worker 1 → World Discovery — P0: Controlled SEO breadth, only behind green-main gate
-**Main goal:** expand exactly one adjacent sourced indicator/data family without adding instability.
-**Execution chain:** first verify current main/CI status; wait for Worker 4 fix commit `b904e1d8` to receive completed green CI before merging generated breadth. Once green, implement one source/year/unit-aware family -> internal links/canonicals/sitemap -> build/link tests -> commit.
-**DoD:** one non-thin, source-backed family with deterministic tests AND green repository checks; otherwise a concrete blocked handoff with candidate/source evidence and no risky merge.
-**Economic impact:** increases organic query surface while preserving crawl/index trust; avoids scaling broken pages.
-**Handoff:** record exact new routes/source/methodology and tests for Worker 4/CEO.
+### CEO Worker 1 → World Discovery — P0: SEO-family candidate + gated implementation
+**Main goal:** prepare and, only after green-main evidence, ship exactly one adjacent source-backed indicator/data family that expands useful organic query surface.
+**Execution chain:** verify current CI/deploy gate -> identify one candidate using existing trustworthy source/year/unit methodology -> inspect data coverage and route usefulness -> if green gate exists, implement pages + methodology/source display + internal links + canonicals + sitemap -> build/link/regression tests -> commit; if gate is still pending, stop before merge and leave a precise candidate/source handoff.
+**DoD:** either (A) one non-thin source-backed family with deterministic tests and completed green checks, or (B) a concrete implementation-ready candidate with source, coverage, expected routes and exact blocked gate; never merge breadth onto unverified red/pending main.
+**Economic impact:** increases Google's opportunity to discover query-market fit across a larger high-quality surface without sacrificing crawl trust.
+**Handoff:** exact routes, source/year/unit contract, tests and gate status to CEO/Worker 4.
 
-### CEO Worker 2 → Things — P0: SOLD-state release evidence, no hosted mutation
-**Main goal:** make the single approval-gated SOLD-state migration fully release-ready without touching hosted production.
-**Execution chain:** rebase/verify against current main -> owner isolation + anonymous denial -> mobile SOLD filtering -> deterministic preflight/postflight -> rollback verification -> tests/commit.
-**DoD:** exactly one reversible hosted step remains, with executable pre/post checks and rollback; all local checks pass; no hosted write.
-**Economic impact:** protects inventory/value truth and user trust, prerequisites for retention and commerce.
-**Handoff:** exact future approval step and rollback command/evidence to CEO.
+### CEO Worker 2 → Things — P0: SOLD-state final release packet, no hosted mutation
+**Main goal:** reduce the future SOLD-state production change to one approval-gated, reversible step with deterministic safety evidence.
+**Execution chain:** verify migration against current Things main -> owner isolation -> anonymous denial -> mobile SOLD filtering -> executable preflight -> postflight -> rollback verification -> local tests -> commit/runbook.
+**DoD:** exactly one hosted migration command remains for future explicit approval; pre/post checks and rollback are executable and locally verified; no hosted write is performed.
+**Economic impact:** preserves inventory/value truth and user trust, prerequisites for retention and future commerce.
+**Handoff:** exact approval step, expected postflight result and rollback command/evidence to CEO.
 
-### CEO Worker 3 → Things — P0: Validation-ready local funnel
-**Main goal:** make the real app flow produce developer-readable, aggregate, PII-free evidence for Capture -> Inventory -> Value -> Sell-start.
-**Execution chain:** verify real transition hooks -> exercise real local flow -> aggregate stage/count/completion only -> regression test -> CI/mobile wiring -> commit.
-**DoD:** a real local app path deterministically yields an inspectable aggregate funnel; no IDs, names, prices, free text, device/location data or network analytics; tests pass.
-**Economic impact:** converts Things prioritization from feature-count guesses toward real adoption evidence without harming privacy/trust.
-**Handoff:** exact local validation command/output schema to CEO; never present fixture/test counts as real-user metrics.
+### CEO Worker 3 → Things — P0: Real local activation-funnel validation
+**Main goal:** prove that real app actions generate developer-readable aggregate evidence for Capture -> Inventory -> Value -> Sell-start without privacy compromise.
+**Execution chain:** exercise actual local app transitions -> verify hooks fire from product actions rather than fixtures only -> aggregate stage/count/completion -> expose inspectable local/debug output -> regression -> mobile/CI wiring -> commit.
+**DoD:** a real local app path deterministically yields an inspectable aggregate funnel; no IDs, names, prices, free text, device/location data or network analytics; fixture/test counts are never presented as real-user metrics.
+**Economic impact:** lets future product allocation follow real activation friction instead of feature-count guesses while preserving trust.
+**Handoff:** exact local validation command/output schema and any remaining instrumentation gap to CEO.
 
-### CEO Worker 4 → World Discovery — P0: Restore green CI for Search Console feedback loop
-**Main goal:** verify the minimal floating-point regression fix restores CI/deploy without weakening data-trust behavior.
-**Execution chain:** monitor commit `b904e1d8` -> require completed `npm run check` CI success -> require Pages deploy success if triggered -> verify Search Console analyzer tests remain green -> only then hand release gate back to Worker 1.
-**DoD:** current main has completed successful CI (and Pages deploy if triggered), Search Console analyzer tests still pass, zero-data behavior remains `NO_DEMAND_EVIDENCE`, and no credentials are introduced.
-**Economic impact:** restores safe automated shipping; prevents every subsequent SEO expansion from compounding a broken release pipeline.
-**Handoff:** root cause is IEEE-754 brittle strict-equality test, not Search Console analyzer/product logic; fix commit `b904e1d8`; completed workflow status still pending.
+### CEO Worker 4 → World Discovery — P0: Close CI/deploy evidence, then harden demand loop
+**Main goal:** turn the floating-point fix into completed release evidence and ensure the Search Console analyzer remains trustworthy.
+**Execution chain:** monitor `b904e1d8`/current main for actual workflow execution -> require completed `npm run check` success -> require Pages deploy success if triggered -> verify Search Console analyzer regression and zero-data `NO_DEMAND_EVIDENCE` -> if no workflow triggers, diagnose trigger/ref configuration rather than claiming success -> make only the minimal safe fix if needed.
+**DoD:** completed successful CI and Pages deployment where applicable, analyzer regressions pass, zero-data remains `NO_DEMAND_EVIDENCE`, no credentials introduced; otherwise an exact workflow-trigger blocker with evidence and smallest safe remediation.
+**Economic impact:** restores reliable automated shipping and protects every subsequent SEO expansion from compounding release risk.
+**Handoff:** explicit green/pending/blocked state plus run/commit evidence to CEO and Worker 1.
 
 ## Allocation rationale
-2 World Discovery / 2 Things remains optimal, but World Discovery breadth remains gated until the Worker 4 fix has completed green workflow evidence. Things keeps two independent value streams: data truth/release safety and privacy-safe validation.
+2 World Discovery / 2 Things remains optimal. World Discovery has the strongest evidenced distribution asset (218 discovered URLs), but breadth stays gated until release evidence is genuinely green. Things retains two independent high-value workstreams: ownership-data truth/release safety and privacy-safe product validation. Moving 3+ workers to World Discovery before demand evidence or green release proof would overproduce supply; moving 3+ to Things would underinvest in the only currently evidenced organic distribution channel.
 
 ## Profit horizons
-- **Short:** obtain green World Discovery CI on `b904e1d8`; keep 218-page asset stable; make Things SOLD-state release-safe and funnel validation-ready.
+- **Short:** close World Discovery green CI/deploy evidence; preserve the 218-page asset; make Things SOLD-state release-safe and activation validation-ready.
 - **Medium:** ingest real Search Console rows as impressions arrive and redirect SEO capacity toward high-impression/near-page-one opportunities; steer Things by real activation/retention/sell evidence.
-- **Long:** automated search/data/API asset plus a popular free ownership/commerce/data asset, monetized only after demand/adoption evidence.
+- **Long:** World Discovery becomes an automated search/data/API asset; Things becomes a popular free ownership/commerce/data asset, monetized only after demand/adoption evidence.
 
 ## Next capital / priority decision
-**0 EUR new spend.** No paid acquisition, ads, commercial analytics or data purchases while demand remains unproven.
+**0 EUR new spend.** No paid acquisition, ads, commercial analytics or data purchases while demand/adoption remain unproven. Next likely owner approval is the narrowly scoped Things hosted SOLD-state migration, only after Worker 2 closes the release packet.
 
 ## Controls / blockers
 - No payments, ad activation, contracts, hosted schema writes, participant outreach or irreversible external actions without explicit approval.
 - Search Console demand remains UNKNOWN until real rows exist.
-- World Discovery breadth remains gated until `b904e1d8` has completed green CI/deploy evidence.
 - Never claim green CI/deploy without completed workflow evidence.
+- World Discovery breadth is gated behind completed green release evidence.
 
 **Nutzeraktion: Keine in diesem Zyklus.**
