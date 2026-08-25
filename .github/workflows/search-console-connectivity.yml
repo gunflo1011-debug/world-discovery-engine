@@ -1,0 +1,74 @@
+name: Search Console connectivity
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/search-console-connectivity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-search-console:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GOOGLE_SEARCH_CONSOLE_CREDENTIALS: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS }}
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install auth dependencies
+        run: python -m pip install --disable-pip-version-check --quiet google-auth requests
+
+      - name: Verify Search Console API access
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          import requests
+          from google.oauth2 import service_account
+          from google.auth.transport.requests import Request
+
+          raw = os.environ.get('GOOGLE_SEARCH_CONSOLE_CREDENTIALS', '')
+          if not raw:
+              raise SystemExit('Missing GOOGLE_SEARCH_CONSOLE_CREDENTIALS secret')
+
+          try:
+              info = json.loads(raw)
+          except json.JSONDecodeError as exc:
+              raise SystemExit(f'Secret is not valid JSON: {exc}')
+
+          credentials = service_account.Credentials.from_service_account_info(
+              info,
+              scopes=['https://www.googleapis.com/auth/webmasters.readonly'],
+          )
+          credentials.refresh(Request())
+
+          response = requests.get(
+              'https://www.googleapis.com/webmasters/v3/sites',
+              headers={'Authorization': f'Bearer {credentials.token}'},
+              timeout=30,
+          )
+          if response.status_code != 200:
+              raise SystemExit(
+                  f'Search Console API request failed: HTTP {response.status_code}: {response.text[:500]}'
+              )
+
+          sites = response.json().get('siteEntry', [])
+          target = 'sc-domain:worlddiscoverydata.com'
+          match = next((site for site in sites if site.get('siteUrl') == target), None)
+          if not match:
+              visible = ', '.join(site.get('siteUrl', '<unknown>') for site in sites) or '<none>'
+              raise SystemExit(f'Connected, but target property not visible. Visible properties: {visible}')
+
+          print('Search Console connection OK')
+          print(f"Property: {match.get('siteUrl')}")
+          print(f"Permission: {match.get('permissionLevel')}")
+          PY
