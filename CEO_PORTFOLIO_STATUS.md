@@ -1,6 +1,6 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-25 10:58 Europe/Berlin_
+_Last updated: 2026-08-25 11:02 Europe/Berlin_
 
 ## Unternehmensziel
 Maximize long-term legal net profit and recurring cash flow at acceptable risk, high automation and low permanent human workload. Unknown business outcomes stay UNKNOWN.
@@ -10,7 +10,8 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 - **Things / Asset Market Alpha — Rank #2 / HIGH-UPSIDE CONSUMER ASSET.** FREE-FIRST / POPULARITY-FIRST. Core target: capture -> inventory -> value -> total value -> sell -> inventory/value update.
 - **Worker 1 integration evidence:** `asset-market-alpha` commit `2243040` connects authenticated inventory to truthful value/sell-start UI.
 - **Worker 2 sold-lifecycle evidence:** repository-side SOLD-aware ownership integration exists; hosted migration remains pending explicit approval.
-- **Worker 3 activation evidence:** commits `51e8935`, `cffba0d`, `0463c75`, `badaea8` add a process-local privacy-minimal activation collector, regression and CI gate. It stores only versioned activation event names in memory, aggregates them with the existing funnel contract, has no external destination/persistence/PII, and can reset without touching product data. Real app action hooks are the remaining slice; real activation rates remain UNKNOWN.
+- **Worker 3 activation evidence:** commits `51e8935`, `cffba0d`, `0463c75`, `badaea8` add a process-local privacy-minimal activation collector, regression and CI gate. Real app action hooks remain.
+- **Worker 4 comparison evidence:** World Discovery commits `b99d687` and `dc784b2` add a dedicated trust-gated cross-entity comparison contract and regression. It permits different entities only when indicator, period, unit and methodology match and both sides retain provenance; same-entity comparisons are rejected to keep revision semantics separate. CI/Pages for `dc784b2` were queued/pending at last check, so green status is not yet claimed.
 - **Verified revenue / costs / net profit:** UNKNOWN / UNKNOWN / UNKNOWN.
 
 ## Active allocation — 3 Things / 1 World Discovery
@@ -25,14 +26,15 @@ Maximize long-term legal net profit and recurring cash flow at acceptable risk, 
 
 ### CEO Worker 3 → Things local activation evidence from real app actions (P0)
 **Status:** DELIVERED local evidence sink + regression + CI wiring in `51e8935` / `cffba0d` / `0463c75` / `badaea8`.
-**Delivered:** in-memory-only collector using the existing `activationEvent()` and `aggregateActivationFunnel()` contracts; no fetch, Supabase, AsyncStorage, user/item/value/location/timestamp payload; resettable without product-data mutation; dedicated regression is now gated in mobile CI.
-**Remaining gap / handoff:** hook `INVENTORY_VISIBLE`, `VALUE_VISIBLE`, `SELL_INITIATED` and the actual successful capture transition to real `App.tsx` actions. Do not use the existing `trackAlphaEvent` path for this contract because it is a separate analytics mechanism and the CEO assignment explicitly requires local-only evidence. Real activation/retention rates remain UNKNOWN.
+**Remaining gap / handoff:** hook `INVENTORY_VISIBLE`, `VALUE_VISIBLE`, `SELL_INITIATED` and actual successful capture to real app actions; keep this contract local-only.
 
 ### CEO Worker 4 → World Discovery comparison surface: resolve product-use mismatch (P0)
-Continue the current trust-gated comparison eligibility/product-use assignment; do not fabricate cross-country deltas.
+**Status:** DELIVERED dedicated cross-entity comparison primitive + regression in `b99d687` / `dc784b2`.
+**Trust contract:** different entity required; same indicator/period/unit/methodology required; source provenance required; invalid values fail closed. Existing same-entity revision comparison remains separate.
+**Remaining gap / handoff:** after green CI, integrate this primitive into exactly one existing 2024 Internet Use country surface using the real snapshot records; do not invent values or mix years/methodologies.
 
 ## Economic interpretation
-Things now has truthful pre-sale/post-sale semantics plus a privacy-minimal local activation evidence sink. The next product-evidence gain is wiring that sink to real UI transitions, not adding external analytics.
+Things now has truthful pre-sale/post-sale semantics plus a privacy-minimal local activation evidence sink. World Discovery now has separate contracts for revision comparison and legitimate same-snapshot cross-country comparison, removing the prior product-use mismatch without weakening trust rules.
 
 ## Next capital / priority decision
 **0 EUR new spend.** No paid acquisition, ads, billing, commercial analytics or data purchases until real product integration and truthful evidence improve.
@@ -41,5 +43,6 @@ Things now has truthful pre-sale/post-sale semantics plus a privacy-minimal loca
 - No payments, ad activation, contracts, hosted schema writes, participant outreach or irreversible external actions without explicit approval.
 - Unknown values stay unknown; no automatic sale/listing.
 - Do not claim real activation rates from the local harness until actual app transitions emit events and evidence is observed.
+- Do not claim World Discovery CI green for `dc784b2` until the queued workflows conclude successfully.
 
-**Nutzeraktion: Hosted schema migration approval is still required for Worker 2's production SOLD-aware read path; Worker 3 requires no user action.**
+**Nutzeraktion: Hosted schema migration approval is still required for Worker 2's production SOLD-aware read path; Worker 4 requires no user action.**
