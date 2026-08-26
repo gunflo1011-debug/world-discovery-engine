@@ -1,25 +1,21 @@
 # CEO Worker 4 Handoff
 
-## 2026-08-25 — Google Dataset structured-data remediation
+## 2026-08-26 — World Discovery release/quality
 
-CEO assignment: fix the evidenced Search Console Dataset defects at source without fabricating attribution or licensing.
+CEO assignment: verify Worker 3's Explore/Indicator improvements and make the release path genuinely green without weakening provenance or live contracts.
 
 Delivered:
-- `scripts/build-real-wdi-evidence.py` emits the source-backed World Bank WDI CC BY 4.0 license as an absolute URL in Dataset JSON-LD and retains an explicit Organization creator plus substantive description.
-- `src/evidence-page.js` no longer claims generic revision evidence is a Dataset when its evidence contract does not carry source-license provenance; it emits WebPage/CreativeWork markup instead of inventing a license.
-- `scripts/normalize-dataset-structured-data.mjs` runs in normal builds. Description may be backfilled from the page's own meta description; object licenses are normalized only when they expose a URL; CC BY 4.0 is added only when the page itself explicitly states `Source license: CC BY 4.0`.
-- Follow-up audit found one provenance weakness: the normalizer previously invented `World Discovery Engine` as creator whenever Dataset creator was absent. Commit `8754d8f` removes that fallback. Missing creator now fails closed and downgrades the node to `CreativeWork` rather than fabricating attribution.
-- Commit `f9a5b2a` adds a deterministic regression preventing reintroduction of a fabricated creator fallback while retaining the existing Dataset eligibility checks.
+- Inspected failed Pages run `32920335887` and downloaded its actual `github-pages` artifact.
+- Confirmed the live-contract failure was real, not a substring-test false positive: the generated sitemap contained duplicate Internet-use country URLs. Example: Bahrain `/indicators/internet-use/country/bhr/` appeared twice; the artifact contained 401 `<loc>` entries but only 218 unique URLs.
+- Root cause was redundant sitemap finalization after `build-site.js` had already emitted Internet-use country/region routes. The finalizer could append discovery URLs again.
+- Commit `fd6c547b99b0ff198c2a3510a62fd1a39a43aebd` changes `scripts/finalize-internet-country-discovery.mjs` to treat the sitemap as a unique URL set, fail closed if any expected country/region route is missing, rewrite a deduplicated sitemap, and set `build.json.publicRoutes` from the resulting unique route count. Country/region build counters remain explicit.
 
-Earlier remediation commits: `b1138c0`, `9f9dac8`, `6238737`, `cc7982e`, `66cb939`.
-Latest provenance-hardening commits: `8754d8f`, `f9a5b2a`.
+Release evidence:
+- Previous Worker 3 release `8ea16af1` deployed, but `verify-live` correctly caught the duplicate sitemap.
+- New CI run `32925032984` and Pages run `32925033023` triggered automatically from `fd6c547b`; both were queued at the latest evidence check. Green release is NOT claimed yet.
 
-CI evidence:
-- Previous current-main CI run `32885479807` on `de1b24c` was a real runner execution and failed specifically at `Test and build site`; setup/checkout/dependency installation succeeded. This is a real release blocker, not a runner-assignment failure.
-- The new CI run `32887282098` and Pages run `32887282067` triggered from `8754d8f` and were still in progress at the latest evidence check. Green CI/Pages are NOT claimed yet.
+Economic contribution: removes duplicate indexable URLs from the sitemap and restores trust in the release gate. This improves crawl hygiene and prevents us from hiding a real SEO-quality defect by weakening the test.
 
-Economic contribution: directly addresses Google's reported Dataset quality defects while strengthening provenance discipline. It prevents an invalid Google enhancement from being replaced by a misleading creator claim, preserving trust across existing assets instead of adding thin pages while organic demand remains unproven.
-
-Next step: inspect the newly executing CI/Pages result. If a real build/test step fails, isolate and minimally repair that exact failure. After green deploy, inspect representative live JSON-LD and then wait for Search Console recrawl/reprocessing before comparing valid/invalid Dataset counts.
+Next step: inspect CI/Pages for `fd6c547b`. If green, verify live sitemap uniqueness plus Explore/Indicator canonicals and hand back to Worker 3 for the next source-backed growth increment. If red, fix only the next evidenced failure.
 
 User action: none.
