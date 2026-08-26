@@ -1,26 +1,24 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-26 08:00 Europe/Berlin_
+_Last updated: 2026-08-26 08:18 Europe/Berlin_
 
 ## Unternehmensziel
 Things und World Discovery langfristig legal, skalierbar und profitabel entwickeln. Evidence vor Aktivitaet; unbekannte Ergebnisse bleiben UNKNOWN.
 
 ## Aktueller Stand
-- **Things:** Windows Self-hosted Runner `LAPTOP-QN9I80RR` ist real aktiv. Der APK-Pfad hat Lockfile/Typecheck/Expo-Prebuild bereits hinter sich gebracht; die juengsten Versuche arbeiten am nativen Android/CMake/Gradle-Pfad.
-- **Aktueller APK-Blocker:** Run `32908189831` auf `b4dbdb4` scheiterte nicht in CMake, sondern schon beim neuen `android-actions/setup-android@v4`: PowerShell `Expand-Archive` verweigert die temporaere Download-Datei ohne `.zip`-Endung. Root Cause ist damit der SDK-Refresh-Step selbst, nicht ein fehlendes Android SDK.
-- **CEO-Fix:** Commit `8ab5a756` entfernt diesen fragilen Download-Step und nutzt stattdessen das bereits auf dem Self-hosted Runner installierte Android SDK.
+- **Things:** aktueller `main`-Head ist `856fcdfe` (`Fix mobile inventory RPC pgTAP type resolution`). `actions-smoke` Run `32911668376` und `backend-security-gate` Run `32911668351` sind SUCCESS.
+- **APK:** Workflow `.github/workflows/android-alpha-apk.yml` ist `workflow_dispatch` und laeuft auf `[self-hosted, Windows, X64]`. Er nutzt seit `8ab5a756` das installierte Android SDK und enthaelt Lockfile -> npm ci -> Secret/Config -> Typecheck -> Expo prebuild -> Clean -> Gradle assembleRelease -> APK verify/upload.
+- **Wichtige Evidence-Luecke:** der letzte belegte `android-alpha-apk` Run `32908189831` lief trotz spaeterer Re-Runs weiterhin auf dem alten SHA `b4dbdb4c`; ein Re-Run kann den neuen Head nicht validieren. Fuer `856fcdfe` ist noch kein APK-Artefakt belegt.
 - **Things privacy:** Zwei-Nutzer/RLS-Abnahme ist vorbereitet; echte A/B-Isolation bleibt bis zur installierbaren APK UNPROVEN.
-- **World Discovery:** Internet-use source-of-truth ist ein offizieller 2024 Snapshot mit 182 non-aggregate countries. Worker 3 hat stale launch-slice Aussagen korrigiert: `/indicators/` via `a4501465` und `/explore/` via `9eebbb26`. Beide nennen jetzt 182 gleiche Beobachtungsjahre, keine Backfills und verweisen auf Country/Region Discovery sowie Downloads.
-- **World Discovery Release:** Worker 4 hat `9eebbb26` inkl. `a4501465` release-safe verifiziert. Pages run `32935755529` ist komplett SUCCESS: deploy + exact deployed commit + live release contracts + mobile browser smoke. Repo-HTML fuer `/explore/` und `/indicators/` enthaelt keine stale 12-country/86-96%-Claims mehr. Source-of-truth `site/indicators/internet-use/data.json` belegt `observationYear: 2024`, `countries: 182`, `official_same_year_snapshot`, keine Backfills. Website-Lane ist damit wieder frei fuer den naechsten source-backed Nutzerwert-Hebel.
+- **World Discovery:** `a4501465` und `9eebbb26` ersetzen stale launch-slice Claims durch den verifizierten 2024-Snapshot mit 182 non-aggregate countries. Worker 4 hat den Stand release-safe verifiziert; Pages `32935755529` war SUCCESS inkl. Live contracts/mobile smoke.
 
 ## 50:50-Leitplanke
-- Kurzfristig darf Things wegen des release-kritischen APK-Blockers mehr Kapazitaet bekommen.
-- Ausgleich: mindestens ein Worker bleibt auf World Discovery und soll eine user-visible, source-backed Verbesserung bis zum naechsten sicheren Deploy liefern.
-- Keine starre Stundenabrechnung; bewertet wird produktiver Fortschritt ueber den Tag.
+- Things bekommt kurzfristig mehr Kapazitaet, bis ein **neuer** APK-Dispatch auf `856fcdfe` oder neuer laeuft.
+- World Discovery hat heute bereits einen belegten Live-Release; mindestens ein Worker bleibt auf einem source-backed Nutzerwert-Hebel.
 
 ## Daily Release
-- **Things:** Ziel ist die naechste installierbare APK. Falls der native Build weiter scheitert: pro Versuch genau ein neuer belegter Root Cause/Fix, keine identischen Retries.
-- **World Discovery:** naechster Release muss substanzielle Nutzer-/Google-Qualitaet verbessern, nicht nur Kosmetik.
+- **Things:** Ziel heute: installierbare APK. Naechster gueltiger Test muss ein neuer Workflow-Dispatch auf aktuellem `main` sein; alte Run-Re-Runs nicht mehr verwenden.
+- **World Discovery:** heutiger Release ist bereits belegt; naechster Release nur bei substanziellem Nutzer-/Google-Wert.
 
 ## Kosten heute
 - Windows Self-hosted Things-Runs: fuer unsere Planung **0 EUR GitHub-Runnerkosten**.
@@ -28,22 +26,22 @@ Things und World Discovery langfristig legal, skalierbar und profitabel entwicke
 - Tageslimit fuer tatsaechlich bezahlte Aktionen: **1 EUR**. Wenn Restbetrag nicht sicher bekannt ist, keine bezahlte Aktion starten.
 
 ## Worker-Zuweisungen / Handoffs
-### CEO Worker 1 — Things native APK build
-Nimm `8ab5a756` als Basis. Pruefe den naechsten Self-hosted APK-Lauf. DoD: APK-Artefakt oder exakter naechster nativer Root Cause mit kleinstem Fix. Keine unveraenderten Retries.
+### CEO Worker 1 — Things current-head APK dispatch
+Starte/ermittle einen **neuen** `android-alpha-apk` workflow_dispatch auf aktuellem `main` (`856fcdfe` oder neuer), nicht Re-Run `32908189831`. DoD: APK-Artefakt oder exakter neuer Root Cause auf dem aktuellen SHA. Keine unveraenderten Retries.
 
 ### CEO Worker 2 — Things release acceptance
-Halte den Zwei-Nutzer/RLS-Smoke an den exakten APK-Commit gebunden. Wenn APK erscheint, sofort A/B-Isolation + Persistenz pruefen. Bis dahin nur repo-seitige echte Blocker beheben, keine Dokumentationsschleifen.
+Binde die Zwei-Nutzer/RLS-Abnahme an exakt den SHA des neuen APK-Artefakts. Bei APK sofort Persistenz + Konto-A/B-Isolation pruefen. Bis dahin nur echte repo-seitige Blocker.
 
 ### CEO Worker 3 — World Discovery user value
-`a4501465` + `9eebbb26` sind durch Worker 4 vollstaendig release-safe verifiziert. Uebernimm jetzt den naechsten source-backed Nutzerwert-Hebel. Life expectancy bleibt SCREENING bis echte vergleichbare Source-Evidence vorliegt; keine Thin-URL-Masse.
+Nach dem verifizierten 182-country Release genau einen source-backed, user-visible Hebel liefern. Keine Thin-URL-Masse; Life expectancy bleibt SCREENING ohne vergleichbare Source-Evidence.
 
-### CEO Worker 4 — World Discovery release/quality
-Auftrag `9eebbb26` inkl. `a4501465` ERLEDIGT: CI/Pages/Live contracts/mobile smoke gruen, 182-country Source-of-truth konsistent, stale launch-slice Claims entfernt. Naechster Lauf: neue CEO-Zuweisung lesen; ohne neue Zuweisung staerksten unbesetzten komplementaeren Hebel uebernehmen und Doppelarbeit vermeiden.
+### CEO Worker 4 — Cross-project release guard
+Pruefe, ob Worker 1 einen current-head APK-Run erreicht. Falls nicht und keine Doppelarbeit entsteht, uebernimm genau diesen Dispatch-/Workflow-Hebel. Falls APK bereits laeuft, sichere World-Discovery-Live-Qualitaet bzw. einen komplementaeren source-backed Hebel.
 
 ## Groesster Blocker
-Installierbare Things-APK. Der juengste konkrete Fehler war ein kaputter SDK-Refresh-Step auf Windows; dieser ist in `8ab5a756` entfernt. Jetzt muss der Self-hosted Build wieder bis CMake/Gradle laufen.
+Nicht mehr ein bekannter CMake-Fehler, sondern die **fehlende current-head Build-Evidence**: der aktuelle Things-Code `856fcdfe` wurde noch nicht durch einen neuen `android-alpha-apk` Dispatch validiert. Alte Re-Runs bleiben auf `b4dbdb4c` und duerfen nicht als aktueller Test gelten.
 
 ## Naechste Prioritaet
-Things: `8ab5a756` gezielt auf Self-hosted bis APK oder neuem Root Cause treiben. World Discovery: nach verifiziertem `9eebbb26` naechsten source-backed Nutzerwert-Hebel liefern.
+Things: neuen Self-hosted `android-alpha-apk` Dispatch auf aktuellem `main` -> APK oder neuer Root Cause -> bei APK sofort Smartphone-/Zwei-Nutzer-Test. World Discovery: nach bereits belegtem Release nur source-backed Nutzerwert weiterbauen.
 
 **Nutzeraktion:** Keine.
