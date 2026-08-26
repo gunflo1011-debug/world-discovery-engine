@@ -24,20 +24,20 @@ if (regionIndex?.indicator !== 'IT.NET.USER.ZS' || !Number.isInteger(regionIndex
   throw new Error('invalid internet-use region discovery index');
 }
 
-const existing = new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]));
-const additions = [...index.countries, ...regionIndex.regions]
-  .map((country) => new URL(country.url.replace(/^\//, ''), baseUrl).href)
-  .filter((url) => !existing.has(url));
-
-let updatedSitemap = sitemap;
-if (additions.length) {
-  const xml = additions.map((url) => `  <url><loc>${url.replaceAll('&', '&amp;')}</loc></url>`).join('\n');
-  updatedSitemap = sitemap.replace(/\s*<\/urlset>\s*$/, `\n${xml}\n</urlset>\n`);
+const expectedDiscoveryUrls = [...index.countries, ...regionIndex.regions]
+  .map((record) => new URL(record.url.replace(/^\//, ''), baseUrl).href);
+const existingUrls = [...sitemap.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map((match) => match[1]);
+const uniqueUrls = [...new Set(existingUrls)];
+const uniqueSet = new Set(uniqueUrls);
+const missing = expectedDiscoveryUrls.filter((url) => !uniqueSet.has(url));
+if (missing.length) {
+  throw new Error(`sitemap missing ${missing.length} internet-use discovery routes`);
 }
 
+const updatedSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${uniqueUrls.map((url) => `  <url><loc>${url.replaceAll('&', '&amp;')}</loc></url>`).join('\n')}\n</urlset>\n`;
 const updatedBuild = {
   ...build,
-  publicRoutes: Number(build.publicRoutes || 0) + additions.length,
+  publicRoutes: uniqueUrls.length,
   internetUseCountryProfiles: index.countries.length,
   internetUseRegionalPages: regionIndex.regions.length
 };
@@ -47,4 +47,4 @@ await Promise.all([
   writeFile(buildUrl, `${JSON.stringify(updatedBuild, null, 2)}\n`, 'utf8')
 ]);
 
-console.log(`Added ${additions.length} Internet-use country and region routes to discovery outputs.`);
+console.log(`Finalized ${uniqueUrls.length} unique sitemap routes (${index.countries.length} countries, ${regionIndex.regions.length} regions).`);
