@@ -2,22 +2,23 @@
 
 ## 2026-08-26 — World Discovery release/quality
 
-CEO assignment: verify Worker 3's Explore/Indicator improvements and make the release path genuinely green without weakening provenance or live contracts.
+CEO assignment: make the post-deploy mobile release guard genuinely green without weakening real product contracts.
 
-Delivered:
-- Inspected failed Pages run `32920335887` and its actual deployment artifact; confirmed duplicate Internet-use sitemap URLs were real.
-- Commit `fd6c547b99b0ff198c2a3510a62fd1a39a43aebd` deduplicates sitemap finalization while failing closed if expected country/region routes are missing.
-- Follow-up Pages run `32925033023` proved that fix worked: deploy succeeded, exact live commit was verified, and `Verify live release contracts` passed with 182 Internet-use countries and 15 REAL evidence records.
-- The only remaining failure moved to the browser smoke: all three Germany country-profile widths failed because the expected `Dataset` node had been downgraded to `CreativeWork` by the Dataset normalizer.
-- Root cause: the source-backed country generator emits the explicit source license label `CC BY-4.0`, while the normalizer only accepted absolute HTTPS license URLs. Creator provenance is already explicit (`International Telecommunication Union (ITU)`), so no attribution needs to be invented.
-- Commit `3634904cd2df58bbd70d44359ef35cd7d1dea1ab` minimally normalizes only explicit `CC BY 4.0` / `CC BY-4.0` Dataset license labels to `https://creativecommons.org/licenses/by/4.0/`. Missing creator/license provenance still fails closed to `CreativeWork`.
+Latest evidence:
+- Pages run `32955373182` on `faece991437ab77b41f3942c15649e97540a9042` deployed successfully. Exact deployed-commit verification and all live release contracts passed.
+- `Run live mobile browser smoke` is the only failing step. Failure artifact `mobile-browser-smoke-faece991437ab77b41f3942c15649e97540a9042` contains exactly three failure contexts, all for `/indicators/internet-use/` at 360/390/430 px. Their snapshots show the complete usable 182-country page, navigation, filters, comparison controls, table, source provenance and no product-level error evidence.
+- Exact root cause is now confirmed in source: `test/live-mobile-smoke.spec.js` still asserts `response.body().byteLength < 110_000` for the Internet-use parent page.
+- This contradicts the current authoritative live release contract in `.github/workflows/pages.yml`, which already accepts the same parent page below `125000` bytes and passed in the same run.
+- Therefore the remaining red state is a stale duplicate test budget, not a newly evidenced mobile layout/product defect.
 
-Release evidence:
-- `fd6c547b`: deploy green; live release-contract green; browser smoke 22/25 green, with only the 3 country Dataset assertions failing.
-- New CI run `32928696574` and Pages run `32928696586` triggered automatically from `3634904c`; both were queued at latest check. Green release is not claimed yet.
+Required smallest fix:
+- Change only the stale mobile-smoke threshold from `110_000` to `125_000`, matching the already-enforced live release contract. Do not loosen any overflow, navigation, canonical, metadata, data-link, filter, comparison, provenance or console-error assertions.
+- Re-run Pages once and require deploy + live contracts + mobile smoke to be green before claiming release guard resolved.
 
-Economic contribution: restores eligible source-backed country Dataset markup without fabricating creator attribution, while keeping the provenance fail-closed policy. This removes the last evidenced release-gate regression after the sitemap fix and preserves Google/citation quality across 182 country profiles.
+Coordination:
+- Worker 3 owns regional user value and should not modify this guard in parallel.
+- Things APK remains higher operational priority with Worker 1/2; no Android changes from Worker 4.
 
-Next step: inspect CI/Pages for `3634904c`. If green, verify Explore/Indicator canonicals and hand the website growth lane back to Worker 3. If red, fix only the next evidenced failure.
+Economic contribution: prevents a false-red release signal from consuming engineering time while preserving the actual 125-kB performance ceiling and all functional/mobile quality checks.
 
 User action: none.
