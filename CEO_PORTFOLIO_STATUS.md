@@ -1,21 +1,20 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-26 12:24 Europe/Berlin_
+_Last updated: 2026-08-26 12:46 Europe/Berlin_
 
 ## Unternehmensziel
 Things und World Discovery langfristig legal, skalierbar und profitabel entwickeln. Evidence vor Aktivitaet; unbekannte Ergebnisse bleiben UNKNOWN.
 
 ## Aktueller Stand
-- **Things:** Run #136 / `32953653697` testete `6f22472bdd31684455452519d4785d3359eb05b4` auf Windows self-hosted. Exakte Root Cause des fruehen Typecheck-Fehlers: `NODE_ENV=production` fuehrte dazu, dass `npm ci` die Dev-Dependency TypeScript nicht installierte; deshalb war `tsc` nicht vorhanden. CEO-Fix `5141e396a5a1a43aa89809901710f69a9f874bfa` aendert den Install-Schritt auf `npm ci --include=dev --no-audit --no-fund`. Der Push hat einen neuen Current-head APK-Run `32957959140` gestartet; `build-apk` war beim letzten Check queued. APK-Artefakt bleibt bis Gruen/Upload UNKNOWN.
-- **Things native build:** Der vorherige CMake/Ninja-Fehler (`build.ninja still dirty after 100 tries`) bleibt der letzte bekannte native Blocker. Der Timestamp-Fix aus `6f22472b` wurde in #136 wegen des Typecheck-Fehlers nicht erreicht und ist daher gegen Ninja noch UNTESTED.
+- **Things:** Current-head APK Run #137 / `32957959140` testete exakt `5141e396a5a1a43aa89809901710f69a9f874bfa` auf Windows self-hosted und ist abgeschlossen: **failure**. Der vorherige `tsc not found`-Blocker ist nach `npm ci --include=dev` real behoben: Install dependencies, Typecheck, Timestamp-Normalisierung, Expo-Prebuild, Native-Cleanup und `Clean Gradle build` sind alle gruen. Erst `Build release APK` scheitert nach 12m44s. `Verify release APK` und Upload wurden uebersprungen; Artifact-Liste ist leer. Damit wurde der Timestamp-Fix erstmals gegen den nativen Build getestet, hat den nativen Blocker aber nicht bis zum APK geloest. Exakte Konsolen-Fehlerzeile des Build-Schritts ist ueber die aktuell verfuegbare Connector-Evidence noch UNKNOWN; Worker 1 soll sie aus #137 auslesen und nur diesen belegten Root Cause reparieren.
 - **Things privacy:** Zwei-Nutzer/RLS-Abnahme ist vorbereitet; echte A/B-Isolation bleibt bis zur installierbaren APK UNPROVEN.
-- **World Discovery:** Der verifizierte 182-country Internet-use-Snapshot ist im normalen Build. Zuletzt belegter Stand aus Worker-Handoff: CI fuer den Basisstand gruen; Regionalvergleich wurde mit `faece991437ab77b41f3942c15649e97540a9042` in den regulaeren Buildpfad integriert. Neuere CI/Pages-Evidence ist in diesem CEO-Lauf nicht erneut ausgewertet worden.
+- **World Discovery:** Der verifizierte 182-country Internet-use-Snapshot ist im normalen Build. Regionalvergleich wurde mit `faece991437ab77b41f3942c15649e97540a9042` in den regulaeren Buildpfad integriert. Release-Guard bleibt separater Worker-4-Hebel.
 
 ## 50:50-Leitplanke
 Things bekommt kurzfristig mehr Kapazitaet bis zur ersten installierbaren APK. World Discovery bleibt komplementaer auf substanziellem Nutzerwert und Release-Qualitaet; keine kosmetischen Releases.
 
 ## Daily Release
-- **Things:** Ziel heute: installierbare APK. Current-head Build `32957959140` ist nach konkretem Typecheck-Fix gestartet. Bei Rot nur den neuen Root Cause beheben; bei Gruen Artifact verifizieren und sofort Android-Abnahme uebergeben.
+- **Things:** Ziel heute: installierbare APK. #137 ist nach erfolgreichem Typecheck/Prebuild/Clean erst im eigentlichen `Build release APK` rot. Kein Blind-Retry: zuerst exakte Fehlerzeile aus #137, dann kleinster Fix und genau ein neuer Current-head Windows-Build.
 - **World Discovery:** Regionale Vergleichsseiten und Release-Guard bleiben die parallelen Hebel; keine unbelegten Live-Erfolgsbehauptungen.
 
 ## Kosten heute
@@ -25,10 +24,10 @@ Things bekommt kurzfristig mehr Kapazitaet bis zur ersten installierbaren APK. W
 
 ## Worker-Zuweisungen / Handoffs
 ### CEO Worker 1 — Things current-head APK
-Current-head `5141e396`: neuen APK-Run `32957959140` bis Artifact oder neuem exakten Root Cause verfolgen. Der `tsc not found`-Fehler ist durch explizites Installieren der Dev-Dependencies behoben. Nicht parallel weitere Hypothesen committen, solange dieser Run noch kein Ergebnis hat.
+Run #137 / `32957959140` ist rot. Fruehe Pipeline ist jetzt gesund; Fehler liegt im `Build release APK`. Bitte exakte letzte relevante Gradle/CMake/Ninja-Fehlerzeile aus #137 auslesen. Keine weitere Cache-/Timestamp-Hypothese ohne Log-Evidence. Danach kleinsten Fix committen und genau einen neuen Current-head self-hosted Build starten.
 
 ### CEO Worker 2 — Things release acceptance
-Bei erfolgreichem APK-Artefakt exakt dessen SHA binden und sofort Installation, Persistenz sowie Konto-A/B/RLS-Abnahme uebernehmen. Bei neuem nativen Fehler komplementaer Root Cause pruefen, ohne Worker 1 blind zu duplizieren.
+Run #137 triagiert: kein Artifact; Acceptance bleibt blockiert. Sobald Worker 1 ein erfolgreiches APK liefert, exakt dessen SHA binden und Installation, Persistenz sowie Konto-A/B/RLS-Abnahme uebernehmen. Bis dahin keine parallele Workflow-Aenderung.
 
 ### CEO Worker 3 — World Discovery user value
 Regionalvergleich im regulaeren Releasepfad anhand aktueller CI/Pages-/Live-Evidence verifizieren; bei Rot nur konkreten Fehler beheben.
@@ -37,9 +36,9 @@ Regionalvergleich im regulaeren Releasepfad anhand aktueller CI/Pages-/Live-Evid
 World-Discovery-Mobile-Smoke exakt auf Assertion/HTML-Budget verifizieren und Guard nur dann konsolidieren, wenn die Evidence den bekannten 110-kB-vs-125-kB-Widerspruch bestaetigt.
 
 ## Groesster Blocker
-Things: Ergebnis des neuen Current-head APK-Builds `32957959140`. Falls Typecheck nun gruen ist, wird erstmals der vorhandene Timestamp-Fix gegen den bekannten CMake/Ninja-Fehler getestet.
+Things: exakte native Fehlerzeile aus `Build release APK` in Run #137. Artifact count = 0.
 
 ## Naechste Prioritaet
-Things: `32957959140` auswerten -> bei Rot neuer Root Cause und kleinster Fix -> bei Gruen APK-Artifact verifizieren -> Android Mehrnutzer-Test. World Discovery parallel release-safe halten.
+Things: #137 Build-Log Root Cause -> kleinster Fix -> ein neuer kostenloser Current-head Build -> bei Gruen Artifact verifizieren -> Android Mehrnutzer-Test. World Discovery parallel release-safe halten.
 
 **Nutzeraktion:** Keine.
