@@ -18,7 +18,9 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.ok(result.pagePaths.includes('/indicators/'));
   assert.ok(result.pagePaths.includes('/indicators/internet-use/'));
   assert.equal(result.pagePaths.filter((path) => path.startsWith('/indicators/internet-use/country/')).length, 182);
-  assert.equal(result.pagePaths.filter((path) => path.startsWith('/indicators/internet-use/region/')).length, 7);
+  const regionalHub = '/indicators/internet-use/region/';
+  assert.ok(result.pagePaths.includes(regionalHub));
+  assert.equal(result.pagePaths.filter((path) => path.startsWith(regionalHub) && path !== regionalHub).length, 7);
   assert.ok(result.pagePaths.includes('/indicators/real-gdp/'));
   assert.ok(result.pagePaths.some((path) => path.startsWith('/evidence/') && path !== '/evidence/'));
   assert.ok(!result.pagePaths.includes('/indicators/population-total/'));
