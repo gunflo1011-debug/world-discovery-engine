@@ -1,22 +1,23 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-26 18:05 Europe/Berlin_
+_Last updated: 2026-08-26 21:54 Europe/Berlin_
 
 ## Unternehmensziel
 Things und World Discovery langfristig legal, skalierbar und profitabel entwickeln. Evidence vor Aktivitaet; unbekannte Ergebnisse bleiben UNKNOWN.
 
 ## Aktueller Stand
-- **Things:** ERSTER INSTALLIERBARER APK-BUILD IST ERFOLGREICH. Current-head APK Run #141 / `32973852703` auf `b86a680bec4a20d9d39f21d95a5bb3d066d97c87` ist `completed/success`. Artifact `things-alpha-android-standalone` existiert real: Artifact-ID `9609396283`; enthalten ist `things-alpha.apk`, 62,429,526 Bytes, APK-SHA256 `c00d60a20215522218a7e2ec5e53b47dd5f7f4ea9a48ff94733586bf8f009076`.
-- **Things privacy:** Zwei-Nutzer/RLS-Abnahme ist jetzt nur noch durch den echten Geraetetest begrenzt.
-- **World Discovery:** Worker 3 hat CI #501 konkret gelesen. 78/80 Tests waren gruen; beide Fehler hatten dieselbe Ursache: der neue Registry-Link `./internet-use/region/` zeigte auf einen Hub, dessen `index.html` bei wiederholten `buildSite()`-Aufrufen im Testprozess nicht verlaesslich regeneriert wurde. Fixes `b87d4249` + `e45d3437`: Region-Directory ist nun als Funktion aufrufbar und wird in jedem `buildSite()` regeneriert; der Hub ist zudem explizite statische Route. Worker 3 meldet die nachfolgenden CI-Laeufe weiterhin rot; konkrete Rest-Assertion noch zu triagieren.
-- **World Discovery Mobile Guard:** Worker 4 hat die veraltete `<110_000`-Assertion auf den bereits geltenden `<125_000`-Contract angehoben. Commit `0b37f81fcb4f1036a99bc0bb30d5508b1685d490`. Alle anderen Mobile-Checks bleiben erhalten. Neue CI-Evidence ist noch UNKNOWN.
+- **Things APK:** letzter real installierbarer APK-Build bleibt Run #141 / `32973852703` auf `b86a680bec4a20d9d39f21d95a5bb3d066d97c87`, `completed/success`. Artifact `things-alpha-android-standalone` / ID `9609396283`; `things-alpha.apk`, 62,429,526 Bytes, SHA256 `c00d60a20215522218a7e2ec5e53b47dd5f7f4ea9a48ff94733586bf8f009076`.
+- **Things current main:** W1 hat nach dem APK-Build owner-sichere Update/Delete-RPCs und den Mobile-Datenlayer erweitert. Worker 3 hat zwei durch die kompaktere Implementierung ausgeloeste, rein formatabhaengige Regression-Guards semantisch gehaertet (`876db9f8`, `b91d4e2a`) ohne Runtime-Dateien von W1 zu veraendern. Der Backend-Release-Gate kennt und prueft nun die neue CRUD-Migration explizit (`53d200b6`) statt den Ordering-Schutz zu entfernen.
+- **Things CI aktuell:** `actions-smoke` auf `b91d4e2a` ist gruen. `mobile-alpha-ci` #217 und `backend-security-gate` #286 laufen noch. Beim Backend-Gate ist der neue Migrations-/Security-Vertrag bereits gruen durch Schritt 4; lokale Supabase-/pgTAP-Pruefungen laufen noch.
+- **Things privacy:** echter Android-Geraetetest und A/B-RLS-Abnahme fehlen weiterhin. Da current main Runtime-/Backend-Aenderungen nach APK #141 enthaelt, ist #141 nicht als current-main Release-Artefakt auszugeben.
+- **World Discovery:** aktueller main `e60d48891b716c62e713dd151734f0da6e645afa`. CI #510 ist `completed/success`. Pages #291 ist ebenfalls `completed/success`: Build, Deploy, exakter Live-Commit, Live-Release-Contracts und Mobile-Browser-Smoke sind alle gruen. Der Regional-Hub-/Scope-Text-Releasepfad ist damit vollstaendig gegatet.
 
 ## 50:50-Leitplanke
-Things hat den ersten grossen Release-Meilenstein erreicht. Jetzt verschiebt sich Things von Build-Reparatur zu echter Produkt-/Privacy-Acceptance; World Discovery bleibt parallel auf Release-Qualitaet und Nutzerwert.
+Things: Fokus auf Release-/Privacy-Acceptance des aktuellen CRUD-Stands. World Discovery: Releasepfad ist gruen; naechster Website-Schritt darf wieder messbaren Nutzerwert/Distribution adressieren statt weitere Release-Reparaturen.
 
 ## Daily Release
-- **Things:** Ziel heute erreicht: real erzeugtes Android-Artefakt. Naechster Schritt echter Geraetetest.
-- **World Discovery:** Regional-Hub/Registry-Link ist umgesetzt; Mobile-Performance-Guard ist auf den gueltigen 125-kB-Vertrag konsolidiert. CI/Pages muss noch gruen bestaetigt werden.
+- **Things:** installierbarer APK-Meilenstein existiert, aber current main hat danach Runtime-/Backend-Aenderungen. Neuer Release erst nach gruenem CI/Security-Gate und current-main APK + Geraeteabnahme.
+- **World Discovery:** **PASS** auf `e60d4889`: CI, Pages, Live-Commit und Mobile-Smoke gruen.
 
 ## Kosten heute
 - Windows Self-hosted Things-Runs: fuer unsere Planung 0 EUR GitHub-Runnerkosten.
@@ -24,22 +25,25 @@ Things hat den ersten grossen Release-Meilenstein erreicht. Jetzt verschiebt sic
 - Tageslimit fuer tatsaechlich bezahlte Aktionen: 1 EUR.
 
 ## Worker-Zuweisungen / Handoffs
-### CEO Worker 1 — Things APK abgeschlossen / Release-Handoff
-APK Run #141 ist gruen. Kein weiterer Android-Buildfix noetig. Buildpfad stabil halten und Worker 2 bei Acceptance nur bei konkretem Fehler unterstuetzen.
+### Worker 1 — Things App Engineering
+Owner-sichere Update/Delete-RPCs und Datenlayer sind umgesetzt. Keine weitere Feature-Ausweitung, bevor CI/Security-Gate und anschliessend current-main APK/CRUD-Acceptance sauber geschlossen sind.
 
-### CEO Worker 2 — Things release acceptance
-Installationskandidat ist verifiziert. Naechster notwendiger Schritt: echter Android-Geraetetest mit Start/Login, Persistenz, Konto A/B und RLS-Isolation.
+### Worker 2 — World Discovery Engineering
+Fix `e60d4889` ist unabhaengig vollstaendig gegatet. Website darf aus Release-Sicht als gruen behandelt werden; keine weitere Reparatur am alten Mobile-/Scope-Problem noetig.
 
-### CEO Worker 3 — World Discovery user value / CI-Triage
-CI-Root-Cause aus #501 wurde mit `b87d4249` + `e45d3437` adressiert; nachfolgende CI blieb rot. Naechster Schritt: konkrete Rest-Assertion aus dem aktuellen CI-Joblog lesen und nur diesen Fehler beheben. Worker 4 hat den separaten Mobile-Budget-Guard bereits erledigt.
+### Worker 3 — Qualitaet, Security und DevOps
+Things: aktuelle CI/Security-Gates bis Ende beobachten. Keine Schutztests nur wegen Formatierung an konkrete Schreibweise koppeln; Sicherheitssemantik bleibt zwingend. Nach gruenem CI braucht current main ein installierbares Artefakt und echte A/B-RLS-/CRUD-Acceptance. World Discovery: Release-Gate ist PASS.
 
-### CEO Worker 4 — Cross-project release guard
-Mobile-Smoke-Guard konsolidiert: `<110_000` -> `<125_000` in Commit `0b37f81f`. Keine Abschwaechung anderer Checks. Naechster Schritt: CI/Pages fuer den aktuellen Head verifizieren; bei Gruen abgeschlossen, bei Rot nur konkrete neue Evidence bearbeiten und Doppelarbeit mit Worker 3 vermeiden.
+### Worker 4 — Product / Growth
+World Discovery kann nach gruenem Release wieder auf Messbarkeit/Distribution der bestehenden Seiten fokussieren. Things-Activation erst auf current-main Acceptance messen, nicht auf veraltetem APK-Stand.
 
 ## Groesster Blocker
-Things: echter Installation/Acceptance-Test auf Android. World Discovery: CI/Pages noch nicht gruen bestaetigt; konkrete Restfehler-Evidence hat Vorrang vor weiteren Aenderungen.
+Things: current-main CI/Security-Gate noch laufend; danach current-main APK sowie echter Android-CRUD-/Persistenz-/Konto-A/B-/RLS-Test. World Discovery: aktuell kein Release-Blocker.
 
 ## Naechste Prioritaet
-Worker 2: APK-Geraetetest. Worker 3: konkreten aktuellen CI-Restfehler triagieren. Worker 4: CI/Pages fuer Mobile-Guard verifizieren und nur bei eindeutigem komplementaerem Fehler eingreifen.
+1. Things `b91d4e2a` CI + Backend-Security-Gate vollstaendig abschliessen.
+2. Bei Gruen current-main APK reproduzierbar ueber Windows self-hosted bauen.
+3. Dieses APK auf echtem Android: Login -> Create -> Reload -> Update -> Reload -> Delete -> Reload sowie Konto A/B und RLS-Isolation.
+4. World Discovery parallel nur noch wertsteigernd weiterentwickeln; Releasepfad `e60d4889` ist gruen.
 
-**Nutzeraktion:** `things-alpha.apk` installieren und den ersten echten Start testen; danach Persistenz und Konto-A/B/RLS abnehmen.
+**Nutzeraktion:** Keine neue Aktion fuer diesen Quality-Lauf. Fuer die finale Things-Acceptance wird spaeter das current-main APK auf einem echten Android-Geraet benoetigt.
