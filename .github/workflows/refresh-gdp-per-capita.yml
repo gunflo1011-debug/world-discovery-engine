@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   refresh:
@@ -18,6 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install project dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Fetch official World Bank WDI snapshot
         run: node scripts/ingest-gdp-per-capita-wdi.mjs --year 2024
       - name: Validate snapshot contract
@@ -29,13 +32,28 @@ jobs:
           if(d.records.some(r=>!r.code||!r.country||!r.region?.code||!Number.isFinite(r.value)||r.year!==2024)) throw new Error('GDP snapshot contains malformed record');
           console.log(`Validated ${d.records.length} official country observations.`);
           NODE
+      - name: Gate generated snapshot against full site
+        run: npm run check
       - name: Commit verified snapshot when changed
+        id: commit_snapshot
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "$(git status --porcelain -- site/indicators/gdp-per-capita/data.json)" ]; then echo 'Snapshot unchanged'; exit 0; fi
+          if [ -z "$(git status --porcelain -- site/indicators/gdp-per-capita/data.json)" ]; then
+            echo 'Snapshot unchanged'
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add site/indicators/gdp-per-capita/data.json
           git commit -m 'Refresh verified GDP per capita snapshot'
           git push
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+      - name: Dispatch CI and Pages for refreshed main
+        if: steps.commit_snapshot.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run ci.yml --ref main
+          gh workflow run pages.yml --ref main
