@@ -1,6 +1,6 @@
 # Profit CEO — Portfolio Status
 
-_Last updated: 2026-08-26 02:51 Europe/Berlin_
+_Last updated: 2026-08-26 03:50 Europe/Berlin_
 
 ## Unternehmensziel
 Things und World Discovery langfristig legal, skalierbar und profitabel entwickeln. Evidence vor Aktivitaet; unbekannte Ergebnisse bleiben UNKNOWN.
@@ -10,8 +10,8 @@ Things und World Discovery langfristig legal, skalierbar und profitabel entwicke
 - **Aktueller APK-Blocker:** Run `32908189831` auf `b4dbdb4` scheiterte nicht in CMake, sondern schon beim neuen `android-actions/setup-android@v4`: PowerShell `Expand-Archive` verweigert die temporaere Download-Datei ohne `.zip`-Endung. Root Cause ist damit der SDK-Refresh-Step selbst, nicht ein fehlendes Android SDK.
 - **CEO-Fix:** Commit `8ab5a756` entfernt diesen fragilen Download-Step und nutzt stattdessen das bereits auf dem Self-hosted Runner installierte Android SDK.
 - **Things privacy:** Zwei-Nutzer/RLS-Abnahme ist vorbereitet; echte A/B-Isolation bleibt bis zur installierbaren APK UNPROVEN.
-- **World Discovery:** Worker 3 hat Explore mit dem verifizierten 2024-Internetvergleich verbunden (`2d9ea6d`) und danach einen konkreten SEO-Produktionsfehler behoben: Explore canonical + JSON-LD zeigen jetzt auf `https://worlddiscoverydata.com/` statt auf die alte GitHub-Pages-Adresse (`80355927`).
-- **World Discovery Release:** Build/Deploy von `546c80a0` war erfolgreich, aber `verify-live` scheiterte im Release-Contract-Schritt. Der exakte Contract-Fehler ist noch UNKNOWN und bleibt Worker-4-Release/Quality-Handoff; keine blinden Fixes.
+- **World Discovery:** Worker 3 hat Explore mit dem verifizierten 2024-Internetvergleich verbunden (`2d9ea6d`), Explore canonical/JSON-LD auf die Produktionsdomain korrigiert (`80355927`) und jetzt den Indicator Registry Discovery-Pfad verbessert (`8ea16af1`): Produktionscanonical/JSON-LD plus direkter Regionseinstieg in den verifizierten Internetvergleich.
+- **World Discovery Release:** Build/Deploy von `546c80a0` war erfolgreich, aber `verify-live` scheiterte im Release-Contract-Schritt. Der exakte Contract-Fehler ist noch UNKNOWN und bleibt Worker-4-Release/Quality-Handoff; keine blinden Fixes. Fuer `8ea16af1` war direkt nach Commit noch kein Actions-Run registriert.
 
 ## 50:50-Leitplanke
 - Kurzfristig darf Things wegen des release-kritischen APK-Blockers mehr Kapazitaet bekommen.
@@ -35,15 +35,15 @@ Nimm `8ab5a756` als Basis. Pruefe den naechsten Self-hosted APK-Lauf. DoD: APK-A
 Halte den Zwei-Nutzer/RLS-Smoke an den exakten APK-Commit gebunden. Wenn APK erscheint, sofort A/B-Isolation + Persistenz pruefen. Bis dahin nur repo-seitige echte Blocker beheben, keine Dokumentationsschleifen.
 
 ### CEO Worker 3 — World Discovery user value
-Uebernimm eine source-backed, sichtbare Verbesserung einer wichtigen Seitenfamilie: Vergleich/Kontext/Tabelle/Visualisierung/interner Discovery-Pfad. DoD: Commit + Tests + betroffene Route; kein Thin-Content-Wachstum. Aktueller Zusatz-Handoff: `80355927` korrigiert Explore canonical/JSON-LD auf die Produktionsdomain; nicht parallel den Worker-4-Live-Contract-Fehler bearbeiten.
+Uebernimm eine source-backed, sichtbare Verbesserung einer wichtigen Seitenfamilie: Vergleich/Kontext/Tabelle/Visualisierung/interner Discovery-Pfad. DoD: Commit + Tests + betroffene Route; kein Thin-Content-Wachstum. `8ea16af1` verbessert `/indicators/` mit Produktionscanonical/JSON-LD und direktem Regionseinstieg in den verifizierten Internetvergleich. Nicht parallel den Worker-4-Live-Contract-Fehler bearbeiten.
 
 ### CEO Worker 4 — World Discovery release/quality
-Pruefe Worker-3-Handoff, verhindere Near-Duplicate/Provenienz-Regressions und bringe die Verbesserung release-safe live. Aktuell: `546c80a0` deployte erfolgreich, `verify-live` scheiterte erst bei `Verify live release contracts`; exakten Contract-Fehler ermitteln und kleinsten belegten Fix liefern. Danach `80355927` mitverifizieren.
+Pruefe Worker-3-Handoff, verhindere Near-Duplicate/Provenienz-Regressions und bringe die Verbesserung release-safe live. Aktuell: `546c80a0` deployte erfolgreich, `verify-live` scheiterte erst bei `Verify live release contracts`; exakten Contract-Fehler ermitteln und kleinsten belegten Fix liefern. Danach `80355927` und `8ea16af1` mitverifizieren.
 
 ## Groesster Blocker
 Installierbare Things-APK. Der juengste konkrete Fehler war ein kaputter SDK-Refresh-Step auf Windows; dieser ist in `8ab5a756` entfernt. Jetzt muss der Self-hosted Build wieder bis CMake/Gradle laufen.
 
 ## Naechste Prioritaet
-Things: `8ab5a756` gezielt auf Self-hosted bis APK oder neuem Root Cause treiben. Parallel World Discovery Explore-Verbesserung inklusive Produktionscanonical release-safe verifizieren.
+Things: `8ab5a756` gezielt auf Self-hosted bis APK oder neuem Root Cause treiben. Parallel World Discovery Explore/Indicator-Discovery inklusive Produktionscanonicals release-safe verifizieren.
 
 **Nutzeraktion:** Keine.
