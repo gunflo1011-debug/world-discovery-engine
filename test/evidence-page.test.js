@@ -17,10 +17,13 @@ test('creates stable human-readable evidence slug', () => {
   assert.equal(evidenceSlug(evidence), 'germany-gdp-growth-2024');
 });
 
-test('renders canonical, structured dataset metadata and transparent revision history', () => {
+test('renders canonical, provenance-safe structured metadata and transparent revision history', () => {
   const html = renderRevisionEvidencePage(evidence, { baseUrl: 'https://facts.example' });
   assert.match(html, /<link rel="canonical" href="https:\/\/facts\.example\/evidence\/germany-gdp-growth-2024\/">/);
-  assert.match(html, /"@type":"Dataset"/);
+  assert.match(html, /"@type":"WebPage"/);
+  assert.match(html, /"@type":"CreativeWork"/);
+  assert.doesNotMatch(html, /"@type":"Dataset"/);
+  assert.match(html, /"isBasedOn":"https:\/\/data\.worldbank\.org\/"/);
   assert.match(html, /-25% revision/);
   assert.match(html, /Methodology and provenance/);
   assert.match(html, /World Bank WDI/);
