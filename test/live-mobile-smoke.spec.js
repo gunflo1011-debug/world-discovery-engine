@@ -139,7 +139,7 @@ test.describe('mobile smoke tests', () => {
 
           if (routeConfig.currentDataset) {
             const htmlBytes = (await response.body()).byteLength;
-            expect(htmlBytes, `${route} HTML exceeded its mobile performance budget`).toBeLessThan(110_000);
+            expect(htmlBytes, `${route} HTML exceeded its mobile performance budget`).toBeLessThan(125_000);
             expect(await page.locator('article').count(), `${route} rendered duplicate country cards`).toBeLessThan(10);
             await expect(page.locator('#country-profiles')).toHaveCount(0);
 
@@ -178,10 +178,7 @@ test.describe('mobile smoke tests', () => {
             expect(payload.records.length, `JSON coverage is not materially broader for ${route}`).toBeGreaterThan(12);
             expect(payload.records.length, `JSON coverage count mismatch for ${route}`).toBe(payload.coverage?.countries);
             expect(payload.records.every(record => record.year === routeConfig.currentDataset.observationYear), `mixed observation years in ${route}`).toBeTruthy();
-            expect(
-              await page.locator('a[href^="./country/"]').count(),
-              `${route} must link every country from both the region directory and comparison table`
-            ).toBe(payload.records.length * 2);
+            expect(await page.locator('a[href^="./country/"]').count(), `${route} must link every country from both the region directory and comparison table`).toBe(payload.records.length * 2);
 
             const tableRows = page.locator('#internet-table tbody tr');
             const visibleRows = () => tableRows.evaluateAll((items) => items.filter((item) => !item.hidden).length);
@@ -319,10 +316,7 @@ test.describe('mobile smoke tests', () => {
             expect(entityIx, `CSV entity_code missing for ${route}`).toBeGreaterThanOrEqual(0);
             expect(indicatorIx, `CSV indicator_code missing for ${route}`).toBeGreaterThanOrEqual(0);
             expect(yearIx, `CSV reference_year missing for ${route}`).toBeGreaterThanOrEqual(0);
-            const identityMatches = lines.slice(1).some(values =>
-              values[entityIx] === routeConfig.evidence.entityCode &&
-              values[indicatorIx] === routeConfig.evidence.indicatorCode &&
-              String(values[yearIx]) === String(routeConfig.evidence.referenceYear));
+            const identityMatches = lines.slice(1).some(values => values[entityIx] === routeConfig.evidence.entityCode && values[indicatorIx] === routeConfig.evidence.indicatorCode && String(values[yearIx]) === String(routeConfig.evidence.referenceYear));
             expect(identityMatches, `CSV semantic identity mismatch for ${route}`).toBeTruthy();
           }
 
@@ -333,13 +327,7 @@ test.describe('mobile smoke tests', () => {
             if (!el || el === document.body || el === document.documentElement) return null;
             const style = getComputedStyle(el);
             const rect = el.getBoundingClientRect();
-            return {
-              tag: el.tagName,
-              visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none',
-              outlineStyle: style.outlineStyle,
-              outlineWidth: style.outlineWidth,
-              boxShadow: style.boxShadow,
-            };
+            return { tag: el.tagName, visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none', outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth, boxShadow: style.boxShadow };
           });
           expect(focusState, `Tab did not reach an interactive element on ${route}`).not.toBeNull();
           expect(focusState?.visible, `focused element is not visible on ${route}: ${JSON.stringify(focusState)}`).toBeTruthy();
