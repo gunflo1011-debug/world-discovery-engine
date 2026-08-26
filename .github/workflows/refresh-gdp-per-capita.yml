@@ -51,7 +51,7 @@ jobs:
           git push
           echo 'changed=true' >> "$GITHUB_OUTPUT"
       - name: Dispatch CI and Pages for refreshed main
-        if: steps.commit_snapshot.outputs.changed == 'true'
+        if: steps.commit_snapshot.outputs.changed == 'true' || github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
