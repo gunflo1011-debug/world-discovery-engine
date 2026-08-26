@@ -39,6 +39,14 @@ const itemList = {
 // enrichment is run against an older generated artifact.
 html = html.replace(/<section\b[^>]*\bid="country-profiles"[^>]*>[\s\S]*?<\/section>/, '');
 
+// Keep the user-visible scope contract explicit. The dataset is broad and same-year,
+// but countries without a current-year observation are deliberately omitted rather
+// than backfilled, so this must not be presented as a complete global ranking.
+html = html.replace(
+  `Countries without a ${data.observationYear} observation are omitted rather than backfilled from older years.`,
+  `Countries without a ${data.observationYear} observation are omitted rather than backfilled from older years, so this is not a complete global ranking.`
+);
+
 if (!html.includes('Internet use country profiles')) {
   html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(itemList)}</script></head>`);
 }
