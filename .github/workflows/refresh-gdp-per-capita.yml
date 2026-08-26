@@ -1,0 +1,41 @@
+name: Refresh GDP per capita snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-gdp-per-capita.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fetch official World Bank WDI snapshot
+        run: node scripts/ingest-gdp-per-capita-wdi.mjs --year 2024
+      - name: Validate snapshot contract
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile } from 'node:fs/promises';
+          const d=JSON.parse(await readFile('site/indicators/gdp-per-capita/data.json','utf8'));
+          if(d.status!=='CURRENT_VERIFIED'||d.indicator?.code!=='NY.GDP.PCAP.CD'||d.observationYear!==2024||!Array.isArray(d.records)||d.records.length<150) throw new Error('GDP snapshot contract failed');
+          if(d.records.some(r=>!r.code||!r.country||!r.region?.code||!Number.isFinite(r.value)||r.year!==2024)) throw new Error('GDP snapshot contains malformed record');
+          console.log(`Validated ${d.records.length} official country observations.`);
+          NODE
+      - name: Commit verified snapshot when changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- site/indicators/gdp-per-capita/data.json; then echo 'Snapshot unchanged'; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/indicators/gdp-per-capita/data.json
+          git commit -m 'Refresh verified GDP per capita snapshot'
+          git push
