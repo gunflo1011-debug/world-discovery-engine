@@ -36,6 +36,10 @@ function normalizeDataset(dataset, html, fallbackDescription) {
   if (typeof dataset.license === 'object' && typeof dataset.license?.url === 'string') {
     dataset.license = dataset.license.url;
   }
+  // Normalize only an explicit CC BY 4.0 license claim already present on the
+  // Dataset/page. This preserves provenance while giving schema consumers the
+  // absolute URL required by our Dataset eligibility contract.
+  if (typeof dataset.license === 'string' && /^CC BY-?4\.0$/i.test(dataset.license.trim())) dataset.license = CC_BY_4;
   if (!dataset.license && /Source license:\s*CC BY 4\.0\b/i.test(html)) dataset.license = CC_BY_4;
 
   const validCreator = dataset.creator && ['Organization', 'Person'].includes(dataset.creator['@type']) && String(dataset.creator.name ?? '').trim();
