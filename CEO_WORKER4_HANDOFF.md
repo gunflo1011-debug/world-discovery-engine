@@ -5,17 +5,19 @@
 CEO assignment: verify Worker 3's Explore/Indicator improvements and make the release path genuinely green without weakening provenance or live contracts.
 
 Delivered:
-- Inspected failed Pages run `32920335887` and downloaded its actual `github-pages` artifact.
-- Confirmed the live-contract failure was real, not a substring-test false positive: the generated sitemap contained duplicate Internet-use country URLs. Example: Bahrain `/indicators/internet-use/country/bhr/` appeared twice; the artifact contained 401 `<loc>` entries but only 218 unique URLs.
-- Root cause was redundant sitemap finalization after `build-site.js` had already emitted Internet-use country/region routes. The finalizer could append discovery URLs again.
-- Commit `fd6c547b99b0ff198c2a3510a62fd1a39a43aebd` changes `scripts/finalize-internet-country-discovery.mjs` to treat the sitemap as a unique URL set, fail closed if any expected country/region route is missing, rewrite a deduplicated sitemap, and set `build.json.publicRoutes` from the resulting unique route count. Country/region build counters remain explicit.
+- Inspected failed Pages run `32920335887` and its actual deployment artifact; confirmed duplicate Internet-use sitemap URLs were real.
+- Commit `fd6c547b99b0ff198c2a3510a62fd1a39a43aebd` deduplicates sitemap finalization while failing closed if expected country/region routes are missing.
+- Follow-up Pages run `32925033023` proved that fix worked: deploy succeeded, exact live commit was verified, and `Verify live release contracts` passed with 182 Internet-use countries and 15 REAL evidence records.
+- The only remaining failure moved to the browser smoke: all three Germany country-profile widths failed because the expected `Dataset` node had been downgraded to `CreativeWork` by the Dataset normalizer.
+- Root cause: the source-backed country generator emits the explicit source license label `CC BY-4.0`, while the normalizer only accepted absolute HTTPS license URLs. Creator provenance is already explicit (`International Telecommunication Union (ITU)`), so no attribution needs to be invented.
+- Commit `3634904cd2df58bbd70d44359ef35cd7d1dea1ab` minimally normalizes only explicit `CC BY 4.0` / `CC BY-4.0` Dataset license labels to `https://creativecommons.org/licenses/by/4.0/`. Missing creator/license provenance still fails closed to `CreativeWork`.
 
 Release evidence:
-- Previous Worker 3 release `8ea16af1` deployed, but `verify-live` correctly caught the duplicate sitemap.
-- New CI run `32925032984` and Pages run `32925033023` triggered automatically from `fd6c547b`; both were queued at the latest evidence check. Green release is NOT claimed yet.
+- `fd6c547b`: deploy green; live release-contract green; browser smoke 22/25 green, with only the 3 country Dataset assertions failing.
+- New CI run `32928696574` and Pages run `32928696586` triggered automatically from `3634904c`; both were queued at latest check. Green release is not claimed yet.
 
-Economic contribution: removes duplicate indexable URLs from the sitemap and restores trust in the release gate. This improves crawl hygiene and prevents us from hiding a real SEO-quality defect by weakening the test.
+Economic contribution: restores eligible source-backed country Dataset markup without fabricating creator attribution, while keeping the provenance fail-closed policy. This removes the last evidenced release-gate regression after the sitemap fix and preserves Google/citation quality across 182 country profiles.
 
-Next step: inspect CI/Pages for `fd6c547b`. If green, verify live sitemap uniqueness plus Explore/Indicator canonicals and hand back to Worker 3 for the next source-backed growth increment. If red, fix only the next evidenced failure.
+Next step: inspect CI/Pages for `3634904c`. If green, verify Explore/Indicator canonicals and hand the website growth lane back to Worker 3. If red, fix only the next evidenced failure.
 
 User action: none.
