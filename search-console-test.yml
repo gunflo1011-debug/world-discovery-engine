@@ -1,0 +1,67 @@
+name: Search Console Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  search-console:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Google API libraries
+        run: pip install google-api-python-client google-auth
+
+      - name: Query Search Console
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from datetime import date, timedelta
+
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+
+          info = json.loads(os.environ["GOOGLE_CREDENTIALS"])
+
+          credentials = service_account.Credentials.from_service_account_info(
+              info,
+              scopes=["https://www.googleapis.com/auth/webmasters.readonly"],
+          )
+
+          service = build("searchconsole", "v1", credentials=credentials)
+
+          end_date = date.today() - timedelta(days=3)
+          start_date = end_date - timedelta(days=27)
+
+          site = "sc-domain:worlddiscoverydata.com"
+
+          result = service.searchanalytics().query(
+              siteUrl=site,
+              body={
+                  "startDate": start_date.isoformat(),
+                  "endDate": end_date.isoformat(),
+                  "dimensions": ["date"],
+                  "rowLimit": 1000,
+              },
+          ).execute()
+
+          rows = result.get("rows", [])
+
+          clicks = sum(row.get("clicks", 0) for row in rows)
+          impressions = sum(row.get("impressions", 0) for row in rows)
+
+          print("SEARCH CONSOLE CONNECTION: OK")
+          print(f"Period: {start_date} to {end_date}")
+          print(f"Clicks: {clicks:.0f}")
+          print(f"Impressions: {impressions:.0f}")
+          PY
