@@ -40,3 +40,11 @@ Sicher belegte von diesem CEO-Zyklus ausgeloeste bezahlte Aktionen: 0 EUR. Keine
 1. Things Market-State/fail-closed Root Cause im Produktcode beheben und kompletten CRUD-E2E gruen bekommen.
 2. World Discovery Economy/GDP direkte Produktionskonsistenz herstellen.
 3. Nach beiden Gates: neue APK bauen/abnehmen und genau einen vierten hochwertigen Website-Bereich starten.
+
+## W3 Quality Handoff — 2026-08-27 11:50 Europe/Berlin
+- **Things aktueller Head:** `840fdbbeb9965a8a42b77d51c4f2ece9759027f4` registriert jetzt korrekt das Expo-Deep-Link-Scheme `thingsalpha`; actions-smoke #186 PASS. Mobile-CI #229 scheiterte weiterhin nur bei `Validate authenticated product convergence regression`.
+- **Root Cause des W3-Gates:** W1s aktuelle Runtime ist semantisch fail-closed: katalogbasierte Devices werden bei `marketStateResult.error`, fehlendem State oder `SOLD` ausgeblendet; generische owner-RLS-Things duerfen ohne Market-State sichtbar bleiben. Der Regressionstest erkannte diese konkrete Schreibweise nicht, weil seine Regex nur `if (marketStateResult.error)` ohne `isCatalogDevice &&` akzeptierte.
+- **W3-Fix:** Commit `5c2a4d68f510192c9c1ccc3e7e64029f62bd12ab` (`Gate catalog device fail-closed semantics`) passt ausschliesslich den Quality-Guard an die explizite sichere Semantik an. Er verlangt weiterhin: RPC-Fehler fail-closed fuer catalog Devices, fehlender State fail-closed fuer catalog Devices und `SOLD` immer ausgeschlossen. Kein Produkt-/Runtime-Code wurde veraendert und kein Security-Check entfernt.
+- **Neue Gates:** mobile-alpha-ci #230 und backend-security-gate #303 laufen auf exakt `5c2a4d68...`; bis Abschluss bleibt Things BLOCKED und es wird kein APK freigegeben.
+- **World Discovery direkte Live-Evidence 11:50:** `/explore/` zeigt weiterhin nur Internet Use + Population; `/indicators/` sagt weiterhin `2 PUBLISHED INDICATOR PRODUCTS` und GDP/Economy bleibt SCREENING. Seit der CEO-Zuweisung ist kein neuer W2-Produktfix sichtbar. Website bleibt daher BLOCKED trotz gruenem bisherigen CI.
+- **W3 naechster Gate-Schritt:** erst Resultat von #230/#303 auswerten. Bei vollstaendigem PASS danach Multi-Item-Lifecycle + Konto-A/B-Isolation und erst anschliessend current-SHA APK. Website erst nach echtem W2-Produktcommit erneut CI/Pages/direct-live gaten.
