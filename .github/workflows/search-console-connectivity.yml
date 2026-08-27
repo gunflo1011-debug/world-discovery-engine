@@ -69,12 +69,12 @@ jobs:
               if dimensions: body['dimensions']=dimensions
               r=requests.post(endpoint,headers=headers,json=body,timeout=60)
               r.raise_for_status()
-              return r.json().get('rows',[])
+              return r.json()
 
           # Stable 28-day final-data baseline.
           final_end=datetime.date.today()-datetime.timedelta(days=2)
           final_start=final_end-datetime.timedelta(days=27)
-          aggregate=query(final_start,final_end,[],1,'final')
+          aggregate=query(final_start,final_end,[],1,'final').get('rows',[])
           agg=aggregate[0] if aggregate else {}
           clicks=float(agg.get('clicks',0))
           impressions=float(agg.get('impressions',0))
@@ -84,11 +84,11 @@ jobs:
           dimensions={}
           for dim in ['date','query','page','country','device','searchAppearance']:
               try:
-                  dimensions[dim]=query(final_start,final_end,[dim],25000,'final')
+                  dimensions[dim]=query(final_start,final_end,[dim],25000,'final').get('rows',[])
               except requests.HTTPError as exc:
                   dimensions[dim]={'unavailable':str(exc)}
 
-          detailed=query(final_start,final_end,['date','page','query'],25000,'final')
+          detailed=query(final_start,final_end,['date','page','query'],25000,'final').get('rows',[])
           with open('search-console-response.json','w',encoding='utf-8') as f:
               json.dump({'rows':detailed},f)
 
@@ -96,33 +96,27 @@ jobs:
               if not isinstance(rows,list): return rows
               return rows[:n]
 
-          # Fresh rolling 24-hour view. Search Console's `all` data state can include
-          # preliminary/fresh data. We request date+hour and retain only returned
-          # hourly buckets whose UTC-constructed timestamp is within the last 24h.
+          # Search Console requires dataState=hourly_all when grouping by hour.
+          # Hourly timestamps and incomplete-hour metadata are reported by Google in
+          # America/Los_Angeles time, so we retain Google's returned hour buckets and
+          # use the latest 24 returned buckets instead of inventing UTC timestamps.
           now=datetime.datetime.now(datetime.timezone.utc)
-          cutoff=now-datetime.timedelta(hours=24)
-          fresh_start=(cutoff-datetime.timedelta(hours=1)).date()
           fresh_end=now.date()
+          fresh_start=fresh_end-datetime.timedelta(days=2)
           fresh_error=None
           fresh_hourly=[]
+          fresh_metadata={}
           try:
-              fresh_hourly=query(fresh_start,fresh_end,['date','hour'],25000,'all')
+              hourly_payload=query(fresh_start,fresh_end,['date','hour'],25000,'hourly_all')
+              fresh_hourly=hourly_payload.get('rows',[])
+              fresh_metadata=hourly_payload.get('metadata',{}) or {}
           except requests.HTTPError as exc:
               fresh_error=str(exc)
 
-          rolling=[]
-          for row in fresh_hourly if isinstance(fresh_hourly,list) else []:
-              keys=row.get('keys',[])
-              if len(keys) < 2: continue
-              try:
-                  d=datetime.date.fromisoformat(str(keys[0]))
-                  hour=int(keys[1])
-                  ts=datetime.datetime(d.year,d.month,d.day,hour,tzinfo=datetime.timezone.utc)
-              except Exception:
-                  continue
-              if cutoff <= ts <= now:
-                  rolling.append(row)
-
+          # API sorts date-grouped results oldest -> newest; keep the latest 24 hourly
+          # rows actually returned by Search Console. This is the closest API-native
+          # rolling 24-hour view and avoids timezone conversion errors.
+          rolling=(fresh_hourly[-24:] if isinstance(fresh_hourly,list) else [])
           fresh_clicks=sum(float(r.get('clicks',0)) for r in rolling)
           fresh_impressions=sum(float(r.get('impressions',0)) for r in rolling)
           fresh_ctr=(fresh_clicks/fresh_impressions) if fresh_impressions else 0
@@ -131,13 +125,12 @@ jobs:
               if fresh_impressions else 0
           )
 
-          # Also collect fresh query/page/device/country views for the same calendar
-          # window. These are useful context but may cover slightly more than 24h;
-          # the rolling24h aggregate above is the strict filtered metric.
+          # Context dimensions use preliminary/fresh day-level data. They can cover
+          # up to the surrounding calendar window and are labeled accordingly.
           fresh_dimensions={}
           for dim in ['query','page','country','device','searchAppearance']:
               try:
-                  fresh_dimensions[dim]=query(fresh_start,fresh_end,[dim],25000,'all')
+                  fresh_dimensions[dim]=query(fresh_start,fresh_end,[dim],25000,'all').get('rows',[])
               except requests.HTTPError as exc:
                   fresh_dimensions[dim]={'unavailable':str(exc)}
 
@@ -158,9 +151,9 @@ jobs:
               'daily':clean_rows(dimensions['date'],40),
               'fresh24h':{
                   'generatedAtUtc':now.isoformat(),
-                  'cutoffUtc':cutoff.isoformat(),
-                  'dataState':'all',
+                  'dataState':'hourly_all',
                   'hourlyApiError':fresh_error,
+                  'metadata':fresh_metadata,
                   'returnedHourlyRows':len(fresh_hourly) if isinstance(fresh_hourly,list) else 0,
                   'rolling24hRows':len(rolling),
                   'clicks':fresh_clicks,
