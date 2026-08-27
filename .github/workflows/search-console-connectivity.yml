@@ -9,6 +9,8 @@ on:
       - 'scripts/extract-search-console.mjs'
       - 'scripts/analyze-search-console.mjs'
       - 'test/search-console-extractor.test.js'
+  schedule:
+    - cron: '17 * * * *'
 
 permissions:
   contents: read
@@ -30,7 +32,7 @@ jobs:
           python-version: '3.12'
       - name: Install auth dependencies
         run: python -m pip install --disable-pip-version-check --quiet google-auth requests
-      - name: Fetch Search Console baseline
+      - name: Fetch Search Console baseline and fresh 24-hour view
         shell: bash
         run: |
           python - <<'PY'
@@ -41,7 +43,10 @@ jobs:
           raw=os.environ.get('GOOGLE_SEARCH_CONSOLE_CREDENTIALS','')
           if not raw: raise SystemExit('Missing GOOGLE_SEARCH_CONSOLE_CREDENTIALS secret')
           info=json.loads(raw)
-          credentials=service_account.Credentials.from_service_account_info(info,scopes=['https://www.googleapis.com/auth/webmasters.readonly'])
+          credentials=service_account.Credentials.from_service_account_info(
+              info,
+              scopes=['https://www.googleapis.com/auth/webmasters.readonly'],
+          )
           credentials.refresh(Request())
           headers={'Authorization':f'Bearer {credentials.token}','Content-Type':'application/json'}
           target='sc-domain:worlddiscoverydata.com'
@@ -52,18 +57,24 @@ jobs:
           match=next((s for s in sites.json().get('siteEntry',[]) if s.get('siteUrl')==target),None)
           if not match: raise SystemExit('Connected, but target property not visible')
 
-          end=datetime.date.today()-datetime.timedelta(days=2)
-          start=end-datetime.timedelta(days=27)
           endpoint='https://www.googleapis.com/webmasters/v3/sites/'+encoded+'/searchAnalytics/query'
 
-          def query(dimensions=None, limit=25000):
-              body={'startDate':str(start),'endDate':str(end),'rowLimit':limit,'dataState':'final'}
+          def query(start_date, end_date, dimensions=None, limit=25000, data_state='final'):
+              body={
+                  'startDate':str(start_date),
+                  'endDate':str(end_date),
+                  'rowLimit':limit,
+                  'dataState':data_state,
+              }
               if dimensions: body['dimensions']=dimensions
               r=requests.post(endpoint,headers=headers,json=body,timeout=60)
               r.raise_for_status()
               return r.json().get('rows',[])
 
-          aggregate=query([],1)
+          # Stable 28-day final-data baseline.
+          final_end=datetime.date.today()-datetime.timedelta(days=2)
+          final_start=final_end-datetime.timedelta(days=27)
+          aggregate=query(final_start,final_end,[],1,'final')
           agg=aggregate[0] if aggregate else {}
           clicks=float(agg.get('clicks',0))
           impressions=float(agg.get('impressions',0))
@@ -73,11 +84,11 @@ jobs:
           dimensions={}
           for dim in ['date','query','page','country','device','searchAppearance']:
               try:
-                  dimensions[dim]=query([dim],25000)
+                  dimensions[dim]=query(final_start,final_end,[dim],25000,'final')
               except requests.HTTPError as exc:
                   dimensions[dim]={'unavailable':str(exc)}
 
-          detailed=query(['date','page','query'],25000)
+          detailed=query(final_start,final_end,['date','page','query'],25000,'final')
           with open('search-console-response.json','w',encoding='utf-8') as f:
               json.dump({'rows':detailed},f)
 
@@ -85,10 +96,55 @@ jobs:
               if not isinstance(rows,list): return rows
               return rows[:n]
 
+          # Fresh rolling 24-hour view. Search Console's `all` data state can include
+          # preliminary/fresh data. We request date+hour and retain only returned
+          # hourly buckets whose UTC-constructed timestamp is within the last 24h.
+          now=datetime.datetime.now(datetime.timezone.utc)
+          cutoff=now-datetime.timedelta(hours=24)
+          fresh_start=(cutoff-datetime.timedelta(hours=1)).date()
+          fresh_end=now.date()
+          fresh_error=None
+          fresh_hourly=[]
+          try:
+              fresh_hourly=query(fresh_start,fresh_end,['date','hour'],25000,'all')
+          except requests.HTTPError as exc:
+              fresh_error=str(exc)
+
+          rolling=[]
+          for row in fresh_hourly if isinstance(fresh_hourly,list) else []:
+              keys=row.get('keys',[])
+              if len(keys) < 2: continue
+              try:
+                  d=datetime.date.fromisoformat(str(keys[0]))
+                  hour=int(keys[1])
+                  ts=datetime.datetime(d.year,d.month,d.day,hour,tzinfo=datetime.timezone.utc)
+              except Exception:
+                  continue
+              if cutoff <= ts <= now:
+                  rolling.append(row)
+
+          fresh_clicks=sum(float(r.get('clicks',0)) for r in rolling)
+          fresh_impressions=sum(float(r.get('impressions',0)) for r in rolling)
+          fresh_ctr=(fresh_clicks/fresh_impressions) if fresh_impressions else 0
+          fresh_position=(
+              sum(float(r.get('position',0))*float(r.get('impressions',0)) for r in rolling)/fresh_impressions
+              if fresh_impressions else 0
+          )
+
+          # Also collect fresh query/page/device/country views for the same calendar
+          # window. These are useful context but may cover slightly more than 24h;
+          # the rolling24h aggregate above is the strict filtered metric.
+          fresh_dimensions={}
+          for dim in ['query','page','country','device','searchAppearance']:
+              try:
+                  fresh_dimensions[dim]=query(fresh_start,fresh_end,[dim],25000,'all')
+              except requests.HTTPError as exc:
+                  fresh_dimensions[dim]={'unavailable':str(exc)}
+
           summary={
               'property':target,
-              'startDate':str(start),
-              'endDate':str(end),
+              'startDate':str(final_start),
+              'endDate':str(final_end),
               'clicks':clicks,
               'impressions':impressions,
               'ctr':ctr,
@@ -100,8 +156,29 @@ jobs:
               'devices':clean_rows(dimensions['device']),
               'searchAppearance':clean_rows(dimensions['searchAppearance']),
               'daily':clean_rows(dimensions['date'],40),
+              'fresh24h':{
+                  'generatedAtUtc':now.isoformat(),
+                  'cutoffUtc':cutoff.isoformat(),
+                  'dataState':'all',
+                  'hourlyApiError':fresh_error,
+                  'returnedHourlyRows':len(fresh_hourly) if isinstance(fresh_hourly,list) else 0,
+                  'rolling24hRows':len(rolling),
+                  'clicks':fresh_clicks,
+                  'impressions':fresh_impressions,
+                  'ctr':fresh_ctr,
+                  'averagePosition':fresh_position,
+                  'hourly':rolling,
+                  'calendarWindowStart':str(fresh_start),
+                  'calendarWindowEnd':str(fresh_end),
+                  'topQueriesCalendarWindow':clean_rows(fresh_dimensions['query']),
+                  'topPagesCalendarWindow':clean_rows(fresh_dimensions['page']),
+                  'countriesCalendarWindow':clean_rows(fresh_dimensions['country']),
+                  'devicesCalendarWindow':clean_rows(fresh_dimensions['device']),
+                  'searchAppearanceCalendarWindow':clean_rows(fresh_dimensions['searchAppearance']),
+              },
           }
-          with open('search-console-baseline.json','w',encoding='utf-8') as f: json.dump(summary,f,indent=2)
+          with open('search-console-baseline.json','w',encoding='utf-8') as f:
+              json.dump(summary,f,indent=2)
 
           print('SEARCH_CONSOLE_BASELINE_BEGIN')
           print(json.dumps(summary,indent=2))
