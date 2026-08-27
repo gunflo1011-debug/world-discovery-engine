@@ -30,13 +30,14 @@ jobs:
           python-version: '3.12'
       - name: Install auth dependencies
         run: python -m pip install --disable-pip-version-check --quiet google-auth requests
-      - name: Verify access and fetch aggregate performance
+      - name: Fetch Search Console baseline
         shell: bash
         run: |
           python - <<'PY'
           import datetime, json, os, requests
           from google.oauth2 import service_account
           from google.auth.transport.requests import Request
+
           raw=os.environ.get('GOOGLE_SEARCH_CONSOLE_CREDENTIALS','')
           if not raw: raise SystemExit('Missing GOOGLE_SEARCH_CONSOLE_CREDENTIALS secret')
           info=json.loads(raw)
@@ -44,20 +45,67 @@ jobs:
           credentials.refresh(Request())
           headers={'Authorization':f'Bearer {credentials.token}','Content-Type':'application/json'}
           target='sc-domain:worlddiscoverydata.com'
+          encoded=requests.utils.quote(target,safe='')
+
           sites=requests.get('https://www.googleapis.com/webmasters/v3/sites',headers=headers,timeout=30)
           sites.raise_for_status()
           match=next((s for s in sites.json().get('siteEntry',[]) if s.get('siteUrl')==target),None)
           if not match: raise SystemExit('Connected, but target property not visible')
+
           end=datetime.date.today()-datetime.timedelta(days=2)
           start=end-datetime.timedelta(days=27)
-          body={'startDate':str(start),'endDate':str(end),'dimensions':['date','page','query'],'rowLimit':25000,'dataState':'final'}
-          url='https://www.googleapis.com/webmasters/v3/sites/'+requests.utils.quote(target,safe='')+'/searchAnalytics/query'
-          response=requests.post(url,headers=headers,json=body,timeout=60)
-          response.raise_for_status()
-          with open('search-console-response.json','w',encoding='utf-8') as f: json.dump(response.json(),f)
-          print('Search Console connection OK')
-          print('Property:',target)
-          print('Window:',start,'to',end)
+          endpoint='https://www.googleapis.com/webmasters/v3/sites/'+encoded+'/searchAnalytics/query'
+
+          def query(dimensions=None, limit=25000):
+              body={'startDate':str(start),'endDate':str(end),'rowLimit':limit,'dataState':'final'}
+              if dimensions: body['dimensions']=dimensions
+              r=requests.post(endpoint,headers=headers,json=body,timeout=60)
+              r.raise_for_status()
+              return r.json().get('rows',[])
+
+          aggregate=query([],1)
+          agg=aggregate[0] if aggregate else {}
+          clicks=float(agg.get('clicks',0))
+          impressions=float(agg.get('impressions',0))
+          ctr=float(agg.get('ctr',0))
+          position=float(agg.get('position',0)) if agg else 0
+
+          dimensions={}
+          for dim in ['date','query','page','country','device','searchAppearance']:
+              try:
+                  dimensions[dim]=query([dim],25000)
+              except requests.HTTPError as exc:
+                  dimensions[dim]={'unavailable':str(exc)}
+
+          detailed=query(['date','page','query'],25000)
+          with open('search-console-response.json','w',encoding='utf-8') as f:
+              json.dump({'rows':detailed},f)
+
+          def clean_rows(rows, n=10):
+              if not isinstance(rows,list): return rows
+              return rows[:n]
+
+          summary={
+              'property':target,
+              'startDate':str(start),
+              'endDate':str(end),
+              'clicks':clicks,
+              'impressions':impressions,
+              'ctr':ctr,
+              'averagePosition':position,
+              'rowCounts':{k:(len(v) if isinstance(v,list) else None) for k,v in dimensions.items()},
+              'topQueries':clean_rows(dimensions['query']),
+              'topPages':clean_rows(dimensions['page']),
+              'countries':clean_rows(dimensions['country']),
+              'devices':clean_rows(dimensions['device']),
+              'searchAppearance':clean_rows(dimensions['searchAppearance']),
+              'daily':clean_rows(dimensions['date'],40),
+          }
+          with open('search-console-baseline.json','w',encoding='utf-8') as f: json.dump(summary,f,indent=2)
+
+          print('SEARCH_CONSOLE_BASELINE_BEGIN')
+          print(json.dumps(summary,indent=2))
+          print('SEARCH_CONSOLE_BASELINE_END')
           PY
       - name: Normalize, test and analyze
         run: |
@@ -70,6 +118,7 @@ jobs:
         with:
           name: search-console-performance
           path: |
+            search-console-baseline.json
             search-console.csv
             search-console-opportunities.txt
-          retention-days: 14
+          retention-days: 30
