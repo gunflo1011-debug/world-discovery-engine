@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
+import { join, relative } from 'node:path';
 
 function parseJsonLd(html) {
   return [...html.matchAll(/<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)]
@@ -26,6 +27,32 @@ function assertEligibleDataset(dataset, label) {
   assert.equal(typeof dataset.license, 'string', `${label}: Dataset license must be a URL string`);
   assert.match(dataset.license, /^https:\/\//, `${label}: Dataset license must use an absolute HTTPS URL`);
 }
+
+async function htmlFiles(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const out = [];
+  for (const entry of entries) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...await htmlFiles(path));
+    else if (entry.isFile() && entry.name.endsWith('.html')) out.push(path);
+  }
+  return out;
+}
+
+test('every published Dataset node has Google-eligible source-backed core metadata', async () => {
+  const siteRoot = new URL('../site/', import.meta.url);
+  const files = await htmlFiles(siteRoot.pathname);
+  let datasetCount = 0;
+  for (const path of files) {
+    const html = await readFile(path, 'utf8');
+    const datasets = parseJsonLd(html).flatMap(datasetNodes);
+    datasets.forEach((dataset, index) => {
+      datasetCount += 1;
+      assertEligibleDataset(dataset, `${relative(siteRoot.pathname, path)} Dataset ${index + 1}`);
+    });
+  }
+  assert.ok(datasetCount >= 1, 'published site must expose at least one eligible Dataset');
+});
 
 test('internet-use parent Dataset has Google-eligible core metadata', async () => {
   const html = await readFile(new URL('../site/indicators/internet-use/index.html', import.meta.url), 'utf8');
