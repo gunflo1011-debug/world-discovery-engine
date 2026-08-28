@@ -39,9 +39,7 @@ test.describe('internet-use country profile live smoke', () => {
       expect(((await page.locator('meta[name="description"]').getAttribute('content')) || '').trim().length).toBeGreaterThan(40);
 
       const heading = page.getByRole('heading', { level: 1 });
-      await expect(heading).toContainText(new RegExp(`^${sentinel.country} internet (?:penetration / )?internet use rate`, 'i'));
-      await expect(heading).toContainText(/internet penetration/i);
-      await expect(heading).toContainText(/internet use rate/i);
+      await expect(heading).toContainText(new RegExp(`^${sentinel.country} internet penetration rate in ${sentinel.year}:`, 'i'));
       await expect(page.getByText(new RegExp(`${sentinel.indicator}`)).first()).toBeVisible();
       await expect(page.getByText(new RegExp(`${sentinel.year}`)).first()).toBeVisible();
       await expect(page.getByText(/not to a complete worldwide ranking/i)).toBeVisible();
@@ -104,7 +102,7 @@ test('AI discovery manifest and llms.txt are live, citation-ready, and source-fa
   const evidence = await evidenceResponse.json();
   const internet = await internetResponse.json();
 
-  expect(manifest.schemaVersion).toBe('1.1');
+  expect(manifest.schemaVersion).toBe('1.2');
   expect(manifest.generatedFrom?.realEvidenceIndex).toBe(`${BASE}/evidence/index.json`);
   expect(manifest.generatedFrom?.internetUseDataset).toBe(`${BASE}/indicators/internet-use/data.json`);
   expect(manifest.generatedFrom?.sourcesPage).toBe(`${BASE}/sources/`);
@@ -228,8 +226,8 @@ test.describe('refreshed sources discovery page live smoke', () => {
       expect(((await page.locator('meta[name="description"]').getAttribute('content')) || '').trim().length).toBeGreaterThan(40);
 
       await expect(page.getByRole('heading', { level: 1 })).toContainText('Sources, provenance & machine access');
-      await expect(page.getByText(/verified REAL population-revision evidence is published/i)).toBeVisible();
-      await expect(page.getByText(/CURRENT_VERIFIED same-year observations/i)).toBeVisible();
+      await expect(page.getByText(/REAL population-revision evidence, CURRENT_VERIFIED Internet Use observations/i)).toBeVisible();
+      await expect(page.getByText(/CURRENT_VERIFIED Internet Use observations/i)).toBeVisible();
       await expect(page.getByText(/Real-GDP revision publishing remains blocked/i)).toBeVisible();
 
       const structured = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
