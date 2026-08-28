@@ -141,13 +141,32 @@ jobs:
               fresh_error=str(exc)
 
           rolling=(fresh_hourly[-24:] if isinstance(fresh_hourly,list) else [])
-          fresh_clicks=sum(float(r.get('clicks',0)) for r in rolling)
-          fresh_impressions=sum(float(r.get('impressions',0)) for r in rolling)
-          fresh_ctr=(fresh_clicks/fresh_impressions) if fresh_impressions else 0
-          fresh_position=(
-              sum(float(r.get('position',0))*float(r.get('impressions',0)) for r in rolling)/fresh_impressions
-              if fresh_impressions else 0
-          )
+          if fresh_error is None:
+              fresh_clicks=sum(float(r.get('clicks',0)) for r in rolling)
+              fresh_impressions=sum(float(r.get('impressions',0)) for r in rolling)
+              fresh_ctr=(fresh_clicks/fresh_impressions) if fresh_impressions else 0
+              fresh_position=(
+                  sum(float(r.get('position',0))*float(r.get('impressions',0)) for r in rolling)/fresh_impressions
+                  if fresh_impressions else 0
+              )
+          else:
+              fresh_clicks=None
+              fresh_impressions=None
+              fresh_ctr=None
+              fresh_position=None
+
+          calendar_error=None
+          calendar_agg={}
+          try:
+              calendar_rows=query(fresh_start,fresh_end,[],1,'all').get('rows',[])
+              calendar_agg=calendar_rows[0] if calendar_rows else {}
+          except requests.HTTPError as exc:
+              calendar_error=str(exc)
+
+          calendar_clicks=(float(calendar_agg.get('clicks',0)) if calendar_error is None else None)
+          calendar_impressions=(float(calendar_agg.get('impressions',0)) if calendar_error is None else None)
+          calendar_ctr=(float(calendar_agg.get('ctr',0)) if calendar_error is None else None)
+          calendar_position=(float(calendar_agg.get('position',0)) if calendar_agg and calendar_error is None else (0 if calendar_error is None else None))
 
           fresh_dimensions={}
           for dim in ['query','page','country','device','searchAppearance']:
@@ -175,6 +194,7 @@ jobs:
               'daily':clean_rows(dimensions['date'],40),
               'fresh24h':{
                   'generatedAtUtc':now.isoformat(),
+                  'available':fresh_error is None,
                   'dataState':'hourly_all',
                   'hourlyApiError':fresh_error,
                   'metadata':fresh_metadata,
@@ -187,6 +207,15 @@ jobs:
                   'hourly':rolling,
                   'calendarWindowStart':str(fresh_start),
                   'calendarWindowEnd':str(fresh_end),
+                  'calendarWindow':{
+                      'available':calendar_error is None,
+                      'dataState':'all',
+                      'error':calendar_error,
+                      'clicks':calendar_clicks,
+                      'impressions':calendar_impressions,
+                      'ctr':calendar_ctr,
+                      'averagePosition':calendar_position,
+                  },
                   'topQueriesCalendarWindow':clean_rows(fresh_dimensions['query']),
                   'topPagesCalendarWindow':clean_rows(fresh_dimensions['page']),
                   'countriesCalendarWindow':clean_rows(fresh_dimensions['country']),
