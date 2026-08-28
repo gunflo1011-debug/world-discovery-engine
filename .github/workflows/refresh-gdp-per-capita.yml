@@ -1,4 +1,4 @@
-name: Refresh GDP per capita snapshot
+name: Refresh published WDI snapshots
 
 on:
   workflow_dispatch:
@@ -21,33 +21,38 @@ jobs:
           node-version: 22
       - name: Install project dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Fetch official World Bank WDI snapshot
-        run: node scripts/ingest-gdp-per-capita-wdi.mjs --year 2024
-      - name: Validate snapshot contract
+      - name: Fetch official World Bank WDI snapshots
+        run: |
+          node scripts/ingest-gdp-per-capita-wdi.mjs --year 2024
+          node scripts/ingest-internet-use-history-wdi.mjs --start 1990 --end 2024
+      - name: Validate snapshot contracts
         run: |
           node --input-type=module <<'NODE'
           import { readFile } from 'node:fs/promises';
-          const d=JSON.parse(await readFile('site/indicators/gdp-per-capita/data.json','utf8'));
-          if(d.status!=='CURRENT_VERIFIED'||d.indicator?.code!=='NY.GDP.PCAP.CD'||d.observationYear!==2024||!Array.isArray(d.records)||d.records.length<150) throw new Error('GDP snapshot contract failed');
-          if(d.records.some(r=>!r.code||!r.country||!r.region?.code||!Number.isFinite(r.value)||r.year!==2024)) throw new Error('GDP snapshot contains malformed record');
-          console.log(`Validated ${d.records.length} official country observations.`);
+          const gdp=JSON.parse(await readFile('site/indicators/gdp-per-capita/data.json','utf8'));
+          if(gdp.status!=='CURRENT_VERIFIED'||gdp.indicator?.code!=='NY.GDP.PCAP.CD'||gdp.observationYear!==2024||!Array.isArray(gdp.records)||gdp.records.length<150) throw new Error('GDP snapshot contract failed');
+          if(gdp.records.some(r=>!r.code||!r.country||!r.region?.code||!Number.isFinite(r.value)||r.year!==2024)) throw new Error('GDP snapshot contains malformed record');
+          const history=JSON.parse(await readFile('site/indicators/internet-use/history.json','utf8'));
+          if(history.status!=='CURRENT_VERIFIED_HISTORY'||history.indicator?.code!=='IT.NET.USER.ZS'||history.period?.startYear!==1990||history.period?.endYear!==2024||!Array.isArray(history.records)||history.records.length<150) throw new Error('Internet history contract failed');
+          if(history.records.some(r=>!r.code||!r.country||!Array.isArray(r.observations)||r.observations.length<2||r.observations.some(o=>!Number.isInteger(o.year)||!Number.isFinite(o.value)))) throw new Error('Internet history contains malformed record');
+          console.log(`Validated ${gdp.records.length} GDP observations and ${history.records.length} internet-use histories.`);
           NODE
-      - name: Gate generated snapshot against full site
+      - name: Gate generated snapshots against full site
         run: npm run check
-      - name: Commit verified snapshot when changed
+      - name: Commit verified snapshots when changed
         id: commit_snapshot
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "$(git status --porcelain -- site/indicators/gdp-per-capita/data.json)" ]; then
-            echo 'Snapshot unchanged'
+          if [ -z "$(git status --porcelain -- site/indicators/gdp-per-capita/data.json site/indicators/internet-use/history.json)" ]; then
+            echo 'Snapshots unchanged'
             echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add site/indicators/gdp-per-capita/data.json
-          git commit -m 'Refresh verified GDP per capita snapshot'
+          git add site/indicators/gdp-per-capita/data.json site/indicators/internet-use/history.json
+          git commit -m 'Refresh verified WDI snapshots'
           git push
           echo 'changed=true' >> "$GITHUB_OUTPUT"
       - name: Dispatch CI and Pages for refreshed main
