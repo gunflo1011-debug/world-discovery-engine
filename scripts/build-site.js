@@ -60,6 +60,15 @@ async function internetUseDiscoveryRoutes() {
   if (!Array.isArray(data.records) || !data.records.every((record) => /^[A-Z]{3}$/.test(record.code))) throw new Error('sitemap requires valid internet-use country codes');
   if (!Array.isArray(regionIndex?.regions) || !regionIndex.regions.every((region) => hasText(region.url))) throw new Error('sitemap requires the generated internet-use region index');
   const routes = [...data.records.map((record) => `/indicators/internet-use/country/${record.code.toLowerCase()}/`), ...regionIndex.regions.map((region) => region.url)];
+  if (await fileExists(resolve(root, 'indicators', 'internet-use', 'history.json'))) {
+    const history = JSON.parse(await readFile(resolve(root, 'indicators', 'internet-use', 'history.json'), 'utf8'));
+    if (history?.status !== 'CURRENT_VERIFIED_HISTORY' || history?.indicator?.code !== data.indicator?.code || !Array.isArray(history.records)) throw new Error('sitemap requires valid internet-use history data');
+    const currentCodes = new Set(data.records.map(record => record.code));
+    for (const record of history.records) {
+      if (!currentCodes.has(record.code) || !Array.isArray(record.observations) || record.observations.length < 2) throw new Error(`invalid internet-use history route ${record.code || 'unknown'}`);
+      routes.push(`/indicators/internet-use/country/${record.code.toLowerCase()}/history/`);
+    }
+  }
   if (new Set(routes).size !== routes.length) throw new Error('duplicate internet-use discovery route');
   return routes;
 }
@@ -74,18 +83,17 @@ async function existingStaticRoutes(routes) {
 }
 
 export async function buildSite() {
-  // Tests and other callers invoke buildSite repeatedly in one Node process. Regenerate
-  // the hub here rather than relying on a one-shot module side effect from npm build.
   await buildInternetUseRegionDirectory();
   const [evidence, internetUseRoutes] = await Promise.all([collectEvidence(), internetUseDiscoveryRoutes()]);
   const staticRoutes = await existingStaticRoutes(['/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', '/indicators/', '/categories/economy/', '/indicators/gdp-per-capita/', '/indicators/internet-use/', '/indicators/internet-use/region/', '/indicators/real-gdp/', '/leaderboard/']);
   const indexableEvidence = evidence.filter((record) => !record.demo && !record.noindex && record.discovery.ready);
   const pagePaths = [...staticRoutes, ...indexableEvidence.map((record) => record.url), ...internetUseRoutes];
   const generatedAt = new Date().toISOString();
+  const historyCount = internetUseRoutes.filter(path => path.endsWith('/history/')).length;
   await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt({ baseUrl }), 'utf8');
   await writeFile(resolve(root, 'sitemap.xml'), renderSitemap({ baseUrl, pages: pagePaths.map((path) => ({ path })) }), 'utf8');
   await writeFile(resolve(root, 'evidence', 'index.json'), `${JSON.stringify({ schemaVersion: '1.2', generatedAt, evidence: indexableEvidence.map(machineRecord) }, null, 2)}\n`, 'utf8');
-  await writeFile(resolve(root, 'build.json'), `${JSON.stringify({ generatedAt, baseUrl, publicRoutes: pagePaths.length, evidencePages: indexableEvidence.length, demoPagesExcluded: evidence.filter((item) => item.demo).length, noindexPagesExcluded: evidence.filter((item) => item.noindex).length, discoveryIncompleteExcluded: evidence.filter((item) => !item.demo && !item.noindex && !item.discovery.ready).length }, null, 2)}\n`, 'utf8');
+  await writeFile(resolve(root, 'build.json'), `${JSON.stringify({ generatedAt, baseUrl, publicRoutes: pagePaths.length, evidencePages: indexableEvidence.length, internetUseHistoryProfiles: historyCount, demoPagesExcluded: evidence.filter((item) => item.demo).length, noindexPagesExcluded: evidence.filter((item) => item.noindex).length, discoveryIncompleteExcluded: evidence.filter((item) => !item.demo && !item.noindex && !item.discovery.ready).length }, null, 2)}\n`, 'utf8');
   return { evidence: indexableEvidence, allEvidence: evidence, pagePaths, generatedAt };
 }
 
