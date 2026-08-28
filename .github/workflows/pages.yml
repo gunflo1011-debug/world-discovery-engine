@@ -101,6 +101,7 @@ jobs:
           const robots=await get('/robots.txt');
           if(!robots.includes(`Sitemap: ${base}/sitemap.xml`)) throw new Error('robots sitemap mismatch');
           const sitemap=await get('/sitemap.xml');
+          const sitemapLocations=new Set([...sitemap.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map(match=>match[1]));
           if(!sitemap.includes(`${base}/evidence/germany-population-revision-2025/`)) throw new Error('Germany REAL evidence missing from sitemap');
 
           const gdp=await get('/indicators/real-gdp/status.json','json');
@@ -127,7 +128,7 @@ jobs:
             const parentHref=`href="./country/${country.code.toLowerCase()}/"`;
             if(parent.split(parentHref).length-1!==2) throw new Error(`parent discovery count mismatch ${country.code}`);
             const human=`${base}${country.url}`;
-            if((sitemap.split(human).length-1)!==1) throw new Error(`sitemap count mismatch ${country.code}`);
+            if(!sitemapLocations.has(human)) throw new Error(`sitemap missing ${country.code}`);
             if(!listed.has(human)) throw new Error(`ItemList missing ${country.code}`);
             const html=await get(country.url);
             const payload=await get(country.machineDataUrl,'json');
@@ -153,7 +154,7 @@ jobs:
             regionCountryTotal+=region.countries;
             if(!indexedRegionCodes.has(region.code)) throw new Error(`region has no indexed countries ${region.code}`);
             const human=`${base}${region.url}`;
-            if((sitemap.split(human).length-1)!==1) throw new Error(`region sitemap count mismatch ${region.code}`);
+            if(!sitemapLocations.has(human)) throw new Error(`region sitemap missing ${region.code}`);
             const html=await get(region.url);
             const payload=await get(region.machineDataUrl,'json');
             if(payload.schemaVersion!=='1.0'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.observationYear!==2024||payload.region?.code!==region.code||payload.region?.name!==region.name||payload.records?.length!==region.countries) throw new Error(`region JSON identity mismatch ${region.code}`);
