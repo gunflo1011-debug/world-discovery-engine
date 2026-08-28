@@ -17,7 +17,8 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.ok(result.pagePaths.includes('/status/'));
   assert.ok(result.pagePaths.includes('/indicators/'));
   assert.ok(result.pagePaths.includes('/indicators/internet-use/'));
-  assert.equal(result.pagePaths.filter((path) => path.startsWith('/indicators/internet-use/country/')).length, 182);
+  const currentCountryRoutes = result.pagePaths.filter((path) => path.startsWith('/indicators/internet-use/country/') && !path.endsWith('/history/'));
+  assert.equal(currentCountryRoutes.length, 182);
   const regionalHub = '/indicators/internet-use/region/';
   assert.ok(result.pagePaths.includes(regionalHub));
   assert.equal(result.pagePaths.filter((path) => path.startsWith(regionalHub) && path !== regionalHub).length, 7);
