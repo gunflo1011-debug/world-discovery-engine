@@ -37,6 +37,21 @@ function enrichCountrySearchIntent(page, record) {
     page = page.replace(heroEnd, answer);
   }
 
+  // Existing generated pages may already contain the quick-answer block from an
+  // earlier build. Backfill the regional link idempotently instead of requiring
+  // a clean rebuild or failing the release when the marker already exists.
+  if (regionCode) {
+    const regionalHref = `../../region/${regionCode}/`;
+    if (!page.includes(`href="${regionalHref}"`)) {
+      const markerHeading = `<h2>${marker}</h2>`;
+      if (!page.includes(markerHeading)) throw new Error(`country search-intent heading missing for ${record.code}`);
+      page = page.replace(
+        markerHeading,
+        `${markerHeading}<p><a href="${regionalHref}">See the regional internet-use comparison for additional same-year context →</a></p>`
+      );
+    }
+  }
+
   return page;
 }
 
