@@ -15,6 +15,7 @@ function enrichCountrySearchIntent(page, record) {
   const country = String(record.country);
   const value = Number(record.value);
   const year = Number(record.year);
+  const regionCode = String(record.region?.code ?? '').toLowerCase();
   const marker = `Internet access in ${country}: quick answer`;
 
   page = page.replace(
@@ -28,7 +29,10 @@ function enrichCountrySearchIntent(page, record) {
 
   if (!page.includes(marker)) {
     const heroEnd = '</section><section class="section"><div class="wrap"><h2>How ';
-    const answer = `</section><section class="section"><div class="wrap"><h2>${marker}</h2><p><strong>${value}%</strong> of people in ${country} used the internet in ${year} in this verified ITU/WDI observation. This measure is often described as an <strong>internet penetration rate</strong>. It measures people using the internet; it does not mean household access, subscriptions, network coverage or availability at a specific address.</p></div></section><section class="section"><div class="wrap"><h2>How `;
+    const regionalContext = regionCode
+      ? ` <a href="../../region/${regionCode}/">See the regional internet-use comparison for additional same-year context →</a>`
+      : '';
+    const answer = `</section><section class="section"><div class="wrap"><h2>${marker}</h2><p><strong>${value}%</strong> of people in ${country} used the internet in ${year} in this verified ITU/WDI observation. This measure is often described as an <strong>internet penetration rate</strong>. It measures people using the internet; it does not mean household access, subscriptions, network coverage or availability at a specific address.</p>${regionalContext ? `<p>${regionalContext}</p>` : ''}</div></section><section class="section"><div class="wrap"><h2>How `;
     if (!page.includes(heroEnd)) throw new Error(`country search-intent insertion point missing for ${record.code}`);
     page = page.replace(heroEnd, answer);
   }
@@ -45,6 +49,8 @@ for (const record of data.records) {
 
   page = enrichCountrySearchIntent(page, record);
   if (!page.includes(`Internet access in ${record.country}: quick answer`)) throw new Error(`search-intent answer missing for ${record.code}`);
+  const regionCode = String(record.region?.code ?? '').toLowerCase();
+  if (regionCode && !page.includes(`href="../../region/${regionCode}/"`)) throw new Error(`regional context link missing for ${record.code}`);
   await writeFile(pageUrl, page, 'utf8');
 }
 
