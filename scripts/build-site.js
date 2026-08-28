@@ -66,7 +66,8 @@ async function internetUseDiscoveryRoutes() {
     const currentCodes = new Set(data.records.map(record => record.code));
     for (const record of history.records) {
       if (!currentCodes.has(record.code) || !Array.isArray(record.observations) || record.observations.length < 2) throw new Error(`invalid internet-use history route ${record.code || 'unknown'}`);
-      routes.push(`/indicators/internet-use/country/${record.code.toLowerCase()}/history/`);
+      const historyFile = resolve(root, 'indicators', 'internet-use', 'country', record.code.toLowerCase(), 'history', 'index.html');
+      if (await fileExists(historyFile)) routes.push(`/indicators/internet-use/country/${record.code.toLowerCase()}/history/`);
     }
   }
   if (new Set(routes).size !== routes.length) throw new Error('duplicate internet-use discovery route');
