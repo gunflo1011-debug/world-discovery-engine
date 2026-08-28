@@ -38,7 +38,10 @@ test.describe('internet-use country profile live smoke', () => {
       expect((await page.title()).trim().length).toBeGreaterThan(10);
       expect(((await page.locator('meta[name="description"]').getAttribute('content')) || '').trim().length).toBeGreaterThan(40);
 
-      await expect(page.getByRole('heading', { level: 1 })).toContainText(`${sentinel.country} internet use rate`);
+      const heading = page.getByRole('heading', { level: 1 });
+      await expect(heading).toContainText(new RegExp(`^${sentinel.country} internet (?:penetration / )?internet use rate`, 'i'));
+      await expect(heading).toContainText(/internet penetration/i);
+      await expect(heading).toContainText(/internet use rate/i);
       await expect(page.getByText(new RegExp(`${sentinel.indicator}`)).first()).toBeVisible();
       await expect(page.getByText(new RegExp(`${sentinel.year}`)).first()).toBeVisible();
       await expect(page.getByText(/not to a complete worldwide ranking/i)).toBeVisible();
