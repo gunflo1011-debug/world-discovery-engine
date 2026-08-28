@@ -50,6 +50,10 @@ test("Search Console verification files are accepted only when unchanged", () =>
 });
 
 test("robots, sitemap and canonicals expose one consistent indexable URL set", async () => {
+  // Other generator tests intentionally rebuild the country directory. Recreate optional
+  // historical pages before validating sitemap-to-file consistency.
+  await import("../scripts/build-internet-use-history.mjs");
+
   const [robots, sitemap] = await Promise.all([
     readFile(new URL("robots.txt", SITE_ROOT), "utf8"),
     readFile(new URL("sitemap.xml", SITE_ROOT), "utf8"),
