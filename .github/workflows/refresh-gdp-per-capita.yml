@@ -63,4 +63,4 @@ jobs:
           gh workflow run ci.yml --ref main
           gh workflow run pages.yml --ref main
 
-# This workflow intentionally reuses the existing refresh job for historical internet-use data.
+# Reuses the existing refresh job for current and historical WDI data.
