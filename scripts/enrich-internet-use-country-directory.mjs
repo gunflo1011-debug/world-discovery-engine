@@ -5,6 +5,12 @@ const dataUrl = new URL('data.json', root);
 const htmlUrl = new URL('index.html', root);
 const canonical = 'https://worlddiscoverydata.com/indicators/internet-use/';
 
+const esc = (value) => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;');
+
 function validate(data) {
   if (data?.status !== 'CURRENT_VERIFIED') throw new Error('country directory requires CURRENT_VERIFIED data');
   if (data?.indicator?.code !== 'IT.NET.USER.ZS') throw new Error('unexpected indicator code');
@@ -68,4 +74,25 @@ if (!html.includes('id="source-provenance"')) {
 }
 
 await writeFile(htmlUrl, html, 'utf8');
-console.log(`Added ItemList discovery for ${records.length} country profiles without duplicating the crawlable HTML directory.`);
+
+// Search Console is already surfacing country profiles for phrases such as
+// "internet penetration rate", "internet access" and "how many people ... use
+// the internet". Answer those intents directly while preserving the exact WDI
+// metric definition instead of silently treating broader connectivity concepts
+// as interchangeable.
+for (const record of records) {
+  const countryHtmlUrl = new URL(`country/${record.code.toLowerCase()}/index.html`, root);
+  let countryHtml = await readFile(countryHtmlUrl, 'utf8');
+  if (countryHtml.includes('id="internet-access-quick-answer"')) continue;
+
+  const comparisonHeading = `<section class="section"><div class="wrap"><h2>How ${esc(record.country)} compares</h2>`;
+  if (!countryHtml.includes(comparisonHeading)) {
+    throw new Error(`country comparison section not found for ${record.code}`);
+  }
+
+  const quickAnswer = `<section class="section section-soft" id="internet-access-quick-answer"><div class="wrap"><h2>Internet access in ${esc(record.country)}: quick answers</h2><div class="grid"><article class="card"><span class="pill">QUICK ANSWER</span><h3>How many people in ${esc(record.country)} use the internet?</h3><p><strong>${record.value}% of the population</strong> used the internet in ${record.year} in this verified World Development Indicators observation.</p></article><article class="card"><span class="pill">METRIC CLARITY</span><h3>What is ${esc(record.country)}'s internet penetration rate?</h3><p>“Internet penetration” and “internet access rate” are common ways people search for this topic. The value reported here is specifically the official <strong>${esc(data.indicator.name)}</strong> measure (${esc(data.indicator.code)}). It should not be read as a household-access, subscription or network-coverage statistic.</p></article><article class="card"><span class="pill">DATA YEAR</span><h3>Which year does this figure describe?</h3><p>The observation is for <strong>${record.year}</strong>. The retrieval date shown below records when the source was collected and is not treated as the observation year.</p></article></div></div></section>`;
+  countryHtml = countryHtml.replace(comparisonHeading, `${quickAnswer}${comparisonHeading}`);
+  await writeFile(countryHtmlUrl, countryHtml, 'utf8');
+}
+
+console.log(`Added ItemList discovery and search-intent quick answers for ${records.length} country profiles.`);
