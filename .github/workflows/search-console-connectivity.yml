@@ -57,6 +57,38 @@ jobs:
           match=next((s for s in sites.json().get('siteEntry',[]) if s.get('siteUrl')==target),None)
           if not match: raise SystemExit('Connected, but target property not visible')
 
+          sitemap_status={'available':False,'entries':[],'error':None}
+          try:
+              sitemap_response=requests.get(
+                  'https://www.googleapis.com/webmasters/v3/sites/'+encoded+'/sitemaps',
+                  headers=headers,
+                  timeout=30,
+              )
+              sitemap_response.raise_for_status()
+              entries=[]
+              for item in sitemap_response.json().get('sitemap',[]):
+                  contents=[]
+                  for content in item.get('contents',[]) or []:
+                      contents.append({
+                          'type':content.get('type'),
+                          'submitted':content.get('submitted'),
+                          'indexed':content.get('indexed'),
+                      })
+                  entries.append({
+                      'path':item.get('path'),
+                      'lastSubmitted':item.get('lastSubmitted'),
+                      'lastDownloaded':item.get('lastDownloaded'),
+                      'isPending':item.get('isPending'),
+                      'isSitemapsIndex':item.get('isSitemapsIndex'),
+                      'type':item.get('type'),
+                      'warnings':item.get('warnings'),
+                      'errors':item.get('errors'),
+                      'contents':contents,
+                  })
+              sitemap_status={'available':True,'entries':entries,'error':None}
+          except requests.HTTPError as exc:
+              sitemap_status={'available':False,'entries':[],'error':str(exc)}
+
           endpoint='https://www.googleapis.com/webmasters/v3/sites/'+encoded+'/searchAnalytics/query'
 
           def query(start_date, end_date, dimensions=None, limit=25000, data_state='final'):
@@ -71,7 +103,6 @@ jobs:
               r.raise_for_status()
               return r.json()
 
-          # Stable 28-day final-data baseline.
           final_end=datetime.date.today()-datetime.timedelta(days=2)
           final_start=final_end-datetime.timedelta(days=27)
           aggregate=query(final_start,final_end,[],1,'final').get('rows',[])
@@ -96,10 +127,6 @@ jobs:
               if not isinstance(rows,list): return rows
               return rows[:n]
 
-          # Search Console requires dataState=hourly_all when grouping by hour.
-          # Hourly timestamps and incomplete-hour metadata are reported by Google in
-          # America/Los_Angeles time, so we retain Google's returned hour buckets and
-          # use the latest 24 returned buckets instead of inventing UTC timestamps.
           now=datetime.datetime.now(datetime.timezone.utc)
           fresh_end=now.date()
           fresh_start=fresh_end-datetime.timedelta(days=2)
@@ -113,9 +140,6 @@ jobs:
           except requests.HTTPError as exc:
               fresh_error=str(exc)
 
-          # API sorts date-grouped results oldest -> newest; keep the latest 24 hourly
-          # rows actually returned by Search Console. This is the closest API-native
-          # rolling 24-hour view and avoids timezone conversion errors.
           rolling=(fresh_hourly[-24:] if isinstance(fresh_hourly,list) else [])
           fresh_clicks=sum(float(r.get('clicks',0)) for r in rolling)
           fresh_impressions=sum(float(r.get('impressions',0)) for r in rolling)
@@ -125,8 +149,6 @@ jobs:
               if fresh_impressions else 0
           )
 
-          # Context dimensions use preliminary/fresh day-level data. They can cover
-          # up to the surrounding calendar window and are labeled accordingly.
           fresh_dimensions={}
           for dim in ['query','page','country','device','searchAppearance']:
               try:
@@ -136,6 +158,8 @@ jobs:
 
           summary={
               'property':target,
+              'propertyPermissionLevel':match.get('permissionLevel'),
+              'sitemaps':sitemap_status,
               'startDate':str(final_start),
               'endDate':str(final_end),
               'clicks':clicks,
