@@ -73,7 +73,7 @@ export function normalizeInternetUseSnapshot({ indicatorPayload, countryPayload,
       dataset: 'World Telecommunication/ICT Indicators Database',
       surface: 'World Bank World Development Indicators (WDI), Indicators API v2',
       metadataUrl: 'https://databank.worldbank.org/metadataglossary/world-development-indicators/series/IT.NET.USER.ZS',
-      license: 'CC BY-4.0',
+      license: 'https://creativecommons.org/licenses/by/4.0/',
       attribution: 'Please cite the International Telecommunication Union for third-party use of these data.'
     },
     records
