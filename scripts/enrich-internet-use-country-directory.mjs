@@ -53,6 +53,30 @@ html = html.replace(
   `Countries without a ${data.observationYear} observation are omitted rather than backfilled from older years, so this is not a complete global ranking.`
 );
 
+// Search Console is repeatedly surfacing phrases around "internet penetration".
+// Align the hub with that real user language, but keep the metric contract exact:
+// IT.NET.USER.ZS measures people using the internet, not access infrastructure,
+// subscriptions, network coverage or internet traffic.
+html = html.replace(
+  `<title>Internet use by country — ${data.observationYear} verified comparison | World Discovery Engine</title>`,
+  `<title>Internet use &amp; penetration by country — ${data.observationYear} verified comparison | World Discovery Engine</title>`
+);
+html = html.replace(
+  `Compare ${data.observationYear} internet use as a percentage of population across ${data.records.length} verified non-aggregate countries, with ITU/WDI provenance and JSON/CSV data.`,
+  `Compare ${data.observationYear} internet use (often searched as internet penetration) as a percentage of population across ${data.records.length} verified non-aggregate countries, with ITU/WDI provenance and JSON/CSV data.`
+);
+html = html.replace(
+  `<h2>Internet use by country — ${data.observationYear} observations</h2>`,
+  `<h2>Internet use and penetration by country — ${data.observationYear} observations</h2>`
+);
+const penetrationExplanation = `<p id="internet-penetration-definition"><strong>About “internet penetration”:</strong> people often use that phrase for this topic. On this page it refers specifically to the World Development Indicators measure <strong>${esc(data.indicator.name)}</strong> (${esc(data.indicator.code)}): the share of people who used the internet. It is not a measure of household access, subscriptions, network coverage or internet traffic.</p>`;
+if (!html.includes('id="internet-penetration-definition"')) {
+  html = html.replace(
+    `<h2>Internet use and penetration by country — ${data.observationYear} observations</h2>`,
+    `<h2>Internet use and penetration by country — ${data.observationYear} observations</h2>${penetrationExplanation}`
+  );
+}
+
 if (!html.includes('Internet use country profiles')) {
   html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(itemList)}</script></head>`);
 }
