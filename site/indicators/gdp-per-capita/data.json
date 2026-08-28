@@ -13,7 +13,7 @@
     "countries": 200,
     "note": "All non-aggregate country observations returned by WDI for NY.GDP.PCAP.CD in 2024; missing countries are not backfilled from other years."
   },
-  "retrievedAt": "2026-08-26",
+  "retrievedAt": "2026-08-28",
   "retrievalUrl": "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.CD?date=2024&format=json&per_page=400&source=2",
   "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
   "source": {
