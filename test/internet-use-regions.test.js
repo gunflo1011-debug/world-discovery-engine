@@ -8,6 +8,7 @@ const execFileAsync = promisify(execFile);
 const builder = new URL('../scripts/build-internet-use-regions.mjs', import.meta.url);
 const sourceUrl = new URL('../site/indicators/internet-use/data.json', import.meta.url);
 const root = new URL('../site/indicators/internet-use/region/', import.meta.url);
+const CC_BY_4 = 'https://creativecommons.org/licenses/by/4.0/';
 
 test('builds seven substantial regional discovery pages and matching JSON', async () => {
   await execFileAsync(process.execPath, [builder.pathname]);
@@ -41,7 +42,8 @@ test('builds seven substantial regional discovery pages and matching JSON', asyn
     assert.equal(dataset.identifier, `IT.NET.USER.ZS-${region.code}-${source.observationYear}`);
     assert.equal(dataset.spatialCoverage.identifier, region.code);
     assert.equal(dataset.variableMeasured.propertyID, source.indicator.code);
-    assert.equal(dataset.license, source.source.license);
+    assert.equal(dataset.license, CC_BY_4);
+    assert.equal(payload.provenance.license, CC_BY_4);
     assert.deepEqual(breadcrumbs.itemListElement.map((item) => item.position), [1, 2, 3]);
     assert.equal(breadcrumbs.itemListElement[1].item, 'https://worlddiscoverydata.com/indicators/internet-use/');
     assert.equal(breadcrumbs.itemListElement[1].name, `Internet use by country — ${source.observationYear}`);
