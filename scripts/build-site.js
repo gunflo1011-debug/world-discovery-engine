@@ -78,7 +78,7 @@ export async function buildSite() {
   // the hub here rather than relying on a one-shot module side effect from npm build.
   await buildInternetUseRegionDirectory();
   const [evidence, internetUseRoutes] = await Promise.all([collectEvidence(), internetUseDiscoveryRoutes()]);
-  const staticRoutes = await existingStaticRoutes(['/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', '/indicators/', '/indicators/internet-use/', '/indicators/internet-use/region/', '/indicators/real-gdp/', '/leaderboard/']);
+  const staticRoutes = await existingStaticRoutes(['/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', '/indicators/', '/categories/economy/', '/indicators/gdp-per-capita/', '/indicators/internet-use/', '/indicators/internet-use/region/', '/indicators/real-gdp/', '/leaderboard/']);
   const indexableEvidence = evidence.filter((record) => !record.demo && !record.noindex && record.discovery.ready);
   const pagePaths = [...staticRoutes, ...indexableEvidence.map((record) => record.url), ...internetUseRoutes];
   const generatedAt = new Date().toISOString();
