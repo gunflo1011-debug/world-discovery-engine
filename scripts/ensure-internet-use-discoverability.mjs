@@ -9,7 +9,11 @@ if (data?.status !== 'CURRENT_VERIFIED') throw new Error('discoverability requir
 if (!Array.isArray(data?.records) || data.records.length < 2) throw new Error('discoverability requires country records');
 
 const base = 'https://worlddiscoverydata.com/indicators/internet-use/';
-const expected = [base, ...data.records.map((record) => `${base}country/${String(record.code).toLowerCase()}/`)];
+const countryUrls = data.records.map((record) => `${base}country/${String(record.code).toLowerCase()}/`);
+const regionCodes = [...new Set(data.records.map((record) => String(record.region?.code ?? '').trim()).filter((code) => /^[A-Z]{3}$/.test(code)))];
+if (regionCodes.length < 2) throw new Error('discoverability requires region metadata');
+const regionUrls = regionCodes.map((code) => `${base}region/${code.toLowerCase()}/`);
+const expected = [base, ...countryUrls, ...regionUrls];
 
 function enrichCountrySearchIntent(page, record) {
   const country = String(record.country);
@@ -69,6 +73,13 @@ for (const record of data.records) {
   await writeFile(pageUrl, page, 'utf8');
 }
 
+for (const code of regionCodes) {
+  const slug = code.toLowerCase();
+  const page = await readFile(new URL(`region/${slug}/index.html`, internetRoot), 'utf8');
+  const canonical = `${base}region/${slug}/`;
+  if (!page.includes(`<link rel="canonical" href="${canonical}">`)) throw new Error(`region canonical missing for ${code}`);
+}
+
 let parent = await readFile(new URL('index.html', internetRoot), 'utf8');
 for (const record of data.records) {
   const href = `./country/${String(record.code).toLowerCase()}/`;
@@ -100,4 +111,4 @@ for (const url of expected) {
 }
 await writeFile(sitemapUrl, sitemap, 'utf8');
 
-console.log(`Verified canonical/internal-link discoverability, search-intent coverage and sitemap coverage for ${data.records.length} internet-use country pages.`);
+console.log(`Verified canonical/internal-link discoverability, search-intent coverage and sitemap coverage for ${data.records.length} internet-use country pages and ${regionCodes.length} region pages.`);
