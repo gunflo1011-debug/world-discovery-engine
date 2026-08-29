@@ -27,11 +27,8 @@ function promoteHistoryHtml(html, record) {
     .replace(/href="\.\.\/\.\.\/([a-z]{3})\/history\/"/g, 'href="../$1/"')
     .replaceAll('href="../../../region/', 'href="../../region/');
 
-  // On the historical route, a bare ../ linked back to the old country snapshot.
-  // Once that history page becomes the country root, the same relative link would
-  // point at the non-existent /country/ directory. Point it at the internet-use hub.
-  output = output.replaceAll('href="../"', 'href="../../"');
-  output = output.replace(/ · <a href="\.\.\/\.\.\/">See [^<]+ latest profile and country comparison →<\/a>/, ' · <a href="../../">Compare countries →</a>');
+  output = output.replace(/ · <a href="\.\.\/">See [^<]+ latest profile and country comparison →<\/a>/, ' · <a href="../../">Compare countries →</a>');
+  output = output.replace('Download historical JSON →</a>', 'Download historical JSON →</a> · <a href="./data.csv">Download historical CSV →</a>');
   return output;
 }
 
@@ -43,6 +40,19 @@ function legacyRedirect(record) {
 
 function removeLegacyHistoryRoutes(sitemap) {
   return sitemap.replace(/\s*<url>\s*<loc>https:\/\/worlddiscoverydata\.com\/indicators\/internet-use\/country\/[a-z]{3}\/history\/<\/loc>[\s\S]*?<\/url>/g, '');
+}
+
+function csvEscape(value) {
+  const text = String(value ?? '');
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+
+function timeSeriesCsv(machine) {
+  const header = ['entity_code','indicator_code','reference_year','value'];
+  const rows = [...machine.observations]
+    .sort((a, b) => b.year - a.year)
+    .map(observation => [machine.entity.code, machine.indicator.code, observation.year, observation.value]);
+  return [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\n') + '\n';
 }
 
 if (!(await exists(historyUrl))) {
@@ -71,8 +81,15 @@ for (const record of data.records) {
   ]);
 
   const machine = JSON.parse(machineJson);
+  const latest = machine.observations.at(-1);
   machine.schemaVersion = '1.1';
+  machine.status = 'CURRENT_VERIFIED';
   machine.humanUrl = `${baseCanonical}country/${record.code.toLowerCase()}/`;
+  machine.observation = { year: latest.year, value: latest.value };
+  machine.scope = {
+    completeGlobalRanking: false,
+    historicalRevisionProduct: false
+  };
   machine.product = {
     type: 'country-time-series',
     primary: true,
@@ -83,6 +100,7 @@ for (const record of data.records) {
   await Promise.all([
     writeFile(new URL('index.html', countryDir), promoteHistoryHtml(html, record), 'utf8'),
     writeFile(new URL('data.json', countryDir), `${JSON.stringify(machine, null, 2)}\n`, 'utf8'),
+    writeFile(new URL('data.csv', countryDir), timeSeriesCsv(machine), 'utf8'),
     writeFile(historyPage, legacyRedirect(record), 'utf8')
   ]);
   promoted += 1;
