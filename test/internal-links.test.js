@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 
 import { auditInternalLinks } from '../scripts/check-internal-links.mjs';
 
+const execFileAsync = promisify(execFile);
+
 test('all sitemap pages have valid internal targets, fragments and inbound discovery paths', async () => {
+  // Earlier generator tests intentionally rebuild intermediate site states. Restore
+  // the canonical post-build state before auditing: country time series are the
+  // primary URLs and duplicate /history/ routes are retired from the sitemap.
+  await execFileAsync(process.execPath, ['scripts/promote-internet-use-series.mjs'], {
+    cwd: new URL('..', import.meta.url)
+  });
+
   const result = await auditInternalLinks();
   const sitemap = await readFile(new URL('../site/sitemap.xml', import.meta.url), 'utf8');
   const sitemapPages = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].length;
