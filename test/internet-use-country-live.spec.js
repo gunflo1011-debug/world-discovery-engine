@@ -170,7 +170,7 @@ test('AI discovery manifest and llms.txt are live, citation-ready, and source-fa
     expect(country.citation?.attribution).toBe(internet.source.attribution);
   }
 
-  expect(llms).toContain('# World Discovery Engine');
+  expect(llms).toContain('# World Discovery Data');
   expect(llms).toContain(`${BASE}/sources/`);
   expect(llms).toContain(`${BASE}/ai-index.json`);
   expect(llms).toContain(`${BASE}/evidence/index.json`);
