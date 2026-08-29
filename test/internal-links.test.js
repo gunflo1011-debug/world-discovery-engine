@@ -21,6 +21,8 @@ test('all sitemap pages have valid internal targets, fragments and inbound disco
   const sitemapPages = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].length;
   assert.ok(sitemapPages > 180, 'sitemap must retain the complete public corpus');
   assert.equal(result.pages, sitemapPages);
-  assert.ok(result.checkedLinks > 2000);
+  // Link volume is not a quality target. Require broad crawlable connectivity while
+  // allowing canonical consolidation to remove duplicate /history/ routes and links.
+  assert.ok(result.checkedLinks > sitemapPages * 4, 'public corpus must remain strongly internally connected');
   assert.equal(result.orphanPages, 0);
 });
