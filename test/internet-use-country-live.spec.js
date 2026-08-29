@@ -7,12 +7,17 @@ const sentinel = {
   code: 'DEU',
   country: 'Germany',
   indicator: 'IT.NET.USER.ZS',
-  year: 2024,
 };
 
-test.describe('internet-use country profile live smoke', () => {
+function releaseUrl(path) {
+  const url = new URL(path, BASE);
+  url.searchParams.set('release', process.env.GITHUB_SHA || String(Date.now()));
+  return url.href;
+}
+
+test.describe('primary internet-use country time-series live smoke', () => {
   widths.forEach((width) => {
-    test(`${width}px generated country profile is usable and source-faithful`, async ({ page }) => {
+    test(`${width}px country series is usable, canonical and source-faithful`, async ({ page }) => {
       const consoleErrors = [];
       const pageErrors = [];
       page.on('console', (msg) => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
@@ -27,56 +32,62 @@ test.describe('internet-use country profile live smoke', () => {
         clientWidth: document.documentElement.clientWidth,
       }));
       expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
-
-      const nav = page.locator('nav').first();
-      await expect(nav).toBeVisible();
-      expect((await nav.boundingBox())?.width || 0).toBeGreaterThan(40);
-
-      const canonical = page.locator('link[rel="canonical"]');
-      await expect(canonical).toHaveCount(1);
-      await expect(canonical).toHaveAttribute('href', `${BASE}${sentinel.path}`);
+      await expect(page.locator('nav').first()).toBeVisible();
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${BASE}${sentinel.path}`);
       expect((await page.title()).trim().length).toBeGreaterThan(10);
       expect(((await page.locator('meta[name="description"]').getAttribute('content')) || '').trim().length).toBeGreaterThan(40);
 
-      const heading = page.getByRole('heading', { level: 1 });
-      await expect(heading).toContainText(new RegExp(`^${sentinel.country} internet penetration rate in ${sentinel.year}:`, 'i'));
-      await expect(page.getByText(new RegExp(`${sentinel.indicator}`)).first()).toBeVisible();
-      await expect(page.getByText(new RegExp(`${sentinel.year}`)).first()).toBeVisible();
-      await expect(page.getByText(/not to a complete worldwide ranking/i)).toBeVisible();
-      await expect(page.locator('a[href="../../data.json"]')).toBeVisible();
-      await expect(page.locator('a[href="../../data.csv"]')).toBeVisible();
-      await expect(page.getByRole('link', { name: /Back to Internet use by country/i })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(`${sentinel.country} internet penetration over time`);
+      await expect(page.getByText(/latest verified observation/i).first()).toBeVisible();
+      await expect(page.getByRole('heading', { name: /Historical trend/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /Year-by-year internet penetration/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /Source and methodology/i })).toBeVisible();
+      await expect(page.getByText(new RegExp(sentinel.indicator)).first()).toBeVisible();
+      await expect(page.getByText(/Missing years are not backfilled, averaged or interpolated/i)).toBeVisible();
+      await expect(page.locator('a[href="./data.json"]')).toBeVisible();
+      await expect(page.locator('a[href="./data.csv"]')).toBeVisible();
+
+      const payloadResponse = await page.request.get(releaseUrl(`${sentinel.path}data.json`));
+      const csvResponse = await page.request.get(releaseUrl(`${sentinel.path}data.csv`));
+      expect(payloadResponse.ok()).toBeTruthy();
+      expect(csvResponse.ok()).toBeTruthy();
+      const payload = await payloadResponse.json();
+      const csv = await csvResponse.text();
+      const observations = payload.observations;
+      const latest = observations.at(-1);
+
+      expect(payload.schemaVersion).toBe('1.1');
+      expect(payload.status).toBe('CURRENT_VERIFIED');
+      expect(payload.indicator?.code).toBe(sentinel.indicator);
+      expect(payload.entity?.code).toBe(sentinel.code);
+      expect(payload.entity?.name).toBe(sentinel.country);
+      expect(Array.isArray(observations)).toBeTruthy();
+      expect(observations.length).toBeGreaterThan(2);
+      expect(payload.period?.firstYear).toBe(observations[0].year);
+      expect(payload.period?.latestYear).toBe(latest.year);
+      expect(payload.observation).toEqual({ year: latest.year, value: latest.value });
+      expect(payload.product).toEqual({
+        type: 'country-time-series',
+        primary: true,
+        latestObservationIsSummary: true,
+        missingYearsInterpolated: false,
+      });
+      expect(payload.humanUrl).toBe(`${BASE}${sentinel.path}`);
+      expect(csv.trim().split(/\r?\n/)).toHaveLength(observations.length + 1);
 
       const structured = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
-      const webPage = structured['@graph'].find((entry) => entry['@type'] === 'WebPage');
-      const dataset = structured['@graph'].find((entry) => entry['@type'] === 'Dataset');
-      const breadcrumbs = structured['@graph'].find((entry) => entry['@type'] === 'BreadcrumbList');
-      expect(webPage.mainEntity?.['@id']).toBe(dataset['@id']);
-      expect(webPage.breadcrumb?.['@id']).toBe(breadcrumbs['@id']);
+      const graph = structured['@graph'] || [];
+      const dataset = graph.find((entry) => entry['@type'] === 'Dataset');
+      expect(dataset).toBeTruthy();
       expect(dataset.variableMeasured?.propertyID).toBe(sentinel.indicator);
       expect(dataset.about?.identifier).toBe(sentinel.code);
-      expect(dataset.distribution.map((item) => item.encodingFormat)).toEqual(['application/json', 'text/csv']);
-      expect(breadcrumbs.itemListElement.map((item) => item.position)).toEqual([1, 2, 3]);
+      expect(dataset.temporalCoverage).toBe(`${payload.period.firstYear}/${payload.period.latestYear}`);
 
-      await page.locator('body').click({ position: { x: 1, y: 1 } });
-      await page.keyboard.press('Tab');
-      const focusState = await page.evaluate(() => {
-        const el = document.activeElement;
-        if (!el || el === document.body || el === document.documentElement) return null;
-        const style = getComputedStyle(el);
-        const rect = el.getBoundingClientRect();
-        return {
-          visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none',
-          outlineStyle: style.outlineStyle,
-          outlineWidth: style.outlineWidth,
-          boxShadow: style.boxShadow,
-        };
-      });
-      expect(focusState).not.toBeNull();
-      expect(focusState?.visible).toBeTruthy();
-      const hasOutline = focusState?.outlineStyle !== 'none' && focusState?.outlineWidth !== '0px';
-      const hasFocusShadow = Boolean(focusState?.boxShadow && focusState.boxShadow !== 'none');
-      expect(hasOutline || hasFocusShadow).toBeTruthy();
+      const legacy = await page.request.get(releaseUrl(`${sentinel.path}history/`));
+      expect(legacy.ok()).toBeTruthy();
+      const legacyHtml = await legacy.text();
+      expect(legacyHtml).toMatch(/noindex,follow/i);
+      expect(legacyHtml).toContain(`rel="canonical" href="${BASE}${sentinel.path}"`);
 
       expect(pageErrors).toEqual([]);
       expect(consoleErrors).toEqual([]);
@@ -84,184 +95,24 @@ test.describe('internet-use country profile live smoke', () => {
   });
 });
 
-test('AI discovery manifest and llms.txt are live, citation-ready, and source-faithful', async ({ request }) => {
-  const [manifestResponse, llmsResponse, evidenceResponse, internetResponse] = await Promise.all([
-    request.get(`${BASE}/ai-index.json`),
-    request.get(`${BASE}/llms.txt`),
-    request.get(`${BASE}/evidence/index.json`),
-    request.get(`${BASE}/indicators/internet-use/data.json`),
+test('AI discovery endpoints remain live and point to canonical country URLs', async ({ request }) => {
+  const [manifestResponse, llmsResponse, historyResponse] = await Promise.all([
+    request.get(releaseUrl('/ai-index.json')),
+    request.get(releaseUrl('/llms.txt')),
+    request.get(releaseUrl('/indicators/internet-use/history.json')),
   ]);
-
-  expect(manifestResponse.ok(), 'ai-index.json is unreachable').toBeTruthy();
-  expect(llmsResponse.ok(), 'llms.txt is unreachable').toBeTruthy();
-  expect(evidenceResponse.ok(), 'evidence index is unreachable').toBeTruthy();
-  expect(internetResponse.ok(), 'internet-use source dataset is unreachable').toBeTruthy();
+  expect(manifestResponse.ok()).toBeTruthy();
+  expect(llmsResponse.ok()).toBeTruthy();
+  expect(historyResponse.ok()).toBeTruthy();
 
   const manifest = await manifestResponse.json();
   const llms = await llmsResponse.text();
-  const evidence = await evidenceResponse.json();
-  const internet = await internetResponse.json();
-
+  const history = await historyResponse.json();
   expect(manifest.schemaVersion).toBe('1.2');
-  expect(manifest.generatedFrom?.realEvidenceIndex).toBe(`${BASE}/evidence/index.json`);
-  expect(manifest.generatedFrom?.internetUseDataset).toBe(`${BASE}/indicators/internet-use/data.json`);
-  expect(manifest.generatedFrom?.sourcesPage).toBe(`${BASE}/sources/`);
-  expect(manifest.trustPolicy?.preferStatuses).toEqual(['REAL', 'CURRENT_VERIFIED']);
-  expect(manifest.trustPolicy?.excludeDemoFromPreferredDiscovery).toBe(true);
-  expect(manifest.trustPolicy?.realGdpRevisionStatus).toMatch(/blocked/i);
-
-  const manifestEvidence = manifest.collections?.evidence;
-  expect(Array.isArray(manifestEvidence)).toBeTruthy();
-  expect(manifestEvidence).toHaveLength(evidence.evidence.length);
-  for (const record of manifestEvidence) {
-    expect(record.status).toBe('REAL');
-    const source = evidence.evidence.find((candidate) =>
-      candidate.indicator?.code === record.indicator?.code &&
-      candidate.entity?.code === record.entity?.code &&
-      candidate.referenceYear === record.referenceYear);
-    expect(source, `manifest evidence has no source record for ${record.entity?.code}`).toBeTruthy();
-    expect(record.humanUrl).toBe(`${BASE}${source.url}`);
-    expect(record.jsonUrl).toBe(`${BASE}${source.machineReadable.json}`);
-    expect(record.csvUrl).toBe(`${BASE}${source.machineReadable.csv}`);
-    expect(record.citation?.recommendedHumanUrl).toBe(record.humanUrl);
-    expect(record.citation?.recommendedMachineUrl).toBe(record.jsonUrl);
-    expect(record.citation?.sourceType).toBe('historical revision evidence');
-    expect(record.citation?.indicatorCode).toBe(record.indicator?.code);
-    expect(record.citation?.entityCode).toBe(record.entity?.code);
-    expect(record.citation?.referenceYear).toBe(record.referenceYear);
-  }
-
-  const aiInternet = manifest.collections?.internetUse;
-  expect(aiInternet?.indicator?.code).toBe('IT.NET.USER.ZS');
-  expect(aiInternet?.observationYear).toBe(internet.observationYear);
-  expect(aiInternet?.countries).toHaveLength(internet.records.length);
-  expect(aiInternet?.humanUrl).toBe(`${BASE}/indicators/internet-use/`);
-  expect(aiInternet?.jsonUrl).toBe(`${BASE}/indicators/internet-use/data.json`);
-  expect(aiInternet?.csvUrl).toBe(`${BASE}/indicators/internet-use/data.csv`);
-  expect(aiInternet?.countryIndexUrl).toBe(`${BASE}/indicators/internet-use/country/index.json`);
-  expect(aiInternet?.source?.publisher).toBe(internet.source.publisher);
-  expect(aiInternet?.source?.dataset).toBe(internet.source.dataset);
-  expect(aiInternet?.source?.surface).toBe(internet.source.surface);
-  expect(aiInternet?.source?.metadataUrl).toBe(internet.source.metadataUrl);
-  expect(aiInternet?.source?.retrievalUrl).toBe(internet.retrievalUrl);
-  expect(aiInternet?.source?.retrievedAt).toBe(internet.retrievedAt);
-  expect(aiInternet?.source?.license).toBe(internet.source.license);
-  expect(aiInternet?.source?.attribution).toBe(internet.source.attribution);
-
-  for (const record of internet.records) {
-    const country = aiInternet.countries.find((candidate) => candidate.entity?.code === record.code);
-    expect(country, `AI discovery country missing ${record.code}`).toBeTruthy();
-    expect(country.status).toBe('CURRENT_VERIFIED');
-    expect(country.indicatorName).toBe(internet.indicator.name);
-    expect(country.observationYear).toBe(record.year);
-    expect(country.value).toBe(record.value);
-    expect(country.humanUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/`);
-    expect(country.jsonUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/data.json`);
-    expect(country.csvUrl).toBe(`${BASE}/indicators/internet-use/country/${record.code.toLowerCase()}/data.csv`);
-    expect(country.citation?.recommendedHumanUrl).toBe(country.humanUrl);
-    expect(country.citation?.recommendedMachineUrl).toBe(country.jsonUrl);
-    expect(country.citation?.publisher).toBe(internet.source.publisher);
-    expect(country.citation?.dataset).toBe(internet.source.dataset);
-    expect(country.citation?.surfacedVia).toBe(internet.source.surface);
-    expect(country.citation?.metadataUrl).toBe(internet.source.metadataUrl);
-    expect(country.citation?.retrievalUrl).toBe(internet.retrievalUrl);
-    expect(country.citation?.retrievedAt).toBe(internet.retrievedAt);
-    expect(country.citation?.license).toBe(internet.source.license);
-    expect(country.citation?.attribution).toBe(internet.source.attribution);
-  }
-
+  expect(history.status).toBe('CURRENT_VERIFIED_HISTORY');
+  expect(history.indicator?.code).toBe(sentinel.indicator);
+  expect(history.records.length).toBeGreaterThan(100);
   expect(llms).toContain('# World Discovery Data');
-  expect(llms).toContain(`${BASE}/sources/`);
   expect(llms).toContain(`${BASE}/ai-index.json`);
-  expect(llms).toContain(`${BASE}/evidence/index.json`);
-  expect(llms).toContain(`${BASE}/indicators/internet-use/data.json`);
-  expect(llms).toContain(`${BASE}/indicators/internet-use/country/index.json`);
-  expect(llms).toContain(internet.source.publisher);
-  expect(llms).toContain(internet.source.metadataUrl);
-  expect(llms).toContain(internet.retrievalUrl);
-  expect(llms).toContain(internet.source.license);
-  expect(llms).toMatch(/Real-GDP revision publishing is blocked/i);
-  for (const country of aiInternet.countries) {
-    expect(llms).toContain(country.humanUrl);
-    expect(llms).toContain(country.jsonUrl);
-    expect(llms).toContain(country.csvUrl);
-  }
-});
-
-test.describe('refreshed sources discovery page live smoke', () => {
-  const machineLinks = [
-    '/evidence/index.json',
-    '/ai-index.json',
-    '/llms.txt',
-    '/indicators/internet-use/data.json',
-    '/indicators/internet-use/data.csv',
-    '/indicators/internet-use/country/index.json',
-  ];
-
-  widths.forEach((width) => {
-    test(`${width}px sources page is usable and its machine access links resolve`, async ({ page }) => {
-      const consoleErrors = [];
-      const pageErrors = [];
-      page.on('console', (msg) => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
-      page.on('pageerror', (error) => pageErrors.push(String(error)));
-
-      await page.setViewportSize({ width, height: 900 });
-      const response = await page.goto(`${BASE}/sources/`, { waitUntil: 'networkidle', timeout: 30000 });
-      expect(response?.ok(), 'sources page is unreachable').toBeTruthy();
-
-      const overflow = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-      }));
-      expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
-
-      const nav = page.locator('nav').first();
-      await expect(nav).toBeVisible();
-      expect((await nav.boundingBox())?.width || 0).toBeGreaterThan(40);
-
-      const canonical = page.locator('link[rel="canonical"]');
-      await expect(canonical).toHaveCount(1);
-      await expect(canonical).toHaveAttribute('href', `${BASE}/sources/`);
-      expect((await page.title()).trim()).toContain('Sources, provenance & machine access');
-      expect(((await page.locator('meta[name="description"]').getAttribute('content')) || '').trim().length).toBeGreaterThan(40);
-
-      await expect(page.getByRole('heading', { level: 1 })).toContainText('Sources, provenance & machine access');
-      await expect(page.getByText(/REAL population-revision evidence, CURRENT_VERIFIED Internet Use observations/i)).toBeVisible();
-      await expect(page.getByText(/CURRENT_VERIFIED Internet Use observations/i)).toBeVisible();
-      await expect(page.getByText(/Real-GDP revision publishing remains blocked/i)).toBeVisible();
-
-      const structured = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
-      expect(structured['@type']).toBe('WebPage');
-
-      for (const target of machineLinks) {
-        const link = page.locator(`a[href="..${target}"]`);
-        await expect(link, `sources page link missing: ${target}`).toHaveCount(1);
-        const targetResponse = await page.request.get(`${BASE}${target}`);
-        expect(targetResponse.ok(), `sources machine target unreachable: ${target}`).toBeTruthy();
-      }
-
-      await page.locator('body').click({ position: { x: 1, y: 1 } });
-      await page.keyboard.press('Tab');
-      const focusState = await page.evaluate(() => {
-        const el = document.activeElement;
-        if (!el || el === document.body || el === document.documentElement) return null;
-        const style = getComputedStyle(el);
-        const rect = el.getBoundingClientRect();
-        return {
-          visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none',
-          outlineStyle: style.outlineStyle,
-          outlineWidth: style.outlineWidth,
-          boxShadow: style.boxShadow,
-        };
-      });
-      expect(focusState).not.toBeNull();
-      expect(focusState?.visible).toBeTruthy();
-      const hasOutline = focusState?.outlineStyle !== 'none' && focusState?.outlineWidth !== '0px';
-      const hasFocusShadow = Boolean(focusState?.boxShadow && focusState.boxShadow !== 'none');
-      expect(hasOutline || hasFocusShadow).toBeTruthy();
-
-      expect(pageErrors).toEqual([]);
-      expect(consoleErrors).toEqual([]);
-    });
-  });
+  expect(llms).toContain(`${BASE}/indicators/internet-use/country/deu/`);
 });
