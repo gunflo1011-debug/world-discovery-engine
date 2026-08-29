@@ -25,9 +25,13 @@ function promoteHistoryHtml(html, record) {
     .replaceAll('href="../../../../index.html"', 'href="../../../index.html"')
     .replaceAll('href="../../../"', 'href="../../"')
     .replace(/href="\.\.\/\.\.\/([a-z]{3})\/history\/"/g, 'href="../$1/"')
-    .replaceAll('href="../../../region/', 'href="../../region/');
+    .replaceAll('href="../../../region/', 'href="../../region/')
+    // The history page's ../ link points to the country profile. Once the
+    // history document becomes the country profile itself, that same relative
+    // link would incorrectly resolve to /country/. Point it at the indicator hub.
+    .replaceAll('href="../"', 'href="../../"');
 
-  output = output.replace(/ · <a href="\.\.\/">See [^<]+ latest profile and country comparison →<\/a>/, ' · <a href="../../">Compare countries →</a>');
+  output = output.replace(/ · <a href="\.\.\/\.\.\/">See [^<]+ latest profile and country comparison →<\/a>/, ' · <a href="../../">Compare countries →</a>');
   output = output.replace('Download historical JSON →</a>', 'Download historical JSON →</a> · <a href="./data.csv">Download historical CSV →</a>');
   return output;
 }
