@@ -133,13 +133,17 @@ jobs:
             const html=await get(country.url);
             const payload=await get(country.machineDataUrl,'json');
             const csvText=await get(country.machineCsvUrl);
-            if(payload.schemaVersion!=='1.1'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.entity?.code!==country.code||payload.observation?.year!==2024||payload.observation?.value!==country.value||payload.entity?.region?.code!==country.region?.code||payload.entity?.region?.name!==country.region?.name) throw new Error(`country JSON identity mismatch ${country.code}`);
+            const observations=payload.observations;
+            const latest=Array.isArray(observations)&&observations.length ? observations.at(-1) : null;
+            if(payload.schemaVersion!=='1.1'||payload.status!=='CURRENT_VERIFIED'||payload.indicator?.code!==index.indicator||payload.entity?.code!==country.code||payload.entity?.region?.code!==country.region?.code||payload.entity?.region?.name!==country.region?.name) throw new Error(`country JSON identity mismatch ${country.code}`);
+            if(!latest||!Number.isFinite(Number(latest.year))||!Number.isFinite(Number(latest.value))||payload.period?.firstYear!==observations[0]?.year||payload.period?.latestYear!==latest.year) throw new Error(`country time-series period mismatch ${country.code}`);
+            if(payload.observation?.year!==latest.year||Number(payload.observation?.value)!==Number(latest.value)||payload.product?.type!=='country-time-series'||payload.product?.primary!==true||payload.product?.latestObservationIsSummary!==true||payload.product?.missingYearsInterpolated!==false) throw new Error(`country time-series product mismatch ${country.code}`);
             if(payload.scope?.completeGlobalRanking!==false||payload.scope?.historicalRevisionProduct!==false||payload.humanUrl!==human) throw new Error(`country JSON scope mismatch ${country.code}`);
             if(!html.includes('./data.json')||!html.includes('./data.csv')) throw new Error(`country machine links missing ${country.code}`);
             const lines=csvText.trim().split(/\r?\n/).map(csv); const cols=lines[0]; const row=lines[1];
             for(const k of ['entity_code','indicator_code','reference_year','value']) if(!cols.includes(k)) throw new Error(`country CSV missing ${k}: ${country.code}`);
             const v=k=>row[cols.indexOf(k)];
-            if(v('entity_code')!==country.code||v('indicator_code')!==index.indicator||Number(v('reference_year'))!==2024||Number(v('value'))!==Number(country.value)) throw new Error(`country CSV identity mismatch ${country.code}`);
+            if(v('entity_code')!==country.code||v('indicator_code')!==index.indicator||Number(v('reference_year'))!==Number(latest.year)||Number(v('value'))!==Number(latest.value)||lines.length-1!==observations.length) throw new Error(`country CSV time-series mismatch ${country.code}`);
           }
 
           const regionIndex=await get('/indicators/internet-use/region/index.json','json');
@@ -179,7 +183,7 @@ jobs:
             if(record.indicator?.code==='SP.POP.TOTL'&&record.entity?.code==='DEU') germany=true;
           }
           if(!germany) throw new Error('Germany population sentinel missing');
-          console.log(`LIVE RELEASE CONTRACT VERIFIED: ${index.countries.length} internet-use countries, ${evidence.evidence.length} REAL evidence records`);
+          console.log(`LIVE RELEASE CONTRACT VERIFIED: ${index.countries.length} internet-use time series, ${evidence.evidence.length} REAL evidence records`);
           NODE
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
