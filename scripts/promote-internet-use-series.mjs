@@ -27,7 +27,11 @@ function promoteHistoryHtml(html, record) {
     .replace(/href="\.\.\/\.\.\/([a-z]{3})\/history\/"/g, 'href="../$1/"')
     .replaceAll('href="../../../region/', 'href="../../region/');
 
-  output = output.replace(/ · <a href="\.\.\/">See [^<]+ latest profile and country comparison →<\/a>/, ' · <a href="../../">Compare countries →</a>');
+  // On the historical route, a bare ../ linked back to the old country snapshot.
+  // Once that history page becomes the country root, the same relative link would
+  // point at the non-existent /country/ directory. Point it at the internet-use hub.
+  output = output.replaceAll('href="../"', 'href="../../"');
+  output = output.replace(/ · <a href="\.\.\/\.\.\/">See [^<]+ latest profile and country comparison →<\/a>/, ' · <a href="../../">Compare countries →</a>');
   return output;
 }
 
