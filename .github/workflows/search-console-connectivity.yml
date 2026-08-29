@@ -10,7 +10,7 @@ on:
       - 'scripts/analyze-search-console.mjs'
       - 'test/search-console-extractor.test.js'
   schedule:
-    - cron: '17 6 * * *'
+    - cron: '7 * * * *'
 
 permissions:
   contents: read
