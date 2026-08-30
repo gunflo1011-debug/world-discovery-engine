@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.1",
-  "generatedAt": "2026-08-30T15:40:56.962Z",
+  "generatedAt": "2026-08-30T15:41:58.378Z",
   "source": "World Development Indicators",
   "fromYear": 2000,
   "toYear": 2025,
@@ -344,16 +344,16 @@
       "dataUrl": "/data/wdi/renewable-energy-consumption/history.json"
     },
     {
-      "code": "EN.ATM.CO2E.PC",
+      "code": "EN.GHG.CO2.PC.CE.AR5",
       "slug": "co2-emissions-per-capita",
-      "name": "CO2 emissions (metric tons per capita)",
-      "unit": "metric tons per person",
+      "name": "Carbon dioxide (CO2) emissions excluding LULUCF per capita",
+      "unit": "t CO2e per capita",
       "fromYear": 2000,
       "toYear": 2025,
-      "countries": 0,
-      "years": 0,
-      "observations": 0,
-      "status": "INSUFFICIENT_HISTORY_COVERAGE",
+      "countries": 203,
+      "years": 25,
+      "observations": 5075,
+      "status": "VERIFIED_HISTORY",
       "dataUrl": "/data/wdi/co2-emissions-per-capita/history.json"
     },
     {
