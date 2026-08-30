@@ -174,8 +174,8 @@
       if (!response.ok) throw new Error(`History request failed: ${response.status}`);
       return response.json();
     })
-    .then((history) => {
-      const records = Array.isArray(history.records) ? history.records : [];
+    .then((historyData) => {
+      const records = Array.isArray(historyData.records) ? historyData.records : [];
       const years = [...new Set(records.map((r) => Number(r.year)).filter(Number.isFinite))].sort((a, b) => b - a);
       if (!years.length) return;
 
@@ -208,7 +208,7 @@
         renderRows(yearRecords, year);
         const url = new URL(location.href);
         if (year === currentYear) url.searchParams.delete('year'); else url.searchParams.set('year', String(year));
-        history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+        window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
       };
 
       yearSelect.addEventListener('change', () => renderYear(Number(yearSelect.value)));
