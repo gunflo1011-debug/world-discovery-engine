@@ -1,0 +1,10 @@
+World Discovery official WDI catalog status
+
+Verified current snapshots: 30/30
+Verified histories: 30/30
+Historical country-year observations: 153722
+Snapshot selection: newest same-year country snapshot with at least 120 countries, searched from 2025 back to 2020.
+History range: 2000-2025.
+Source family: World Bank World Development Indicators.
+
+Generated from the successful WDI catalog ingestion run on 2026-08-30.
