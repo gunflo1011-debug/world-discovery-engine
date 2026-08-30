@@ -1,0 +1,1899 @@
+{
+  "schemaVersion": "1.1",
+  "status": "CURRENT_VERIFIED",
+  "indicator": {
+    "code": "NY.GDP.PCAP.CD",
+    "name": "GDP per capita (current US$)",
+    "unit": "current US$ per person"
+  },
+  "observationYear": 2025,
+  "coverage": {
+    "type": "latest_well_covered_same_year_snapshot",
+    "countries": 186,
+    "minimumCountries": 120,
+    "searchWindow": {
+      "latestYear": 2025,
+      "earliestYear": 2020
+    },
+    "attempts": [
+      {
+        "year": 2025,
+        "countries": 186
+      }
+    ],
+    "note": "Newest same-year non-aggregate country snapshot meeting the coverage threshold; no country is backfilled from another year."
+  },
+  "retrievedAt": "2026-08-30",
+  "retrievalUrl": "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.CD?date=2025&format=json&per_page=400&source=2",
+  "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
+  "source": {
+    "publisher": "World Bank",
+    "dataset": "World Development Indicators",
+    "surface": "World Bank Indicators API v2",
+    "metadataUrl": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD",
+    "license": "CC BY-4.0",
+    "attribution": "World Bank World Development Indicators."
+  },
+  "records": [
+    {
+      "code": "ALB",
+      "country": "Albania",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 12998.147869552,
+      "year": 2025
+    },
+    {
+      "code": "DZA",
+      "country": "Algeria",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 6051.00322704182,
+      "year": 2025
+    },
+    {
+      "code": "AND",
+      "country": "Andorra",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 54291.5026031052,
+      "year": 2025
+    },
+    {
+      "code": "AGO",
+      "country": "Angola",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 3129.47662331063,
+      "year": 2025
+    },
+    {
+      "code": "ATG",
+      "country": "Antigua and Barbuda",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 24819.2454680158,
+      "year": 2025
+    },
+    {
+      "code": "ARG",
+      "country": "Argentina",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 14898.0885943842,
+      "year": 2025
+    },
+    {
+      "code": "ARM",
+      "country": "Armenia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 9474.01849300368,
+      "year": 2025
+    },
+    {
+      "code": "AUS",
+      "country": "Australia",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 65129.7227990563,
+      "year": 2025
+    },
+    {
+      "code": "AUT",
+      "country": "Austria",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 62930.0351324599,
+      "year": 2025
+    },
+    {
+      "code": "AZE",
+      "country": "Azerbaijan",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 7410.72281660142,
+      "year": 2025
+    },
+    {
+      "code": "BHR",
+      "country": "Bahrain",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 30596.5794898885,
+      "year": 2025
+    },
+    {
+      "code": "BGD",
+      "country": "Bangladesh",
+      "region": {
+        "code": "SAS",
+        "name": "South Asia"
+      },
+      "value": 2597.34352335275,
+      "year": 2025
+    },
+    {
+      "code": "BRB",
+      "country": "Barbados",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 28364.8181499736,
+      "year": 2025
+    },
+    {
+      "code": "BLR",
+      "country": "Belarus",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 10279.2547190723,
+      "year": 2025
+    },
+    {
+      "code": "BEL",
+      "country": "Belgium",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 60750.2735864647,
+      "year": 2025
+    },
+    {
+      "code": "BLZ",
+      "country": "Belize",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 7865.47937690933,
+      "year": 2025
+    },
+    {
+      "code": "BEN",
+      "country": "Benin",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1658.27312662991,
+      "year": 2025
+    },
+    {
+      "code": "BTN",
+      "country": "Bhutan",
+      "region": {
+        "code": "SAS",
+        "name": "South Asia"
+      },
+      "value": 4492.78400306618,
+      "year": 2025
+    },
+    {
+      "code": "BOL",
+      "country": "Bolivia",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 5147.81081955367,
+      "year": 2025
+    },
+    {
+      "code": "BIH",
+      "country": "Bosnia and Herzegovina",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 10381.8460703874,
+      "year": 2025
+    },
+    {
+      "code": "BWA",
+      "country": "Botswana",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 7778.1151090571,
+      "year": 2025
+    },
+    {
+      "code": "BRA",
+      "country": "Brazil",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 10713.2856869511,
+      "year": 2025
+    },
+    {
+      "code": "BRN",
+      "country": "Brunei Darussalam",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 32234.6428368582,
+      "year": 2025
+    },
+    {
+      "code": "BGR",
+      "country": "Bulgaria",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 20328.1667065538,
+      "year": 2025
+    },
+    {
+      "code": "BFA",
+      "country": "Burkina Faso",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1147.57131635601,
+      "year": 2025
+    },
+    {
+      "code": "BDI",
+      "country": "Burundi",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 233.823013385395,
+      "year": 2025
+    },
+    {
+      "code": "CPV",
+      "country": "Cabo Verde",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 5796.47207860911,
+      "year": 2025
+    },
+    {
+      "code": "KHM",
+      "country": "Cambodia",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 2872.42926639909,
+      "year": 2025
+    },
+    {
+      "code": "CMR",
+      "country": "Cameroon",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1972.3815800786,
+      "year": 2025
+    },
+    {
+      "code": "CAN",
+      "country": "Canada",
+      "region": {
+        "code": "NAC",
+        "name": "North America"
+      },
+      "value": 55697.6639660837,
+      "year": 2025
+    },
+    {
+      "code": "CAF",
+      "country": "Central African Republic",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 556.131398031455,
+      "year": 2025
+    },
+    {
+      "code": "TCD",
+      "country": "Chad",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1022.33559390754,
+      "year": 2025
+    },
+    {
+      "code": "CHL",
+      "country": "Chile",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 17994.5911957485,
+      "year": 2025
+    },
+    {
+      "code": "CHN",
+      "country": "China",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 13861.970224368,
+      "year": 2025
+    },
+    {
+      "code": "COL",
+      "country": "Colombia",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 8561.62091854449,
+      "year": 2025
+    },
+    {
+      "code": "COM",
+      "country": "Comoros",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 2055.75921566281,
+      "year": 2025
+    },
+    {
+      "code": "COD",
+      "country": "Congo, Dem. Rep.",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 806.776000708534,
+      "year": 2025
+    },
+    {
+      "code": "COG",
+      "country": "Congo, Rep.",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 2514.73393584747,
+      "year": 2025
+    },
+    {
+      "code": "CRI",
+      "country": "Costa Rica",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 19970.0989059622,
+      "year": 2025
+    },
+    {
+      "code": "CIV",
+      "country": "Cote d'Ivoire",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 3050.10202257321,
+      "year": 2025
+    },
+    {
+      "code": "HRV",
+      "country": "Croatia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 27103.9116109268,
+      "year": 2025
+    },
+    {
+      "code": "CYP",
+      "country": "Cyprus",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 41783.08984375,
+      "year": 2025
+    },
+    {
+      "code": "CZE",
+      "country": "Czechia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 35917.2724081665,
+      "year": 2025
+    },
+    {
+      "code": "DNK",
+      "country": "Denmark",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 76970.1535217919,
+      "year": 2025
+    },
+    {
+      "code": "DJI",
+      "country": "Djibouti",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 3905.604954681,
+      "year": 2025
+    },
+    {
+      "code": "DMA",
+      "country": "Dominica",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 10989.0431185083,
+      "year": 2025
+    },
+    {
+      "code": "DOM",
+      "country": "Dominican Republic",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 11059.2081531834,
+      "year": 2025
+    },
+    {
+      "code": "ECU",
+      "country": "Ecuador",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 7125.27618527738,
+      "year": 2025
+    },
+    {
+      "code": "EGY",
+      "country": "Egypt, Arab Rep.",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 3085.80712036204,
+      "year": 2025
+    },
+    {
+      "code": "SLV",
+      "country": "El Salvador",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 5766.72574029107,
+      "year": 2025
+    },
+    {
+      "code": "GNQ",
+      "country": "Equatorial Guinea",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 6615.25245207167,
+      "year": 2025
+    },
+    {
+      "code": "EST",
+      "country": "Estonia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 34417.6320815138,
+      "year": 2025
+    },
+    {
+      "code": "SWZ",
+      "country": "Eswatini",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 4108.25221093363,
+      "year": 2025
+    },
+    {
+      "code": "ETH",
+      "country": "Ethiopia",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 932.729352775179,
+      "year": 2025
+    },
+    {
+      "code": "FJI",
+      "country": "Fiji",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 6642.00449450523,
+      "year": 2025
+    },
+    {
+      "code": "FIN",
+      "country": "Finland",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 56148.580949046,
+      "year": 2025
+    },
+    {
+      "code": "FRA",
+      "country": "France",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 48985.7307807924,
+      "year": 2025
+    },
+    {
+      "code": "GAB",
+      "country": "Gabon",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 8263.03321595,
+      "year": 2025
+    },
+    {
+      "code": "GMB",
+      "country": "Gambia, The",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 919.060423427951,
+      "year": 2025
+    },
+    {
+      "code": "GEO",
+      "country": "Georgia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 9691.53472415196,
+      "year": 2025
+    },
+    {
+      "code": "DEU",
+      "country": "Germany",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 60496.4350820414,
+      "year": 2025
+    },
+    {
+      "code": "GHA",
+      "country": "Ghana",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 3257.1588903576,
+      "year": 2025
+    },
+    {
+      "code": "GRC",
+      "country": "Greece",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 26948.0070432791,
+      "year": 2025
+    },
+    {
+      "code": "GRD",
+      "country": "Grenada",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 12106.8790105068,
+      "year": 2025
+    },
+    {
+      "code": "GTM",
+      "country": "Guatemala",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 6598.18032988711,
+      "year": 2025
+    },
+    {
+      "code": "GIN",
+      "country": "Guinea",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1877.2541220972,
+      "year": 2025
+    },
+    {
+      "code": "GNB",
+      "country": "Guinea-Bissau",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1123.76679992349,
+      "year": 2025
+    },
+    {
+      "code": "GUY",
+      "country": "Guyana",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 32413.7930757518,
+      "year": 2025
+    },
+    {
+      "code": "HTI",
+      "country": "Haiti",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 2694.18969101404,
+      "year": 2025
+    },
+    {
+      "code": "HND",
+      "country": "Honduras",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 3598.21450440452,
+      "year": 2025
+    },
+    {
+      "code": "HKG",
+      "country": "Hong Kong SAR, China",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 56983.0663059906,
+      "year": 2025
+    },
+    {
+      "code": "HUN",
+      "country": "Hungary",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 25907.4743259406,
+      "year": 2025
+    },
+    {
+      "code": "ISL",
+      "country": "Iceland",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 98323.4849517418,
+      "year": 2025
+    },
+    {
+      "code": "IND",
+      "country": "India",
+      "region": {
+        "code": "SAS",
+        "name": "South Asia"
+      },
+      "value": 2702.47987141553,
+      "year": 2025
+    },
+    {
+      "code": "IDN",
+      "country": "Indonesia",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 5059.62596411213,
+      "year": 2025
+    },
+    {
+      "code": "IRN",
+      "country": "Iran, Islamic Rep.",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 3924.38017821898,
+      "year": 2025
+    },
+    {
+      "code": "IRQ",
+      "country": "Iraq",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 5409.67899716967,
+      "year": 2025
+    },
+    {
+      "code": "IRL",
+      "country": "Ireland",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 131592.462547877,
+      "year": 2025
+    },
+    {
+      "code": "ISR",
+      "country": "Israel",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 60336.8477964194,
+      "year": 2025
+    },
+    {
+      "code": "ITA",
+      "country": "Italy",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 43308.6403060733,
+      "year": 2025
+    },
+    {
+      "code": "JAM",
+      "country": "Jamaica",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 8002.92104076242,
+      "year": 2025
+    },
+    {
+      "code": "JPN",
+      "country": "Japan",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 35951.0449549304,
+      "year": 2025
+    },
+    {
+      "code": "JOR",
+      "country": "Jordan",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 5347.77731384797,
+      "year": 2025
+    },
+    {
+      "code": "KAZ",
+      "country": "Kazakhstan",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 14692.1331757237,
+      "year": 2025
+    },
+    {
+      "code": "KEN",
+      "country": "Kenya",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 2362.86091198611,
+      "year": 2025
+    },
+    {
+      "code": "KIR",
+      "country": "Kiribati",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 2558.66636011102,
+      "year": 2025
+    },
+    {
+      "code": "KOR",
+      "country": "Korea, Rep.",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 36226.9663637512,
+      "year": 2025
+    },
+    {
+      "code": "XKX",
+      "country": "Kosovo",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 7899.41841135202,
+      "year": 2025
+    },
+    {
+      "code": "KWT",
+      "country": "Kuwait",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 32312.3119953634,
+      "year": 2025
+    },
+    {
+      "code": "KGZ",
+      "country": "Kyrgyz Republic",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 3080.96893823359,
+      "year": 2025
+    },
+    {
+      "code": "LAO",
+      "country": "Lao PDR",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 2324.76353098791,
+      "year": 2025
+    },
+    {
+      "code": "LVA",
+      "country": "Latvia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 26311.9730706362,
+      "year": 2025
+    },
+    {
+      "code": "LSO",
+      "country": "Lesotho",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1088.96276223185,
+      "year": 2025
+    },
+    {
+      "code": "LBR",
+      "country": "Liberia",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 915.328972645548,
+      "year": 2025
+    },
+    {
+      "code": "LBY",
+      "country": "Libya",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 6448.82415074121,
+      "year": 2025
+    },
+    {
+      "code": "LTU",
+      "country": "Lithuania",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 32958.6706396386,
+      "year": 2025
+    },
+    {
+      "code": "LUX",
+      "country": "Luxembourg",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 147252.179121515,
+      "year": 2025
+    },
+    {
+      "code": "MAC",
+      "country": "Macao SAR, China",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 75901.7461294198,
+      "year": 2025
+    },
+    {
+      "code": "MDG",
+      "country": "Madagascar",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 599.265294255357,
+      "year": 2025
+    },
+    {
+      "code": "MWI",
+      "country": "Malawi",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 671.506847203876,
+      "year": 2025
+    },
+    {
+      "code": "MYS",
+      "country": "Malaysia",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 13124.5554178269,
+      "year": 2025
+    },
+    {
+      "code": "MDV",
+      "country": "Maldives",
+      "region": {
+        "code": "SAS",
+        "name": "South Asia"
+      },
+      "value": 14614.7208116541,
+      "year": 2025
+    },
+    {
+      "code": "MLI",
+      "country": "Mali",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1193.27601004701,
+      "year": 2025
+    },
+    {
+      "code": "MLT",
+      "country": "Malta",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 47906.9000057635,
+      "year": 2025
+    },
+    {
+      "code": "MHL",
+      "country": "Marshall Islands",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 8489.05793506422,
+      "year": 2025
+    },
+    {
+      "code": "MRT",
+      "country": "Mauritania",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 2197.51046251309,
+      "year": 2025
+    },
+    {
+      "code": "MUS",
+      "country": "Mauritius",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 12991.2935987166,
+      "year": 2025
+    },
+    {
+      "code": "MEX",
+      "country": "Mexico",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 13889.2339628708,
+      "year": 2025
+    },
+    {
+      "code": "FSM",
+      "country": "Micronesia, Fed. Sts.",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 4414.00737137479,
+      "year": 2025
+    },
+    {
+      "code": "MDA",
+      "country": "Moldova",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 8621.71721623786,
+      "year": 2025
+    },
+    {
+      "code": "MNG",
+      "country": "Mongolia",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 7108.22743246244,
+      "year": 2025
+    },
+    {
+      "code": "MNE",
+      "country": "Montenegro",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 14816.8380299947,
+      "year": 2025
+    },
+    {
+      "code": "MAR",
+      "country": "Morocco",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 4672.46826171875,
+      "year": 2025
+    },
+    {
+      "code": "MOZ",
+      "country": "Mozambique",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 626.914419215727,
+      "year": 2025
+    },
+    {
+      "code": "MMR",
+      "country": "Myanmar",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 1488.87527836542,
+      "year": 2025
+    },
+    {
+      "code": "NAM",
+      "country": "Namibia",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 4875.92558158247,
+      "year": 2025
+    },
+    {
+      "code": "NRU",
+      "country": "Naoero",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 14639.5046929186,
+      "year": 2025
+    },
+    {
+      "code": "NPL",
+      "country": "Nepal",
+      "region": {
+        "code": "SAS",
+        "name": "South Asia"
+      },
+      "value": 1535.87781246307,
+      "year": 2025
+    },
+    {
+      "code": "NLD",
+      "country": "Netherlands",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 73683.917132794,
+      "year": 2025
+    },
+    {
+      "code": "NZL",
+      "country": "New Zealand",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 49591.0405731713,
+      "year": 2025
+    },
+    {
+      "code": "NIC",
+      "country": "Nicaragua",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 3173.33724815085,
+      "year": 2025
+    },
+    {
+      "code": "NER",
+      "country": "Niger",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 775.353622143879,
+      "year": 2025
+    },
+    {
+      "code": "NGA",
+      "country": "Nigeria",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1224.25410237743,
+      "year": 2025
+    },
+    {
+      "code": "MKD",
+      "country": "North Macedonia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 10489.9255355525,
+      "year": 2025
+    },
+    {
+      "code": "NOR",
+      "country": "Norway",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 94594.1929573987,
+      "year": 2025
+    },
+    {
+      "code": "OMN",
+      "country": "Oman",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 19947.3966227092,
+      "year": 2025
+    },
+    {
+      "code": "PAK",
+      "country": "Pakistan",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 1595.90912252837,
+      "year": 2025
+    },
+    {
+      "code": "PLW",
+      "country": "Palau",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 19532.3557719527,
+      "year": 2025
+    },
+    {
+      "code": "PAN",
+      "country": "Panama",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 19789.7308555826,
+      "year": 2025
+    },
+    {
+      "code": "PNG",
+      "country": "Papua New Guinea",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 3019.5309140573,
+      "year": 2025
+    },
+    {
+      "code": "PRY",
+      "country": "Paraguay",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 7026.61906146401,
+      "year": 2025
+    },
+    {
+      "code": "PER",
+      "country": "Peru",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 9684.41170314988,
+      "year": 2025
+    },
+    {
+      "code": "PHL",
+      "country": "Philippines",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 4170.72347271451,
+      "year": 2025
+    },
+    {
+      "code": "POL",
+      "country": "Poland",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 28419.5777395638,
+      "year": 2025
+    },
+    {
+      "code": "PRT",
+      "country": "Portugal",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 32081.8106150292,
+      "year": 2025
+    },
+    {
+      "code": "PRI",
+      "country": "Puerto Rico (US)",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 40620.1526923687,
+      "year": 2025
+    },
+    {
+      "code": "QAT",
+      "country": "Qatar",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 72524.9066385222,
+      "year": 2025
+    },
+    {
+      "code": "ROU",
+      "country": "Romania",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 22537.9532108047,
+      "year": 2025
+    },
+    {
+      "code": "RUS",
+      "country": "Russian Federation",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 17546.609375,
+      "year": 2025
+    },
+    {
+      "code": "RWA",
+      "country": "Rwanda",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1123.73874633225,
+      "year": 2025
+    },
+    {
+      "code": "WSM",
+      "country": "Samoa",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 5872.78333308796,
+      "year": 2025
+    },
+    {
+      "code": "STP",
+      "country": "Sao Tome and Principe",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 4084.40062145233,
+      "year": 2025
+    },
+    {
+      "code": "SAU",
+      "country": "Saudi Arabia",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 34536.6555456551,
+      "year": 2025
+    },
+    {
+      "code": "SEN",
+      "country": "Senegal",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1954.71174194867,
+      "year": 2025
+    },
+    {
+      "code": "SRB",
+      "country": "Serbia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 15262.0464193413,
+      "year": 2025
+    },
+    {
+      "code": "SYC",
+      "country": "Seychelles",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 19449.3836346926,
+      "year": 2025
+    },
+    {
+      "code": "SLE",
+      "country": "Sierra Leone",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 846.296172499617,
+      "year": 2025
+    },
+    {
+      "code": "SGP",
+      "country": "Singapore",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 98813.9788172877,
+      "year": 2025
+    },
+    {
+      "code": "SXM",
+      "country": "Sint Maarten (Dutch part)",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 42978.1317407037,
+      "year": 2025
+    },
+    {
+      "code": "SVK",
+      "country": "Slovak Republic",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 28543.6653439813,
+      "year": 2025
+    },
+    {
+      "code": "SVN",
+      "country": "Slovenia",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 37376.2216079138,
+      "year": 2025
+    },
+    {
+      "code": "SLB",
+      "country": "Solomon Islands",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 2086.18955928928,
+      "year": 2025
+    },
+    {
+      "code": "SOM",
+      "country": "Somalia, Fed. Rep.",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 661.173877723116,
+      "year": 2025
+    },
+    {
+      "code": "ZAF",
+      "country": "South Africa",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 6597.71450918774,
+      "year": 2025
+    },
+    {
+      "code": "ESP",
+      "country": "Spain",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 38627.2472148623,
+      "year": 2025
+    },
+    {
+      "code": "LKA",
+      "country": "Sri Lanka",
+      "region": {
+        "code": "SAS",
+        "name": "South Asia"
+      },
+      "value": 5002.07904353724,
+      "year": 2025
+    },
+    {
+      "code": "KNA",
+      "country": "St. Kitts and Nevis",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 25223.0257622185,
+      "year": 2025
+    },
+    {
+      "code": "LCA",
+      "country": "St. Lucia",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 14745.8184305461,
+      "year": 2025
+    },
+    {
+      "code": "VCT",
+      "country": "St. Vincent and the Grenadines",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 12561.769166789,
+      "year": 2025
+    },
+    {
+      "code": "SDN",
+      "country": "Sudan",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1164.53991699219,
+      "year": 2025
+    },
+    {
+      "code": "SUR",
+      "country": "Suriname",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 7069.87230892274,
+      "year": 2025
+    },
+    {
+      "code": "SWE",
+      "country": "Sweden",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 63133.2126736715,
+      "year": 2025
+    },
+    {
+      "code": "CHE",
+      "country": "Switzerland",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 114769.012314293,
+      "year": 2025
+    },
+    {
+      "code": "TJK",
+      "country": "Tajikistan",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 1637.2542942547,
+      "year": 2025
+    },
+    {
+      "code": "TZA",
+      "country": "Tanzania",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1318.81921386719,
+      "year": 2025
+    },
+    {
+      "code": "THA",
+      "country": "Thailand",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 8056.56359761558,
+      "year": 2025
+    },
+    {
+      "code": "TLS",
+      "country": "Timor-Leste",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 1340.9640193437,
+      "year": 2025
+    },
+    {
+      "code": "TGO",
+      "country": "Togo",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1383.89974929887,
+      "year": 2025
+    },
+    {
+      "code": "TON",
+      "country": "Tonga",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 6547.18646814228,
+      "year": 2025
+    },
+    {
+      "code": "TTO",
+      "country": "Trinidad and Tobago",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 18967.2704636681,
+      "year": 2025
+    },
+    {
+      "code": "TUN",
+      "country": "Tunisia",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 4656.63818386852,
+      "year": 2025
+    },
+    {
+      "code": "TUR",
+      "country": "Turkiye",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 18599.4420922378,
+      "year": 2025
+    },
+    {
+      "code": "TKM",
+      "country": "Turkmenistan",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 6540.17876401136,
+      "year": 2025
+    },
+    {
+      "code": "TUV",
+      "country": "Tuvalu",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 6041.44908591428,
+      "year": 2025
+    },
+    {
+      "code": "UGA",
+      "country": "Uganda",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1206.30450825002,
+      "year": 2025
+    },
+    {
+      "code": "UKR",
+      "country": "Ukraine",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 5865.884765625,
+      "year": 2025
+    },
+    {
+      "code": "GBR",
+      "country": "United Kingdom",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 57601.9621201954,
+      "year": 2025
+    },
+    {
+      "code": "USA",
+      "country": "United States",
+      "region": {
+        "code": "NAC",
+        "name": "North America"
+      },
+      "value": 90026.5163005744,
+      "year": 2025
+    },
+    {
+      "code": "URY",
+      "country": "Uruguay",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 25215.8238152781,
+      "year": 2025
+    },
+    {
+      "code": "UZB",
+      "country": "Uzbekistan",
+      "region": {
+        "code": "ECS",
+        "name": "Europe & Central Asia"
+      },
+      "value": 3968.2720079072,
+      "year": 2025
+    },
+    {
+      "code": "VUT",
+      "country": "Vanuatu",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 4038.73520713411,
+      "year": 2025
+    },
+    {
+      "code": "VEN",
+      "country": "Venezuela, RB",
+      "region": {
+        "code": "LCN",
+        "name": "Latin America & Caribbean "
+      },
+      "value": 3494.8138870244,
+      "year": 2025
+    },
+    {
+      "code": "VNM",
+      "country": "Viet Nam",
+      "region": {
+        "code": "EAS",
+        "name": "East Asia & Pacific"
+      },
+      "value": 5065.99091899299,
+      "year": 2025
+    },
+    {
+      "code": "PSE",
+      "country": "West Bank and Gaza",
+      "region": {
+        "code": "MEA",
+        "name": "Middle East, North Africa, Afghanistan & Pakistan"
+      },
+      "value": 3171.10844621579,
+      "year": 2025
+    },
+    {
+      "code": "ZMB",
+      "country": "Zambia",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 1317.87771619597,
+      "year": 2025
+    },
+    {
+      "code": "ZWE",
+      "country": "Zimbabwe",
+      "region": {
+        "code": "SSF",
+        "name": "Sub-Saharan Africa "
+      },
+      "value": 3021.43019873632,
+      "year": 2025
+    }
+  ]
+}

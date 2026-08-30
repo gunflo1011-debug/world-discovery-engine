@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.1",
+  "status": "INSUFFICIENT_CURRENT_COVERAGE",
+  "indicator": {
+    "code": "EN.ATM.CO2E.PC",
+    "name": "CO2 emissions (metric tons per capita)",
+    "unit": "metric tons per person"
+  },
+  "observationYear": null,
+  "coverage": {
+    "type": "latest_well_covered_same_year_snapshot",
+    "countries": 0,
+    "minimumCountries": 120,
+    "searchWindow": {
+      "latestYear": 2025,
+      "earliestYear": 2020
+    },
+    "attempts": [
+      {
+        "year": 2025,
+        "countries": 0
+      },
+      {
+        "year": 2024,
+        "countries": 0
+      },
+      {
+        "year": 2023,
+        "countries": 0
+      },
+      {
+        "year": 2022,
+        "countries": 0
+      },
+      {
+        "year": 2021,
+        "countries": 0
+      },
+      {
+        "year": 2020,
+        "countries": 0
+      }
+    ],
+    "note": "Newest same-year non-aggregate country snapshot meeting the coverage threshold; no country is backfilled from another year."
+  },
+  "retrievedAt": "2026-08-30",
+  "retrievalUrl": null,
+  "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
+  "source": {
+    "publisher": "World Bank",
+    "dataset": "World Development Indicators",
+    "surface": "World Bank Indicators API v2",
+    "metadataUrl": "https://data.worldbank.org/indicator/EN.ATM.CO2E.PC",
+    "license": "CC BY-4.0",
+    "attribution": "World Bank World Development Indicators."
+  },
+  "records": []
+}

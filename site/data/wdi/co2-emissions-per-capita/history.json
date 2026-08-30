@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.1",
+  "status": "INSUFFICIENT_HISTORY_COVERAGE",
+  "indicator": {
+    "code": "EN.ATM.CO2E.PC",
+    "name": "CO2 emissions (metric tons per capita)",
+    "unit": "metric tons per person"
+  },
+  "requestedRange": {
+    "fromYear": 2000,
+    "toYear": 2025
+  },
+  "coverage": {
+    "countries": 0,
+    "years": [],
+    "observations": 0,
+    "note": "Official WDI country-year observations only; aggregates and missing values omitted; no backfill."
+  },
+  "retrievedAt": "2026-08-30",
+  "retrievalUrl": "https://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.PC?date=2000:2025&format=json&per_page=10000&source=2",
+  "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
+  "error": null,
+  "source": {
+    "publisher": "World Bank",
+    "dataset": "World Development Indicators",
+    "metadataUrl": "https://data.worldbank.org/indicator/EN.ATM.CO2E.PC",
+    "license": "CC BY-4.0"
+  },
+  "records": []
+}
