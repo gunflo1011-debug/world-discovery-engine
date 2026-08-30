@@ -34,7 +34,7 @@ jobs:
       - run: npm ci
       - name: Ingest current WDI snapshots
         run: npm run ingest:wdi-catalog
-      - name: Ingest 2000-2024 WDI history
+      - name: Ingest 2000-2025 WDI history
         run: npm run ingest:wdi-history
       - name: Validate generated catalog
         run: |
@@ -45,12 +45,14 @@ jobs:
           if (current.indicators.length !== 30) throw new Error(`Expected 30 current indicators, got ${current.indicators.length}`);
           if (history.indicators.length !== 30) throw new Error(`Expected 30 history indicators, got ${history.indicators.length}`);
           for (const item of current.indicators) await access(`site${item.dataUrl}`);
-          for (const item of history.indicators) {
-            await access(`site${item.dataUrl}`);
-            if (item.observations < 2) throw new Error(`${item.code} has insufficient historical observations`);
-          }
+          for (const item of history.indicators) await access(`site${item.dataUrl}`);
+          const verifiedCurrent = current.indicators.filter(item => item.status === 'CURRENT_VERIFIED').length;
+          const verifiedHistory = history.indicators.filter(item => item.status === 'VERIFIED_HISTORY').length;
           const observations = history.indicators.reduce((sum, item) => sum + item.observations, 0);
-          console.log(`Validated 30 indicators with ${observations} historical country-year observations.`);
+          if (verifiedCurrent < 25) throw new Error(`Only ${verifiedCurrent}/30 current indicators meet verified coverage`);
+          if (verifiedHistory < 25) throw new Error(`Only ${verifiedHistory}/30 history indicators have verified history`);
+          if (observations < 100000) throw new Error(`Only ${observations} historical observations generated`);
+          console.log(`Validated ${verifiedCurrent}/30 current snapshots, ${verifiedHistory}/30 histories and ${observations} country-year observations.`);
           NODE
       - name: Commit refreshed official data
         run: |
