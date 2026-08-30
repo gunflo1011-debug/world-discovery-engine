@@ -27,7 +27,7 @@ test('internet-use landing page exposes data-derived regional highlights', async
     readFile(dataUrl, 'utf8').then(JSON.parse),
   ]);
 
-  const regions = [...new Map(data.records.map((record) => [record.region.code, record.region.name])).entries()];
+  const regions = [...new Map(data.records.map((record) => [record.region.code, record.region.name.trim()])).entries()];
   assert.ok(regions.length >= 2);
   assert.match(html, /id="region-highlights-heading"/);
   assert.match(html, /Compare internet use by region/);
