@@ -31,7 +31,7 @@ export const INDICATORS = [
   { code: 'IT.CEL.SETS.P2', slug: 'mobile-subscriptions', name: 'Mobile cellular subscriptions (per 100 people)', unit: 'per 100 people' },
   { code: 'EG.ELC.ACCS.ZS', slug: 'electricity-access', name: 'Access to electricity (% of population)', unit: '% of population' },
   { code: 'EG.FEC.RNEW.ZS', slug: 'renewable-energy-consumption', name: 'Renewable energy consumption (% of total final energy consumption)', unit: '% of final energy consumption' },
-  { code: 'EN.ATM.CO2E.PC', slug: 'co2-emissions-per-capita', name: 'CO2 emissions (metric tons per capita)', unit: 'metric tons per person' },
+  { code: 'EN.GHG.CO2.PC.CE.AR5', slug: 'co2-emissions-per-capita', name: 'Carbon dioxide (CO2) emissions excluding LULUCF per capita', unit: 't CO2e per capita' },
   { code: 'AG.LND.FRST.ZS', slug: 'forest-area-share', name: 'Forest area (% of land area)', unit: '% of land area' },
   { code: 'AG.LND.AGRI.ZS', slug: 'agricultural-land-share', name: 'Agricultural land (% of land area)', unit: '% of land area' },
   { code: 'SH.XPD.CHEX.GD.ZS', slug: 'health-expenditure-share-of-gdp', name: 'Current health expenditure (% of GDP)', unit: '% of GDP' }
