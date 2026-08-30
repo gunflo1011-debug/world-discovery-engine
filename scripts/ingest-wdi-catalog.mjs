@@ -1,7 +1,9 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
-export const DEFAULT_YEAR = 2024;
+export const LATEST_YEAR = 2025;
+export const EARLIEST_SNAPSHOT_YEAR = 2020;
+export const MIN_COUNTRIES = 120;
 export const INDICATORS = [
   { code: 'SP.POP.TOTL', slug: 'population', name: 'Population, total', unit: 'people' },
   { code: 'SP.POP.GROW', slug: 'population-growth', name: 'Population growth (annual %)', unit: 'annual %' },
@@ -35,65 +37,33 @@ export const INDICATORS = [
   { code: 'SH.XPD.CHEX.GD.ZS', slug: 'health-expenditure-share-of-gdp', name: 'Current health expenditure (% of GDP)', unit: '% of GDP' }
 ];
 
-function rows(payload, label) {
-  if (!Array.isArray(payload) || payload.length < 2 || !Array.isArray(payload[1])) throw new Error(`${label} returned an unexpected World Bank API payload`);
-  return payload[1];
-}
-
+function apiRows(payload) { return Array.isArray(payload) && Array.isArray(payload[1]) ? payload[1] : []; }
 function countryMap(payload) {
-  return new Map(rows(payload, 'country metadata')
-    .filter((country) => country?.id && country?.name && country?.region?.id && country.region.id !== 'NA')
-    .map((country) => [country.id, { code: country.id, country: country.name, region: { code: country.region.id, name: country.region.value } }]));
+  return new Map(apiRows(payload).filter(c => c?.id && c?.name && c?.region?.id && c.region.id !== 'NA').map(c => [c.id, { code:c.id, country:c.name, region:{ code:c.region.id, name:c.region.value } }]));
 }
-
-export function normalizeSnapshot({ spec, indicatorPayload, countries, year, retrievedAt, retrievalUrl, countryMetadataUrl }) {
-  const records = [];
-  for (const observation of rows(indicatorPayload, spec.code)) {
-    if (observation?.indicator?.id !== spec.code || Number(observation?.date) !== year) continue;
-    const country = countries.get(observation?.countryiso3code);
-    if (!country || typeof observation?.value !== 'number' || !Number.isFinite(observation.value)) continue;
-    records.push({ ...country, value: observation.value, year });
+function normalizeYear(spec, payload, countries, year) {
+  const records = apiRows(payload).filter(o => o?.indicator?.id === spec.code && Number(o?.date) === year && typeof o?.value === 'number' && Number.isFinite(o.value) && countries.has(o.countryiso3code)).map(o => ({ ...countries.get(o.countryiso3code), value:o.value, year }));
+  records.sort((a,b)=>a.country.localeCompare(b.country));
+  return records;
+}
+async function fetchJson(url, fetchImpl, attempts=3) {
+  let last;
+  for (let i=0;i<attempts;i++) { try { const r=await fetchImpl(url); if (r.ok) return await r.json(); last=new Error(`HTTP ${r.status}`); } catch(e){ last=e; } if(i+1<attempts) await new Promise(r=>setTimeout(r,1000*(i+1))); }
+  throw last;
+}
+export async function ingestCatalog({ latestYear=LATEST_YEAR, earliestYear=EARLIEST_SNAPSHOT_YEAR, minCountries=MIN_COUNTRIES, fetchImpl=fetch }={}) {
+  const retrievedAt=new Date().toISOString().slice(0,10); const countryMetadataUrl='https://api.worldbank.org/v2/country?format=json&per_page=400';
+  const countries=countryMap(await fetchJson(countryMetadataUrl,fetchImpl)); const outputRoot=new URL('../site/data/wdi/',import.meta.url); await mkdir(outputRoot,{recursive:true}); const catalog=[];
+  for(const spec of INDICATORS){
+    let selected=null; const attempts=[];
+    for(let year=latestYear;year>=earliestYear;year--){
+      const url=`https://api.worldbank.org/v2/country/all/indicator/${spec.code}?date=${year}&format=json&per_page=400&source=2`;
+      try { const records=normalizeYear(spec,await fetchJson(url,fetchImpl),countries,year); attempts.push({year,countries:records.length}); if(records.length>=minCountries){selected={year,records,url};break;} } catch(e){ attempts.push({year,countries:0,error:String(e.message||e)}); }
+    }
+    const directory=new URL(`${spec.slug}/`,outputRoot); await mkdir(directory,{recursive:true});
+    const snapshot={schemaVersion:'1.1',status:selected?'CURRENT_VERIFIED':'INSUFFICIENT_CURRENT_COVERAGE',indicator:{code:spec.code,name:spec.name,unit:spec.unit},observationYear:selected?.year??null,coverage:{type:'latest_well_covered_same_year_snapshot',countries:selected?.records.length??0,minimumCountries:minCountries,searchWindow:{latestYear,earliestYear},attempts,note:'Newest same-year non-aggregate country snapshot meeting the coverage threshold; no country is backfilled from another year.'},retrievedAt,retrievalUrl:selected?.url??null,countryMetadataUrl,source:{publisher:'World Bank',dataset:'World Development Indicators',surface:'World Bank Indicators API v2',metadataUrl:`https://data.worldbank.org/indicator/${spec.code}`,license:'CC BY-4.0',attribution:'World Bank World Development Indicators.'},records:selected?.records??[]};
+    await writeFile(new URL('data.json',directory),`${JSON.stringify(snapshot,null,2)}\n`,'utf8'); catalog.push({...spec,year:snapshot.observationYear,countries:snapshot.records.length,status:snapshot.status,dataUrl:`/data/wdi/${spec.slug}/data.json`});
   }
-  records.sort((a, b) => a.country.localeCompare(b.country));
-  if (new Set(records.map((record) => record.code)).size !== records.length) throw new Error(`duplicate ${spec.code} country observations`);
-  return {
-    schemaVersion: '1.0', status: records.length >= 2 ? 'CURRENT_VERIFIED' : 'INSUFFICIENT_CURRENT_COVERAGE',
-    indicator: { code: spec.code, name: spec.name, unit: spec.unit }, observationYear: year,
-    coverage: { type: 'official_same_year_snapshot', countries: records.length, note: `Non-aggregate country observations returned by WDI for ${spec.code} in ${year}; missing countries are not backfilled.` },
-    retrievedAt, retrievalUrl, countryMetadataUrl,
-    source: { publisher: 'World Bank', dataset: 'World Development Indicators', surface: 'World Bank Indicators API v2', metadataUrl: `https://data.worldbank.org/indicator/${spec.code}`, license: 'CC BY-4.0', attribution: 'World Bank World Development Indicators.' },
-    records
-  };
+  await writeFile(new URL('index.json',outputRoot),`${JSON.stringify({schemaVersion:'1.1',generatedAt:new Date().toISOString(),source:'World Development Indicators',selectionPolicy:{latestYear,earliestYear,minCountries},indicators:catalog},null,2)}\n`,'utf8'); console.log(`Ingested ${catalog.length} WDI indicators: ${catalog.map(x=>`${x.code}=${x.year??'none'}/${x.countries}`).join(', ')}`); return catalog;
 }
-
-export async function ingestCatalog({ year = DEFAULT_YEAR, fetchImpl = fetch } = {}) {
-  const retrievedAt = new Date().toISOString().slice(0, 10);
-  const countryMetadataUrl = 'https://api.worldbank.org/v2/country?format=json&per_page=400';
-  const countryResponse = await fetchImpl(countryMetadataUrl);
-  if (!countryResponse.ok) throw new Error(`World Bank country request failed: HTTP ${countryResponse.status}`);
-  const countries = countryMap(await countryResponse.json());
-  const outputRoot = new URL('../site/data/wdi/', import.meta.url);
-  await mkdir(outputRoot, { recursive: true });
-  const catalog = [];
-
-  for (const spec of INDICATORS) {
-    const retrievalUrl = `https://api.worldbank.org/v2/country/all/indicator/${spec.code}?date=${year}&format=json&per_page=400&source=2`;
-    const response = await fetchImpl(retrievalUrl);
-    if (!response.ok) throw new Error(`World Bank ${spec.code} request failed: HTTP ${response.status}`);
-    const snapshot = normalizeSnapshot({ spec, indicatorPayload: await response.json(), countries, year, retrievedAt, retrievalUrl, countryMetadataUrl });
-    const directory = new URL(`${spec.slug}/`, outputRoot);
-    await mkdir(directory, { recursive: true });
-    await writeFile(new URL('data.json', directory), `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');
-    catalog.push({ ...spec, year, countries: snapshot.records.length, status: snapshot.status, dataUrl: `/data/wdi/${spec.slug}/data.json` });
-  }
-
-  await writeFile(new URL('index.json', outputRoot), `${JSON.stringify({ schemaVersion: '1.0', generatedAt: new Date().toISOString(), source: 'World Development Indicators', indicators: catalog }, null, 2)}\n`, 'utf8');
-  console.log(`Ingested ${catalog.length} WDI indicators for ${year}: ${catalog.map(item => `${item.code}=${item.countries}`).join(', ')}`);
-  return catalog;
-}
-
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const yearIndex = process.argv.indexOf('--year');
-  const year = yearIndex >= 0 ? Number(process.argv[yearIndex + 1]) : DEFAULT_YEAR;
-  ingestCatalog({ year }).catch((error) => { console.error(error.message); process.exitCode = 1; });
-}
+if(import.meta.url===pathToFileURL(process.argv[1]).href) ingestCatalog().catch(e=>{console.error(e.message);process.exitCode=1;});
