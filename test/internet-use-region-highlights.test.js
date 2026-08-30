@@ -4,6 +4,11 @@ import { readFile } from 'node:fs/promises';
 
 const htmlUrl = new URL('../site/indicators/internet-use/index.html', import.meta.url);
 const dataUrl = new URL('../site/indicators/internet-use/data.json', import.meta.url);
+const esc = (value) => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;');
 
 test('internet-use landing page exposes data-derived regional highlights', async () => {
   const [html, data] = await Promise.all([
@@ -18,6 +23,6 @@ test('internet-use landing page exposes data-derived regional highlights', async
 
   for (const [code, name] of regions) {
     assert.ok(html.includes(`href="./region/${code.toLowerCase()}/"`), `missing region link for ${code}`);
-    assert.ok(html.includes(`>${name}</h3>`), `missing regional highlight for ${name}`);
+    assert.ok(html.includes(`>${esc(name)}</h3>`), `missing regional highlight for ${name}`);
   }
 });
