@@ -1,8 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
+import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
 
+const execFileAsync = promisify(execFile);
 const root = new URL('../site/indicators/internet-use/', import.meta.url);
+const repoRoot = fileURLToPath(new URL('../', import.meta.url));
+const enrichScript = fileURLToPath(new URL('../scripts/enrich-internet-use-regional-context.mjs', import.meta.url));
+
+async function enrichRegionalContext() {
+  await execFileAsync(process.execPath, [enrichScript], { cwd: repoRoot });
+}
 
 function median(values) {
   const sorted = [...values].sort((a, b) => a - b);
@@ -20,6 +30,7 @@ function ordinal(value) {
 }
 
 test('country pages expose source-backed regional rank, median context and peer discovery', async () => {
+  await enrichRegionalContext();
   const data = JSON.parse(await readFile(new URL('data.json', root), 'utf8'));
   const record = data.records.find((item) => item.code === 'DEU') ?? data.records[0];
   const regional = data.records.filter((item) => item.region.code === record.region.code);
@@ -42,7 +53,9 @@ test('country pages expose source-backed regional rank, median context and peer 
   }
 });
 
-test('regional context enrichment remains idempotent after the double-build check', async () => {
+test('regional context enrichment is idempotent on generated country pages', async () => {
+  await enrichRegionalContext();
+  await enrichRegionalContext();
   const data = JSON.parse(await readFile(new URL('data.json', root), 'utf8'));
   const record = data.records[0];
   const page = await readFile(new URL(`country/${record.code.toLowerCase()}/index.html`, root), 'utf8');
