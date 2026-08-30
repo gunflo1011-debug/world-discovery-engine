@@ -3,7 +3,10 @@ import { readFile, writeFile } from 'node:fs/promises';
 const root = new URL('../site/indicators/internet-use/', import.meta.url);
 const dataUrl = new URL('data.json', root);
 const countryRoot = new URL('country/', root);
-const marker = '<section class="section"><div class="wrap"><h2>Definition and provenance</h2>';
+const markers = [
+  '<section class="section"><div class="wrap"><h2>Definition and provenance</h2>',
+  '<section class="section"><div class="wrap"><h2>Source and methodology</h2>'
+];
 
 const esc = (value) => String(value)
   .replaceAll('&', '&amp;')
@@ -72,7 +75,8 @@ validate(data);
 for (const record of data.records) {
   const pageUrl = new URL(`${slugFor(record.code)}/index.html`, countryRoot);
   const html = await readFile(pageUrl, 'utf8');
-  if (!html.includes(marker)) throw new Error(`definition marker missing for ${record.code}`);
+  const marker = markers.find((candidate) => html.includes(candidate));
+  if (!marker) throw new Error(`source marker missing for ${record.code}`);
 
   const existingPattern = /<section class="section section-soft" data-regional-context="[A-Z]{3}">[\s\S]*?<\/section>/;
   const section = sectionFor(record, data.records);
