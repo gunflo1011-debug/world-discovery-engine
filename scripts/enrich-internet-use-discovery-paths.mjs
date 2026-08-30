@@ -30,8 +30,9 @@ for (const record of ranked) {
   const cards = [above && card(above, record, 'NEXT HIGHER'), below && card(below, record, 'NEXT LOWER'), ...regional.map(r => card(r, record, 'REGIONAL PEER'))].filter(Boolean).join('');
   const section = `<section class="section section-soft" id="country-discovery-paths"><div class="wrap"><div class="eyebrow">Keep exploring</div><h2>Countries to compare with ${esc(record.country)}</h2><p>Move through the ${data.observationYear} ranking or compare ${esc(record.country)} with nearby values in ${esc(record.region?.name || 'its region')}.</p><div class="grid">${cards}</div><p><a href="../../region/${record.region.code.toLowerCase()}/">Explore ${esc(record.region.name)} →</a> · <a href="../../">Compare all ${ranked.length} countries →</a></p></div></section>`;
   const marker = '<section class="section"><div class="wrap"><h2>Definition and provenance</h2>';
-  if (!html.includes(marker)) throw new Error(`provenance marker missing for ${record.code}`);
-  html = html.replace(marker, `${section}${marker}`);
+  if (html.includes(marker)) html = html.replace(marker, `${section}${marker}`);
+  else if (html.includes('</main>')) html = html.replace('</main>', `${section}</main>`);
+  else throw new Error(`safe insertion point missing for ${record.code}`);
   await writeFile(path, html, 'utf8');
 }
 
