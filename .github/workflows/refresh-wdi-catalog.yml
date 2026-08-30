@@ -1,0 +1,65 @@
+name: Refresh WDI catalog
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 4 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ingest-wdi-catalog.mjs'
+      - 'scripts/ingest-wdi-history-catalog.mjs'
+      - 'package.json'
+      - '.github/workflows/refresh-wdi-catalog.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-wdi-catalog
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Ingest current WDI snapshots
+        run: npm run ingest:wdi-catalog
+      - name: Ingest 2000-2024 WDI history
+        run: npm run ingest:wdi-history
+      - name: Validate generated catalog
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, access } from 'node:fs/promises';
+          const current = JSON.parse(await readFile('site/data/wdi/index.json', 'utf8'));
+          const history = JSON.parse(await readFile('site/data/wdi/history-index.json', 'utf8'));
+          if (current.indicators.length !== 30) throw new Error(`Expected 30 current indicators, got ${current.indicators.length}`);
+          if (history.indicators.length !== 30) throw new Error(`Expected 30 history indicators, got ${history.indicators.length}`);
+          for (const item of current.indicators) await access(`site${item.dataUrl}`);
+          for (const item of history.indicators) {
+            await access(`site${item.dataUrl}`);
+            if (item.observations < 2) throw new Error(`${item.code} has insufficient historical observations`);
+          }
+          const observations = history.indicators.reduce((sum, item) => sum + item.observations, 0);
+          console.log(`Validated 30 indicators with ${observations} historical country-year observations.`);
+          NODE
+      - name: Commit refreshed official data
+        run: |
+          git add site/data/wdi
+          if git diff --cached --quiet; then
+            echo 'WDI catalog already current.'
+            exit 0
+          fi
+          git config user.name 'world-discovery-data-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'data: refresh official WDI catalog [skip ci]'
+          git push
