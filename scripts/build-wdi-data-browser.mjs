@@ -1,0 +1,17 @@
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+
+const siteRoot = new URL('../site/', import.meta.url);
+const dataRoot = new URL('data/wdi/', siteRoot);
+const outputRoot = new URL('data/', siteRoot);
+await mkdir(outputRoot, { recursive: true });
+
+let catalog = null;
+try { catalog = JSON.parse(await readFile(new URL('index.json', dataRoot), 'utf8')); } catch {}
+const indicators = Array.isArray(catalog?.indicators) ? catalog.indicators : [];
+const verified = indicators.filter((x) => x.status === 'CURRENT_VERIFIED');
+const esc = (v) => String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+const cards = indicators.map((item) => `<article class="card"><span class="pill">${esc(item.code)}</span><div class="metric">${esc(item.countries)}</div><h3>${esc(item.name)}</h3><p>${item.year ? `Latest well-covered same-year snapshot: <strong>${esc(item.year)}</strong>.` : 'No snapshot currently meets the coverage threshold.'} Unit: ${esc(item.unit)}.</p><p><a href="./wdi/${esc(item.slug)}/data.json">Open snapshot JSON →</a> · <a href="./wdi/${esc(item.slug)}/history.json">Open history JSON →</a></p></article>`).join('');
+const body = indicators.length ? `<section class="hero"><div class="wrap"><div class="eyebrow">Official data catalog · World Bank WDI</div><h1>Test the growing World Discovery dataset.</h1><p>${verified.length} of ${indicators.length} catalog indicators currently have a verified well-covered same-year snapshot. Each indicator chooses its newest year meeting the coverage rule instead of forcing every dataset into one calendar year.</p><p><span class="pill">${indicators.length} INDICATORS · ${verified.length} VERIFIED SNAPSHOTS · OFFICIAL SOURCE</span></p></div></section><main><section class="section"><div class="wrap"><h2>Available indicators</h2><p class="muted">Open the raw snapshot or history JSON to inspect country coverage, observation year, provenance and source URLs.</p><div class="grid">${cards}</div></div></section></main>` : `<section class="hero"><div class="wrap"><div class="eyebrow">Official data catalog</div><h1>WDI catalog refresh pending.</h1><p>The public catalog page is ready. Verified World Bank data will appear here automatically after the ingestion workflow commits its first successful catalog.</p></div></section>`;
+const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Official data catalog — World Discovery</title><meta name="description" content="Browse and test World Discovery's official World Bank WDI indicator catalog, country coverage, observation years and machine-readable data."><link rel="canonical" href="https://worlddiscoverydata.com/data/"><link rel="stylesheet" href="../styles.css"></head><body><header class="topbar"><div class="wrap"><div class="brand">World Discovery Engine</div><nav class="nav"><a href="../">Home</a><a href="../indicators/">Indicators</a><a href="./" aria-current="page">Data catalog</a><a href="../methodology/">Methodology</a><a href="../sources/">Sources</a></nav></div></header>${body}<footer class="footer"><div class="wrap">World Discovery Engine · Official data, explicit years, machine-readable evidence.</div></footer></body></html>`;
+await writeFile(new URL('index.html', outputRoot), html, 'utf8');
+console.log(`Built public WDI data catalog page with ${indicators.length} indicators (${verified.length} verified snapshots).`);
