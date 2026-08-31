@@ -10,7 +10,8 @@ const urls = [
   '/data/',
   ...(catalog.indicators ?? []).filter((x) => x.status === 'CURRENT_VERIFIED').map((x) => `/data/${x.slug}/`),
   '/countries/',
-  ...(countries.countries ?? []).map((x) => x.url)
+  ...(countries.countries ?? []).map((x) => x.url),
+  '/compare/'
 ];
 
 for (const path of urls) {
