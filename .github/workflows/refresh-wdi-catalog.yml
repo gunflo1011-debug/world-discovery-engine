@@ -63,5 +63,7 @@ jobs:
           fi
           git config user.name 'world-discovery-data-bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'data: refresh official WDI catalog [skip ci]'
+          # Do not use [skip ci] here: refreshed site/data must trigger the normal
+          # CI + GitHub Pages pipeline so validated official data actually reaches production.
+          git commit -m 'data: refresh official WDI catalog'
           git push
