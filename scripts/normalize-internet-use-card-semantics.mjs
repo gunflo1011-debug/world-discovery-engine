@@ -3,9 +3,10 @@ import { readFile, writeFile } from 'node:fs/promises';
 const htmlUrl = new URL('../site/indicators/internet-use/index.html', import.meta.url);
 const html = await readFile(htmlUrl, 'utf8');
 
-const normalized = html
-  .replaceAll('<article class="card">', '<div class="card">')
-  .replaceAll('</article>', '</div>');
+const normalized = html.replace(
+  /<article class="card">([\s\S]*?)<\/article>/g,
+  '<div class="card">$1</div>',
+);
 
 if (normalized !== html) {
   await writeFile(htmlUrl, normalized);
