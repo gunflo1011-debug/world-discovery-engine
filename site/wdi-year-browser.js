@@ -166,7 +166,17 @@
     const last = points.at(-1);
     const change = last.value - first.value;
     const sign = change > 0 ? '+' : '';
-    if (chartSummary) chartSummary.textContent = `${last.country}: ${valueText(first.value)} in ${first.year} → ${valueText(last.value)} in ${last.year} (${sign}${formatValue(change)}${suffix()} change).`;
+    if (chartSummary) {
+      if (unit.includes('%')) {
+        const relativeChange = first.value !== 0 ? (change / Math.abs(first.value)) * 100 : null;
+        const relativeText = Number.isFinite(relativeChange)
+          ? `; ${relativeChange > 0 ? '+' : ''}${relativeChange.toFixed(1)}% relative change`
+          : '';
+        chartSummary.textContent = `${last.country}: ${valueText(first.value)} in ${first.year} → ${valueText(last.value)} in ${last.year} (${sign}${formatValue(change)} percentage points${relativeText}).`;
+      } else {
+        chartSummary.textContent = `${last.country}: ${valueText(first.value)} in ${first.year} → ${valueText(last.value)} in ${last.year} (${sign}${formatValue(change)}${suffix()} change).`;
+      }
+    }
   };
 
   fetch(historyUrl)
