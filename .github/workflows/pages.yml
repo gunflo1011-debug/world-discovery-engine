@@ -11,6 +11,9 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/pages.yml'
+  workflow_run:
+    workflows: ['Refresh WDI catalog']
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -24,12 +27,21 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    outputs:
+      release_sha: ${{ steps.release.outputs.sha }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # A refresh workflow commits generated data with GITHUB_TOKEN. GitHub
+          # intentionally does not emit a second push-triggered workflow from
+          # that token, so workflow_run must deploy the current main HEAD.
+          ref: main
+          fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -37,8 +49,13 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Test and build release artifact
         run: npm run check
-      - name: Stamp release identity
-        run: printf '%s\n' "$GITHUB_SHA" > site/release-sha.txt
+      - id: release
+        name: Stamp release identity
+        shell: bash
+        run: |
+          release_sha="$(git rev-parse HEAD)"
+          printf '%s\n' "$release_sha" > site/release-sha.txt
+          echo "sha=$release_sha" >> "$GITHUB_OUTPUT"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
@@ -51,8 +68,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_URL: https://worlddiscoverydata.com
+      RELEASE_SHA: ${{ needs.deploy.outputs.release_sha }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -63,8 +83,8 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3 4 5 6; do
-            live_sha="$(curl -L --silent --show-error --fail --max-time 20 "${BASE_URL}/release-sha.txt?release=${GITHUB_SHA}" || true)"
-            if [ "$live_sha" = "$GITHUB_SHA" ]; then echo "LIVE COMMIT VERIFIED: $live_sha"; exit 0; fi
+            live_sha="$(curl -L --silent --show-error --fail --max-time 20 "${BASE_URL}/release-sha.txt?release=${RELEASE_SHA}" || true)"
+            if [ "$live_sha" = "$RELEASE_SHA" ]; then echo "LIVE COMMIT VERIFIED: $live_sha"; exit 0; fi
             sleep $((attempt * 10))
           done
           exit 1
@@ -78,7 +98,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-browser-smoke-${{ github.sha }}
+          name: mobile-browser-smoke-${{ needs.deploy.outputs.release_sha }}
           path: test-results/
           if-no-files-found: ignore
           retention-days: 14
