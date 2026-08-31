@@ -43,7 +43,7 @@
     "observations": 5641,
     "note": "Official WDI country-year observations only; aggregates and missing values omitted; no backfill."
   },
-  "retrievedAt": "2026-08-30",
+  "retrievedAt": "2026-08-31",
   "retrievalUrl": "https://api.worldbank.org/v2/country/all/indicator/SP.POP.GROW?date=2000:2025&format=json&per_page=10000&source=2",
   "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
   "error": null,

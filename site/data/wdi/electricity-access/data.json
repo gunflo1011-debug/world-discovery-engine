@@ -27,7 +27,7 @@
     ],
     "note": "Newest same-year non-aggregate country snapshot meeting the coverage threshold; no country is backfilled from another year."
   },
-  "retrievedAt": "2026-08-30",
+  "retrievedAt": "2026-08-31",
   "retrievalUrl": "https://api.worldbank.org/v2/country/all/indicator/EG.ELC.ACCS.ZS?date=2024&format=json&per_page=400&source=2",
   "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
   "source": {
