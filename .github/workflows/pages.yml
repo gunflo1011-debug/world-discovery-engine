@@ -23,7 +23,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -37,9 +37,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # A refresh workflow commits generated data with GITHUB_TOKEN. GitHub
-          # intentionally does not emit a second push-triggered workflow from
-          # that token, so workflow_run must deploy the current main HEAD.
           ref: main
           fetch-depth: 1
       - uses: actions/setup-node@v4
