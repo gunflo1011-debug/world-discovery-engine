@@ -15,6 +15,7 @@ PROPERTY = 'sc-domain:worlddiscoverydata.com'
 INSPECTION_ENDPOINT = 'https://searchconsole.googleapis.com/v1/urlInspection/index:inspect'
 DEFAULT_SITEMAP = Path('site/sitemap.xml')
 DEFAULT_REQUEST_TIMEOUT = 12.0
+CORE_DATA_PREFIX = 'https://worlddiscoverydata.com/data/'
 
 
 def load_credentials():
@@ -45,6 +46,47 @@ def read_sitemap_urls(path: Path):
         if loc.text and loc.text.strip():
             urls.append(loc.text.strip())
     return urls
+
+
+def cyclic_slice(items, offset, limit):
+    if not items or limit <= 0:
+        return []
+    limit = min(limit, len(items))
+    start = offset % len(items)
+    return [items[(start + index) % len(items)] for index in range(limit)]
+
+
+def select_urls(urls, args):
+    if args.contains:
+        filtered = [url for url in urls if args.contains in url]
+        filtered = filtered[args.offset:]
+        if args.limit >= 0:
+            filtered = filtered[:args.limit]
+        return filtered, 'filtered'
+
+    if args.limit < 0:
+        return urls[args.offset:], 'sequential'
+
+    # Scheduled GitHub runs historically landed on large clusters of older
+    # Internet-use country URLs. Balance each bounded batch so half of it
+    # continuously samples the canonical English /data/ indicator surface.
+    # This gives the team direct evidence about newly added indicators while
+    # preserving broad sitemap rotation with the other half.
+    if os.environ.get('GITHUB_ACTIONS') == 'true' and args.limit >= 2:
+        priority = [url for url in urls if url.startswith(CORE_DATA_PREFIX)]
+        priority_count = min(args.limit // 2, len(priority))
+        priority_urls = cyclic_slice(priority, args.offset, priority_count)
+
+        priority_set = set(priority_urls)
+        general_pool = [url for url in urls if url not in priority_set]
+        general_count = args.limit - len(priority_urls)
+        general_urls = cyclic_slice(general_pool, args.offset, general_count)
+        return priority_urls + general_urls, 'balanced-core-data'
+
+    selected = urls[args.offset:]
+    if args.limit >= 0:
+        selected = selected[:args.limit]
+    return selected, 'sequential'
 
 
 def inspect_url(url, headers, language_code='en-US', timeout=DEFAULT_REQUEST_TIMEOUT):
@@ -164,11 +206,7 @@ def main():
     }
 
     urls = read_sitemap_urls(Path(args.sitemap))
-    if args.contains:
-        urls = [url for url in urls if args.contains in url]
-    urls = urls[args.offset:]
-    if args.limit >= 0:
-        urls = urls[:args.limit]
+    urls, selection_mode = select_urls(urls, args)
 
     if not urls:
         raise SystemExit('No sitemap URLs selected for inspection')
@@ -198,6 +236,7 @@ def main():
         'contains': args.contains,
         'offset': args.offset,
         'limit': args.limit,
+        'selectionMode': selection_mode,
         'requestTimeoutSeconds': args.timeout,
         'summary': summarize(rows),
         'rows': rows,
