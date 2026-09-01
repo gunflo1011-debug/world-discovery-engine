@@ -17,7 +17,17 @@
       "dataTitle": "Explore global indicators",
       "dataIntro": "Choose an indicator and compare countries using official World Bank World Development Indicators data.",
       "sourceNote": "Official source: World Bank World Development Indicators. Observation years and definitions stay attached to every dataset.",
-      "openIndicator": "Open indicator"
+      "openIndicator": "Open indicator",
+      "openInEnglish": "Open in English",
+      "searchCountries": "Search countries",
+      "searchPlaceholder": "Type a country name",
+      "rank": "Rank",
+      "country": "Country",
+      "value": "Value",
+      "coverage": "countries in this same-year snapshot",
+      "officialLabel": "Official World Bank indicator label",
+      "backToData": "Back to all data",
+      "indicatorNames": {}
     },
     "de": {
       "path": "de",
@@ -35,7 +45,23 @@
       "dataTitle": "Globale Indikatoren entdecken",
       "dataIntro": "Wähle einen Indikator und vergleiche Länder mit offiziellen Daten der World Development Indicators der Weltbank.",
       "sourceNote": "Offizielle Quelle: World Development Indicators der Weltbank. Beobachtungsjahre und Definitionen bleiben bei jedem Datensatz sichtbar.",
-      "openIndicator": "Indikator öffnen"
+      "openIndicator": "Indikator öffnen",
+      "openInEnglish": "Auf Englisch öffnen",
+      "searchCountries": "Länder durchsuchen",
+      "searchPlaceholder": "Land eingeben",
+      "rank": "Rang",
+      "country": "Land",
+      "value": "Wert",
+      "coverage": "Länder in diesem einheitlichen Jahresdatensatz",
+      "officialLabel": "Offizielle Indikatorbezeichnung der Weltbank",
+      "backToData": "Zurück zu allen Daten",
+      "indicatorNames": {
+        "population": "Bevölkerung insgesamt",
+        "gdp": "Bruttoinlandsprodukt (BIP)",
+        "gdp-per-capita": "BIP pro Kopf",
+        "life-expectancy": "Lebenserwartung bei Geburt",
+        "internet-use": "Internetnutzung (% der Bevölkerung)"
+      }
     },
     "es": {
       "path": "es",
@@ -53,7 +79,23 @@
       "dataTitle": "Explora indicadores globales",
       "dataIntro": "Elige un indicador y compara países con datos oficiales de los Indicadores del Desarrollo Mundial del Banco Mundial.",
       "sourceNote": "Fuente oficial: Indicadores del Desarrollo Mundial del Banco Mundial. El año de observación y la definición permanecen visibles en cada conjunto de datos.",
-      "openIndicator": "Abrir indicador"
+      "openIndicator": "Abrir indicador",
+      "openInEnglish": "Abrir en inglés",
+      "searchCountries": "Buscar países",
+      "searchPlaceholder": "Escribe un país",
+      "rank": "Posición",
+      "country": "País",
+      "value": "Valor",
+      "coverage": "países en esta instantánea del mismo año",
+      "officialLabel": "Nombre oficial del indicador del Banco Mundial",
+      "backToData": "Volver a todos los datos",
+      "indicatorNames": {
+        "population": "Población total",
+        "gdp": "Producto interno bruto (PIB)",
+        "gdp-per-capita": "PIB per cápita",
+        "life-expectancy": "Esperanza de vida al nacer",
+        "internet-use": "Uso de Internet (% de la población)"
+      }
     },
     "fr": {
       "path": "fr",
@@ -71,7 +113,23 @@
       "dataTitle": "Explorer les indicateurs mondiaux",
       "dataIntro": "Choisissez un indicateur et comparez les pays à partir des données officielles des Indicateurs du développement dans le monde de la Banque mondiale.",
       "sourceNote": "Source officielle : Indicateurs du développement dans le monde de la Banque mondiale. L’année d’observation et la définition restent visibles pour chaque jeu de données.",
-      "openIndicator": "Ouvrir l’indicateur"
+      "openIndicator": "Ouvrir l’indicateur",
+      "openInEnglish": "Ouvrir en anglais",
+      "searchCountries": "Rechercher des pays",
+      "searchPlaceholder": "Saisissez un pays",
+      "rank": "Rang",
+      "country": "Pays",
+      "value": "Valeur",
+      "coverage": "pays dans cet instantané d’une même année",
+      "officialLabel": "Libellé officiel de l’indicateur de la Banque mondiale",
+      "backToData": "Retour à toutes les données",
+      "indicatorNames": {
+        "population": "Population totale",
+        "gdp": "Produit intérieur brut (PIB)",
+        "gdp-per-capita": "PIB par habitant",
+        "life-expectancy": "Espérance de vie à la naissance",
+        "internet-use": "Utilisation d’Internet (% de la population)"
+      }
     },
     "zh-Hans": {
       "path": "zh-hans",
@@ -89,7 +147,23 @@
       "dataTitle": "探索全球指标",
       "dataIntro": "选择一个指标，并使用世界银行世界发展指标的官方数据比较各国。",
       "sourceNote": "官方来源：世界银行世界发展指标。每个数据集都会保留观测年份和定义。",
-      "openIndicator": "打开指标"
+      "openIndicator": "打开指标",
+      "openInEnglish": "用英语打开",
+      "searchCountries": "搜索国家",
+      "searchPlaceholder": "输入国家名称",
+      "rank": "排名",
+      "country": "国家",
+      "value": "数值",
+      "coverage": "个国家包含在同一年份的数据快照中",
+      "officialLabel": "世界银行官方指标名称",
+      "backToData": "返回全部数据",
+      "indicatorNames": {
+        "population": "总人口",
+        "gdp": "国内生产总值（GDP）",
+        "gdp-per-capita": "人均国内生产总值",
+        "life-expectancy": "出生时预期寿命",
+        "internet-use": "互联网使用率（占人口百分比）"
+      }
     }
   }
 }
