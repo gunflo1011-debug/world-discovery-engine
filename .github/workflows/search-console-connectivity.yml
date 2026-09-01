@@ -45,10 +45,11 @@ jobs:
         shell: bash
         run: |
           TOTAL=$(grep -c '<loc>' site/sitemap.xml)
-          LIMIT=50
+          LIMIT=20
+          REQUEST_TIMEOUT=12
           OFFSET=$(( (GITHUB_RUN_NUMBER * LIMIT) % TOTAL ))
-          echo "Inspecting ${LIMIT} URLs from offset ${OFFSET} of ${TOTAL} sitemap URLs"
-          python scripts/inspect-search-console-indexing.py --limit "$LIMIT" --offset "$OFFSET"
+          echo "Inspecting ${LIMIT} URLs from offset ${OFFSET} of ${TOTAL} sitemap URLs with ${REQUEST_TIMEOUT}s per-request timeout"
+          python scripts/inspect-search-console-indexing.py --limit "$LIMIT" --offset "$OFFSET" --timeout "$REQUEST_TIMEOUT"
       - name: Normalize, test and analyze
         run: |
           node --test test/search-console-extractor.test.js
