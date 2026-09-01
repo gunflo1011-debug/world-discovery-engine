@@ -34,9 +34,10 @@
     count.textContent = `${shown.length} of ${indicators.length} indicators shown`;
     grid.innerHTML = shown.map(item => {
       const comparisonUrl = comparisonUrls[item.slug];
+      const humanUrl = `./${encodeURIComponent(item.slug)}/`;
       const action = comparisonUrl
-        ? `<a href="${comparisonUrl}">Explore and compare countries →</a> · <a href="${escapeHtml(item.dataUrl)}">JSON</a>`
-        : `<a href="${escapeHtml(item.dataUrl)}">Open official data (JSON) →</a>`;
+        ? `<a href="${comparisonUrl}">Explore and compare countries →</a> · <a href="${humanUrl}">View indicator →</a> · <a href="${escapeHtml(item.dataUrl)}">JSON</a>`
+        : `<a href="${humanUrl}">Explore countries →</a> · <a href="${escapeHtml(item.dataUrl)}">JSON</a>`;
       return `<article class="card"><span class="pill">${escapeHtml(item.year)}</span><h2>${escapeHtml(item.name)}</h2><p>${escapeHtml(item.unit)} · ${escapeHtml(item.countries)} countries</p><p>${action}</p></article>`;
     }).join('') || '<p>No matching indicator. Try a broader word such as population, health, GDP, internet or energy.</p>';
   }
