@@ -24,7 +24,7 @@
   const count = document.getElementById('data-count');
   let indicators = [];
   const aliases = { health: 'life expectancy fertility birth death health', technology: 'internet mobile', energy: 'electricity renewable energy', environment: 'co2 forest agricultural land', economy: 'gdp inflation trade exports investment fdi', people: 'population fertility birth death life expectancy', population: 'population fertility birth death age density' };
-  const comparisonUrls = { 'gdp-per-capita': '../indicators/gdp-per-capita/', 'internet-use': '../indicators/internet-use/' };
+  const comparisonUrls = { 'gdp': '../indicators/gdp/', 'gdp-per-capita': '../indicators/gdp-per-capita/', 'internet-use': '../indicators/internet-use/' };
   const escapeHtml = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   function render() {
     const query = input.value.trim().toLowerCase();
