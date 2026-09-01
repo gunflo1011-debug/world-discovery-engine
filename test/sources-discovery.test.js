@@ -32,7 +32,7 @@ test('sources page reflects all published products and exposes machine discovery
     assert.match(html, new RegExp(`href="${href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
   }
 
-  assert.match(html, /href="\.\.\/indicators\/index\.html">Indicators<\/a>/);
+  assert.match(html, /href="\.\.\/indicators\/">Indicators<\/a>/);
   assert.match(html, /"@type":"WebPage"/);
   assert.match(html, /World Development Indicators/);
   assert.match(html, /<div class="table-wrap" tabindex="0" aria-label="Archive comparison requirements"><table class="table">/);
