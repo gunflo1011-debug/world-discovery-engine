@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/search-console-connectivity.yml'
       - 'scripts/fetch-search-console-analytics.py'
+      - 'scripts/inspect-search-console-indexing.py'
       - 'scripts/extract-search-console.mjs'
       - 'scripts/analyze-search-console.mjs'
       - 'test/search-console-extractor.test.js'
@@ -19,7 +20,7 @@ permissions:
 jobs:
   verify-search-console:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     env:
       GOOGLE_SEARCH_CONSOLE_CREDENTIALS: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS }}
     steps:
@@ -27,14 +28,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install auth dependencies
-        run: python -m pip install --disable-pip-version-check --quiet google-auth requests
+      - name: Install dependencies
+        run: |
+          npm ci
+          python -m pip install --disable-pip-version-check --quiet google-auth requests
+      - name: Build current discovery surfaces
+        run: npm run build
       - name: Fetch Search Console baseline and fresh 24-hour view
         run: python scripts/fetch-search-console-analytics.py
+      - name: Inspect a rotating sitemap slice in Google
+        shell: bash
+        run: |
+          TOTAL=$(grep -c '<loc>' site/sitemap.xml)
+          LIMIT=50
+          OFFSET=$(( (GITHUB_RUN_NUMBER * LIMIT) % TOTAL ))
+          echo "Inspecting ${LIMIT} URLs from offset ${OFFSET} of ${TOTAL} sitemap URLs"
+          python scripts/inspect-search-console-indexing.py --limit "$LIMIT" --offset "$OFFSET"
       - name: Normalize, test and analyze
         run: |
           node --test test/search-console-extractor.test.js
@@ -49,4 +63,6 @@ jobs:
             search-console-baseline.json
             search-console.csv
             search-console-opportunities.txt
+            search-console-indexing.json
+            search-console-indexing.csv
           retention-days: 30

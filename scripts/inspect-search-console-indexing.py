@@ -1,0 +1,210 @@
+import argparse
+import csv
+import json
+import os
+import sys
+import time
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+import requests
+from google.auth.transport.requests import Request
+from google.oauth2 import service_account
+
+PROPERTY = 'sc-domain:worlddiscoverydata.com'
+INSPECTION_ENDPOINT = 'https://searchconsole.googleapis.com/v1/urlInspection/index:inspect'
+DEFAULT_SITEMAP = Path('site/sitemap.xml')
+
+
+def load_credentials():
+    raw = os.environ.get('GOOGLE_SEARCH_CONSOLE_CREDENTIALS', '')
+    if not raw:
+        raise SystemExit('Missing GOOGLE_SEARCH_CONSOLE_CREDENTIALS secret')
+
+    info = json.loads(raw)
+    credentials = service_account.Credentials.from_service_account_info(
+        info,
+        scopes=['https://www.googleapis.com/auth/webmasters.readonly'],
+    )
+    credentials.refresh(Request())
+    return credentials
+
+
+def read_sitemap_urls(path: Path):
+    if not path.exists():
+        raise SystemExit(f'Sitemap not found: {path}')
+
+    root = ET.parse(path).getroot()
+    namespace = ''
+    if root.tag.startswith('{'):
+        namespace = root.tag.split('}', 1)[0] + '}'
+
+    urls = []
+    for loc in root.findall(f'.//{namespace}loc'):
+        if loc.text and loc.text.strip():
+            urls.append(loc.text.strip())
+    return urls
+
+
+def inspect_url(url, headers, language_code='en-US'):
+    body = {
+        'inspectionUrl': url,
+        'siteUrl': PROPERTY,
+        'languageCode': language_code,
+    }
+    response = requests.post(
+        INSPECTION_ENDPOINT,
+        headers=headers,
+        json=body,
+        timeout=60,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def normalize_result(url, payload):
+    result = payload.get('inspectionResult', {}) or {}
+    index = result.get('indexStatusResult', {}) or {}
+
+    return {
+        'url': url,
+        'inspectionResultLink': result.get('inspectionResultLink'),
+        'verdict': index.get('verdict'),
+        'coverageState': index.get('coverageState'),
+        'indexingState': index.get('indexingState'),
+        'robotsTxtState': index.get('robotsTxtState'),
+        'pageFetchState': index.get('pageFetchState'),
+        'googleCanonical': index.get('googleCanonical'),
+        'userCanonical': index.get('userCanonical'),
+        'lastCrawlTime': index.get('lastCrawlTime'),
+        'crawledAs': index.get('crawledAs'),
+        'referringUrls': index.get('referringUrls') or [],
+        'sitemap': index.get('sitemap') or [],
+    }
+
+
+def write_csv(path: Path, rows):
+    columns = [
+        'url',
+        'verdict',
+        'coverageState',
+        'indexingState',
+        'robotsTxtState',
+        'pageFetchState',
+        'lastCrawlTime',
+        'crawledAs',
+        'googleCanonical',
+        'userCanonical',
+        'inspectionResultLink',
+        'sitemap',
+        'referringUrls',
+        'error',
+    ]
+
+    with path.open('w', encoding='utf-8', newline='') as handle:
+        writer = csv.DictWriter(handle, fieldnames=columns)
+        writer.writeheader()
+        for row in rows:
+            out = dict(row)
+            out['sitemap'] = ' | '.join(out.get('sitemap') or [])
+            out['referringUrls'] = ' | '.join(out.get('referringUrls') or [])
+            writer.writerow({key: out.get(key) for key in columns})
+
+
+def summarize(rows):
+    summary = {
+        'total': len(rows),
+        'successfulInspections': 0,
+        'errors': 0,
+        'verdicts': {},
+        'coverageStates': {},
+        'indexingStates': {},
+        'pageFetchStates': {},
+    }
+
+    for row in rows:
+        if row.get('error'):
+            summary['errors'] += 1
+            continue
+        summary['successfulInspections'] += 1
+        for field, target in [
+            ('verdict', 'verdicts'),
+            ('coverageState', 'coverageStates'),
+            ('indexingState', 'indexingStates'),
+            ('pageFetchState', 'pageFetchStates'),
+        ]:
+            value = row.get(field) or 'UNKNOWN'
+            summary[target][value] = summary[target].get(value, 0) + 1
+    return summary
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Inspect sitemap URLs with the Google Search Console URL Inspection API.'
+    )
+    parser.add_argument('--sitemap', default=str(DEFAULT_SITEMAP))
+    parser.add_argument('--limit', type=int, default=100)
+    parser.add_argument('--contains', default=None, help='Only inspect URLs containing this text.')
+    parser.add_argument('--offset', type=int, default=0)
+    parser.add_argument('--delay', type=float, default=0.15, help='Delay between API requests in seconds.')
+    parser.add_argument('--language', default='en-US')
+    parser.add_argument('--json-output', default='search-console-indexing.json')
+    parser.add_argument('--csv-output', default='search-console-indexing.csv')
+    args = parser.parse_args()
+
+    credentials = load_credentials()
+    headers = {
+        'Authorization': f'Bearer {credentials.token}',
+        'Content-Type': 'application/json',
+    }
+
+    urls = read_sitemap_urls(Path(args.sitemap))
+    if args.contains:
+        urls = [url for url in urls if args.contains in url]
+    urls = urls[args.offset:]
+    if args.limit >= 0:
+        urls = urls[:args.limit]
+
+    if not urls:
+        raise SystemExit('No sitemap URLs selected for inspection')
+
+    rows = []
+    for index, url in enumerate(urls, start=1):
+        print(f'[{index}/{len(urls)}] Inspecting {url}', file=sys.stderr)
+        try:
+            payload = inspect_url(url, headers, args.language)
+            row = normalize_result(url, payload)
+            row['error'] = None
+        except requests.HTTPError as exc:
+            response = getattr(exc, 'response', None)
+            error_text = str(exc)
+            if response is not None and response.text:
+                error_text = f'{error_text}; body={response.text[:1500]}'
+            row = {'url': url, 'error': error_text}
+        except requests.RequestException as exc:
+            row = {'url': url, 'error': str(exc)}
+        rows.append(row)
+        if args.delay and index < len(urls):
+            time.sleep(args.delay)
+
+    output = {
+        'property': PROPERTY,
+        'sitemap': args.sitemap,
+        'contains': args.contains,
+        'offset': args.offset,
+        'limit': args.limit,
+        'summary': summarize(rows),
+        'rows': rows,
+    }
+
+    json_path = Path(args.json_output)
+    csv_path = Path(args.csv_output)
+    json_path.write_text(json.dumps(output, indent=2, ensure_ascii=False), encoding='utf-8')
+    write_csv(csv_path, rows)
+
+    print(json.dumps(output['summary'], indent=2, ensure_ascii=False))
+    print(f'Wrote {json_path} and {csv_path}', file=sys.stderr)
+
+
+if __name__ == '__main__':
+    main()
