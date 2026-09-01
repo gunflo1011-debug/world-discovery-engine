@@ -14,6 +14,7 @@ from google.oauth2 import service_account
 PROPERTY = 'sc-domain:worlddiscoverydata.com'
 INSPECTION_ENDPOINT = 'https://searchconsole.googleapis.com/v1/urlInspection/index:inspect'
 DEFAULT_SITEMAP = Path('site/sitemap.xml')
+DEFAULT_REQUEST_TIMEOUT = 12.0
 
 
 def load_credentials():
@@ -46,7 +47,7 @@ def read_sitemap_urls(path: Path):
     return urls
 
 
-def inspect_url(url, headers, language_code='en-US'):
+def inspect_url(url, headers, language_code='en-US', timeout=DEFAULT_REQUEST_TIMEOUT):
     body = {
         'inspectionUrl': url,
         'siteUrl': PROPERTY,
@@ -56,7 +57,7 @@ def inspect_url(url, headers, language_code='en-US'):
         INSPECTION_ENDPOINT,
         headers=headers,
         json=body,
-        timeout=60,
+        timeout=timeout,
     )
     response.raise_for_status()
     return response.json()
@@ -147,10 +148,14 @@ def main():
     parser.add_argument('--contains', default=None, help='Only inspect URLs containing this text.')
     parser.add_argument('--offset', type=int, default=0)
     parser.add_argument('--delay', type=float, default=0.15, help='Delay between API requests in seconds.')
+    parser.add_argument('--timeout', type=float, default=DEFAULT_REQUEST_TIMEOUT, help='Per-request timeout in seconds.')
     parser.add_argument('--language', default='en-US')
     parser.add_argument('--json-output', default='search-console-indexing.json')
     parser.add_argument('--csv-output', default='search-console-indexing.csv')
     args = parser.parse_args()
+
+    if args.timeout <= 0:
+        raise SystemExit('--timeout must be greater than zero')
 
     credentials = load_credentials()
     headers = {
@@ -172,7 +177,7 @@ def main():
     for index, url in enumerate(urls, start=1):
         print(f'[{index}/{len(urls)}] Inspecting {url}', file=sys.stderr)
         try:
-            payload = inspect_url(url, headers, args.language)
+            payload = inspect_url(url, headers, args.language, args.timeout)
             row = normalize_result(url, payload)
             row['error'] = None
         except requests.HTTPError as exc:
@@ -193,6 +198,7 @@ def main():
         'contains': args.contains,
         'offset': args.offset,
         'limit': args.limit,
+        'requestTimeoutSeconds': args.timeout,
         'summary': summarize(rows),
         'rows': rows,
     }
