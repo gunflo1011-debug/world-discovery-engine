@@ -11,7 +11,7 @@ test('historical explorer consumes the records array emitted by the WDI history 
     readFile(ingestUrl, 'utf8')
   ]);
 
-  assert.match(ingest, /payload=\{[^;]*records\}/s, 'history ingest must publish records');
+  assert.match(ingest, /\brecords\};const dir=/, 'history ingest must publish records');
   assert.match(explorer, /Array\.isArray\(payload\.records\)\)return payload\.records/, 'explorer must read the published records array');
   assert.match(explorer, /setCountries\(countries,requested\)/, 'country picker must be populated from historical rows');
 });
