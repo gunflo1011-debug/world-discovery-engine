@@ -43,6 +43,7 @@
   };
 
   const valueText = (value) => `${formatValue(value)}${suffix()}`;
+  const countryHref = (code) => `../../countries/${encodeURIComponent(String(code ?? '').toLowerCase())}/`;
 
   const fillCard = (card, record, label) => {
     if (!card || !record) return;
@@ -62,12 +63,15 @@
       const rank = document.createElement('td');
       rank.textContent = String(index + 1);
       const country = document.createElement('td');
+      const link = document.createElement('a');
+      link.href = countryHref(record.code);
       const strong = document.createElement('strong');
       strong.textContent = record.country;
+      link.append(strong);
       const meta = document.createElement('span');
       meta.className = 'muted';
       meta.textContent = `${record.code} · ${record.region?.name ?? ''}`;
-      country.append(strong, document.createElement('br'), meta);
+      country.append(link, document.createElement('br'), meta);
       const value = document.createElement('td');
       value.textContent = valueText(record.value);
       tr.append(rank, country, value);
