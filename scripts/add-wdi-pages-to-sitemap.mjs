@@ -9,6 +9,7 @@ const base = 'https://worlddiscoverydata.com';
 const urls = [
   '/data/',
   ...(catalog.indicators ?? []).filter((x) => x.status === 'CURRENT_VERIFIED').map((x) => `/data/${x.slug}/`),
+  '/indicators/gdp/',
   '/countries/',
   ...(countries.countries ?? []).map((x) => x.url),
   '/compare/'
