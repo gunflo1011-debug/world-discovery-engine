@@ -16,6 +16,13 @@
   const highestCard = document.querySelector('[data-highest-card]');
   const middleCard = document.querySelector('[data-middle-card]');
   const lowestCard = document.querySelector('[data-lowest-card]');
+  const hero = document.querySelector('main .hero');
+  const heroEyebrow = hero?.querySelector('.eyebrow');
+  const heroIntro = hero?.querySelector('h1 + p');
+  const quickInsights = document.getElementById('quick-insights');
+  const quickEyebrow = quickInsights?.querySelector('.eyebrow');
+  const quickIntro = quickInsights?.querySelector('h2 + p');
+  const quickCards = quickInsights ? [...quickInsights.querySelectorAll('.grid > .card')] : [];
 
   const formatValue = (value) => {
     if (!Number.isFinite(value)) return '—';
@@ -55,6 +62,50 @@
     if (pill) pill.textContent = label;
   };
 
+  const fillInsightList = (card, records) => {
+    const list = card?.querySelector('ol');
+    if (!list) return;
+    list.replaceChildren(...records.map((record) => {
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = countryHref(record.code);
+      const strong = document.createElement('strong');
+      strong.textContent = record.country;
+      link.append(strong);
+      const value = document.createElement('span');
+      value.textContent = valueText(record.value);
+      item.append(link, document.createTextNode(' '), value);
+      return item;
+    }));
+  };
+
+  const syncPageYearState = (records, year) => {
+    if (!records.length) return;
+    const top = records[0];
+    const low = records.at(-1);
+    const spread = top.value - low.value;
+
+    if (heroEyebrow) heroEyebrow.textContent = `${root.closest('main')?.querySelector('.hero .eyebrow')?.textContent?.split(' · ')[0] || ''} · World Bank WDI · ${year}`.replace(/^ · /, '');
+    if (heroIntro) heroIntro.innerHTML = `Compare <strong>${records.length} countries</strong> in the selected same-year ${year} snapshot. You can switch to every available historical year below.`;
+    if (quickEyebrow) quickEyebrow.textContent = `Quick answers · same-year ${year} snapshot`;
+    if (quickIntro) quickIntro.textContent = `Neutral highest/lowest observations — not a judgement of which countries are “best”. Every value below comes from the same ${year} snapshot.`;
+
+    const [highCard, lowCard, rangeCard] = quickCards;
+    fillInsightList(highCard, records.slice(0, 5));
+    fillInsightList(lowCard, records.slice(-5).reverse());
+    if (rangeCard) {
+      const metric = rangeCard.querySelector('.metric');
+      const text = rangeCard.querySelector('h3 + p');
+      const action = rangeCard.querySelector('.insight-actions a');
+      if (metric) metric.textContent = valueText(spread);
+      if (text) text.textContent = `${top.country} is highest at ${valueText(top.value)}; ${low.country} is lowest at ${valueText(low.value)}.`;
+      if (action) {
+        action.href = `../../compare/?a=${encodeURIComponent(String(top.code).toUpperCase())}`;
+        action.textContent = `Compare ${top.country} with another country →`;
+      }
+    }
+  };
+
   const renderRows = (records, year) => {
     if (!rowsTarget) return;
     rowsTarget.replaceChildren();
@@ -87,6 +138,7 @@
     fillCard(highestCard, top, `HIGHEST · ${year}`);
     fillCard(middleCard, middle, `MIDDLE OBSERVATION · ${year}`);
     fillCard(lowestCard, low, `LOWEST · ${year}`);
+    syncPageYearState(records, year);
   };
 
   const renderChart = (records, code) => {
