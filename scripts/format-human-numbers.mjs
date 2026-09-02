@@ -5,7 +5,8 @@ const siteRoot = new URL('../site/', import.meta.url);
 function formatNumber(raw) {
   const value = Number(raw);
   if (!Number.isFinite(value)) return raw;
-  return value.toFixed(1).replace(/\.0$/, '');
+  const formatted = value.toFixed(1).replace(/\.0$/, '');
+  return Number(formatted) === 0 ? '0' : formatted;
 }
 
 function formatVisibleSegment(segment) {
