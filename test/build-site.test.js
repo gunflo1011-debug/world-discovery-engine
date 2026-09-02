@@ -26,6 +26,7 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.ok(result.pagePaths.some((path) => path.startsWith('/evidence/') && path !== '/evidence/'));
   assert.ok(!result.pagePaths.includes('/indicators/population-total/'));
   assert.ok(!result.pagePaths.includes('/evidence/germany-gdp-growth-revision/'));
+  assert.ok(!result.pagePaths.includes('/evidence/life-expectancy-change/'));
   assert.ok(!result.pagePaths.includes('/evidence/real-wdi-population-revision-2025/'));
   assert.ok(result.evidence.every((record) => record.discovery.ready));
 
@@ -37,6 +38,7 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
   assert.match(sitemap, /worlddiscoverydata\.com\/indicators\/real-gdp\//);
   assert.doesNotMatch(sitemap, /worlddiscoverydata\.com\/indicators\/population-total\//);
   assert.doesNotMatch(sitemap, /worlddiscoverydata\.com\/evidence\/germany-gdp-growth-revision\//);
+  assert.doesNotMatch(sitemap, /worlddiscoverydata\.com\/evidence\/life-expectancy-change\//);
   assert.doesNotMatch(sitemap, /worlddiscoverydata\.com\/evidence\/real-wdi-population-revision-2025\//);
 
   const evidenceIndex = JSON.parse(await readFile(resolve(process.cwd(), 'site', 'evidence', 'index.json'), 'utf8'));
@@ -67,8 +69,8 @@ test('static build includes only discovery-ready real evidence in sitemap and ma
 
   const buildMetadata = JSON.parse(await readFile(resolve(process.cwd(), 'site', 'build.json'), 'utf8'));
   assert.equal(buildMetadata.publicRoutes, result.pagePaths.length);
-  assert.ok(buildMetadata.demoPagesExcluded >= 1);
-  assert.ok(buildMetadata.noindexPagesExcluded >= 2);
+  assert.equal(buildMetadata.demoPagesExcluded, 0);
+  assert.ok(buildMetadata.noindexPagesExcluded >= 1);
   assert.ok(Number.isInteger(buildMetadata.discoveryIncompleteExcluded));
 
   for (const slug of ['germany-population-revision-2025', 'united-states-population-revision-2025']) {
