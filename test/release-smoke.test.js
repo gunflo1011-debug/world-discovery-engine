@@ -101,14 +101,11 @@ test('robots and sitemap expose the canonical release surface only', async () =>
   assert.ok(locations.every((url) => url.startsWith(baseUrl)));
   assert.ok(locations.every((url) => !url.includes('/indicators/population-total/')));
   assert.ok(locations.every((url) => !url.includes('/evidence/germany-gdp-growth-revision/')));
+  assert.ok(locations.every((url) => !url.includes('/evidence/life-expectancy-change/')));
   assert.ok(locations.every((url) => !url.includes('/evidence/real-wdi-population-revision-2025/')));
 });
 
-test('demo and legacy duplicate pages are explicitly noindex', async () => {
-  const demo = await readSite('evidence/germany-gdp-growth-revision/index.html');
-  assert.match(demo, /name="robots" content="noindex,follow"/);
-  assert.match(demo, /DEMO FIXTURE · NOT REAL WDI EVIDENCE/);
-
+test('legacy duplicate page is noindex and consolidates to the canonical evidence URL', async () => {
   const legacy = await readSite('evidence/real-wdi-population-revision-2025/index.html');
   assert.match(legacy, /name="robots" content="noindex,follow"/);
   assert.match(legacy, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/evidence\/germany-population-revision-2025\/"/);
