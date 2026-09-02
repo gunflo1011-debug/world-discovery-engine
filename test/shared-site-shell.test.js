@@ -20,6 +20,12 @@ async function walk(dir) {
 const count = (text, needle) => text.split(needle).length - 1;
 
 test('every generated HTML page uses exactly one shared World Discovery shell', async () => {
+  // Some earlier tests exercise the low-level buildSite() function directly, which
+  // intentionally regenerates its page subset before the post-build shell pass.
+  // Re-apply the production post-build transform here so this contract test is
+  // independent of test-file ordering and validates the actual deployable state.
+  await import('../scripts/apply-shared-site-shell.mjs');
+
   const files = await walk(siteRoot);
   assert.ok(files.length > 0, 'expected generated HTML pages');
 
