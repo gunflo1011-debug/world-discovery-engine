@@ -32,7 +32,9 @@ test('sources page reflects all published products and exposes machine discovery
     assert.match(html, new RegExp(`href="${href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
   }
 
-  assert.match(html, /href="\.\.\/indicators\/">Indicators<\/a>/);
+  // The site-wide shell intentionally uses the human-facing Data label instead of
+  // exposing the implementation-oriented Indicators registry as a primary nav item.
+  assert.match(html, /href="\.\.\/data\/">Data<\/a>/);
   assert.match(html, /"@type":"WebPage"/);
   assert.match(html, /World Development Indicators/);
   assert.match(html, /<div class="table-wrap" tabindex="0" aria-label="Archive comparison requirements"><table class="table">/);
