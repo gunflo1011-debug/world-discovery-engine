@@ -15,8 +15,9 @@ const urls = [
 ];
 
 for (const path of urls) {
-  const row = `<url><loc>${base}${path}</loc></url>`;
-  if (!sitemap.includes(row)) sitemap = sitemap.replace('</urlset>', `${row}\n</urlset>`);
+  const loc = `<loc>${base}${path}</loc>`;
+  const row = `<url>${loc}</url>`;
+  if (!sitemap.includes(loc)) sitemap = sitemap.replace('</urlset>', `${row}\n</urlset>`);
 }
 
 await writeFile(sitemapUrl, sitemap, 'utf8');
