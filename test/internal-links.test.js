@@ -16,6 +16,14 @@ test('all sitemap pages have valid internal targets, fragments and inbound disco
     cwd: new URL('..', import.meta.url)
   });
 
+  // The production build finishes with the shared site-shell pass. buildSite() tests
+  // above intentionally exercise an earlier intermediate state, so restore the same
+  // deployable shell here before checking crawlability/orphans. This keeps the link
+  // audit independent of test-file ordering and tests the actual production state.
+  await execFileAsync(process.execPath, ['scripts/apply-shared-site-shell.mjs'], {
+    cwd: new URL('..', import.meta.url)
+  });
+
   const result = await auditInternalLinks();
   const sitemap = await readFile(new URL('../site/sitemap.xml', import.meta.url), 'utf8');
   const sitemapPages = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].length;
