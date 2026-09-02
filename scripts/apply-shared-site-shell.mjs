@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
 const SKIP_PREFIXES = ['assets/'];
 
-const esc = (v) => String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const rel = (fromFile, targetDir) => {
   const fromDir = path.dirname(fromFile);
   let out = path.relative(fromDir, path.join(siteRoot, targetDir)).replaceAll(path.sep, '/');
@@ -28,6 +27,7 @@ async function walk(dir) {
 function sectionFor(file) {
   const p = path.relative(siteRoot, file).replaceAll(path.sep, '/');
   if (p === 'index.html') return 'home';
+  if (p.startsWith('explore/')) return 'explore';
   if (p.startsWith('data/') || p.startsWith('indicators/')) return 'data';
   if (p.startsWith('countries/')) return 'countries';
   if (p.startsWith('compare/')) return 'compare';
@@ -41,19 +41,23 @@ function navLink(href, label, active) {
 
 function header(file, active) {
   const home = rel(file, '');
+  const explore = rel(file, 'explore');
   const data = rel(file, 'data');
   const countries = rel(file, 'countries');
   const compare = rel(file, 'compare');
   const about = rel(file, 'methodology');
-  return `<header class="topbar wd-global-header" data-wd-shared-shell><div class="wrap"><div class="brand"><a href="${home}">World Discovery</a></div><nav class="nav" aria-label="Primary navigation">${navLink(home,'Home',active==='home')}${navLink(data,'Data',active==='data')}${navLink(countries,'Countries',active==='countries')}${navLink(compare,'Compare',active==='compare')}${navLink(about,'About',active==='about')}</nav></div></header>`;
+  return `<header class="topbar wd-global-header" data-wd-shared-shell><div class="wrap"><div class="brand"><a href="${home}">World Discovery</a></div><nav class="nav" aria-label="Primary navigation">${navLink(home,'Home',active==='home')}${navLink(explore,'Explore',active==='explore')}${navLink(data,'Data',active==='data')}${navLink(countries,'Countries',active==='countries')}${navLink(compare,'Compare',active==='compare')}${navLink(about,'About',active==='about')}</nav></div></header>`;
 }
 
 function footer(file) {
+  const explore = rel(file, 'explore');
   const data = rel(file, 'data');
   const countries = rel(file, 'countries');
   const compare = rel(file, 'compare');
   const about = rel(file, 'methodology');
-  return `<footer class="footer wd-global-footer" data-wd-shared-shell><div class="wrap"><strong>World Discovery</strong> · Official global data with explicit years and sources.<br><a href="${data}">Data</a> · <a href="${countries}">Countries</a> · <a href="${compare}">Compare</a> · <a href="${about}">Methodology</a></div></footer>`;
+  const impressum = rel(file, 'impressum');
+  const datenschutz = rel(file, 'datenschutz');
+  return `<footer class="footer wd-global-footer" data-wd-shared-shell><div class="wrap"><strong>World Discovery</strong> · Official global data with explicit years and sources.<br><a href="${explore}">Explore</a> · <a href="${data}">Data</a> · <a href="${countries}">Countries</a> · <a href="${compare}">Compare</a> · <a href="${about}">Methodology</a><br><a href="${impressum}">Impressum</a> · <a href="${datenschutz}">Datenschutz</a></div></footer>`;
 }
 
 function ensureShellCss(html) {
