@@ -4,29 +4,25 @@ import test from "node:test";
 
 const SITE_ROOT = new URL("../site/", import.meta.url);
 
-test("public status page matches current published product coverage", async () => {
-  const [html, rawInternet, rawGdp] = await Promise.all([
-    readFile(new URL("status/index.html", SITE_ROOT), "utf8"),
-    readFile(new URL("indicators/internet-use/data.json", SITE_ROOT), "utf8"),
-    readFile(new URL("indicators/gdp-per-capita/data.json", SITE_ROOT), "utf8"),
-  ]);
-  const internet = JSON.parse(rawInternet);
-  const gdp = JSON.parse(rawGdp);
-  const internetCountryCount = internet.records.length;
-  const regions = new Set(internet.records.map((record) => record.region?.code));
+test("public status page describes current coverage without internal release telemetry", async () => {
+  const html = await readFile(new URL("status/index.html", SITE_ROOT), "utf8");
 
-  assert.equal(internet.coverage.type, "official_same_year_snapshot");
-  assert.equal(internet.observationYear, 2024);
-  assert.equal(gdp.coverage.type, "official_same_year_snapshot");
-  assert.equal(gdp.observationYear, 2024);
-  assert.ok(!regions.has(undefined), "every status-counted internet record must have a region");
+  assert.match(html, /Current verified coverage/i);
+  assert.match(html, /Verified indicators[\s\S]*30/i);
+  assert.match(html, /Country directory[\s\S]*217/i);
+  assert.match(html, /countries, territories and other geographic entities/i);
+  assert.match(html, /Historical explorer[\s\S]*Available/i);
+  assert.match(html, /Official source/i);
+  assert.match(html, /Observation year stays visible/i);
+  assert.match(html, /Missing data stays missing/i);
+  assert.match(html, /Data catalog/i);
+  assert.match(html, /Country profiles/i);
+  assert.match(html, /Country comparison/i);
 
-  assert.match(html, new RegExp(`\\b${internetCountryCount}\\b`));
-  assert.match(html, new RegExp(`\\b${gdp.records.length}\\b`));
-  assert.match(html, /Seven official regions/i);
-  assert.match(html, /Three verified data products are published/i);
-  assert.match(html, /Search Console connection[\s\S]*PASS/i);
-  assert.match(html, /Organic clicks are currently[\s\S]*<strong>0<\/strong>/i);
+  assert.doesNotMatch(html, /Three verified data products are published/i);
+  assert.doesNotMatch(html, /Search Console/i);
+  assert.doesNotMatch(html, /Organic clicks/i);
+  assert.doesNotMatch(html, /Readiness gates/i);
+  assert.doesNotMatch(html, /growth engine/i);
   assert.doesNotMatch(html, /PENDING EXTERNAL VERIFICATION/i);
-  assert.doesNotMatch(html, /Search impressions[\s\S]*not yet instrumented/i);
 });
