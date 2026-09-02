@@ -86,7 +86,7 @@ async function existingStaticRoutes(routes) {
 export async function buildSite() {
   await buildInternetUseRegionDirectory();
   const [evidence, internetUseRoutes] = await Promise.all([collectEvidence(), internetUseDiscoveryRoutes()]);
-  const staticRoutes = await existingStaticRoutes(['/', '/data/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', '/indicators/', '/categories/economy/', '/indicators/gdp-per-capita/', '/indicators/internet-use/', '/indicators/internet-use/region/', '/indicators/real-gdp/', '/leaderboard/']);
+  const staticRoutes = await existingStaticRoutes(['/', '/data/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', '/indicators/', '/categories/economy/', '/indicators/gdp-per-capita/', '/indicators/gdp/', '/indicators/internet-use/', '/indicators/internet-use/region/', '/indicators/real-gdp/', '/leaderboard/']);
   const indexableEvidence = evidence.filter((record) => !record.demo && !record.noindex && record.discovery.ready);
   const pagePaths = [...staticRoutes, ...indexableEvidence.map((record) => record.url), ...internetUseRoutes];
   const generatedAt = new Date().toISOString();
