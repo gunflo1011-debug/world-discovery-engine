@@ -25,5 +25,13 @@ jobs:
           node-version: 22
       - name: Install project dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Test and build site
-        run: npm run check
+      - name: Build site
+        run: npm run build
+      - name: Check internal links
+        run: npm run check:links
+      - name: Run tests
+        run: npm test
+      - name: Rebuild site after tests
+        run: npm run build
+      - name: Recheck internal links
+        run: npm run check:links
