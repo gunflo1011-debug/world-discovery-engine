@@ -74,6 +74,17 @@ async function internetUseDiscoveryRoutes() {
   return routes;
 }
 
+async function indicatorLandingRoutes() {
+  const indicatorsRoot = resolve(root, 'indicators');
+  const entries = await readdir(indicatorsRoot, { withFileTypes: true });
+  const routes = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    if (await fileExists(resolve(indicatorsRoot, entry.name, 'index.html'))) routes.push(`/indicators/${entry.name}/`);
+  }
+  return routes.sort();
+}
+
 async function existingStaticRoutes(routes) {
   const kept = [];
   for (const route of routes) {
@@ -85,10 +96,10 @@ async function existingStaticRoutes(routes) {
 
 export async function buildSite() {
   await buildInternetUseRegionDirectory();
-  const [evidence, internetUseRoutes] = await Promise.all([collectEvidence(), internetUseDiscoveryRoutes()]);
-  const staticRoutes = await existingStaticRoutes(['/', '/data/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', '/indicators/', '/categories/economy/', '/indicators/gdp-per-capita/', '/indicators/gdp/', '/indicators/internet-use/', '/indicators/internet-use/region/', '/indicators/real-gdp/', '/leaderboard/']);
+  const [evidence, internetUseRoutes, indicatorRoutes] = await Promise.all([collectEvidence(), internetUseDiscoveryRoutes(), indicatorLandingRoutes()]);
+  const staticRoutes = await existingStaticRoutes(['/', '/data/', '/explore/', '/discoveries/', '/methodology/', '/sources/', '/archive/', '/status/', '/evidence/', '/indicators/', '/categories/economy/', '/indicators/internet-use/region/', '/leaderboard/']);
   const indexableEvidence = evidence.filter((record) => !record.demo && !record.noindex && record.discovery.ready);
-  const pagePaths = [...staticRoutes, ...indexableEvidence.map((record) => record.url), ...internetUseRoutes];
+  const pagePaths = [...staticRoutes, ...indicatorRoutes, ...indexableEvidence.map((record) => record.url), ...internetUseRoutes];
   const generatedAt = new Date().toISOString();
   const historyCount = internetUseRoutes.filter(path => path.endsWith('/history/')).length;
   await writeFile(resolve(root, 'robots.txt'), renderRobotsTxt({ baseUrl }), 'utf8');
