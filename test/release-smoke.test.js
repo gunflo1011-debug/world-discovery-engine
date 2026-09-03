@@ -55,7 +55,7 @@ test('GDP screening remains fail-closed and machine-readable', async () => {
   assert.match(page, /NY\.GDP\.MKTP\.KD/);
   assert.match(page, /SCREENING · FAIL CLOSED/);
   assert.match(page, /no revision values(?: or rankings)? are published/i);
-  assert.match(page, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/indicators\/real-gdp\/"/);
+  assert.match(page, /name="robots" content="noindex,follow"/);
 
   const status = JSON.parse(await readSite('indicators/real-gdp/status.json'));
   assert.equal(status.indicator.code, 'NY.GDP.MKTP.KD');
@@ -70,9 +70,10 @@ test('GDP screening remains fail-closed and machine-readable', async () => {
   }
 });
 
-test('indicator registry is canonical and does not advertise a missing population hub', async () => {
+test('legacy indicator registry points to the maintained data catalog', async () => {
   const page = await readSite('indicators/index.html');
-  assert.match(page, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/indicators\/"/);
+  assert.match(page, /name="robots" content="noindex,follow"/);
+  assert.match(page, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/data\/"/);
   assert.match(page, /Population, total/);
   assert.match(page, /Real GDP/);
   assert.doesNotMatch(page, /href="\.\/population-total\/index\.html"/);
@@ -91,14 +92,22 @@ test('robots and sitemap expose the canonical release surface only', async () =>
 
   for (const expected of [
     baseUrl,
-    `${baseUrl}indicators/`,
-    `${baseUrl}indicators/real-gdp/`,
+    `${baseUrl}data/`,
     `${baseUrl}evidence/germany-population-revision-2025/`
   ]) {
     assert.ok(locations.includes(expected), `sitemap missing ${expected}`);
   }
 
   assert.ok(locations.every((url) => url.startsWith(baseUrl)));
+  for (const legacy of [
+    `${baseUrl}indicators/`,
+    `${baseUrl}indicators/gdp/`,
+    `${baseUrl}indicators/gdp-per-capita/`,
+    `${baseUrl}indicators/internet-use/`,
+    `${baseUrl}indicators/real-gdp/`
+  ]) {
+    assert.equal(locations.includes(legacy), false, `legacy indicator URL must be excluded from sitemap: ${legacy}`);
+  }
   assert.ok(locations.every((url) => !url.includes('/indicators/population-total/')));
   assert.ok(locations.every((url) => !url.includes('/evidence/germany-gdp-growth-revision/')));
   assert.ok(locations.every((url) => !url.includes('/evidence/life-expectancy-change/')));
