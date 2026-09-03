@@ -6,6 +6,7 @@ const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
 const SKIP_PREFIXES = ['assets/'];
 
 const rel = (fromFile, targetDir) => {
+  if (path.basename(fromFile) === '404.html') return targetDir ? `/${targetDir.replace(/^\/+|\/+$/g, '')}/` : '/';
   const fromDir = path.dirname(fromFile);
   let out = path.relative(fromDir, path.join(siteRoot, targetDir)).replaceAll(path.sep, '/');
   if (!out) out = '.';
@@ -89,7 +90,7 @@ async function ensureBranded404() {
 <style>body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f7f9fc}a{color:#174ea6}.wrap{max-width:72rem;margin:0 auto;padding:1rem 1.25rem}.topbar{background:#fff;border-bottom:1px solid #dfe5ee}.brand a{font-weight:800;text-decoration:none;color:#172033}.not-found{min-height:55vh;display:grid;place-items:center}.not-found-card{max-width:44rem;background:#fff;border:1px solid #dfe5ee;border-radius:1rem;padding:clamp(1.5rem,4vw,3rem);box-shadow:0 .5rem 2rem rgba(23,32,51,.06)}.eyebrow{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;color:#5b6472}.not-found h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.05;margin:.5rem 0 1rem}.not-found p{font-size:1.05rem;line-height:1.7}.recovery-links{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}.recovery-links a{display:inline-flex;align-items:center;min-height:44px;padding:.65rem .9rem;border:1px solid #c9d2df;border-radius:.65rem;background:#fff;text-decoration:none;font-weight:700}.footer{background:#fff;border-top:1px solid #dfe5ee}</style>
 </head>
 <body>
-<main class="wrap not-found" id="main"><section class="not-found-card" aria-labelledby="not-found-title"><div class="eyebrow">404 · Page not found</div><h1 id="not-found-title">This page isn’t here.</h1><p>The address may be outdated or mistyped. Continue with the current World Discovery data catalog, country profiles, or comparison tools.</p><nav class="recovery-links" aria-label="404 recovery links"><a href="./">Home</a><a href="./data/">Data catalog</a><a href="./countries/">Countries</a><a href="./compare/">Compare</a></nav></section></main>
+<main class="wrap not-found" id="main"><section class="not-found-card" aria-labelledby="not-found-title"><div class="eyebrow">404 · Page not found</div><h1 id="not-found-title">This page isn’t here.</h1><p>The address may be outdated or mistyped. Continue with the current World Discovery data catalog, country profiles, or comparison tools.</p><nav class="recovery-links" aria-label="404 recovery links"><a href="/">Home</a><a href="/data/">Data catalog</a><a href="/countries/">Countries</a><a href="/compare/">Compare</a></nav></section></main>
 </body>
 </html>`;
   await writeFile(file, html, 'utf8');
