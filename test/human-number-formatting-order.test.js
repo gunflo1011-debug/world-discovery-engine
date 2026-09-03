@@ -5,15 +5,21 @@ import { readFile } from 'node:fs/promises';
 const packageJson = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
 
 for (const scriptName of ['build', 'build:internet-use']) {
-  test(`${scriptName} formats human-visible numbers after regional enrichments`, () => {
+  test(`${scriptName} formats human-visible numbers after every later HTML mutation`, () => {
     const script = packageJson.scripts[scriptName];
     const formatter = script.lastIndexOf('node scripts/format-human-numbers.mjs');
     const regionalContext = script.lastIndexOf('node scripts/enrich-internet-use-regional-context.mjs');
     const regionalHighlights = script.lastIndexOf('node scripts/enrich-internet-use-region-highlights.mjs');
+    const consolidation = script.lastIndexOf('node scripts/consolidate-legacy-indicators.mjs');
+    const incompleteLocales = script.lastIndexOf('node scripts/guard-incomplete-locales.mjs');
 
     assert.notEqual(formatter, -1, 'formatter must be present');
     assert.ok(formatter > regionalContext, 'formatter must run after regional context enrichment');
     assert.ok(formatter > regionalHighlights, 'formatter must run after regional highlights enrichment');
+    assert.ok(formatter > consolidation, 'formatter must run after legacy consolidation');
+    if (incompleteLocales !== -1) {
+      assert.ok(formatter > incompleteLocales, 'formatter must run after incomplete-locale guarding');
+    }
   });
 }
 
