@@ -5,6 +5,13 @@ const siteRoot = resolve(process.cwd(), 'site');
 
 const legacyRoutes = [
   {
+    path: 'indicators/index.html',
+    route: '/indicators/',
+    canonical: 'https://worlddiscoverydata.com/data/',
+    currentHref: '../data/',
+    label: 'indicator catalog',
+  },
+  {
     path: 'indicators/gdp/index.html',
     route: '/indicators/gdp/',
     canonical: 'https://worlddiscoverydata.com/data/gdp/',
@@ -17,6 +24,20 @@ const legacyRoutes = [
     canonical: 'https://worlddiscoverydata.com/data/gdp-per-capita/',
     currentHref: '../../data/gdp-per-capita/',
     label: 'GDP per capita',
+  },
+  {
+    path: 'indicators/internet-use/index.html',
+    route: '/indicators/internet-use/',
+    canonical: 'https://worlddiscoverydata.com/data/internet-use/',
+    currentHref: '../../data/internet-use/',
+    label: 'internet use',
+  },
+  {
+    path: 'indicators/real-gdp/index.html',
+    route: '/indicators/real-gdp/',
+    canonical: null,
+    currentHref: '../../data/',
+    label: 'indicator data',
   },
 ];
 
@@ -31,13 +52,15 @@ function consolidateHtml(html, item) {
   } else {
     next = next.replace(/<head>/i, '<head><meta name="robots" content="noindex,follow">');
   }
-  if (/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i.test(next)) {
-    next = next.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${item.canonical}">`);
-  } else {
-    next = next.replace(/<\/head>/i, `<link rel="canonical" href="${item.canonical}"></head>`);
+  if (item.canonical) {
+    if (/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i.test(next)) {
+      next = next.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${item.canonical}">`);
+    } else {
+      next = next.replace(/<\/head>/i, `<link rel="canonical" href="${item.canonical}"></head>`);
+    }
   }
   if (!next.includes('data-legacy-indicator-notice')) {
-    const notice = `<section class="section section-soft" data-legacy-indicator-notice><div class="wrap"><strong>Current ${item.label} page:</strong> this older URL is retained for existing links, but the maintained dataset and historical year browser now live at <a href="${item.currentHref}">${item.currentHref}</a>.</div></section>`;
+    const notice = `<section class="section section-soft" data-legacy-indicator-notice><div class="wrap"><strong>Current ${item.label}:</strong> this older URL is retained for existing links, but maintained World Discovery data now live at <a href="${item.currentHref}">${item.currentHref}</a>.</div></section>`;
     next = next.replace(/<main>/i, `<main>${notice}`);
   }
   return next;
@@ -58,4 +81,4 @@ for (const item of legacyRoutes) {
 }
 await writeFile(sitemapPath, sitemap.trimEnd() + '\n', 'utf8');
 
-console.log('Consolidated overlapping legacy GDP indicator URLs onto /data/ canonicals.');
+console.log('Consolidated legacy indicator URLs onto the maintained /data/ architecture.');
