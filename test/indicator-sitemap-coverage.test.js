@@ -84,3 +84,10 @@ test('legacy indicator routes are noindex and excluded from sitemap', async () =
   assert.equal(extractCanonical(catalog), `${base}/data/`);
   assert.equal(extractCanonical(internet), `${base}/data/internet-use/`);
 });
+
+test('maintained Internet-use landing page keeps regional explorer discoverable', async () => {
+  await execFileAsync(process.execPath, [legacyConsolidatorUrl.pathname]);
+  const page = await readFile(new URL('data/internet-use/index.html', siteRoot), 'utf8');
+  assert.match(page, /data-internet-use-region-discovery/);
+  assert.match(page, /href="\.\.\/\.\.\/indicators\/internet-use\/region\/"/);
+});
