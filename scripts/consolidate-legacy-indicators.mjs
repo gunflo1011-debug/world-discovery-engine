@@ -72,6 +72,25 @@ for (const item of legacyRoutes) {
   await writeFile(file, consolidateHtml(html, item), 'utf8');
 }
 
+// Once legacy indicator pages leave the sitemap, current indexed pages must remain
+// discoverable without relying on those retired routes as their only inbound links.
+const dataIndexPath = resolve(siteRoot, 'data/index.html');
+let dataIndex = await readFile(dataIndexPath, 'utf8');
+dataIndex = dataIndex
+  .replace(/<a href="\.\.\/indicators\/">Indicators<\/a>/g, '')
+  .replace(/<a href="\.\.\/indicators\/">Indicator guide<\/a>/g, '<a href="../categories/economy/">Economy overview</a>')
+  .replace(/<a href="\.\.\/indicators\/">browse indicator topics<\/a>/g, '<a href="../data/">browse the data catalog</a>');
+if (!dataIndex.includes('data-maintained-context-links')) {
+  const contextLinks = '<section class="section section-soft" data-maintained-context-links><div class="wrap"><h2>Data context</h2><p><a href="../categories/economy/">Economy overview</a> · <a href="../archive/">Historical source archive</a> · <a href="../sources/">Sources</a> · <a href="../methodology/">Methodology</a></p></div></section>';
+  dataIndex = dataIndex.replace(/<\/main>/i, `${contextLinks}</main>`);
+}
+await writeFile(dataIndexPath, dataIndex, 'utf8');
+
+const homePath = resolve(siteRoot, 'index.html');
+let home = await readFile(homePath, 'utf8');
+home = home.replace(/href="\.\/indicators\/internet-use\/"/g, 'href="./data/internet-use/"');
+await writeFile(homePath, home, 'utf8');
+
 const sitemapPath = resolve(siteRoot, 'sitemap.xml');
 let sitemap = await readFile(sitemapPath, 'utf8');
 for (const item of legacyRoutes) {
