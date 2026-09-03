@@ -29,3 +29,15 @@ test('country compare normalizes valid lowercase query country codes', async () 
   assert.match(built, /Choose one of the suggested countries\./);
   assert.match(built, /function syncInput\(input,side,code\)/);
 });
+
+test('country compare formats negative US dollar differences with the sign before the currency symbol', async () => {
+  const built = await readFile(builtUrl, 'utf8');
+  const match = built.match(/(function fmt\(v,unit\)\{[\s\S]*?\})\nfunction suffix/);
+
+  assert.ok(match, 'built compare formatter should be present');
+  const fmt = new Function(`${match[1]}; return fmt;`)();
+
+  assert.equal(fmt(-57794, 'current US$'), '-$57,794');
+  assert.equal(fmt(57794, 'current US$'), '$57,794');
+  assert.equal(fmt(-1200000, 'current US$'), '-$1.20M');
+});
