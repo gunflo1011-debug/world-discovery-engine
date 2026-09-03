@@ -3,7 +3,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 const siteRoot = new URL('../site/', import.meta.url);
 
 function formatNumber(raw) {
-  const value = Number(raw);
+  const value = Number(String(raw).replace('−', '-'));
   if (!Number.isFinite(value)) return raw;
   const formatted = value.toFixed(1).replace(/\.0$/, '');
   return Number(formatted) === 0 ? '0' : formatted;
@@ -11,8 +11,10 @@ function formatNumber(raw) {
 
 function formatVisibleSegment(segment) {
   return segment
-    .replace(/(-?\d+\.\d{2,})(?=%)/g, (_, value) => formatNumber(value))
-    .replace(/(-?\d+\.\d{2,})(?=\s+(?:pp|percentage points?))/gi, (_, value) => formatNumber(value));
+    .replace(/([−-]?\d+\.\d{2,})(?=%)/g, (_, value) => formatNumber(value))
+    .replace(/([−-]?\d+\.\d{2,})(?=\s+(?:pp|percentage points?))/gi, (_, value) => formatNumber(value))
+    .replace(/[−-]0(?:\.0+)?(?=%)/g, '0')
+    .replace(/[−-]0(?:\.0+)?(?=\s+(?:pp|percentage points?))/gi, '0');
 }
 
 function formatHtml(html) {
