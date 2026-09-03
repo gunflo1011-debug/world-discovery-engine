@@ -86,6 +86,16 @@ if (!dataIndex.includes('data-maintained-context-links')) {
 }
 await writeFile(dataIndexPath, dataIndex, 'utf8');
 
+// The maintained Internet-use landing page must own discovery of the still-current
+// regional explorer. Otherwise retiring the old landing page leaves /region/ orphaned.
+const internetDataPath = resolve(siteRoot, 'data/internet-use/index.html');
+let internetData = await readFile(internetDataPath, 'utf8');
+if (!internetData.includes('data-internet-use-region-discovery')) {
+  const regionDiscovery = '<section class="section section-soft" data-internet-use-region-discovery><div class="wrap"><h2>Explore by region</h2><p><a href="../../indicators/internet-use/region/">Browse regional internet-use comparisons</a>.</p></div></section>';
+  internetData = internetData.replace(/<\/main>/i, `${regionDiscovery}</main>`);
+}
+await writeFile(internetDataPath, internetData, 'utf8');
+
 const homePath = resolve(siteRoot, 'index.html');
 let home = await readFile(homePath, 'utf8');
 home = home.replace(/href="\.\/indicators\/internet-use\/"/g, 'href="./data/internet-use/"');
