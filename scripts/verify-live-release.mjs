@@ -37,10 +37,10 @@ const critical = [
 ];
 await Promise.all(critical.map(path => get(path)));
 
-const [home, robots, sitemap, source, history, index, build, parent] = await Promise.all([
+const [home, robots, sitemap, source, history, index, build, parent, evidence] = await Promise.all([
   get('/index.html'), get('/robots.txt'), get('/sitemap.xml'), get('/indicators/internet-use/data.json', 'json'),
   get('/indicators/internet-use/history.json', 'json'), get('/indicators/internet-use/country/index.json', 'json'),
-  get('/build.json', 'json'), get('/indicators/internet-use/')
+  get('/build.json', 'json'), get('/indicators/internet-use/'), get('/evidence/')
 ]);
 
 if (!/rel="canonical"/i.test(home)) throw new Error('home canonical missing');
@@ -50,10 +50,11 @@ if (history?.status !== 'CURRENT_VERIFIED_HISTORY' || history?.indicator?.code !
 if (index?.status !== 'CURRENT_VERIFIED' || index?.indicator !== source.indicator.code || index?.observationYear !== source.observationYear) throw new Error('internet-use country index contract mismatch');
 if (build.internetUseCountryProfiles !== index.countries.length) throw new Error('build.json country count mismatch');
 if (parent.includes('id="country-profiles"')) throw new Error('duplicate country-card directory returned to parent page');
+if (/[−-]0(?:\.0+)?%/.test(evidence)) throw new Error('evidence contains a negative-zero percentage');
 
 const sitemapLocations = new Set([...sitemap.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map(match => match[1]));
 for (const expected of [`${base}/countries/`, `${base}/data/`, `${base}/data/population/`, `${base}/compare/`]) {
   if (!sitemapLocations.has(expected)) throw new Error(`sitemap missing ${expected}`);
 }
 
-console.log(`LIVE RELEASE CONTRACT VERIFIED: critical discovery routes reachable, ${index.countries.length} internet-use country profiles`);
+console.log(`LIVE RELEASE CONTRACT VERIFIED: critical discovery routes reachable, ${index.countries.length} internet-use country profiles, no negative-zero evidence percentages`);
