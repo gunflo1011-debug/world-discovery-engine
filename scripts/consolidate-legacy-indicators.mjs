@@ -20,6 +20,10 @@ const legacyRoutes = [
   },
 ];
 
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function consolidateHtml(html, item) {
   let next = html;
   if (/<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i.test(next)) {
@@ -49,8 +53,9 @@ const sitemapPath = resolve(siteRoot, 'sitemap.xml');
 let sitemap = await readFile(sitemapPath, 'utf8');
 for (const item of legacyRoutes) {
   const absolute = `https://worlddiscoverydata.com${item.route}`;
-  sitemap = sitemap.replace(new RegExp(`<url><loc>${absolute.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</loc></url>\\n?`, 'g'), '');
+  const escaped = escapeRegex(absolute);
+  sitemap = sitemap.replace(new RegExp(`\\s*<url>\\s*<loc>${escaped}<\\/loc>[\\s\\S]*?<\\/url>`, 'g'), '');
 }
-await writeFile(sitemapPath, sitemap, 'utf8');
+await writeFile(sitemapPath, sitemap.trimEnd() + '\n', 'utf8');
 
 console.log('Consolidated overlapping legacy GDP indicator URLs onto /data/ canonicals.');
