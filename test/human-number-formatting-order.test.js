@@ -17,14 +17,28 @@ for (const scriptName of ['build', 'build:internet-use']) {
   });
 }
 
-test('formatter normalizes values that round to negative zero', async () => {
+test('formatter normalizes values that round to negative zero, including Unicode minus', async () => {
   const source = await readFile(new URL('../scripts/format-human-numbers.mjs', import.meta.url), 'utf8');
+  assert.match(source, /replace\('−', '-'\)/);
   assert.match(source, /Number\(formatted\) === 0 \? '0' : formatted/);
+  assert.match(source, /\[−-\]0/);
 });
 
-test('built country pages contain no long human-visible percentage precision or negative zero percentages', async () => {
+test('built human-visible pages contain no negative zero percentages', async () => {
+  const paths = [
+    '../site/indicators/internet-use/country/deu/index.html',
+    '../site/countries/deu/index.html',
+    '../site/evidence/index.html'
+  ];
+  for (const path of paths) {
+    const html = await readFile(new URL(path, import.meta.url), 'utf8');
+    const withoutScripts = html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+    assert.doesNotMatch(withoutScripts, /[−-]0(?:\.0+)?%/, `${path} must not expose negative zero percentages`);
+  }
+});
+
+test('built internet-use country pages contain no long human-visible percentage precision', async () => {
   const html = await readFile(new URL('../site/indicators/internet-use/country/deu/index.html', import.meta.url), 'utf8');
   const withoutScripts = html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
   assert.doesNotMatch(withoutScripts, /-?\d+\.\d{2,}(?=%|\s+(?:pp|percentage points?))/i);
-  assert.doesNotMatch(withoutScripts, /-0(?:\.0+)?%/);
 });
