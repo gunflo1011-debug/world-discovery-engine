@@ -16,6 +16,8 @@ test('historical explorer consumes the records array emitted by the WDI history 
   assert.match(ingest, /\brecords\};const dir=/, 'history ingest must publish records');
   assert.match(explorer, /Array\.isArray\(payload\.records\)\)return payload\.records/, 'explorer must read the published records array');
   assert.match(explorer, /setCountries\(countries,requested\)/, 'country picker must be populated from historical rows');
+  assert.match(explorer, /countries and other geographic entities/, 'coverage wording must disclose non-country geographic entities');
+  assert.doesNotMatch(explorer, /\$\{meta\.countries\} countries,/, 'coverage count must not describe every WDI entity as a country');
 });
 
 test('published historical data can populate a real country picker', async () => {
