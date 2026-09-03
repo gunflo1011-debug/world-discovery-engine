@@ -13,7 +13,7 @@ for (const entry of await readdir(dataRoot, { withFileTypes: true })) {
 
   html = html.replace('<div style="overflow-x:auto"><table>', '<div class="ranking-table-wrap"><table>');
   if (!html.includes('data-ranking-table-guard')) html = html.replace('</head>', `${STYLE}</head>`);
-  if (!html.includes('ranking-scroll-note')) {
+  if (!html.includes('class="muted ranking-scroll-note"')) {
     html = html.replace(/(<p class="muted" data-country-summary>.*?<\/p>)/, `$1${NOTE}`);
   }
   await writeFile(pageUrl, html, 'utf8');
