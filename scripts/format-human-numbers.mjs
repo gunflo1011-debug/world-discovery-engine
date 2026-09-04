@@ -1,3 +1,5 @@
+import './hydrate-localizations.mjs';
+import './finalize-localizations.mjs';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 
 const siteRoot = new URL('../site/', import.meta.url);
@@ -18,7 +20,6 @@ function formatVisibleSegment(segment) {
 }
 
 function formatHtml(html) {
-  // Keep scripts byte-for-byte intact so JSON-LD and client-side numeric data retain source precision.
   const parts = html.split(/(<script\b[\s\S]*?<\/script>)/gi);
   return parts.map((part) => /^<script\b/i.test(part) ? part : formatVisibleSegment(part)).join('');
 }
