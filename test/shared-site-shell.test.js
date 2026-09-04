@@ -36,6 +36,9 @@ test('every generated HTML page uses exactly one shared World Discovery shell', 
     if (count(html, 'class="topbar wd-global-header"') !== 1) failures.push(`${relative}: shared header count`);
     if (count(html, 'class="footer wd-global-footer"') !== 1) failures.push(`${relative}: shared footer count`);
     if (count(html, 'id="wd-shared-shell-style"') !== 1) failures.push(`${relative}: shared shell style count`);
+    if (count(html, 'class="wd-skip-link"') !== 1) failures.push(`${relative}: skip link count`);
+    if (!html.includes('class="wd-skip-link" href="#main">Skip to main content</a>')) failures.push(`${relative}: skip link target`);
+    if (count(html, 'id="main"') !== 1) failures.push(`${relative}: main target count`);
     for (const label of ['Explore', 'Data', 'Countries', 'Compare', 'About']) {
       if (!html.includes(`>${label}</a>`)) failures.push(`${relative}: missing ${label} navigation`);
     }
