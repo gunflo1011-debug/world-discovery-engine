@@ -47,7 +47,7 @@ function header(file, active) {
   const countries = rel(file, 'countries');
   const compare = rel(file, 'compare');
   const about = rel(file, 'methodology');
-  return `<header class="topbar wd-global-header" data-wd-shared-shell><div class="wrap"><div class="brand"><a href="${home}">World Discovery</a></div><nav class="nav" aria-label="Primary navigation">${navLink(home,'Home',active==='home')}${navLink(explore,'Explore',active==='explore')}${navLink(data,'Data',active==='data')}${navLink(countries,'Countries',active==='countries')}${navLink(compare,'Compare',active==='compare')}${navLink(about,'About',active==='about')}</nav></div></header>`;
+  return `<a class="wd-skip-link" href="#main">Skip to main content</a><header class="topbar wd-global-header" data-wd-shared-shell><div class="wrap"><div class="brand"><a href="${home}">World Discovery</a></div><nav class="nav" aria-label="Primary navigation">${navLink(home,'Home',active==='home')}${navLink(explore,'Explore',active==='explore')}${navLink(data,'Data',active==='data')}${navLink(countries,'Countries',active==='countries')}${navLink(compare,'Compare',active==='compare')}${navLink(about,'About',active==='about')}</nav></div></header>`;
 }
 
 function footer(file) {
@@ -62,7 +62,7 @@ function footer(file) {
 }
 
 function ensureShellCss(html) {
-  const css = `<style id="wd-shared-shell-style">.wd-global-header .nav{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}.wd-global-header .nav a[aria-current=\"page\"]{font-weight:800;text-decoration:underline;text-underline-offset:.3rem}.wd-global-footer{margin-top:2rem}.wd-global-footer .wrap{line-height:1.8}@media(max-width:720px){.wd-global-header .wrap{display:block}.wd-global-header .brand{margin-bottom:.7rem}.wd-global-header .nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem}.wd-global-header .nav a{min-height:42px;display:flex;align-items:center}.wd-global-footer .wrap{font-size:.95rem}}</style>`;
+  const css = `<style id="wd-shared-shell-style">.wd-skip-link{position:absolute;left:1rem;top:.75rem;transform:translateY(-200%);padding:.65rem .85rem;border:2px solid #172033;border-radius:.5rem;background:#fff;color:#172033;font-weight:800;text-decoration:none}.wd-skip-link:focus{transform:none;z-index:1000}.wd-global-header .nav{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}.wd-global-header .nav a[aria-current=\"page\"]{font-weight:800;text-decoration:underline;text-underline-offset:.3rem}.wd-global-footer{margin-top:2rem}.wd-global-footer .wrap{line-height:1.8}@media(max-width:720px){.wd-global-header .wrap{display:block}.wd-global-header .brand{margin-bottom:.7rem}.wd-global-header .nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem}.wd-global-header .nav a{min-height:42px;display:flex;align-items:center}.wd-global-footer .wrap{font-size:.95rem}}</style>`;
   if (html.includes('id="wd-shared-shell-style"')) return html;
   return html.replace('</head>', `${css}</head>`);
 }
@@ -72,6 +72,8 @@ function normalize(html, file) {
   const active = sectionFor(file);
   html = html.replace(/<header\b[^>]*class="[^"]*topbar[^"]*"[^>]*>[\s\S]*?<\/header>/i, '');
   html = html.replace(/<footer\b[^>]*class="[^"]*footer[^"]*"[^>]*>[\s\S]*?<\/footer>/i, '');
+  html = html.replace(/<a\b[^>]*class="[^"]*wd-skip-link[^"]*"[^>]*>[\s\S]*?<\/a>/i, '');
+  html = html.replace(/<main\b([^>]*)>/i, (match, attrs) => /\bid\s*=/.test(attrs) ? match : `<main id="main"${attrs}>`);
   html = html.replace(/<body([^>]*)>/i, (m, attrs) => `<body${attrs}>${header(file, active)}`);
   html = html.replace(/<\/body>/i, `${footer(file)}</body>`);
   return ensureShellCss(html);
