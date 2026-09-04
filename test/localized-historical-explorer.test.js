@@ -4,8 +4,8 @@ import { readFile } from 'node:fs/promises';
 
 const cases = [
   ['de','de','Länder im Zeitverlauf vergleichen','Länder vergleichen','Länder durchsuchen'],
-  ['es','es','Comparar países a lo largo del tiempo','Comparar países','Buscar países'],
-  ['fr','fr','Comparer les pays dans le temps','Comparer les pays','Rechercher des pays'],
+  ['es','es','Compara países a lo largo del tiempo','Comparar países','Buscar países'],
+  ['fr','fr','Comparez les pays dans le temps','Comparer les pays','Rechercher des pays'],
   ['zh-hans','zh-Hans','按时间比较国家','比较国家','搜索国家']
 ];
 
