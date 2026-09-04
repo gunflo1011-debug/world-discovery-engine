@@ -23,7 +23,7 @@
     ],
     "note": "Newest same-year non-aggregate country snapshot meeting the coverage threshold; no country is backfilled from another year."
   },
-  "retrievedAt": "2026-09-03",
+  "retrievedAt": "2026-09-04",
   "retrievalUrl": "https://api.worldbank.org/v2/country/all/indicator/SL.EMP.TOTL.SP.ZS?date=2025&format=json&per_page=400&source=2",
   "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
   "source": {
