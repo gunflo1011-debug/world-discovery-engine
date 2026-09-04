@@ -37,13 +37,15 @@ const critical = [
 ];
 await Promise.all(critical.map(path => get(path)));
 
-const [home, robots, sitemap, source, history, index, build, parent, evidence] = await Promise.all([
-  get('/index.html'), get('/robots.txt'), get('/sitemap.xml'), get('/indicators/internet-use/data.json', 'json'),
+const [home, countries, robots, sitemap, source, history, index, build, parent, evidence] = await Promise.all([
+  get('/index.html'), get('/countries/'), get('/robots.txt'), get('/sitemap.xml'), get('/indicators/internet-use/data.json', 'json'),
   get('/indicators/internet-use/history.json', 'json'), get('/indicators/internet-use/country/index.json', 'json'),
   get('/build.json', 'json'), get('/indicators/internet-use/'), get('/evidence/')
 ]);
 
 if (!/rel="canonical"/i.test(home)) throw new Error('home canonical missing');
+if (!countries.includes('COUNTRY &amp; TERRITORY PROFILES')) throw new Error('country directory territory wording missing');
+if (/Showing all \d+ country profiles\./i.test(countries)) throw new Error('country directory still labels all profiles as countries');
 if (!robots.includes(`Sitemap: ${base}/sitemap.xml`)) throw new Error('robots sitemap mismatch');
 if (source?.status !== 'CURRENT_VERIFIED' || source?.indicator?.code !== 'IT.NET.USER.ZS' || !Array.isArray(source.records)) throw new Error('internet-use snapshot contract mismatch');
 if (history?.status !== 'CURRENT_VERIFIED_HISTORY' || history?.indicator?.code !== source.indicator.code || !Array.isArray(history.records)) throw new Error('internet-use history contract mismatch');
@@ -57,4 +59,4 @@ for (const expected of [`${base}/countries/`, `${base}/data/`, `${base}/data/pop
   if (!sitemapLocations.has(expected)) throw new Error(`sitemap missing ${expected}`);
 }
 
-console.log(`LIVE RELEASE CONTRACT VERIFIED: critical discovery routes reachable, ${index.countries.length} internet-use country profiles, no negative-zero evidence percentages`);
+console.log(`LIVE RELEASE CONTRACT VERIFIED: critical discovery routes reachable, precise country/territory wording, ${index.countries.length} internet-use country profiles, no negative-zero evidence percentages`);
