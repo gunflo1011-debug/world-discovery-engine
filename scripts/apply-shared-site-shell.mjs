@@ -5,6 +5,45 @@ import { fileURLToPath } from 'node:url';
 const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
 const SKIP_PREFIXES = ['assets/'];
 const SKIP_TARGET_ID = 'wd-main-content';
+const LOCALE_PREFIXES = new Set(['de', 'es', 'fr', 'zh-hans']);
+const LOCALIZED_SECTIONS = new Set(['', 'data']);
+
+const SHELL = {
+  en: {
+    skip: 'Skip to main content', navLabel: 'Primary navigation', home: 'Home', explore: 'Explore', data: 'Data', countries: 'Countries', compare: 'Compare', about: 'About',
+    footer: 'Official global data with explicit years and sources.', methodology: 'Methodology', impressum: 'Impressum', privacy: 'Datenschutz', englishSuffix: ''
+  },
+  de: {
+    skip: 'Zum Hauptinhalt springen', navLabel: 'Hauptnavigation', home: 'Startseite', explore: 'Entdecken', data: 'Daten', countries: 'Länder', compare: 'Vergleichen', about: 'Über World Discovery',
+    footer: 'Offizielle globale Daten mit klaren Jahren und Quellen.', methodology: 'Methodik', impressum: 'Impressum', privacy: 'Datenschutz', englishSuffix: ' · Auf Englisch öffnen'
+  },
+  es: {
+    skip: 'Saltar al contenido principal', navLabel: 'Navegación principal', home: 'Inicio', explore: 'Explorar', data: 'Datos', countries: 'Países', compare: 'Comparar', about: 'Acerca de World Discovery',
+    footer: 'Datos globales oficiales con años y fuentes explícitos.', methodology: 'Metodología', impressum: 'Aviso legal', privacy: 'Privacidad', englishSuffix: ' · Abrir en inglés'
+  },
+  fr: {
+    skip: 'Aller au contenu principal', navLabel: 'Navigation principale', home: 'Accueil', explore: 'Explorer', data: 'Données', countries: 'Pays', compare: 'Comparer', about: 'À propos de World Discovery',
+    footer: 'Données mondiales officielles avec années et sources explicites.', methodology: 'Méthodologie', impressum: 'Mentions légales', privacy: 'Confidentialité', englishSuffix: ' · Ouvrir en anglais'
+  },
+  'zh-hans': {
+    skip: '跳到主要内容', navLabel: '主导航', home: '首页', explore: '探索', data: '数据', countries: '国家', compare: '比较', about: '关于 World Discovery',
+    footer: '官方全球数据，明确标注年份和来源。', methodology: '方法', impressum: '法律声明', privacy: '隐私', englishSuffix: ' · 用英语打开'
+  }
+};
+
+function relativePath(file) {
+  return path.relative(siteRoot, file).replaceAll(path.sep, '/');
+}
+
+function localeFor(file) {
+  const first = relativePath(file).split('/')[0].toLowerCase();
+  return LOCALE_PREFIXES.has(first) ? first : 'en';
+}
+
+function stripLocalePrefix(relative, locale) {
+  if (locale === 'en') return relative;
+  return relative.startsWith(`${locale}/`) ? relative.slice(locale.length + 1) : relative;
+}
 
 const rel = (fromFile, targetDir) => {
   if (path.basename(fromFile) === '404.html') return targetDir ? `/${targetDir.replace(/^\/+|\/+$/g, '')}/` : '/';
@@ -14,6 +53,22 @@ const rel = (fromFile, targetDir) => {
   if (!out.startsWith('.')) out = `./${out}`;
   return out.endsWith('/') ? out : `${out}/`;
 };
+
+function targetFor(file, targetDir) {
+  const locale = localeFor(file);
+  if (locale === 'en') return targetDir;
+  if (LOCALIZED_SECTIONS.has(targetDir)) return targetDir ? `${locale}/${targetDir}` : locale;
+  return targetDir;
+}
+
+function hrefFor(file, targetDir) {
+  return rel(file, targetFor(file, targetDir));
+}
+
+function isLocalizedTarget(file, targetDir) {
+  const locale = localeFor(file);
+  return locale === 'en' || LOCALIZED_SECTIONS.has(targetDir);
+}
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -27,7 +82,8 @@ async function walk(dir) {
 }
 
 function sectionFor(file) {
-  const p = path.relative(siteRoot, file).replaceAll(path.sep, '/');
+  const locale = localeFor(file);
+  const p = stripLocalePrefix(relativePath(file), locale);
   if (p === 'index.html') return 'home';
   if (p.startsWith('explore/')) return 'explore';
   if (p.startsWith('data/') || p.startsWith('indicators/')) return 'data';
@@ -41,25 +97,33 @@ function navLink(href, label, active) {
   return `<a href="${href}"${active ? ' aria-current="page"' : ''}>${label}</a>`;
 }
 
+function navLabel(file, targetDir, label) {
+  return isLocalizedTarget(file, targetDir) ? label : `${label}${SHELL[localeFor(file)].englishSuffix}`;
+}
+
 function header(file, active) {
-  const home = rel(file, '');
-  const explore = rel(file, 'explore');
-  const data = rel(file, 'data');
-  const countries = rel(file, 'countries');
-  const compare = rel(file, 'compare');
-  const about = rel(file, 'methodology');
-  return `<a class="wd-skip-link" href="#${SKIP_TARGET_ID}">Skip to main content</a><header class="topbar wd-global-header" data-wd-shared-shell><div class="wrap"><div class="brand"><a href="${home}">World Discovery</a></div><nav class="nav" aria-label="Primary navigation">${navLink(home,'Home',active==='home')}${navLink(explore,'Explore',active==='explore')}${navLink(data,'Data',active==='data')}${navLink(countries,'Countries',active==='countries')}${navLink(compare,'Compare',active==='compare')}${navLink(about,'About',active==='about')}</nav></div></header><span id="${SKIP_TARGET_ID}" class="wd-skip-target" tabindex="-1"></span>`;
+  const locale = localeFor(file);
+  const ui = SHELL[locale];
+  const home = hrefFor(file, '');
+  const explore = hrefFor(file, 'explore');
+  const data = hrefFor(file, 'data');
+  const countries = hrefFor(file, 'countries');
+  const compare = hrefFor(file, 'compare');
+  const about = hrefFor(file, 'methodology');
+  return `<a class="wd-skip-link" href="#${SKIP_TARGET_ID}">${ui.skip}</a><header class="topbar wd-global-header" data-wd-shared-shell data-wd-shell-locale="${locale}"><div class="wrap"><div class="brand"><a href="${home}">World Discovery</a></div><nav class="nav" aria-label="${ui.navLabel}">${navLink(home,ui.home,active==='home')}${navLink(explore,navLabel(file,'explore',ui.explore),active==='explore')}${navLink(data,ui.data,active==='data')}${navLink(countries,navLabel(file,'countries',ui.countries),active==='countries')}${navLink(compare,navLabel(file,'compare',ui.compare),active==='compare')}${navLink(about,navLabel(file,'methodology',ui.about),active==='about')}</nav></div></header><span id="${SKIP_TARGET_ID}" class="wd-skip-target" tabindex="-1"></span>`;
 }
 
 function footer(file) {
-  const explore = rel(file, 'explore');
-  const data = rel(file, 'data');
-  const countries = rel(file, 'countries');
-  const compare = rel(file, 'compare');
-  const about = rel(file, 'methodology');
-  const impressum = rel(file, 'impressum');
-  const datenschutz = rel(file, 'datenschutz');
-  return `<footer class="footer wd-global-footer" data-wd-shared-shell><div class="wrap"><strong>World Discovery</strong> · Official global data with explicit years and sources.<br><a href="${explore}">Explore</a> · <a href="${data}">Data</a> · <a href="${countries}">Countries</a> · <a href="${compare}">Compare</a> · <a href="${about}">Methodology</a><br><a href="${impressum}">Impressum</a> · <a href="${datenschutz}">Datenschutz</a></div></footer>`;
+  const locale = localeFor(file);
+  const ui = SHELL[locale];
+  const explore = hrefFor(file, 'explore');
+  const data = hrefFor(file, 'data');
+  const countries = hrefFor(file, 'countries');
+  const compare = hrefFor(file, 'compare');
+  const about = hrefFor(file, 'methodology');
+  const impressum = hrefFor(file, 'impressum');
+  const datenschutz = hrefFor(file, 'datenschutz');
+  return `<footer class="footer wd-global-footer" data-wd-shared-shell data-wd-shell-locale="${locale}"><div class="wrap"><strong>World Discovery</strong> · ${ui.footer}<br>${navLink(explore,navLabel(file,'explore',ui.explore),false)} · ${navLink(data,ui.data,false)} · ${navLink(countries,navLabel(file,'countries',ui.countries),false)} · ${navLink(compare,navLabel(file,'compare',ui.compare),false)} · ${navLink(about,navLabel(file,'methodology',ui.methodology),false)}<br>${navLink(impressum,navLabel(file,'impressum',ui.impressum),false)} · ${navLink(datenschutz,navLabel(file,'datenschutz',ui.privacy),false)}</div></footer>`;
 }
 
 function ensureShellCss(html) {
@@ -103,7 +167,7 @@ await ensureBranded404();
 const files = await walk(siteRoot);
 let changed = 0;
 for (const file of files) {
-  const relative = path.relative(siteRoot, file).replaceAll(path.sep, '/');
+  const relative = relativePath(file);
   if (SKIP_PREFIXES.some((prefix) => relative.startsWith(prefix))) continue;
   const before = await readFile(file, 'utf8');
   const after = normalize(before, file);
@@ -112,4 +176,4 @@ for (const file of files) {
     changed += 1;
   }
 }
-console.log(`Applied one shared World Discovery header/footer shell to ${changed}/${files.length} HTML pages.`);
+console.log(`Applied one locale-aware World Discovery header/footer shell to ${changed}/${files.length} HTML pages.`);
