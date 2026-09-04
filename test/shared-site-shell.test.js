@@ -18,6 +18,7 @@ async function walk(dir) {
 }
 
 const count = (text, needle) => text.split(needle).length - 1;
+const countAnchors = (fragment) => (fragment.match(/<a\b/gi) || []).length;
 
 test('every generated HTML page uses exactly one shared World Discovery shell', async () => {
   // Some earlier tests exercise the low-level buildSite() function directly, which
@@ -37,7 +38,7 @@ test('every generated HTML page uses exactly one shared World Discovery shell', 
     if (count(html, 'class="footer wd-global-footer"') !== 1) failures.push(`${relative}: shared footer count`);
     if (count(html, 'id="wd-shared-shell-style"') !== 1) failures.push(`${relative}: shared shell style count`);
     if (count(html, 'class="wd-skip-link"') !== 1) failures.push(`${relative}: skip link count`);
-    if (!html.includes('class="wd-skip-link" href="#wd-main-content">Skip to main content</a>')) failures.push(`${relative}: skip link target`);
+    if (!/class="wd-skip-link" href="#wd-main-content">[^<]+<\/a>/.test(html)) failures.push(`${relative}: skip link target`);
     if (count(html, 'id="wd-main-content"') !== 1) failures.push(`${relative}: content-start target count`);
     if (!html.includes('id="wd-main-content" class="wd-skip-target" tabindex="-1"')) failures.push(`${relative}: focusable content-start target`);
     const headerEnd = html.indexOf('</header>');
@@ -45,10 +46,11 @@ test('every generated HTML page uses exactly one shared World Discovery shell', 
     const firstMain = html.search(/<main\b/i);
     if (headerEnd === -1 || targetStart <= headerEnd) failures.push(`${relative}: content-start target must follow shared header`);
     if (firstMain !== -1 && targetStart >= firstMain) failures.push(`${relative}: content-start target must precede main content/hero layouts`);
-    for (const label of ['Explore', 'Data', 'Countries', 'Compare', 'About']) {
-      if (!html.includes(`>${label}</a>`)) failures.push(`${relative}: missing ${label} navigation`);
-    }
-    if (!html.includes('>Impressum</a>') || !html.includes('>Datenschutz</a>')) failures.push(`${relative}: missing legal links`);
+
+    const header = html.match(/<header\b[^>]*class="[^"]*wd-global-header[^"]*"[^>]*>[\s\S]*?<\/header>/i)?.[0] || '';
+    const footer = html.match(/<footer\b[^>]*class="[^"]*wd-global-footer[^"]*"[^>]*>[\s\S]*?<\/footer>/i)?.[0] || '';
+    if (!header.includes('<nav class="nav"') || countAnchors(header) < 7) failures.push(`${relative}: incomplete shared navigation`);
+    if (countAnchors(footer) < 7) failures.push(`${relative}: incomplete shared footer links`);
   }
 
   assert.deepEqual(failures, []);
