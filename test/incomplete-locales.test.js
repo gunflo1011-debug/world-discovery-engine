@@ -15,12 +15,16 @@ test('incomplete localized surfaces are previews, not full search-language equiv
   const catalog = JSON.parse(catalogRaw);
   const slugs = (catalog.indicators ?? []).map((item) => item.slug);
   const incomplete = Object.entries(config.locales).filter(([locale, cfg]) =>
-    locale !== config.defaultLocale && cfg.path && slugs.some((slug) => !cfg.indicatorNames?.[slug])
+    locale !== config.defaultLocale && cfg.path && (cfg.fullSiteReady !== true || slugs.some((slug) => !cfg.indicatorNames?.[slug]))
   );
 
-  assert.ok(incomplete.length > 0, 'fixture must include at least one incomplete locale');
+  assert.ok(incomplete.length > 0, 'fixture must include at least one locale that is not explicitly full-site ready');
 
   for (const [locale, cfg] of incomplete) {
+    const translated = slugs.filter((slug) => cfg.indicatorNames?.[slug]).length;
+    assert.equal(translated, slugs.length, `${locale} should retain complete published-indicator translations while full-site work continues`);
+    assert.notEqual(cfg.fullSiteReady, true, `${locale} must not claim full-site readiness before all required sections exist`);
+
     const localizedData = await read(`site/${cfg.path}/data/index.html`);
     assert.match(localizedData, /<meta name="robots" content="noindex,follow">/, `${locale} catalog must be noindex,follow while incomplete`);
     assert.match(localizedData, /data-locale-preview="true"/, `${locale} catalog must disclose preview status`);
