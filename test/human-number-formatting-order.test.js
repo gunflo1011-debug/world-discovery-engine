@@ -23,28 +23,34 @@ for (const scriptName of ['build', 'build:internet-use']) {
   });
 }
 
-test('formatter normalizes values that round to negative zero, including Unicode minus', async () => {
+test('formatter preserves meaningful small percentage direction while preventing negative zero', async () => {
   const source = await readFile(new URL('../scripts/format-human-numbers.mjs', import.meta.url), 'utf8');
   assert.match(source, /replace\('−', '-'\)/);
+  assert.match(source, /absolute < 0\.01 \? 3 : absolute < 0\.1 \? 2 : 1/);
   assert.match(source, /Number\(formatted\) === 0 \? '0' : formatted/);
   assert.match(source, /\[−-\]0/);
 });
 
-test('built human-visible pages contain no negative zero percentages', async () => {
+test('built human-visible pages contain no negative zero percentages and keep small negative changes visible', async () => {
   const paths = [
     '../site/indicators/internet-use/country/deu/index.html',
     '../site/countries/deu/index.html',
-    '../site/evidence/index.html'
+    '../site/evidence/index.html',
+    '../site/data/population-growth/index.html'
   ];
   for (const path of paths) {
     const html = await readFile(new URL(path, import.meta.url), 'utf8');
     const withoutScripts = html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
     assert.doesNotMatch(withoutScripts, /[−-]0(?:\.0+)?%/, `${path} must not expose negative zero percentages`);
   }
+
+  const germany = await readFile(new URL('../site/countries/deu/index.html', import.meta.url), 'utf8');
+  const visibleGermany = germany.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+  assert.match(visibleGermany, /Population growth[\s\S]{0,800}-0\.\d+%/i, 'Germany population growth must retain its negative direction');
 });
 
-test('built internet-use country pages contain no long human-visible percentage precision', async () => {
+test('built internet-use country pages avoid gratuitous long percentage precision', async () => {
   const html = await readFile(new URL('../site/indicators/internet-use/country/deu/index.html', import.meta.url), 'utf8');
   const withoutScripts = html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
-  assert.doesNotMatch(withoutScripts, /-?\d+\.\d{2,}(?=%|\s+(?:pp|percentage points?))/i);
+  assert.doesNotMatch(withoutScripts, /-?\d+\.\d{4,}(?=%|\s+(?:pp|percentage points?))/i);
 });

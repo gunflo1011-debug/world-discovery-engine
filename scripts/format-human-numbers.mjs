@@ -5,7 +5,11 @@ const siteRoot = new URL('../site/', import.meta.url);
 function formatNumber(raw) {
   const value = Number(String(raw).replace('−', '-'));
   if (!Number.isFinite(value)) return raw;
-  const formatted = value.toFixed(1).replace(/\.0$/, '');
+  if (value === 0) return '0';
+
+  const absolute = Math.abs(value);
+  const decimals = absolute < 0.01 ? 3 : absolute < 0.1 ? 2 : 1;
+  const formatted = value.toFixed(decimals).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
   return Number(formatted) === 0 ? '0' : formatted;
 }
 
