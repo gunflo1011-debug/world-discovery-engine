@@ -37,9 +37,6 @@ test('legal builder publishes language-pure localized legal and privacy pages', 
 });
 
 test('localized shell keeps legal footer links inside the active locale', async () => {
-  const shell = await readFile(new URL('scripts/apply-shared-site-shell.mjs', root), 'utf8');
-  assert.match(shell, /LOCALIZED_SECTIONS = new Set\(\[[^\]]*'impressum'[^\]]*'datenschutz'/s);
-
   run('scripts/build-legal-pages.mjs');
   run('scripts/align-cloudflare-privacy.mjs');
   run('scripts/apply-shared-site-shell.mjs');

@@ -2,178 +2,29 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
-const SKIP_PREFIXES = ['assets/'];
-const SKIP_TARGET_ID = 'wd-main-content';
-const LOCALE_PREFIXES = new Set(['de', 'es', 'fr', 'zh-hans']);
-const LOCALIZED_SECTIONS = new Set(['', 'explore', 'data', 'countries', 'compare', 'methodology', 'impressum', 'datenschutz']);
-
-const SHELL = {
-  en: {
-    skip: 'Skip to main content', navLabel: 'Primary navigation', home: 'Home', explore: 'Explore', data: 'Data', countries: 'Countries', compare: 'Compare', about: 'About',
-    footer: 'Official global data with explicit years and sources.', methodology: 'Methodology', impressum: 'Impressum', privacy: 'Datenschutz', englishSuffix: ''
-  },
-  de: {
-    skip: 'Zum Hauptinhalt springen', navLabel: 'Hauptnavigation', home: 'Startseite', explore: 'Entdecken', data: 'Daten', countries: 'Länder', compare: 'Vergleichen', about: 'Über World Discovery',
-    footer: 'Offizielle globale Daten mit klaren Jahren und Quellen.', methodology: 'Methodik', impressum: 'Impressum', privacy: 'Datenschutz', englishSuffix: ' · Auf Englisch öffnen'
-  },
-  es: {
-    skip: 'Saltar al contenido principal', navLabel: 'Navegación principal', home: 'Inicio', explore: 'Explorar', data: 'Datos', countries: 'Países', compare: 'Comparar', about: 'Acerca de World Discovery',
-    footer: 'Datos globales oficiales con años y fuentes explícitos.', methodology: 'Metodología', impressum: 'Aviso legal', privacy: 'Privacidad', englishSuffix: ' · Abrir en inglés'
-  },
-  fr: {
-    skip: 'Aller au contenu principal', navLabel: 'Navigation principale', home: 'Accueil', explore: 'Explorer', data: 'Données', countries: 'Pays', compare: 'Comparer', about: 'À propos de World Discovery',
-    footer: 'Données mondiales officielles avec années et sources explicites.', methodology: 'Méthodologie', impressum: 'Mentions légales', privacy: 'Confidentialité', englishSuffix: ' · Ouvrir en anglais'
-  },
-  'zh-hans': {
-    skip: '跳到主要内容', navLabel: '主导航', home: '首页', explore: '探索', data: '数据', countries: '国家', compare: '比较', about: '关于 World Discovery',
-    footer: '官方全球数据，明确标注年份和来源。', methodology: '方法', impressum: '法律声明', privacy: '隐私', englishSuffix: ' · 用英语打开'
-  }
+const root=fileURLToPath(new URL('../site/',import.meta.url));
+const locales=new Set(['de','es','fr','zh-hans']);
+const localized=new Set(['','explore','data','countries','compare','methodology','sources','impressum','datenschutz']);
+const mainId='wd-main-content';
+const ui={
+ en:{skip:'Skip to main content',nav:'Primary navigation',home:'Home',explore:'Explore',data:'Data',countries:'Countries',compare:'Compare',about:'About',methodology:'Methodology',sources:'Sources',imprint:'Impressum',privacy:'Datenschutz',footer:'Official global data with explicit years and sources.',suffix:''},
+ de:{skip:'Zum Hauptinhalt springen',nav:'Hauptnavigation',home:'Startseite',explore:'Entdecken',data:'Daten',countries:'Länder',compare:'Vergleichen',about:'Über World Discovery',methodology:'Methodik',sources:'Quellen',imprint:'Impressum',privacy:'Datenschutz',footer:'Offizielle globale Daten mit klaren Jahren und Quellen.',suffix:' · Auf Englisch öffnen'},
+ es:{skip:'Saltar al contenido principal',nav:'Navegación principal',home:'Inicio',explore:'Explorar',data:'Datos',countries:'Países',compare:'Comparar',about:'Acerca de World Discovery',methodology:'Metodología',sources:'Fuentes',imprint:'Aviso legal',privacy:'Privacidad',footer:'Datos globales oficiales con años y fuentes explícitos.',suffix:' · Abrir en inglés'},
+ fr:{skip:'Aller au contenu principal',nav:'Navigation principale',home:'Accueil',explore:'Explorer',data:'Données',countries:'Pays',compare:'Comparer',about:'À propos de World Discovery',methodology:'Méthodologie',sources:'Sources',imprint:'Mentions légales',privacy:'Confidentialité',footer:'Données mondiales officielles avec années et sources explicites.',suffix:' · Ouvrir en anglais'},
+ 'zh-hans':{skip:'跳到主要内容',nav:'主导航',home:'首页',explore:'探索',data:'数据',countries:'国家',compare:'比较',about:'关于 World Discovery',methodology:'方法',sources:'来源',imprint:'法律声明',privacy:'隐私',footer:'官方全球数据，明确标注年份和来源。',suffix:' · 用英语打开'}
 };
-
-function relativePath(file) {
-  return path.relative(siteRoot, file).replaceAll(path.sep, '/');
-}
-
-function localeFor(file) {
-  const first = relativePath(file).split('/')[0].toLowerCase();
-  return LOCALE_PREFIXES.has(first) ? first : 'en';
-}
-
-function stripLocalePrefix(relative, locale) {
-  if (locale === 'en') return relative;
-  return relative.startsWith(`${locale}/`) ? relative.slice(locale.length + 1) : relative;
-}
-
-const rel = (fromFile, targetDir) => {
-  if (path.basename(fromFile) === '404.html') return targetDir ? `/${targetDir.replace(/^\/+|\/+$/g, '')}/` : '/';
-  const fromDir = path.dirname(fromFile);
-  let out = path.relative(fromDir, path.join(siteRoot, targetDir)).replaceAll(path.sep, '/');
-  if (!out) out = '.';
-  if (!out.startsWith('.')) out = `./${out}`;
-  return out.endsWith('/') ? out : `${out}/`;
-};
-
-function targetFor(file, targetDir) {
-  const locale = localeFor(file);
-  if (locale === 'en') return targetDir;
-  if (LOCALIZED_SECTIONS.has(targetDir)) return targetDir ? `${locale}/${targetDir}` : locale;
-  return targetDir;
-}
-
-function hrefFor(file, targetDir) {
-  return rel(file, targetFor(file, targetDir));
-}
-
-function isLocalizedTarget(file, targetDir) {
-  const locale = localeFor(file);
-  return locale === 'en' || LOCALIZED_SECTIONS.has(targetDir);
-}
-
-async function walk(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...await walk(full));
-    else if (entry.isFile() && entry.name.endsWith('.html')) files.push(full);
-  }
-  return files;
-}
-
-function sectionFor(file) {
-  const locale = localeFor(file);
-  const p = stripLocalePrefix(relativePath(file), locale);
-  if (p === 'index.html') return 'home';
-  if (p.startsWith('explore/')) return 'explore';
-  if (p.startsWith('data/') || p.startsWith('indicators/')) return 'data';
-  if (p.startsWith('countries/')) return 'countries';
-  if (p.startsWith('compare/')) return 'compare';
-  if (p.startsWith('methodology/') || p.startsWith('evidence/') || p.startsWith('about/')) return 'about';
-  return '';
-}
-
-function navLink(href, label, active) {
-  return `<a href="${href}"${active ? ' aria-current="page"' : ''}>${label}</a>`;
-}
-
-function navLabel(file, targetDir, label) {
-  return isLocalizedTarget(file, targetDir) ? label : `${label}${SHELL[localeFor(file)].englishSuffix}`;
-}
-
-function header(file, active) {
-  const locale = localeFor(file);
-  const ui = SHELL[locale];
-  const home = hrefFor(file, '');
-  const explore = hrefFor(file, 'explore');
-  const data = hrefFor(file, 'data');
-  const countries = hrefFor(file, 'countries');
-  const compare = hrefFor(file, 'compare');
-  const about = hrefFor(file, 'methodology');
-  return `<a class="wd-skip-link" href="#${SKIP_TARGET_ID}">${ui.skip}</a><header class="topbar wd-global-header" data-wd-shared-shell data-wd-shell-locale="${locale}"><div class="wrap"><div class="brand"><a href="${home}">World Discovery</a></div><nav class="nav" aria-label="${ui.navLabel}">${navLink(home,ui.home,active==='home')}${navLink(explore,navLabel(file,'explore',ui.explore),active==='explore')}${navLink(data,ui.data,active==='data')}${navLink(countries,navLabel(file,'countries',ui.countries),active==='countries')}${navLink(compare,navLabel(file,'compare',ui.compare),active==='compare')}${navLink(about,navLabel(file,'methodology',ui.about),active==='about')}</nav></div></header><span id="${SKIP_TARGET_ID}" class="wd-skip-target" tabindex="-1"></span>`;
-}
-
-function footer(file) {
-  const locale = localeFor(file);
-  const ui = SHELL[locale];
-  const explore = hrefFor(file, 'explore');
-  const data = hrefFor(file, 'data');
-  const countries = hrefFor(file, 'countries');
-  const compare = hrefFor(file, 'compare');
-  const about = hrefFor(file, 'methodology');
-  const impressum = hrefFor(file, 'impressum');
-  const datenschutz = hrefFor(file, 'datenschutz');
-  return `<footer class="footer wd-global-footer" data-wd-shared-shell data-wd-shell-locale="${locale}"><div class="wrap"><strong>World Discovery</strong> · ${ui.footer}<br>${navLink(explore,navLabel(file,'explore',ui.explore),false)} · ${navLink(data,ui.data,false)} · ${navLink(countries,navLabel(file,'countries',ui.countries),false)} · ${navLink(compare,navLabel(file,'compare',ui.compare),false)} · ${navLink(about,navLabel(file,'methodology',ui.methodology),false)}<br>${navLink(impressum,navLabel(file,'impressum',ui.impressum),false)} · ${navLink(datenschutz,navLabel(file,'datenschutz',ui.privacy),false)}</div></footer>`;
-}
-
-function ensureShellCss(html) {
-  const css = `<style id="wd-shared-shell-style">.wd-skip-link{position:absolute;left:1rem;top:.75rem;transform:translateY(-200%);padding:.65rem .85rem;border:2px solid #172033;border-radius:.5rem;background:#fff;color:#172033;font-weight:800;text-decoration:none}.wd-skip-link:focus{transform:none;z-index:1000}.wd-skip-target{display:block;position:relative;scroll-margin-top:.5rem}.wd-skip-target:focus{outline:none}.wd-global-header{background:#111827;color:#fff}.wd-global-header .brand a{color:#fff;text-decoration:none}.wd-global-header .nav{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}.wd-global-header .nav a[aria-current=\"page\"]{font-weight:800;text-decoration:underline;text-underline-offset:.3rem}.wd-global-footer{margin-top:2rem}.wd-global-footer .wrap{line-height:1.8}@media(max-width:720px){.wd-global-header .wrap{display:block}.wd-global-header .brand{margin-bottom:.7rem}.wd-global-header .nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem}.wd-global-header .nav a{min-height:42px;display:flex;align-items:center}.wd-global-footer .wrap{font-size:.95rem}}</style>`;
-  if (html.includes('id="wd-shared-shell-style"')) return html;
-  return html.replace('</head>', `${css}</head>`);
-}
-
-function normalize(html, file) {
-  if (!/<body\b/i.test(html)) return html;
-  const active = sectionFor(file);
-  html = html.replace(/<header\b[^>]*class="[^"]*topbar[^"]*"[^>]*>[\s\S]*?<\/header>/i, '');
-  html = html.replace(/<footer\b[^>]*class="[^"]*footer[^"]*"[^>]*>[\s\S]*?<\/footer>/i, '');
-  html = html.replace(/<a\b[^>]*class="[^"]*wd-skip-link[^"]*"[^>]*>[\s\S]*?<\/a>/i, '');
-  html = html.replace(/<span\b[^>]*class="[^"]*wd-skip-target[^"]*"[^>]*><\/span>/i, '');
-  html = html.replace(/<body([^>]*)>/i, (m, attrs) => `<body${attrs}>${header(file, active)}`);
-  html = html.replace(/<\/body>/i, `${footer(file)}</body>`);
-  return ensureShellCss(html);
-}
-
-async function ensureBranded404() {
-  const file = path.join(siteRoot, '404.html');
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,follow">
-<title>Page not found · World Discovery</title>
-<meta name="description" content="The requested World Discovery page could not be found. Return to data, countries, comparisons, or the home page.">
-<style>body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f7f9fc}a{color:#174ea6}.wrap{max-width:72rem;margin:0 auto;padding:1rem 1.25rem}.topbar{background:#fff;border-bottom:1px solid #dfe5ee}.brand a{font-weight:800;text-decoration:none;color:#172033}.not-found{min-height:55vh;display:grid;place-items:center}.not-found-card{max-width:44rem;background:#fff;border:1px solid #dfe5ee;border-radius:1rem;padding:clamp(1.5rem,4vw,3rem);box-shadow:0 .5rem 2rem rgba(23,32,51,.06)}.eyebrow{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;color:#5b6472}.not-found h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.05;margin:.5rem 0 1rem}.not-found p{font-size:1.05rem;line-height:1.7}.recovery-links{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}.recovery-links a{display:inline-flex;align-items:center;min-height:44px;padding:.65rem .9rem;border:1px solid #c9d2df;border-radius:.65rem;background:#fff;text-decoration:none;font-weight:700}.footer{background:#fff;border-top:1px solid #dfe5ee}</style>
-</head>
-<body>
-<main class="wrap not-found" id="main"><section class="not-found-card" aria-labelledby="not-found-title"><div class="eyebrow">404 · Page not found</div><h1 id="not-found-title">This page isn’t here.</h1><p>The address may be outdated or mistyped. Continue with the current World Discovery data catalog, country profiles, or comparison tools.</p><nav class="recovery-links" aria-label="404 recovery links"><a href="/">Home</a><a href="/data/">Data catalog</a><a href="/countries/">Countries</a><a href="/compare/">Compare</a></nav></section></main>
-</body>
-</html>`;
-  await writeFile(file, html, 'utf8');
-}
-
-await ensureBranded404();
-const files = await walk(siteRoot);
-let changed = 0;
-for (const file of files) {
-  const relative = relativePath(file);
-  if (SKIP_PREFIXES.some((prefix) => relative.startsWith(prefix))) continue;
-  const before = await readFile(file, 'utf8');
-  const after = normalize(before, file);
-  if (after !== before) {
-    await writeFile(file, after, 'utf8');
-    changed += 1;
-  }
-}
-console.log(`Applied one locale-aware World Discovery header/footer shell to ${changed}/${files.length} HTML pages.`);
+const relPath=f=>path.relative(root,f).replaceAll(path.sep,'/');
+const locale=f=>{const x=relPath(f).split('/')[0].toLowerCase();return locales.has(x)?x:'en';};
+const contentPath=(f,l)=>l==='en'?relPath(f):relPath(f).replace(new RegExp(`^${l}/`),'');
+const target=(f,dir)=>{const l=locale(f);return l==='en'?dir:(localized.has(dir)?(dir?`${l}/${dir}`:l):dir);};
+const href=(f,dir)=>{if(path.basename(f)==='404.html')return dir?`/${dir.replace(/^\/+|\/+$/g,'')}/`:'/';let out=path.relative(path.dirname(f),path.join(root,target(f,dir))).replaceAll(path.sep,'/');if(!out)out='.';if(!out.startsWith('.'))out=`./${out}`;return out.endsWith('/')?out:`${out}/`;};
+const label=(f,dir,text)=>locale(f)==='en'||localized.has(dir)?text:`${text}${ui[locale(f)].suffix}`;
+const link=(h,t,active=false)=>`<a href="${h}"${active?' aria-current="page"':''}>${t}</a>`;
+function section(f){const p=contentPath(f,locale(f));if(p==='index.html')return'home';if(p.startsWith('explore/'))return'explore';if(p.startsWith('data/')||p.startsWith('indicators/'))return'data';if(p.startsWith('countries/'))return'countries';if(p.startsWith('compare/'))return'compare';if(p.startsWith('methodology/')||p.startsWith('evidence/')||p.startsWith('about/')||p.startsWith('sources/'))return'about';return'';}
+function header(f){const l=locale(f),t=ui[l],active=section(f),H={home:href(f,''),explore:href(f,'explore'),data:href(f,'data'),countries:href(f,'countries'),compare:href(f,'compare'),about:href(f,'methodology')};return `<a class="wd-skip-link" href="#${mainId}">${t.skip}</a><header class="topbar wd-global-header" data-wd-shared-shell data-wd-shell-locale="${l}"><div class="wrap"><div class="brand"><a href="${H.home}">World Discovery</a></div><nav class="nav" aria-label="${t.nav}">${link(H.home,t.home,active==='home')}${link(H.explore,label(f,'explore',t.explore),active==='explore')}${link(H.data,t.data,active==='data')}${link(H.countries,label(f,'countries',t.countries),active==='countries')}${link(H.compare,label(f,'compare',t.compare),active==='compare')}${link(H.about,label(f,'methodology',t.about),active==='about')}</nav></div></header><span id="${mainId}" class="wd-skip-target" tabindex="-1"></span>`;}
+function footer(f){const l=locale(f),t=ui[l];return `<footer class="footer wd-global-footer" data-wd-shared-shell data-wd-shell-locale="${l}"><div class="wrap"><strong>World Discovery</strong> · ${t.footer}<br>${link(href(f,'explore'),label(f,'explore',t.explore))} · ${link(href(f,'data'),t.data)} · ${link(href(f,'countries'),label(f,'countries',t.countries))} · ${link(href(f,'compare'),label(f,'compare',t.compare))} · ${link(href(f,'methodology'),label(f,'methodology',t.methodology))} · ${link(href(f,'sources'),label(f,'sources',t.sources))}<br>${link(href(f,'impressum'),label(f,'impressum',t.imprint))} · ${link(href(f,'datenschutz'),label(f,'datenschutz',t.privacy))}</div></footer>`;}
+const css='<style id="wd-shared-shell-style">.wd-skip-link{position:absolute;left:1rem;top:.75rem;transform:translateY(-200%);padding:.65rem .85rem;border:2px solid #172033;border-radius:.5rem;background:#fff;color:#172033;font-weight:800;text-decoration:none}.wd-skip-link:focus{transform:none;z-index:1000}.wd-skip-target{display:block;position:relative;scroll-margin-top:.5rem}.wd-skip-target:focus{outline:none}.wd-global-header{background:#111827;color:#fff}.wd-global-header .brand a{color:#fff;text-decoration:none}.wd-global-header .nav{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}.wd-global-header .nav a[aria-current="page"]{font-weight:800;text-decoration:underline;text-underline-offset:.3rem}.wd-global-footer{margin-top:2rem}.wd-global-footer .wrap{line-height:1.8}@media(max-width:720px){.wd-global-header .wrap{display:block}.wd-global-header .brand{margin-bottom:.7rem}.wd-global-header .nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem}.wd-global-header .nav a{min-height:42px;display:flex;align-items:center}.wd-global-footer .wrap{font-size:.95rem}}</style>';
+async function walk(dir){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const f=path.join(dir,e.name);if(e.isDirectory())out.push(...await walk(f));else if(e.isFile()&&e.name.endsWith('.html'))out.push(f);}return out;}
+function normalize(html,f){if(!/<body\b/i.test(html))return html;html=html.replace(/<header\b[^>]*class="[^"]*topbar[^"]*"[^>]*>[\s\S]*?<\/header>/i,'').replace(/<footer\b[^>]*class="[^"]*footer[^"]*"[^>]*>[\s\S]*?<\/footer>/i,'').replace(/<a\b[^>]*class="[^"]*wd-skip-link[^"]*"[^>]*>[\s\S]*?<\/a>/i,'').replace(/<span\b[^>]*class="[^"]*wd-skip-target[^"]*"[^>]*><\/span>/i,'').replace(/<body([^>]*)>/i,(_,a)=>`<body${a}>${header(f)}`).replace(/<\/body>/i,`${footer(f)}</body>`);if(!html.includes('id="wd-shared-shell-style"'))html=html.replace('</head>',`${css}</head>`);return html;}
+async function ensure404(){const f=path.join(root,'404.html');const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found · World Discovery</title><meta name="description" content="The requested World Discovery page could not be found. Return to data, countries, comparisons, or the home page."></head><body><main class="wrap not-found"><section><div class="eyebrow">404 · Page not found</div><h1>This page isn’t here.</h1><p>The address may be outdated or mistyped.</p><nav><a href="/">Home</a> <a href="/data/">Data catalog</a> <a href="/countries/">Countries</a> <a href="/compare/">Compare</a></nav></section></main></body></html>';await writeFile(f,html,'utf8');}
+await ensure404();const files=await walk(root);let changed=0;for(const f of files){if(relPath(f).startsWith('assets/'))continue;const before=await readFile(f,'utf8'),after=normalize(before,f);if(after!==before){await writeFile(f,after,'utf8');changed++;}}console.log(`Applied one locale-aware World Discovery header/footer shell to ${changed}/${files.length} HTML pages.`);
