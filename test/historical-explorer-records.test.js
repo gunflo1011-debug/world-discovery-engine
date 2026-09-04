@@ -30,15 +30,16 @@ test('historical explorer controls stay compact instead of stretching to the tal
   assert.match(html, /#compare\{[^}]*min-height:44px/);
 });
 
-test('historical explorer uses current production branding and maintained navigation', async () => {
+test('historical explorer uses current production branding and maintained shared navigation', async () => {
   const html = await readFile(explorerHtmlUrl, 'utf8');
   assert.match(html, /<title>Compare countries over time — World Discovery<\/title>/);
-  assert.match(html, /<div class="brand">World Discovery<\/div>/);
-  assert.match(html, /href="\.\.\/data\/index\.html">Data<\/a>/);
-  assert.match(html, /href="\.\.\/countries\/index\.html">Countries<\/a>/);
-  assert.match(html, /href="\.\.\/compare\/index\.html">Compare<\/a>/);
+  assert.match(html, /data-wd-shared-shell/);
+  assert.match(html, /<div class="brand"><a href="\.\.\/">World Discovery<\/a><\/div>/);
+  assert.match(html, /href="\.\.\/data\/">Data<\/a>/);
+  assert.match(html, /href="\.\.\/countries\/">Countries<\/a>/);
+  assert.match(html, /href="\.\.\/compare\/">Compare<\/a>/);
   assert.doesNotMatch(html, /World Discovery Engine/);
-  assert.doesNotMatch(html, /href="\.\.\/indicators\/index\.html">Indicators<\/a>/);
+  assert.doesNotMatch(html, /href="\.\.\/indicators\//);
 });
 
 test('published historical data can populate a real country picker', async () => {
