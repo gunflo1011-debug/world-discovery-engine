@@ -6,7 +6,7 @@ const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
 const SKIP_PREFIXES = ['assets/'];
 const SKIP_TARGET_ID = 'wd-main-content';
 const LOCALE_PREFIXES = new Set(['de', 'es', 'fr', 'zh-hans']);
-const LOCALIZED_SECTIONS = new Set(['', 'data']);
+const LOCALIZED_SECTIONS = new Set(['', 'data', 'countries', 'compare']);
 
 const SHELL = {
   en: {
@@ -47,7 +47,7 @@ function stripLocalePrefix(relative, locale) {
 
 const rel = (fromFile, targetDir) => {
   if (path.basename(fromFile) === '404.html') return targetDir ? `/${targetDir.replace(/^\/+|\/+$/g, '')}/` : '/';
-  const fromDir = path.dirname(fromFile);
+  const fromDir = path.dirname(file);
   let out = path.relative(fromDir, path.join(siteRoot, targetDir)).replaceAll(path.sep, '/');
   if (!out) out = '.';
   if (!out.startsWith('.')) out = `./${out}`;
