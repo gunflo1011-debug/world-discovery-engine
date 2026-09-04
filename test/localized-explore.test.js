@@ -18,7 +18,7 @@ test('localized Explore pages are language-specific, canonical and routed throug
     assert.match(html, new RegExp(section));
     assert.match(html, new RegExp(statusText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     assert.match(html, new RegExp(`data-wd-shell-locale="${path}"`));
-    assert.match(html, new RegExp(`href="(?:\\.\\./)*explore/" aria-current="page">${navLabel}<\\/a>`));
+    assert.match(html, new RegExp(`href="(?:\\./|(?:\\.\\./)*explore/)" aria-current="page">${navLabel}<\\/a>`));
     assert.doesNotMatch(html, /Start with a question, not a database code|Ways to explore|Understand the data|Browse the data catalog/);
   }
 });
