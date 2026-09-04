@@ -1,5 +1,3 @@
-import './hydrate-localizations.mjs';
-import './finalize-localizations.mjs';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 
 const siteRoot = new URL('../site/', import.meta.url);
