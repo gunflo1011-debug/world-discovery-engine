@@ -1,1 +1,27 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Methodology — World Discovery Engine</title><link rel="canonical" href="https://gunflo1011-debug.github.io/world-discovery-engine/methodology/"><link rel="stylesheet" href="../styles.css"></head><body><header class="topbar"><div class="wrap"><div class="brand">World Discovery Engine</div><nav class="nav"><a href="../index.html">Discoveries</a><a href="./index.html">Methodology</a></nav></div></header><main><section class="evidence-head"><div class="wrap"><div class="eyebrow" style="color:#2563eb">Methodology</div><h1>Every claim should be reproducible.</h1><p class="muted">The product is built around a strict pipeline. If the evidence is not comparable, we publish nothing.</p></div></section><section class="section"><div class="wrap"><div class="grid"><article class="card"><h3>1. Source</h3><p>Use official or clearly licensed public data and retain source URL, release date and provenance.</p></article><article class="card"><h3>2. Vintage</h3><p>Store the value as it appeared in a specific publication release rather than silently replacing history.</p></article><article class="card"><h3>3. Comparability gate</h3><p>Require the same entity, indicator, reference period, compatible unit and validated methodology.</p></article><article class="card"><h3>4. Deterministic calculation</h3><p>Revision size, direction and histories are calculated by code. LLMs do not invent numerical facts.</p></article><article class="card"><h3>5. Evidence object</h3><p>One canonical object feeds human HTML, JSON, CSV and structured metadata so outputs cannot drift.</p></article><article class="card"><h3>6. Publication</h3><p>Stable URLs expose raw values, calculation, method, update timestamp and source attribution.</p></article></div><div class="sourcebox" style="margin-top:24px"><strong>MVP rule:</strong> demo values stay visibly labelled as demo until a real archived release passes provenance and methodology validation.</div></div></section></main><footer class="footer"><div class="wrap"><a href="../index.html">← Back to discoveries</a></div></footer></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Methodology — World Discovery</title>
+  <meta name="description" content="How World Discovery selects, validates, compares and publishes official global data without hiding observation years or provenance.">
+  <link rel="canonical" href="https://worlddiscoverydata.com/methodology/">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header class="topbar"><div class="wrap"><div class="brand">World Discovery</div></div></header>
+  <main>
+    <section class="hero hero-compact"><div class="wrap"><div class="eyebrow">Methodology</div><h1>Official data, explicit years, reproducible comparisons.</h1><p>World Discovery keeps source identity, observation year, units and geography attached to the values it publishes. When values are not comparable, the interface does not present a numerical difference as if they were.</p></div></section>
+    <section class="section"><div class="wrap"><div class="grid">
+      <article class="card"><h3>1. Official source</h3><p>Published indicator observations come from identified official datasets. Source attribution and indicator identity stay visible on the relevant data surfaces.</p></article>
+      <article class="card"><h3>2. Observation year</h3><p>The year shown with a value is the observation year for that value. Missing observations are not silently filled from a different year.</p></article>
+      <article class="card"><h3>3. Comparable context</h3><p>Differences are calculated only when the compared observations use compatible indicators, entities, units and observation periods.</p></article>
+      <article class="card"><h3>4. Deterministic calculations</h3><p>Rankings, differences and revision calculations are produced from stored numerical values by code rather than invented or estimated by a language model.</p></article>
+      <article class="card"><h3>5. Provenance</h3><p>Machine-readable and human-readable outputs are built from the same retained source records wherever a corresponding data export is published.</p></article>
+      <article class="card"><h3>6. Stable publication</h3><p>Maintained data pages use stable URLs, canonical metadata and explicit source context so users and search systems can identify the current public surface.</p></article>
+    </div></div></section>
+    <section class="section section-soft"><div class="wrap"><h2>How to read World Discovery data</h2><p>Coverage can differ by indicator, country or territory and year. A lower coverage count means that the verified snapshot contains fewer usable observations for that indicator and period; it does not imply that another year's value was substituted.</p><p>Country comparisons keep each observation year visible. If two values come from different years, both values may still be shown for context, but a difference is not presented as a same-period comparison.</p><p><a href="../sources/">Sources and provenance</a> · <a href="../status/">Current data status</a></p></div></section>
+  </main>
+  <footer class="footer"><div class="wrap">World Discovery · Official global data with explicit years and sources.</div></footer>
+</body>
+</html>
