@@ -13,10 +13,11 @@ test('country directory labels countries and territories precisely', async () =>
 
   const html = await readFile(directoryPage, 'utf8');
 
-  assert.match(html, /COUNTRY & TERRITORY PROFILES · OFFICIAL WORLD BANK DATA/);
+  assert.match(html, /COUNTRY &amp; TERRITORY PROFILES · OFFICIAL WORLD BANK DATA/);
   assert.match(html, /Showing all ['+].*country and territory profiles\./);
   assert.match(html, /No country or territory profiles match this search\./);
   assert.match(html, /Browse country and territory profiles built from 30 official World Bank WDI indicators/);
+  assert.doesNotMatch(html, /COUNTRY & TERRITORY PROFILES · OFFICIAL WORLD BANK DATA/);
   assert.doesNotMatch(html, /COUNTRY PROFILES · OFFICIAL WORLD BANK DATA/);
   assert.doesNotMatch(html, /Showing all ['+].*country profiles\./);
 });
