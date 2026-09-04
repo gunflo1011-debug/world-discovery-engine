@@ -6,15 +6,15 @@ const catalog = JSON.parse(await readFile(new URL('data/wdi/index.json', siteRoo
 const indicators = catalog.indicators ?? [];
 
 const previewLabels = {
-  de: { suffix: 'Vorschau', note: 'Sprachvorschau: Einige Indikatornamen und Einheiten sind noch auf Englisch. Diese Version wird bis zur vollständigen Lokalisierung nicht als gleichwertige Sprachseite indexiert.' },
-  es: { suffix: 'vista previa', note: 'Vista previa de idioma: algunos nombres de indicadores y unidades siguen en inglés. Esta versión no se indexa como página equivalente hasta completar la localización.' },
-  fr: { suffix: 'aperçu', note: 'Aperçu linguistique : certains noms d’indicateurs et certaines unités restent en anglais. Cette version n’est pas indexée comme page équivalente avant la fin de la localisation.' },
-  'zh-Hans': { suffix: '预览', note: '语言预览：部分指标名称和单位仍为英文。在本地化完成前，此版本不会作为等效语言页面建立索引。' }
+  de: { suffix: 'Vorschau', note: 'Sprachvorschau: Die veröffentlichten Datenindikatoren sind übersetzt, aber noch nicht alle Bereiche der Website sind vollständig auf Deutsch verfügbar. Diese Version wird bis zur vollständigen Lokalisierung nicht als gleichwertige Sprachseite indexiert.' },
+  es: { suffix: 'vista previa', note: 'Vista previa de idioma: los indicadores de datos publicados están traducidos, pero todavía no todas las secciones del sitio están disponibles completamente en español. Esta versión no se indexa como página equivalente hasta completar toda la localización.' },
+  fr: { suffix: 'aperçu', note: 'Aperçu linguistique : les indicateurs de données publiés sont traduits, mais toutes les sections du site ne sont pas encore entièrement disponibles en français. Cette version n’est pas indexée comme page équivalente avant la fin de la localisation complète.' },
+  'zh-Hans': { suffix: '预览', note: '语言预览：已发布的数据指标已完成翻译，但网站的所有区域尚未全部提供简体中文版本。在完整本地化完成之前，此版本不会作为等效语言页面建立索引。' }
 };
 
 const escRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const localizedCount = (cfg) => indicators.filter((item) => Boolean(cfg.indicatorNames?.[item.slug])).length;
-const isComplete = (cfg) => indicators.length > 0 && localizedCount(cfg) === indicators.length;
+const isComplete = (cfg) => cfg.fullSiteReady === true && indicators.length > 0 && localizedCount(cfg) === indicators.length;
 
 async function listHtml(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -33,7 +33,7 @@ const incomplete = Object.entries(config.locales)
 for (const [locale, cfg] of incomplete) {
   const preview = previewLabels[locale] ?? {
     suffix: 'preview',
-    note: 'Language preview: some indicator names and units remain in English. This version is not indexed as an equivalent language page until localization is complete.'
+    note: 'Language preview: published data indicators are translated, but not every site section is fully localized yet. This version is not indexed as an equivalent language page until full-site localization is complete.'
   };
   const localeRoot = new URL(`${cfg.path}/`, siteRoot);
   let htmlFiles = [];
@@ -78,4 +78,4 @@ for (const [, cfg] of incomplete) {
 }
 await writeFile(sitemapUrl, `${sitemap.trim()}\n`, 'utf8');
 
-console.log(`Guarded ${incomplete.length} incomplete locales from full-language indexing: ${incomplete.map(([locale, cfg]) => `${locale} ${localizedCount(cfg)}/${indicators.length}`).join(', ') || 'none'}.`);
+console.log(`Guarded ${incomplete.length} incomplete locales from full-language indexing: ${incomplete.map(([locale, cfg]) => `${locale} ${localizedCount(cfg)}/${indicators.length} indicators, fullSiteReady=${cfg.fullSiteReady === true}`).join(', ') || 'none'}.`);
