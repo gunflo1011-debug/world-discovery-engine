@@ -14,6 +14,7 @@ test('country compare honors indicator context from ranking actions', async () =
   assert.match(html, /metric-card-focused/);
   assert.match(html, /data\/wdi\/.*data\.json/);
   assert.match(html, /Showing your selected indicator first/);
+  assert.match(html, /params\.set\('indicator',indicator\);history\.replaceState/);
 });
 
 test('indicator ranking actions preserve their indicator slug for compare', async () => {
