@@ -9,7 +9,7 @@ test('sources page reflects all published products and exposes machine discovery
   const html = await readFile(pageUrl, 'utf8');
 
   assert.match(html, new RegExp(`<link rel="canonical" href="${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}sources/">`));
-  assert.match(html, /<title>Sources, provenance & machine access — World Discovery Data<\/title>/);
+  assert.match(html, /<title>Sources, provenance & machine access — World Discovery<\/title>/);
   assert.match(html, /REAL population-revision evidence/);
   assert.match(html, /CURRENT_VERIFIED Internet Use observations/);
   assert.match(html, /CURRENT_VERIFIED GDP per capita observations/);

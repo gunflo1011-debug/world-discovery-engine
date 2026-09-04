@@ -37,6 +37,18 @@ function headValue(html, pattern) {
   return html.match(pattern)?.[1]?.trim() ?? '';
 }
 
+function normalizeTitleBrand(value) {
+  return value
+    .replace(/\bWorld Discovery Engine\b/g, 'World Discovery')
+    .replace(/\bWorld Discovery Data\b/g, 'World Discovery');
+}
+
+function normalizeHeadBrand(html) {
+  let next = html.replace(/<title>([^<]+)<\/title>/i, (match, title) => `<title>${normalizeTitleBrand(title)}</title>`);
+  next = next.replace(/(<meta\s+property=["']og:title["']\s+content=["'])([^"']+)(["'][^>]*>)/i, (match, before, title, after) => `${before}${normalizeTitleBrand(title)}${after}`);
+  return next;
+}
+
 function ensureSocialMetadata(html) {
   const title = headValue(html, /<title>([^<]+)<\/title>/i);
   const description = headValue(html, /<meta\s+name=["']description["']\s+content=["']([^"']+)["'][^>]*>/i);
@@ -56,6 +68,7 @@ function ensureSocialMetadata(html) {
 let changedFiles = 0;
 let changedLinks = 0;
 let socialFiles = 0;
+let titleBrandFiles = 0;
 for (const file of await htmlFiles(siteRoot)) {
   let html = await readFile(file, 'utf8');
   const before = html;
@@ -65,6 +78,9 @@ for (const file of await htmlFiles(siteRoot)) {
     changedLinks += 1;
     return `href=${quote}${normalized}${quote}`;
   });
+  const beforeBrand = html;
+  html = normalizeHeadBrand(html);
+  if (html !== beforeBrand) titleBrandFiles += 1;
   const beforeSocial = html;
   html = ensureSocialMetadata(html);
   if (html !== beforeSocial) socialFiles += 1;
@@ -91,4 +107,4 @@ if (missing.length || indexLocs.length) {
   throw new Error(`SEO discovery validation failed.\n${details}`);
 }
 
-console.log(`SEO discovery finalized: ${verified.length} verified indicator URLs present; normalized ${changedLinks} index.html links across ${changedFiles} HTML files; added missing social metadata to ${socialFiles} files.`);
+console.log(`SEO discovery finalized: ${verified.length} verified indicator URLs present; normalized ${changedLinks} index.html links across ${changedFiles} HTML files; normalized title branding on ${titleBrandFiles} files; added missing social metadata to ${socialFiles} files.`);
