@@ -13,7 +13,8 @@ test('sources page reflects verified products and exposes machine discovery entr
   assert.match(html, /CURRENT_VERIFIED Internet Use observations/);
   assert.match(html, /CURRENT_VERIFIED GDP per capita observations/);
   assert.match(html, /Additional WDI indicators are exposed through the maintained data catalog/);
-  assert.doesNotMatch(html, /World Discovery Data|three verified product families/i);
+  assert.doesNotMatch(html, /World Discovery Data/);
+  assert.doesNotMatch(html, /three verified product families/i);
   for (const href of ['../evidence/index.json','../ai-index.json','../llms.txt','../indicators/internet-use/data.json','../indicators/internet-use/data.csv','../indicators/internet-use/country/index.json','../indicators/gdp-per-capita/data.json','../indicators/gdp-per-capita/']) {
     assert.match(html, new RegExp(`href="${href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
   }
