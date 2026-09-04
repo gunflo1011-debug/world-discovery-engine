@@ -9,6 +9,7 @@ const run = (script) => execFileSync(process.execPath, [script], { cwd: root, st
 
 test('legal builder publishes language-pure localized legal and privacy pages', async () => {
   run('scripts/build-legal-pages.mjs');
+  run('scripts/align-cloudflare-privacy.mjs');
   run('scripts/apply-shared-site-shell.mjs');
 
   const cases = [
@@ -25,6 +26,7 @@ test('legal builder publishes language-pure localized legal and privacy pages', 
     assert.match(privacy, new RegExp(`<html lang="${lang}"`));
     assert.ok(imprint.includes(`<h1>${imprintHeading}</h1>`));
     assert.ok(privacy.includes(`<h1>${privacyHeading}</h1>`));
+    assert.ok(privacy.includes('<h2>3. Cloudflare Web Analytics</h2>'));
     assert.ok(imprint.includes(`https://worlddiscoverydata.com/${path}/impressum/`));
     assert.ok(privacy.includes(`https://worlddiscoverydata.com/${path}/datenschutz/`));
     assert.doesNotMatch(imprint, /World Discovery Engine/);
@@ -39,6 +41,7 @@ test('localized shell keeps legal footer links inside the active locale', async 
   assert.match(shell, /LOCALIZED_SECTIONS = new Set\(\[[^\]]*'impressum'[^\]]*'datenschutz'/s);
 
   run('scripts/build-legal-pages.mjs');
+  run('scripts/align-cloudflare-privacy.mjs');
   run('scripts/apply-shared-site-shell.mjs');
   const html = await readFile(new URL('es/data/index.html', site), 'utf8');
   assert.match(html, /href="\.\.\/impressum\/"[^>]*>Aviso legal<\/a>/);
