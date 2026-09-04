@@ -35,7 +35,7 @@ test('localized methodology pages are language-specific preview equivalents with
     assert.ok(html.includes(label), `${path} methodology label should be localized`);
     assert.ok(html.includes(headline), `${path} methodology headline should be localized`);
     assert.ok(html.includes(`https://worlddiscoverydata.com/${path}/methodology/`));
-    assert.ok(html.includes(`href="./">${navLabel}</a>`), `${path} shared shell should keep Methodology inside locale`);
+    assert.match(html, new RegExp(`href="\\./"[^>]*>${navLabel}</a>`), `${path} shared shell should keep Methodology inside locale`);
     assert.doesNotMatch(html, /Every claim should be reproducible|MVP rule|demo values|World Discovery Engine/);
   }
 });
