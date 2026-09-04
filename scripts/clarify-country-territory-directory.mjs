@@ -7,8 +7,7 @@ html = html
   .replaceAll('COUNTRY PROFILES', 'COUNTRY & TERRITORY PROFILES')
   .replaceAll('country profiles.', 'country and territory profiles.')
   .replaceAll('country profiles built from', 'country and territory profiles built from')
-  .replaceAll('No country and territory profiles match this search.', 'No country or territory profiles match this search.')
-  .replaceAll('Official WDI country and territory profiles.', 'Official WDI country and territory profiles.');
+  .replaceAll('No country and territory profiles match this search.', 'No country or territory profiles match this search.');
 
 await writeFile(directoryUrl, html, 'utf8');
 console.log('Clarified country and territory directory wording.');
