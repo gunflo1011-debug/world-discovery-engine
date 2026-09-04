@@ -5,7 +5,7 @@ import test from 'node:test';
 const browserUrl = new URL('../site/wdi-year-browser.js', import.meta.url);
 const generatorUrl = new URL('../scripts/build-wdi-data-browser.mjs', import.meta.url);
 
-test('year switching updates all user-visible year state', async () => {
+test('year switching updates all user-visible year state and browser metadata', async () => {
   const [browser, generator] = await Promise.all([
     readFile(browserUrl, 'utf8'),
     readFile(generatorUrl, 'utf8')
@@ -18,4 +18,9 @@ test('year switching updates all user-visible year state', async () => {
   assert.match(browser, /heroIntro\.innerHTML = `Compare <strong>\$\{records\.length\} countries<\/strong> in the selected same-year \$\{year\} snapshot/, 'hero summary must follow selection');
   assert.match(browser, /fillInsightList\(highCard, records\.slice\(0, 5\)\)/, 'highest quick answers must be recalculated');
   assert.match(browser, /fillInsightList\(lowCard, records\.slice\(-5\)\.reverse\(\)\)/, 'lowest quick answers must be recalculated');
+  assert.match(browser, /const syncMetadata = \(year\) =>/, 'year rendering must expose one metadata synchronization path');
+  assert.match(browser, /document\.title = withSelectedYear\(titleTemplate, year\)/, 'browser title must follow the selected year');
+  assert.match(browser, /metaDescription\.content = withSelectedYear\(descriptionTemplate, year\)/, 'meta description must follow the selected year');
+  assert.match(browser, /socialTitleNodes\.forEach/, 'social titles must follow the selected year when present');
+  assert.match(browser, /syncMetadata\(year\);/, 'metadata must update during the same render as visible year state');
 });

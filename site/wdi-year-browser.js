@@ -23,6 +23,25 @@
   const quickEyebrow = quickInsights?.querySelector('.eyebrow');
   const quickIntro = quickInsights?.querySelector('h2 + p');
   const quickCards = quickInsights ? [...quickInsights.querySelectorAll('.grid > .card')] : [];
+  const metaDescription = document.querySelector('meta[name="description"]');
+  const socialTitleNodes = [...document.querySelectorAll('meta[property="og:title"],meta[name="twitter:title"]')];
+  const socialDescriptionNodes = [...document.querySelectorAll('meta[property="og:description"],meta[name="twitter:description"]')];
+  const titleTemplate = document.title;
+  const descriptionTemplate = metaDescription?.content || '';
+  const socialTitleTemplates = socialTitleNodes.map((node) => node.content || '');
+  const socialDescriptionTemplates = socialDescriptionNodes.map((node) => node.content || '');
+
+  const withSelectedYear = (text, year) => {
+    if (!text || !Number.isFinite(currentYear)) return text;
+    return text.replaceAll(String(currentYear), String(year));
+  };
+
+  const syncMetadata = (year) => {
+    document.title = withSelectedYear(titleTemplate, year);
+    if (metaDescription) metaDescription.content = withSelectedYear(descriptionTemplate, year);
+    socialTitleNodes.forEach((node, index) => { node.content = withSelectedYear(socialTitleTemplates[index], year); });
+    socialDescriptionNodes.forEach((node, index) => { node.content = withSelectedYear(socialDescriptionTemplates[index], year); });
+  };
 
   const formatValue = (value) => {
     if (!Number.isFinite(value)) return '—';
@@ -272,6 +291,7 @@
           .filter((r) => Number(r.year) === year && Number.isFinite(r.value))
           .sort((a, b) => b.value - a.value || a.country.localeCompare(b.country));
         renderRows(yearRecords, year);
+        syncMetadata(year);
         const url = new URL(location.href);
         if (year === currentYear) url.searchParams.delete('year'); else url.searchParams.set('year', String(year));
         window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
