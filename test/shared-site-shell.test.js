@@ -36,6 +36,15 @@ test('every generated HTML page uses exactly one shared World Discovery shell', 
     if (count(html, 'class="topbar wd-global-header"') !== 1) failures.push(`${relative}: shared header count`);
     if (count(html, 'class="footer wd-global-footer"') !== 1) failures.push(`${relative}: shared footer count`);
     if (count(html, 'id="wd-shared-shell-style"') !== 1) failures.push(`${relative}: shared shell style count`);
+    if (count(html, 'class="wd-skip-link"') !== 1) failures.push(`${relative}: skip link count`);
+    if (!html.includes('class="wd-skip-link" href="#wd-main-content">Skip to main content</a>')) failures.push(`${relative}: skip link target`);
+    if (count(html, 'id="wd-main-content"') !== 1) failures.push(`${relative}: content-start target count`);
+    if (!html.includes('id="wd-main-content" class="wd-skip-target" tabindex="-1"')) failures.push(`${relative}: focusable content-start target`);
+    const headerEnd = html.indexOf('</header>');
+    const targetStart = html.indexOf('id="wd-main-content"');
+    const firstMain = html.search(/<main\b/i);
+    if (headerEnd === -1 || targetStart <= headerEnd) failures.push(`${relative}: content-start target must follow shared header`);
+    if (firstMain !== -1 && targetStart >= firstMain) failures.push(`${relative}: content-start target must precede main content/hero layouts`);
     for (const label of ['Explore', 'Data', 'Countries', 'Compare', 'About']) {
       if (!html.includes(`>${label}</a>`)) failures.push(`${relative}: missing ${label} navigation`);
     }
