@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const explorerUrl = new URL('../site/explore/history.js', import.meta.url);
+const explorerHtmlUrl = new URL('../site/explore/history.html', import.meta.url);
 const ingestUrl = new URL('../scripts/ingest-wdi-history-catalog.mjs', import.meta.url);
 const historyIndexUrl = new URL('../site/data/wdi/history-index.json', import.meta.url);
 
@@ -18,6 +19,15 @@ test('historical explorer consumes the records array emitted by the WDI history 
   assert.match(explorer, /setCountries\(countries,requested\)/, 'country picker must be populated from historical rows');
   assert.match(explorer, /countries and other geographic entities/, 'coverage wording must disclose non-country geographic entities');
   assert.doesNotMatch(explorer, /\$\{meta\.countries\} countries,/, 'coverage count must not describe every WDI entity as a country');
+});
+
+test('historical explorer controls stay compact instead of stretching to the tallest grid item', async () => {
+  const html = await readFile(explorerHtmlUrl, 'utf8');
+  assert.match(html, /\.controls\{[^}]*align-items:start/);
+  assert.match(html, /\.controls label\{[^}]*align-self:start/);
+  assert.match(html, /\.controls select,\.controls input\{[^}]*min-height:44px/);
+  assert.match(html, /\.country-picker\{[^}]*align-self:start/);
+  assert.match(html, /#compare\{[^}]*min-height:44px/);
 });
 
 test('published historical data can populate a real country picker', async () => {
