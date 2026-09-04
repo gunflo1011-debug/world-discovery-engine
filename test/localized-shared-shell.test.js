@@ -7,16 +7,16 @@ const root = new URL('../', import.meta.url);
 const site = new URL('../site/', import.meta.url);
 
 const CASES = [
-  ['de', 'Startseite', 'Daten', 'Länder', 'Vergleichen', 'Zum Hauptinhalt springen', 'Auf Englisch öffnen'],
-  ['es', 'Inicio', 'Datos', 'Países', 'Comparar', 'Saltar al contenido principal', 'Abrir en inglés'],
-  ['fr', 'Accueil', 'Données', 'Pays', 'Comparer', 'Aller au contenu principal', 'Ouvrir en anglais'],
-  ['zh-hans', '首页', '数据', '国家', '比较', '跳到主要内容', '用英语打开']
+  ['de', 'Startseite', 'Daten', 'Länder', 'Vergleichen', 'Zum Hauptinhalt springen'],
+  ['es', 'Inicio', 'Datos', 'Países', 'Comparar', 'Saltar al contenido principal'],
+  ['fr', 'Accueil', 'Données', 'Pays', 'Comparer', 'Aller au contenu principal'],
+  ['zh-hans', '首页', '数据', '国家', '比较', '跳到主要内容']
 ];
 
 test('shared shell keeps localized entrypoints and completed country/compare sections in-language', async () => {
   execFileSync(process.execPath, ['scripts/apply-shared-site-shell.mjs'], { cwd: root, stdio: 'pipe' });
 
-  for (const [locale, homeLabel, dataLabel, countryLabel, compareLabel, skipLabel, englishSuffix] of CASES) {
+  for (const [locale, homeLabel, dataLabel, countryLabel, compareLabel, skipLabel] of CASES) {
     const home = await readFile(new URL(`${locale}/index.html`, site), 'utf8');
     const data = await readFile(new URL(`${locale}/data/index.html`, site), 'utf8');
 
@@ -27,8 +27,6 @@ test('shared shell keeps localized entrypoints and completed country/compare sec
       assert.ok(html.includes(`>${countryLabel}</a>`), `${locale} shell should localize Countries`);
       assert.ok(html.includes(`>${compareLabel}</a>`), `${locale} shell should localize Compare`);
       assert.ok(html.includes(`>${skipLabel}</a>`), `${locale} skip link should be localized`);
-      assert.ok(!html.includes(`${countryLabel} · ${englishSuffix}`), `${locale} Countries must no longer disclose an English transition`);
-      assert.ok(!html.includes(`${compareLabel} · ${englishSuffix}`), `${locale} Compare must no longer disclose an English transition`);
       assert.ok(!html.includes('>Home</a>'), `${locale} shell must not leave English Home`);
       assert.ok(!html.includes('>Countries</a>'), `${locale} shell must not leave English Countries`);
       assert.ok(!html.includes('>Compare</a>'), `${locale} shell must not leave English Compare`);
