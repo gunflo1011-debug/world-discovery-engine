@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const CASES = [
-  ['de', 'de', 'Weltdaten entdecken', 'Möglichkeiten zum Entdecken', 'Datenstatus ansehen (derzeit auf Englisch)', 'Entdecken'],
-  ['es', 'es', 'Explorar datos mundiales', 'Formas de explorar', 'Ver el estado de los datos (actualmente en inglés)', 'Explorar'],
-  ['fr', 'fr', 'Explorer les données mondiales', 'Façons d’explorer', 'Voir l’état des données (actuellement en anglais)', 'Explorer'],
-  ['zh-hans', 'zh-Hans', '探索全球数据', '探索方式', '查看数据状态（当前仅提供英文版）', '探索']
+  ['de', 'de', 'Weltdaten entdecken', 'Möglichkeiten zum Entdecken', 'Datenstatus ansehen', 'Entdecken'],
+  ['es', 'es', 'Explorar datos mundiales', 'Formas de explorar', 'Ver el estado de los datos', 'Explorar'],
+  ['fr', 'fr', 'Explorer les données mondiales', 'Façons d’explorer', 'Voir l’état des données', 'Explorer'],
+  ['zh-hans', 'zh-Hans', '探索全球数据', '探索方式', '查看数据状态', '探索']
 ];
 
 test('localized Explore pages are language-specific, canonical and routed through the locale-aware shell', async () => {
@@ -17,6 +17,8 @@ test('localized Explore pages are language-specific, canonical and routed throug
     assert.match(html, new RegExp(title));
     assert.match(html, new RegExp(section));
     assert.match(html, new RegExp(statusText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.match(html, /href="\.\.\/status\/"/);
+    assert.doesNotMatch(html, /currently in English|derzeit auf Englisch|actualmente en inglés|actuellement en anglais|当前仅提供英文版/);
     assert.match(html, new RegExp(`data-wd-shell-locale="${path}"`));
     assert.match(html, new RegExp(`href="(?:\\./|(?:\\.\\./)*explore/)" aria-current="page">${navLabel}<\\/a>`));
     assert.doesNotMatch(html, /Start with a question, not a database code|Ways to explore|Understand the data|Browse the data catalog/);
