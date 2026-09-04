@@ -1,0 +1,13 @@
+import { readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+
+const path = resolve(process.cwd(), 'site', 'datenschutz', 'index.html');
+let html = await readFile(path, 'utf8');
+
+const oldSection = '<h2>3. Cookies, Analytics und Tracking</h2><p>World Discovery Engine setzt nach aktuellem Stand keine eigenen Werbe-, Analyse- oder Tracking-Cookies ein und verwendet keine eingebundene Webanalyse. Sollte künftig ein zustimmungspflichtiger Dienst eingesetzt werden, wird diese Datenschutzerklärung vor dessen Aktivierung angepasst und – soweit rechtlich erforderlich – eine Einwilligung eingeholt.</p>';
+const newSection = '<h2>3. Cloudflare Web Analytics</h2><p>Wir verwenden Cloudflare Web Analytics, um aggregierte Nutzungs- und Leistungskennzahlen der Website auszuwerten und das Angebot technisch und inhaltlich zu verbessern. Nach Angaben von Cloudflare verwendet Web Analytics für die Erhebung dieser Nutzungskennzahlen keine Cookies oder localStorage und erstellt für Analysezwecke keine Fingerabdrücke einzelner Besucher anhand von IP-Adresse, User-Agent oder anderen Merkmalen.</p><p>Cloudflare kann die Messung je nach Konfiguration über ein JavaScript-Beacon im Browser oder über seine Edge-Infrastruktur durchführen. Dabei werden insbesondere Seitenaufrufe, Verweisquellen und technische Leistungskennzahlen für die aggregierte Webanalyse ausgewertet. Wir verwenden diese Auswertung nicht, um einzelne Besucher zu identifizieren oder nutzerübergreifende Werbeprofile zu erstellen.</p><p>Die Nutzung erfolgt, soweit sie in unserer Verantwortlichkeit liegt, auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse besteht darin, Nutzung und technische Qualität der Website datensparsam zu messen und die Website anhand aggregierter Erkenntnisse zu verbessern. Weitere Informationen zu Cloudflare Web Analytics und zur Datenverarbeitung durch Cloudflare finden sich auf den offiziellen Informations- und Datenschutzseiten von Cloudflare.</p><p>World Discovery setzt derzeit keine eigenen Werbe- oder Analyse-Cookies ein. Sollten künftig weitere zustimmungspflichtige Analyse-, Werbe- oder Trackingdienste eingesetzt werden, wird diese Datenschutzerklärung vor deren Aktivierung angepasst und – soweit rechtlich erforderlich – eine Einwilligung eingeholt.</p>';
+
+if (!html.includes(oldSection)) throw new Error('Expected legacy analytics privacy statement not found');
+html = html.replace(oldSection, newSection).replace('Stand: 24. August 2026', 'Stand: 4. September 2026');
+await writeFile(path, html, 'utf8');
+console.log('Aligned privacy notice with Cloudflare Web Analytics.');
