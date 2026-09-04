@@ -47,7 +47,7 @@ function stripLocalePrefix(relative, locale) {
 
 const rel = (fromFile, targetDir) => {
   if (path.basename(fromFile) === '404.html') return targetDir ? `/${targetDir.replace(/^\/+|\/+$/g, '')}/` : '/';
-  const fromDir = path.dirname(file);
+  const fromDir = path.dirname(fromFile);
   let out = path.relative(fromDir, path.join(siteRoot, targetDir)).replaceAll(path.sep, '/');
   if (!out) out = '.';
   if (!out.startsWith('.')) out = `./${out}`;
