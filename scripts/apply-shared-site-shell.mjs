@@ -6,7 +6,7 @@ const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
 const SKIP_PREFIXES = ['assets/'];
 const SKIP_TARGET_ID = 'wd-main-content';
 const LOCALE_PREFIXES = new Set(['de', 'es', 'fr', 'zh-hans']);
-const LOCALIZED_SECTIONS = new Set(['', 'data', 'countries', 'compare', 'methodology']);
+const LOCALIZED_SECTIONS = new Set(['', 'data', 'countries', 'compare', 'methodology', 'impressum', 'datenschutz']);
 
 const SHELL = {
   en: {
