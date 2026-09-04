@@ -33,8 +33,29 @@ function normalizeHref(value) {
   return `${normalized}${query}${hash}`;
 }
 
+function headValue(html, pattern) {
+  return html.match(pattern)?.[1]?.trim() ?? '';
+}
+
+function ensureSocialMetadata(html) {
+  const title = headValue(html, /<title>([^<]+)<\/title>/i);
+  const description = headValue(html, /<meta\s+name=["']description["']\s+content=["']([^"']+)["'][^>]*>/i);
+  const canonical = headValue(html, /<link\s+rel=["']canonical["']\s+href=["']([^"']+)["'][^>]*>/i);
+  if (!title || !description || !canonical || !/<\/head>/i.test(html)) return html;
+
+  const tags = [];
+  if (!/<meta\s+property=["']og:type["']/i.test(html)) tags.push('<meta property="og:type" content="website">');
+  if (!/<meta\s+property=["']og:title["']/i.test(html)) tags.push(`<meta property="og:title" content="${title}">`);
+  if (!/<meta\s+property=["']og:description["']/i.test(html)) tags.push(`<meta property="og:description" content="${description}">`);
+  if (!/<meta\s+property=["']og:url["']/i.test(html)) tags.push(`<meta property="og:url" content="${canonical}">`);
+  if (!/<meta\s+name=["']twitter:card["']/i.test(html)) tags.push('<meta name="twitter:card" content="summary">');
+  if (!tags.length) return html;
+  return html.replace(/<\/head>/i, `${tags.join('\n')}\n</head>`);
+}
+
 let changedFiles = 0;
 let changedLinks = 0;
+let socialFiles = 0;
 for (const file of await htmlFiles(siteRoot)) {
   let html = await readFile(file, 'utf8');
   const before = html;
@@ -44,6 +65,9 @@ for (const file of await htmlFiles(siteRoot)) {
     changedLinks += 1;
     return `href=${quote}${normalized}${quote}`;
   });
+  const beforeSocial = html;
+  html = ensureSocialMetadata(html);
+  if (html !== beforeSocial) socialFiles += 1;
   if (html !== before) {
     await writeFile(file, html, 'utf8');
     changedFiles += 1;
@@ -67,4 +91,4 @@ if (missing.length || indexLocs.length) {
   throw new Error(`SEO discovery validation failed.\n${details}`);
 }
 
-console.log(`SEO discovery finalized: ${verified.length} verified indicator URLs present; normalized ${changedLinks} index.html links across ${changedFiles} HTML files.`);
+console.log(`SEO discovery finalized: ${verified.length} verified indicator URLs present; normalized ${changedLinks} index.html links across ${changedFiles} HTML files; added missing social metadata to ${socialFiles} files.`);
