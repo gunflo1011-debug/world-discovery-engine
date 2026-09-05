@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
+const englishFallbacks = /Open in English|Auf Englisch öffnen|Abrir en inglés|Ouvrir en anglais|用英语打开/;
 
 test('incomplete localized surfaces are previews, not full search-language equivalents', async () => {
   const [localesRaw, catalogRaw, sitemap, englishHome] = await Promise.all([
@@ -32,6 +33,7 @@ test('incomplete localized surfaces are previews, not full search-language equiv
     assert.match(localizedData, /<meta name="robots" content="noindex,follow">/, `${locale} catalog must be noindex,follow while incomplete`);
     assert.match(localizedData, /data-locale-preview="true"/, `${locale} catalog must disclose preview status`);
     assert.ok(localizedHome.includes(`href="/${cfg.path}/countries/"`), `${locale} home must keep users in the localized country directory`);
+    assert.doesNotMatch(localizedHome, englishFallbacks, `${locale} home must not describe its localized country directory as English-only`);
     assert.doesNotMatch(sitemap, new RegExp(`<loc>https://worlddiscoverydata\\.com/${cfg.path}/`), `${locale} preview URLs must not be in sitemap`);
 
     const escapedLang = cfg.htmlLang.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
