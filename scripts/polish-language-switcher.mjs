@@ -56,6 +56,11 @@ async function targetFor(route, definition) {
   }
 }
 
+function localized404Runtime() {
+  const defs = Object.fromEntries(localeDefs.map(({ key, short, label }) => [key, { short, label }]));
+  return `<script data-wd-404-language-runtime>(()=>{const defs=${JSON.stringify(defs).replaceAll('<','\\u003c')};const first=location.pathname.split('/').filter(Boolean)[0]?.toLowerCase();const key=defs[first]?first:'en';const menu=document.currentScript.previousElementSibling;if(!menu)return;const d=defs[key],summary=menu.querySelector('summary'),short=summary?.querySelector('span:last-child');if(summary){summary.setAttribute('aria-label',d.label);summary.setAttribute('title',d.label)}if(short)short.textContent=d.short;menu.querySelectorAll('[data-wd-language-link]').forEach(link=>{const target=(link.getAttribute('hreflang')||'').toLowerCase();const match=key==='zh-hans'?target==='zh-hans':target===key;if(match)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')})})()</script>`;
+}
+
 async function languageMenu(file) {
   const relative = relativeFile(file);
   const current = pageLocale(relative);
@@ -66,18 +71,19 @@ async function languageMenu(file) {
     const href = await targetFor(route, definition);
     links.push(`<a data-wd-language-link href="${href}" hreflang="${definition.htmlLang}" lang="${definition.htmlLang}"${definition.key === current ? ' aria-current="page"' : ''}>${definition.nativeName}</a>`);
   }
-  return `<details class="wd-language-menu"><summary aria-label="${currentDef.label}" title="${currentDef.label}"><span class="wd-language-icon" aria-hidden="true">🌐</span><span>${currentDef.short}</span></summary><div class="wd-language-options">${links.join('')}</div></details>`;
+  const menu = `<details class="wd-language-menu"><summary aria-label="${currentDef.label}" title="${currentDef.label}"><span class="wd-language-icon" aria-hidden="true">🌐</span><span>${currentDef.short}</span></summary><div class="wd-language-options">${links.join('')}</div></details>`;
+  return path.basename(file) === '404.html' ? `${menu}${localized404Runtime()}` : menu;
 }
 
 let updated = 0;
 for (const file of await walk(root)) {
-  if (path.basename(file) === '404.html') continue;
   let html = await readFile(file, 'utf8');
   if (!html.includes('wd-global-header')) continue;
 
   html = html
     .replace(/<(nav|div|section)\b[^>]*class="[^"]*language-switcher[^"]*"[^>]*>[\s\S]*?<\/\1>/gi, '')
     .replace(/<details\b[^>]*class="[^"]*wd-language-menu[^"]*"[^>]*>[\s\S]*?<\/details>/gi, '')
+    .replace(/<script\b[^>]*data-wd-404-language-runtime[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<style\b[^>]*id="wd-language-menu-style"[^>]*>[\s\S]*?<\/style>/gi, '');
 
   const menu = await languageMenu(file);
