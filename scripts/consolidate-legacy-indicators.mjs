@@ -31,6 +31,7 @@ const legacyRoutes = [
     canonical: 'https://worlddiscoverydata.com/data/internet-use/',
     currentHref: '../../data/internet-use/',
     label: 'internet use',
+    preserveContent: true,
   },
   {
     path: 'indicators/real-gdp/index.html',
@@ -64,6 +65,11 @@ function consolidateHtml(html, item) {
   } else {
     next = next.replace(/<\/head>/i, `<link rel="canonical" href="${item.canonical}"></head>`);
   }
+
+  // Internet use still serves the current interactive comparison, downloads and
+  // regional/country drill-downs. Keep that useful surface available while the
+  // canonical/noindex policy consolidates search discovery onto /data/internet-use/.
+  if (item.preserveContent) return next;
 
   const title = `Moved ${item.label} — World Discovery`;
   const description = `This older World Discovery URL is retained for existing links. Use the maintained ${item.label} page for current data.`;
