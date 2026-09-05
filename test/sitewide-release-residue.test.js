@@ -26,6 +26,21 @@ const localizedCorePrefixes = [
   '/impressum/',
   '/datenschutz/'
 ];
+const forbiddenVisibleEnglishFallbacks = [
+  'Open in English',
+  'View in English',
+  'currently in English',
+  'available in English',
+  'Search countries',
+  'Clear search',
+  'No results found',
+  'No data available',
+  'Loading data',
+  'Compare countries',
+  'Select countries',
+  'Select indicator',
+  'Data status'
+];
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -40,6 +55,19 @@ async function walk(dir) {
 
 function rel(file) {
   return path.relative(siteRoot, file).replaceAll(path.sep, '/');
+}
+
+function visibleText(html) {
+  return html
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<(script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;|&#160;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;|&#34;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 test('fresh production build has no legacy brand/domain residue and localized paths declare the correct language', async () => {
@@ -96,6 +124,16 @@ test('fresh production build has no legacy brand/domain residue and localized pa
         const href = match[1];
         if (localizedCorePrefixes.some((prefix) => href.toLowerCase().startsWith(prefix))) {
           failures.push(`${relative}: localized core link escapes /${first}/ (${href})`);
+        }
+      }
+
+      // Scan rendered copy rather than raw HTML so shared JavaScript locale dictionaries
+      // can legitimately contain English strings. These phrases are user-facing fallback
+      // states that must not reappear on a published non-English surface.
+      const copy = visibleText(html);
+      for (const phrase of forbiddenVisibleEnglishFallbacks) {
+        if (copy.includes(phrase)) {
+          failures.push(`${relative}: visible English fallback ${JSON.stringify(phrase)}`);
         }
       }
     }
