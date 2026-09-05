@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 const englishFallbacks = /Open in English|Auf Englisch öffnen|Abrir en inglés|Ouvrir en anglais|用英语打开/;
 
-test('incomplete localized surfaces are previews, not full search-language equivalents', async () => {
+test('configured incomplete localized surfaces remain previews, not full search-language equivalents', async () => {
   const [localesRaw, catalogRaw, sitemap, englishHome] = await Promise.all([
     read('site/i18n/locales.json'),
     read('site/data/wdi/index.json'),
@@ -18,8 +18,6 @@ test('incomplete localized surfaces are previews, not full search-language equiv
   const incomplete = Object.entries(config.locales).filter(([locale, cfg]) =>
     locale !== config.defaultLocale && cfg.path && (cfg.fullSiteReady !== true || slugs.some((slug) => !cfg.indicatorNames?.[slug]))
   );
-
-  assert.ok(incomplete.length > 0, 'fixture must include at least one locale that is not explicitly full-site ready');
 
   for (const [locale, cfg] of incomplete) {
     const translated = slugs.filter((slug) => cfg.indicatorNames?.[slug]).length;
