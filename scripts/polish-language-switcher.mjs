@@ -64,7 +64,7 @@ async function languageMenu(file) {
   const links = [];
   for (const definition of localeDefs) {
     const href = await targetFor(route, definition);
-    links.push(`<a href="${href}" hreflang="${definition.htmlLang}" lang="${definition.htmlLang}"${definition.key === current ? ' aria-current="page"' : ''}>${definition.nativeName}</a>`);
+    links.push(`<a data-wd-language-link href="${href}" hreflang="${definition.htmlLang}" lang="${definition.htmlLang}"${definition.key === current ? ' aria-current="page"' : ''}>${definition.nativeName}</a>`);
   }
   return `<details class="wd-language-menu"><summary aria-label="${currentDef.label}" title="${currentDef.label}"><span class="wd-language-icon" aria-hidden="true">🌐</span><span>${currentDef.short}</span></summary><div class="wd-language-options">${links.join('')}</div></details>`;
 }
