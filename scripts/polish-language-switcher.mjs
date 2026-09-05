@@ -76,7 +76,7 @@ for (const file of await walk(root)) {
   if (!html.includes('wd-global-header')) continue;
 
   html = html
-    .replace(/<nav\b[^>]*class="[^"]*language-switcher[^"]*"[^>]*>[\s\S]*?<\/nav>/gi, '')
+    .replace(/<(nav|div|section)\b[^>]*class="[^"]*language-switcher[^"]*"[^>]*>[\s\S]*?<\/\1>/gi, '')
     .replace(/<details\b[^>]*class="[^"]*wd-language-menu[^"]*"[^>]*>[\s\S]*?<\/details>/gi, '')
     .replace(/<style\b[^>]*id="wd-language-menu-style"[^>]*>[\s\S]*?<\/style>/gi, '');
 
