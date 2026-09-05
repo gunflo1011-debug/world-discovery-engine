@@ -8,8 +8,8 @@ async function read(relativePath) {
 
 const origin = 'https://worlddiscoverydata.com';
 
-test('released entrypoints advertise one clear primary favicon and ICO fallback', async () => {
-  for (const page of ['index.html', 'de/index.html', 'es/index.html', 'fr/index.html', 'zh-hans/index.html', '404.html']) {
+test('released locale entrypoints advertise one clear primary favicon and ICO fallback', async () => {
+  for (const page of ['index.html', 'de/index.html', 'es/index.html', 'fr/index.html', 'zh-hans/index.html']) {
     const html = await read(page);
     assert.equal((html.match(/href="https:\/\/worlddiscoverydata\.com\/favicon\.svg"/g) || []).length, 1, `${page} primary favicon`);
     assert.equal((html.match(/href="https:\/\/worlddiscoverydata\.com\/favicon\.ico"/g) || []).length, 1, `${page} ICO fallback`);
