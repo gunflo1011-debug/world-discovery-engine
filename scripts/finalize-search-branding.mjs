@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../site/', import.meta.url));
 const marker = 'data-wd-search-branding';
-const links = `<link rel="icon" href="/favicon.svg" type="image/svg+xml" ${marker}="primary"><link rel="alternate icon" href="/favicon.ico" sizes="any" ${marker}="fallback">`;
+const origin = 'https://worlddiscoverydata.com';
+const links = `<link rel="icon" href="${origin}/favicon.svg" type="image/svg+xml" ${marker}="primary"><link rel="alternate icon" href="${origin}/favicon.ico" sizes="any" ${marker}="fallback">`;
 
 async function walk(dir) {
   const files = [];
@@ -20,7 +21,7 @@ function finalize(html, file) {
   if (!/<head\b/i.test(html) || !/<\/head>/i.test(html)) return html;
   const withoutManagedLinks = html.replace(new RegExp(`<link\\b[^>]*${marker}=["'][^"']+["'][^>]*>`, 'gi'), '');
   const next = withoutManagedLinks.replace(/<\/head>/i, `${links}</head>`);
-  if (!next.includes('href="/favicon.svg"') || !next.includes('href="/favicon.ico"')) {
+  if (!next.includes(`href="${origin}/favicon.svg"`) || !next.includes(`href="${origin}/favicon.ico"`)) {
     throw new Error(`Search-brand favicon links missing after finalization: ${path.relative(root, file)}`);
   }
   return next;
