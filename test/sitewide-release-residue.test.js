@@ -1,9 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const execFileAsync = promisify(execFile);
+const repoRoot = fileURLToPath(new URL('../', import.meta.url));
 const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
 const localePrefixes = new Map([
   ['de', 'de'],
@@ -27,7 +31,11 @@ function rel(file) {
   return path.relative(siteRoot, file).replaceAll(path.sep, '/');
 }
 
-test('generated HTML has no legacy brand/domain residue and localized paths declare the correct language', async () => {
+test('fresh production build has no legacy brand/domain residue and localized paths declare the correct language', async () => {
+  // Other regression tests intentionally exercise individual builders and can mutate
+  // generated files. Rebuild here so this gate always inspects the exact release artifact.
+  await execFileAsync('npm', ['run', 'build'], { cwd: repoRoot, maxBuffer: 16 * 1024 * 1024 });
+
   const files = await walk(siteRoot);
   assert.ok(files.length > 1000, `expected full generated site, found only ${files.length} HTML files`);
 
