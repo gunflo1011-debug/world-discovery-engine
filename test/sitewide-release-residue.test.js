@@ -49,17 +49,33 @@ test('fresh production build has no legacy brand/domain residue and localized pa
     if (/World Discovery (?:Engine|Data)/.test(html)) failures.push(`${relative}: legacy World Discovery branding`);
     if (/gunflo1011-debug\.github\.io\/world-discovery-engine/i.test(html)) failures.push(`${relative}: legacy GitHub Pages origin`);
 
+    const canonical = html.match(/<link\b[^>]*\brel=["']canonical["'][^>]*\bhref=["']([^"']+)["'][^>]*>/i)?.[1]
+      ?? html.match(/<link\b[^>]*\bhref=["']([^"']+)["'][^>]*\brel=["']canonical["'][^>]*>/i)?.[1];
+    if (canonical && !canonical.startsWith('https://worlddiscoverydata.com/')) {
+      failures.push(`${relative}: non-production canonical ${canonical}`);
+    }
+
     const first = relative.split('/')[0].toLowerCase();
     const expectedLang = localePrefixes.get(first);
     if (expectedLang) {
       const lang = html.match(/<html\b[^>]*\blang=["']([^"']+)["']/i)?.[1];
       if (lang !== expectedLang) failures.push(`${relative}: expected lang=${expectedLang}, got ${lang ?? 'missing'}`);
-    }
 
-    const canonical = html.match(/<link\b[^>]*\brel=["']canonical["'][^>]*\bhref=["']([^"']+)["'][^>]*>/i)?.[1]
-      ?? html.match(/<link\b[^>]*\bhref=["']([^"']+)["'][^>]*\brel=["']canonical["'][^>]*>/i)?.[1];
-    if (canonical && !canonical.startsWith('https://worlddiscoverydata.com/')) {
-      failures.push(`${relative}: non-production canonical ${canonical}`);
+      // A localized page must own its canonical URL. Missing canonicals or canonicals
+      // that collapse to English hide locale defects and would undermine release SEO.
+      if (!canonical) {
+        failures.push(`${relative}: missing localized canonical`);
+      } else {
+        let pathname;
+        try {
+          pathname = new URL(canonical).pathname.toLowerCase();
+        } catch {
+          failures.push(`${relative}: invalid canonical ${canonical}`);
+        }
+        if (pathname && !pathname.startsWith(`/${first}/`)) {
+          failures.push(`${relative}: localized canonical escapes /${first}/ (${canonical})`);
+        }
+      }
     }
   }
 
