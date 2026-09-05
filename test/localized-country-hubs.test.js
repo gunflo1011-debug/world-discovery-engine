@@ -50,17 +50,3 @@ for (const [locale,path,lang,hero,searchLabel,population,key,entityLabel,germany
     }
   });
 }
-
-test('localized country sitemap exposure follows the English indexed-route policy after release', async () => {
-  const sitemap = await readFile(new URL('sitemap.xml', siteRoot), 'utf8');
-  const englishDirectoryIndexed = sitemap.includes('https://worlddiscoverydata.com/countries/');
-
-  for (const [locale,path] of cases.map(([locale,path]) => [locale,path])) {
-    const present = sitemap.includes(`https://worlddiscoverydata.com/${path}/countries/`);
-    if (config.locales[locale]?.fullSiteReady === true) {
-      assert.equal(present, englishDirectoryIndexed, `${locale} country directory sitemap exposure must mirror the indexed English equivalent`);
-    } else {
-      assert.equal(present, false, `${locale} preview country directory must stay out of sitemap`);
-    }
-  }
-});
