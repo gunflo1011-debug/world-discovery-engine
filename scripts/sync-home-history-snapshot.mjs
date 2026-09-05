@@ -35,7 +35,10 @@ export function updateHomepageHtml(html, { count, note }) {
   const withoutNote = html.replace(/<p class="muted home-data-snapshot" data-wd-history-snapshot>[\s\S]*?<\/p>/, '');
   const factsPattern = /(<div class="facts">)([\s\S]*?)(<\/div>)(<p class="home-cta">)/;
   const match = withoutNote.match(factsPattern);
-  if (!match) throw new Error('homepage facts block not found');
+  if (!match) {
+    if (/153k\+/i.test(withoutNote)) throw new Error('stale homepage observation claim could not be normalized');
+    return withoutNote;
+  }
 
   let factIndex = 0;
   const updatedFacts = match[2].replace(
@@ -64,7 +67,8 @@ export async function syncHomeHistorySnapshot() {
       changed += 1;
     }
   }
-  console.log(`Synced homepage WDI history snapshot across ${Object.keys(locales).length} locales (${changed} changed).`);
+  if (changed < 1) throw new Error('no homepage history total was synchronized');
+  console.log(`Synced sourced WDI history totals on ${changed} homepage(s); locales without a published total were left unchanged.`);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
