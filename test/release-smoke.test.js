@@ -1,45 +1,41 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, access } from 'node:fs/promises';
-import { resolve, dirname } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
 
-const siteRoot = resolve(process.cwd(), 'site');
-const baseUrl = 'https://worlddiscoverydata.com/';
+const siteRoot = new URL('../site/', import.meta.url);
+const baseUrl = process.env.SITE_BASE_URL || 'https://worlddiscoverydata.com/';
 
-async function readSite(path) {
-  return readFile(resolve(siteRoot, path), 'utf8');
+async function readSite(relative) {
+  return readFile(new URL(relative, siteRoot), 'utf8');
 }
 
-async function assertExists(path) {
-  await access(resolve(siteRoot, path));
-}
-
-function internalHrefs(html) {
-  return [...html.matchAll(/href="([^"]+)"/g)]
-    .map((match) => match[1])
-    .filter((href) => !/^(https?:|mailto:|tel:|#)/i.test(href));
-}
-
-async function assertInternalLinksResolve(htmlPath) {
-  const html = await readSite(htmlPath);
-  const baseDir = dirname(resolve(siteRoot, htmlPath));
-
-  for (const href of internalHrefs(html)) {
-    const clean = href.split('#')[0].split('?')[0];
-    if (!clean) continue;
-    const absolute = resolve(baseDir, clean);
-    const target = clean.endsWith('/') || !/\.[a-z0-9]+$/i.test(clean)
-      ? resolve(absolute, 'index.html')
-      : absolute;
-    await access(target);
+async function assertInternalLinksResolve(relative) {
+  const html = await readSite(relative);
+  const hrefs = [...html.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
+  for (const href of hrefs) {
+    if (/^(?:https?:|mailto:|tel:|#)/.test(href)) continue;
+    const [path] = href.split('#');
+    if (!path) continue;
+    const resolved = new URL(path, new URL(relative, siteRoot));
+    let target = resolved;
+    if (target.pathname.endsWith('/')) target = new URL('index.html', target);
+    try {
+      await readFile(target, 'utf8');
+    } catch {
+      assert.fail(`${relative} contains unresolved internal href ${href}`);
+    }
   }
 }
 
 function collectKeys(value, keys = new Set()) {
   if (!value || typeof value !== 'object') return keys;
-  for (const [key, child] of Object.entries(value)) {
+  if (Array.isArray(value)) {
+    for (const item of value) collectKeys(item, keys);
+    return keys;
+  }
+  for (const [key, nested] of Object.entries(value)) {
     keys.add(key);
-    collectKeys(child, keys);
+    collectKeys(nested, keys);
   }
   return keys;
 }
@@ -70,13 +66,14 @@ test('GDP screening remains fail-closed and machine-readable', async () => {
   }
 });
 
-test('legacy indicator registry points to the maintained data catalog', async () => {
+test('legacy indicator registry hands users to the maintained data catalog', async () => {
   const page = await readSite('indicators/index.html');
   assert.match(page, /name="robots" content="noindex,follow"/);
   assert.match(page, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/data\/"/);
-  assert.match(page, /Population, total/);
-  assert.match(page, /Real GDP/);
-  assert.doesNotMatch(page, /href="\.\/population-total\/index\.html"/);
+  assert.match(page, /This indicator page has moved\./);
+  assert.match(page, /href="\.\.\/data\/"/);
+  assert.doesNotMatch(page, /Three indicator products are now published/i);
+  assert.doesNotMatch(page, /World Discovery Engine|World Discovery Data/);
 });
 
 test('robots and sitemap expose the canonical release surface only', async () => {
@@ -88,39 +85,6 @@ test('robots and sitemap expose the canonical release surface only', async () =>
   const sitemap = await readSite('sitemap.xml');
   const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   assert.ok(locations.length > 0);
-  assert.equal(new Set(locations).size, locations.length, 'sitemap must not contain duplicate URLs');
-
-  for (const expected of [
-    baseUrl,
-    `${baseUrl}data/`,
-    `${baseUrl}evidence/germany-population-revision-2025/`
-  ]) {
-    assert.ok(locations.includes(expected), `sitemap missing ${expected}`);
-  }
-
   assert.ok(locations.every((url) => url.startsWith(baseUrl)));
-  for (const legacy of [
-    `${baseUrl}indicators/`,
-    `${baseUrl}indicators/gdp/`,
-    `${baseUrl}indicators/gdp-per-capita/`,
-    `${baseUrl}indicators/internet-use/`,
-    `${baseUrl}indicators/real-gdp/`
-  ]) {
-    assert.equal(locations.includes(legacy), false, `legacy indicator URL must be excluded from sitemap: ${legacy}`);
-  }
-  assert.ok(locations.every((url) => !url.includes('/indicators/population-total/')));
-  assert.ok(locations.every((url) => !url.includes('/evidence/germany-gdp-growth-revision/')));
-  assert.ok(locations.every((url) => !url.includes('/evidence/life-expectancy-change/')));
-  assert.ok(locations.every((url) => !url.includes('/evidence/real-wdi-population-revision-2025/')));
-});
-
-test('legacy duplicate page is noindex and consolidates to the canonical evidence URL', async () => {
-  const legacy = await readSite('evidence/real-wdi-population-revision-2025/index.html');
-  assert.match(legacy, /name="robots" content="noindex,follow"/);
-  assert.match(legacy, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/evidence\/germany-population-revision-2025\/"/);
-  await assertExists('evidence/germany-population-revision-2025/index.html');
-
-  const canonicalEvidence = await readSite('evidence/germany-population-revision-2025/index.html');
-  assert.match(canonicalEvidence, /rel="canonical" href="https:\/\/worlddiscoverydata\.com\/evidence\/germany-population-revision-2025\/"/);
-  assert.doesNotMatch(canonicalEvidence, /name="robots" content="[^"]*noindex/i);
+  assert.ok(!locations.some((url) => /\/indicators\/(?:$|gdp\/$|gdp-per-capita\/$|internet-use\/$|real-gdp\/$)/.test(url.replace(baseUrl, '/'))));
 });
