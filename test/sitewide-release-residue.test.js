@@ -15,6 +15,17 @@ const localePrefixes = new Map([
   ['fr', 'fr'],
   ['zh-hans', 'zh-Hans']
 ]);
+const localizedCorePrefixes = [
+  '/data/',
+  '/countries/',
+  '/compare/',
+  '/methodology/',
+  '/sources/',
+  '/status/',
+  '/explore/',
+  '/impressum/',
+  '/datenschutz/'
+];
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -74,6 +85,17 @@ test('fresh production build has no legacy brand/domain residue and localized pa
         }
         if (pathname && !pathname.startsWith(`/${first}/`)) {
           failures.push(`${relative}: localized canonical escapes /${first}/ (${canonical})`);
+        }
+      }
+
+      // Localized core sections already exist for every published locale. Internal links
+      // from a localized page must therefore stay in that locale instead of silently
+      // dropping visitors onto the English equivalent. Language-switch links to `/` are
+      // intentionally outside this check.
+      for (const match of html.matchAll(/<a\b[^>]*\bhref=["']([^"']+)["'][^>]*>/gi)) {
+        const href = match[1];
+        if (localizedCorePrefixes.some((prefix) => href.toLowerCase().startsWith(prefix))) {
+          failures.push(`${relative}: localized core link escapes /${first}/ (${href})`);
         }
       }
     }
