@@ -23,6 +23,10 @@ test('localized sources pages preserve locale, branding and locale-internal trus
     assert.ok(html.includes(headline));
     assert.ok(html.includes(`https://worlddiscoverydata.com/${path}/sources/`));
     assert.ok(html.includes('href="../methodology/"'));
+    assert.ok(html.includes('href="../status/"'), `${path}: status trust link must remain inside the active locale`);
+    assert.ok(html.includes('href="../data/"'));
+    assert.doesNotMatch(html, /href="\.\.\/\.\.\/status\/"/, `${path}: sources page must not escape to the English root status page`);
+    assert.doesNotMatch(html, /status[^<]*·\s*English|datos[^<]*·\s*English|données[^<]*·\s*English|状态[^<]*·\s*English/i, `${path}: released sources page must not advertise its status link as English-only`);
     assert.match(html, /data-wd-shell-locale=/);
     assert.doesNotMatch(html, /World Discovery Data|three verified product families|MVP rule|demo values/i);
   }
