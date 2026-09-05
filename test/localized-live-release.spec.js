@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 const BASE = process.env.BASE_URL || 'https://worlddiscoverydata.com';
 const widths = [360, 430];
 const locales = [
-  { path: 'de', lang: 'de', home: 'Entdecke die Welt durch Daten.', data: 'Globale Indikatoren entdecken', countries: 'Länder und Territorien', compare: 'Vergleichen' },
+  { path: 'de', lang: 'de', home: 'Entdecke die Welt durch Daten.', data: 'Globale Indikatoren entdecken', countries: 'Länder- und Territorienprofile', compare: 'Vergleichen' },
   { path: 'es', lang: 'es', home: 'Descubre el mundo a través de los datos.', data: 'Explora indicadores globales', countries: 'países y territorios', compare: 'Comparar' },
   { path: 'fr', lang: 'fr', home: 'Découvrez le monde à travers les données.', data: 'Explorer les indicateurs mondiaux', countries: 'pays et territoires', compare: 'Comparer' },
   { path: 'zh-hans', lang: 'zh-Hans', home: '用数据发现世界。', data: '探索全球指标', countries: '国家和地区', compare: '比较' },
@@ -16,7 +16,7 @@ const surfaces = [
   { suffix: '/compare/', token: 'compare' },
   { suffix: '/methodology/' },
   { suffix: '/status/' },
-  { suffix: '/explore/history/' },
+  { suffix: '/explore/history.html' },
 ];
 
 test.describe('localized live release smoke', () => {
@@ -53,6 +53,10 @@ test.describe('localized live release smoke', () => {
 
           const body = await page.locator('body').innerText();
           expect(body).not.toContain('Open in English');
+          expect(body).not.toContain('Auf Englisch öffnen');
+          expect(body).not.toContain('Abrir en inglés');
+          expect(body).not.toContain('Ouvrir en anglais');
+          expect(body).not.toContain('用英语打开');
           expect(body).not.toContain('World Discovery Data');
           expect(body).not.toContain('World Discovery Engine');
           expect(pageErrors, `uncaught page errors: ${pageErrors.join(' | ')}`).toEqual([]);
