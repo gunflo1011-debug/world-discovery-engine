@@ -13,7 +13,7 @@ test('build emits a branded, non-indexed 404 with path-safe recovery links', asy
   assert.match(html, /data-wd-shared-shell/);
   assert.match(html, /404 · Page not found/);
   assert.match(html, /href="\/"[^>]*>Home<\/a>/);
-  assert.match(html, /href="\/data\/"[^>]*>Data catalog<\/a>/);
+  assert.match(html, /href="\/data\/"[^>]*>Data<\/a>/);
   assert.match(html, /href="\/countries\/"[^>]*>Countries<\/a>/);
   assert.match(html, /href="\/compare\/"[^>]*>Compare<\/a>/);
   assert.doesNotMatch(html, /href="\.\.?\//);
@@ -23,12 +23,12 @@ test('404 localizes the full error and recovery surface from the requested local
   const html = await readFile(resolve(root, '404.html'), 'utf8');
 
   for (const [path, lang, title, data, countries, compare] of [
-    ['de', 'de', 'Seite nicht gefunden', 'Datenkatalog', 'Länder', 'Vergleichen'],
-    ['es', 'es', 'Página no encontrada', 'Catálogo de datos', 'Países', 'Comparar'],
-    ['fr', 'fr', 'Page introuvable', 'Catalogue de données', 'Pays', 'Comparer'],
-    ['zh-hans', 'zh-Hans', '未找到页面', '数据目录', '国家', '比较']
+    ['de', 'de', 'Seite nicht gefunden', 'Daten', 'Länder', 'Vergleichen'],
+    ['es', 'es', 'Página no encontrada', 'Datos', 'Países', 'Comparar'],
+    ['fr', 'fr', 'Page introuvable', 'Données', 'Pays', 'Comparer'],
+    ['zh-hans', 'zh-Hans', '未找到页面', '数据', '国家', '比较']
   ]) {
-    assert.ok(html.includes(`${path}:{lang:'${lang}'`), `${path}: missing runtime locale definition`);
+    assert.ok(html.includes(`"${path}":{"lang":"${lang}"`), `${path}: missing runtime locale definition`);
     assert.ok(html.includes(title), `${path}: missing localized 404 title`);
     assert.ok(html.includes(data), `${path}: missing localized data recovery label`);
     assert.ok(html.includes(countries), `${path}: missing localized countries recovery label`);
