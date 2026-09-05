@@ -90,7 +90,7 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Run live browser smoke
-        run: npx playwright test test/live-mobile-smoke.spec.js test/internet-use-country-live.spec.js test/internet-use-regions-live.spec.js --reporter=line
+        run: npx playwright test test/live-mobile-smoke.spec.js test/localized-live-release.spec.js test/internet-use-country-live.spec.js test/internet-use-regions-live.spec.js --reporter=line
       - name: Upload browser-smoke evidence on failure
         if: failure()
         uses: actions/upload-artifact@v4
