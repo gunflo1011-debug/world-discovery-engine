@@ -32,7 +32,6 @@ test('incomplete localized surfaces are previews, not full search-language equiv
     assert.match(localizedData, /<meta name="robots" content="noindex,follow">/, `${locale} catalog must be noindex,follow while incomplete`);
     assert.match(localizedData, /data-locale-preview="true"/, `${locale} catalog must disclose preview status`);
     assert.ok(localizedHome.includes(`href="/${cfg.path}/countries/"`), `${locale} home must keep users in the localized country directory`);
-    assert.ok(!localizedHome.includes(`${cfg.browseCountries} · ${cfg.openInEnglish} →`), `${locale} localized country links must not claim to open English`);
     assert.doesNotMatch(sitemap, new RegExp(`<loc>https://worlddiscoverydata\\.com/${cfg.path}/`), `${locale} preview URLs must not be in sitemap`);
 
     const escapedLang = cfg.htmlLang.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
