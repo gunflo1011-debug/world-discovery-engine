@@ -26,6 +26,6 @@ test('evidence human surfaces never collapse negative revisions into negative ze
   }
 
   const index = await readFile(new URL('evidence/index.html', siteRoot), 'utf8');
-  assert.match(index, /Canada:[\s\S]*?−0\.04%/);
-  assert.match(index, /Australia:[\s\S]*?−0\.02%/);
+  assert.match(index, /Canada:[\s\S]*?[−-]0\.04%/);
+  assert.match(index, /Australia:[\s\S]*?[−-]0\.02%/);
 });
