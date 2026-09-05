@@ -3,6 +3,7 @@ import { extname } from 'node:path';
 
 const siteRoot = new URL('../site/', import.meta.url);
 const base = 'https://worlddiscoverydata.com';
+const socialImage = `${base}/social-preview.png`;
 
 async function htmlFiles(dir) {
   const out = [];
@@ -49,6 +50,10 @@ function normalizeHeadBrand(html) {
   return next;
 }
 
+function metaContent(value) {
+  return value.replaceAll('"', '&quot;');
+}
+
 function ensureSocialMetadata(html) {
   const title = headValue(html, /<title>([^<]+)<\/title>/i);
   const description = headValue(html, /<meta\s+name=["']description["']\s+content=["']([^"']+)["'][^>]*>/i);
@@ -56,13 +61,26 @@ function ensureSocialMetadata(html) {
   if (!title || !description || !canonical || !/<\/head>/i.test(html)) return html;
 
   const tags = [];
+  const socialAlt = metaContent(title);
   if (!/<meta\s+property=["']og:type["']/i.test(html)) tags.push('<meta property="og:type" content="website">');
   if (!/<meta\s+property=["']og:title["']/i.test(html)) tags.push(`<meta property="og:title" content="${title}">`);
   if (!/<meta\s+property=["']og:description["']/i.test(html)) tags.push(`<meta property="og:description" content="${description}">`);
   if (!/<meta\s+property=["']og:url["']/i.test(html)) tags.push(`<meta property="og:url" content="${canonical}">`);
-  if (!/<meta\s+name=["']twitter:card["']/i.test(html)) tags.push('<meta name="twitter:card" content="summary">');
+  if (!/<meta\s+property=["']og:image["']/i.test(html)) {
+    tags.push(`<meta property="og:image" content="${socialImage}">`);
+    tags.push('<meta property="og:image:width" content="1200">');
+    tags.push('<meta property="og:image:height" content="630">');
+    tags.push(`<meta property="og:image:alt" content="${socialAlt}">`);
+  }
+  if (/<meta\s+name=["']twitter:card["']/i.test(html)) {
+    html = html.replace(/(<meta\s+name=["']twitter:card["']\s+content=["'])summary(["'][^>]*>)/i, '$1summary_large_image$2');
+  } else {
+    tags.push('<meta name="twitter:card" content="summary_large_image">');
+  }
   if (!/<meta\s+name=["']twitter:title["']/i.test(html)) tags.push(`<meta name="twitter:title" content="${title}">`);
   if (!/<meta\s+name=["']twitter:description["']/i.test(html)) tags.push(`<meta name="twitter:description" content="${description}">`);
+  if (!/<meta\s+name=["']twitter:image["']/i.test(html)) tags.push(`<meta name="twitter:image" content="${socialImage}">`);
+  if (!/<meta\s+name=["']twitter:image:alt["']/i.test(html)) tags.push(`<meta name="twitter:image:alt" content="${socialAlt}">`);
   if (!tags.length) return html;
   return html.replace(/<\/head>/i, `${tags.join('\n')}\n</head>`);
 }
