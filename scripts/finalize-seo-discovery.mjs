@@ -91,20 +91,37 @@ for (const file of await htmlFiles(siteRoot)) {
 }
 
 const catalog = JSON.parse(await readFile(new URL('data/wdi/index.json', siteRoot), 'utf8'));
+const localeConfig = JSON.parse(await readFile(new URL('i18n/locales.json', siteRoot), 'utf8'));
 const verified = (catalog.indicators ?? []).filter((item) => item.status === 'CURRENT_VERIFIED');
 const sitemapUrl = new URL('sitemap.xml', siteRoot);
-const sitemap = await readFile(sitemapUrl, 'utf8');
+let sitemap = await readFile(sitemapUrl, 'utf8');
+
+const historyUrls = [`${base}/explore/history.html`];
+for (const [locale, cfg] of Object.entries(localeConfig.locales ?? {})) {
+  if (locale === localeConfig.defaultLocale || cfg.fullSiteReady !== true || !cfg.path) continue;
+  historyUrls.push(`${base}/${cfg.path}/explore/history.html`);
+}
+let historySitemapAdded = 0;
+for (const url of historyUrls) {
+  if (sitemap.includes(`<loc>${url}</loc>`)) continue;
+  sitemap = sitemap.replace('</urlset>', `<url><loc>${url}</loc></url>\n</urlset>`);
+  historySitemapAdded += 1;
+}
+if (historySitemapAdded) await writeFile(sitemapUrl, sitemap, 'utf8');
+
 const missing = verified
   .map((item) => `${base}/data/${item.slug}/`)
   .filter((url) => !sitemap.includes(`<loc>${url}</loc>`));
+const missingHistory = historyUrls.filter((url) => !sitemap.includes(`<loc>${url}</loc>`));
 const indexLocs = [...sitemap.matchAll(/<loc>([^<]*\/index\.html(?:[?#][^<]*)?)<\/loc>/g)].map((match) => match[1]);
 
-if (missing.length || indexLocs.length) {
+if (missing.length || missingHistory.length || indexLocs.length) {
   const details = [
     missing.length ? `Missing verified indicator URLs: ${missing.join(', ')}` : '',
+    missingHistory.length ? `Missing indexable history explorer URLs: ${missingHistory.join(', ')}` : '',
     indexLocs.length ? `Non-canonical index.html sitemap URLs: ${indexLocs.join(', ')}` : ''
   ].filter(Boolean).join('\n');
   throw new Error(`SEO discovery validation failed.\n${details}`);
 }
 
-console.log(`SEO discovery finalized: ${verified.length} verified indicator URLs present; normalized ${changedLinks} index.html links across ${changedFiles} HTML files; normalized title branding on ${titleBrandFiles} files; added missing social metadata to ${socialFiles} files.`);
+console.log(`SEO discovery finalized: ${verified.length} verified indicator URLs present; ensured ${historyUrls.length} indexable history explorer URLs (${historySitemapAdded} added); normalized ${changedLinks} index.html links across ${changedFiles} HTML files; normalized title branding on ${titleBrandFiles} files; added missing social metadata to ${socialFiles} files.`);
