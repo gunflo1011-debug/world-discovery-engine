@@ -67,8 +67,7 @@ export async function syncHomeHistorySnapshot() {
       changed += 1;
     }
   }
-  if (changed < 1) throw new Error('no homepage history total was synchronized');
-  console.log(`Synced sourced WDI history totals on ${changed} homepage(s); locales without a published total were left unchanged.`);
+  console.log(`Synchronized sourced WDI history totals on ${changed} homepage(s); already synchronized or non-publishing locales were left unchanged.`);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
