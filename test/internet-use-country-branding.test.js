@@ -13,10 +13,10 @@ test('internet-use country branding normalizer removes legacy product names', as
   assert.match(source, /replace\(legacyBranding, 'World Discovery'\)/);
 });
 
-test('production builds normalize internet-use country branding', async () => {
+test('production builds run country branding cleanup after internet-use enrichers', async () => {
   const pkg = JSON.parse(await readFile(packageUrl, 'utf8'));
-  assert.match(pkg.scripts.build, /build-internet-use-countries\.mjs && node scripts\/normalize-internet-use-country-branding\.mjs/);
-  assert.match(pkg.scripts['build:internet-use'], /build-internet-use-countries\.mjs && node scripts\/normalize-internet-use-country-branding\.mjs/);
+  assert.match(pkg.scripts.build, /normalize-internet-use-card-semantics\.mjs && node scripts\/normalize-internet-use-country-branding\.mjs/);
+  assert.match(pkg.scripts['build:internet-use'], /normalize-internet-use-card-semantics\.mjs && node scripts\/normalize-internet-use-country-branding\.mjs/);
 });
 
 test('built internet-use country page contains only current World Discovery branding', async () => {
