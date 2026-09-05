@@ -26,6 +26,7 @@ const representativeRoutes = [
   'sources/',
   'status/',
   'explore/',
+  'explore/history.html',
   'impressum/',
   'datenschutz/'
 ];
