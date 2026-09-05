@@ -19,7 +19,8 @@ test('production builds run country branding cleanup after internet-use enricher
   assert.match(pkg.scripts['build:internet-use'], /normalize-internet-use-card-semantics\.mjs && node scripts\/normalize-internet-use-country-branding\.mjs/);
 });
 
-test('built internet-use country page contains only current World Discovery branding', async () => {
+test('branding cleanup leaves a representative country page on current World Discovery branding', async () => {
+  await import(`${normalizerUrl.href}?test=${Date.now()}`);
   const html = await readFile(samplePageUrl, 'utf8');
   assert.doesNotMatch(html, legacyBranding);
   assert.match(html, /World Discovery/);
