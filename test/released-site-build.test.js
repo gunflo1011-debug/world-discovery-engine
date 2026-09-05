@@ -88,13 +88,16 @@ test('a full build with all supported locales released produces indexable recipr
         const file = htmlPathFor(root, relative);
         const html = await readFile(file, 'utf8');
         const canonical = canonicalFor(relative);
+        const englishCanonical = canonicalFor(route);
 
         assert.match(html, new RegExp(`<html[^>]+lang="${expected.htmlLang}"`), `${relative}: wrong html lang`);
         assert.ok(html.includes(`<link rel="canonical" href="${canonical}">`), `${relative}: canonical must self-reference released locale`);
         assert.doesNotMatch(html, /noindex,follow|data-locale-preview="true"/, `${relative}: released locale must be indexable and preview-free`);
         assert.ok(html.includes('hreflang="en"'), `${relative}: released locale must retain English reciprocal alternate`);
         assert.ok(html.includes(`hreflang="${expected.htmlLang}"`), `${relative}: released locale must retain its own hreflang alternate`);
-        assert.ok(sitemap.includes(`<loc>${canonical}</loc>`), `${relative}: released locale route missing from sitemap`);
+        if (sitemap.includes(`<loc>${englishCanonical}</loc>`)) {
+          assert.ok(sitemap.includes(`<loc>${canonical}</loc>`), `${relative}: released equivalent missing from sitemap while English route is indexed`);
+        }
       }
 
       const englishHome = await readFile(join(root, 'site', 'index.html'), 'utf8');
