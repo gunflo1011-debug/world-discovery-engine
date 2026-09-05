@@ -1,22 +1,25 @@
 import { test, expect } from '@playwright/test';
 
 const BASE = process.env.BASE_URL || 'https://worlddiscoverydata.com';
-const widths = [360, 430];
+const widths = [360, 1280];
 const locales = [
-  { path: 'de', lang: 'de', home: 'Entdecke die Welt durch Daten.', data: 'Globale Indikatoren entdecken', countries: 'Länder- und Territorienprofile', compare: 'Vergleichen' },
-  { path: 'es', lang: 'es', home: 'Descubre el mundo a través de los datos.', data: 'Explora indicadores globales', countries: 'países y territorios', compare: 'Comparar' },
-  { path: 'fr', lang: 'fr', home: 'Découvrez le monde à travers les données.', data: 'Explorer les indicateurs mondiaux', countries: 'pays et territoires', compare: 'Comparer' },
-  { path: 'zh-hans', lang: 'zh-Hans', home: '用数据发现世界。', data: '探索全球指标', countries: '国家和地区', compare: '比较' },
+  { path: 'de', lang: 'de', home: 'Entdecke die Welt durch Daten.', data: 'Globale Indikatoren entdecken', countries: 'Länder- und Territorienprofile', compare: 'Vergleichen', country: 'Deutschland', legal: 'Impressum' },
+  { path: 'es', lang: 'es', home: 'Descubre el mundo a través de los datos.', data: 'Explora indicadores globales', countries: 'países y territorios', compare: 'Comparar', country: 'Alemania', legal: 'Aviso legal' },
+  { path: 'fr', lang: 'fr', home: 'Découvrez le monde à travers les données.', data: 'Explorer les indicateurs mondiaux', countries: 'pays et territoires', compare: 'Comparer', country: 'Allemagne', legal: 'Mentions légales' },
+  { path: 'zh-hans', lang: 'zh-Hans', home: '用数据发现世界。', data: '探索全球指标', countries: '国家和地区', compare: '比较', country: '德国', legal: '法律声明' },
 ];
 
 const surfaces = [
   { suffix: '/', token: 'home' },
   { suffix: '/data/', token: 'data' },
   { suffix: '/countries/', token: 'countries' },
+  { suffix: '/countries/deu/', token: 'country' },
+  { suffix: '/data/internet-use/' },
   { suffix: '/compare/', token: 'compare' },
   { suffix: '/methodology/' },
   { suffix: '/status/' },
   { suffix: '/explore/history.html' },
+  { suffix: '/impressum/', token: 'legal' },
 ];
 
 test.describe('localized live release smoke', () => {
