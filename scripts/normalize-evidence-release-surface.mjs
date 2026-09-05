@@ -18,12 +18,19 @@ async function htmlFiles(dir) {
   return files;
 }
 
+function normalizeInternalHtmlLinks(html) {
+  return html.replace(/href=(["'])([^"']*?)index\.html([?#][^"']*)?\1/gi, (_match, quote, prefix, suffix = '') => (
+    `href=${quote}${prefix}${suffix}${quote}`
+  ));
+}
+
 let changed = 0;
 const files = await htmlFiles(evidenceRoot);
 for (const file of files) {
   const before = await readFile(file, 'utf8');
   let after = before.replaceAll(LEGACY_ORIGIN, CANONICAL_ORIGIN);
   for (const legacy of LEGACY_BRANDS) after = after.replaceAll(legacy, 'World Discovery');
+  after = normalizeInternalHtmlLinks(after);
   if (after !== before) {
     await writeFile(file, after, 'utf8');
     changed += 1;
@@ -32,6 +39,9 @@ for (const file of files) {
     if (after.includes(legacy)) throw new Error(`${path.relative(evidenceRoot, file)} still contains ${legacy}`);
   }
   if (after.includes(LEGACY_ORIGIN)) throw new Error(`${path.relative(evidenceRoot, file)} still contains the legacy GitHub Pages origin`);
+  if (/href=(["'])[^"']*index\.html(?:[?#][^"']*)?\1/i.test(after)) {
+    throw new Error(`${path.relative(evidenceRoot, file)} still links internally through index.html`);
+  }
 }
 
-console.log(`Normalized evidence release branding/domain in ${changed}/${files.length} HTML pages.`);
+console.log(`Normalized evidence release branding/domain and clean internal URLs in ${changed}/${files.length} HTML pages.`);
