@@ -46,18 +46,23 @@ function escapeRegex(value) {
 }
 
 function consolidateHtml(html, item) {
-  let next = html;
+  let next = html
+    .replaceAll('World Discovery Engine', 'World Discovery')
+    .replaceAll('World Discovery Data', 'World Discovery');
   if (/<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i.test(next)) {
     next = next.replace(/<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i, '<meta name="robots" content="noindex,follow">');
   } else {
     next = next.replace(/<head>/i, '<head><meta name="robots" content="noindex,follow">');
   }
-  if (item.canonical) {
-    if (/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i.test(next)) {
-      next = next.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${item.canonical}">`);
-    } else {
-      next = next.replace(/<\/head>/i, `<link rel="canonical" href="${item.canonical}"></head>`);
-    }
+
+  // Real GDP remains a fail-closed screening/trust surface because there is no
+  // maintained replacement page yet. Keep its methodology evidence intact.
+  if (!item.canonical) return next;
+
+  if (/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i.test(next)) {
+    next = next.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${item.canonical}">`);
+  } else {
+    next = next.replace(/<\/head>/i, `<link rel="canonical" href="${item.canonical}"></head>`);
   }
 
   const title = `Moved ${item.label} — World Discovery`;
