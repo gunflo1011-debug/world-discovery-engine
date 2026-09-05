@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/build-real-wdi-evidence.py'
+      - 'scripts/normalize-evidence-release-surface.mjs'
       - '.github/workflows/real-wdi-evidence.yml'
 
 permissions:
@@ -24,8 +25,10 @@ jobs:
           python-version: '3.12'
       - name: Install XLSX reader
         run: python -m pip install --disable-pip-version-check openpyxl==3.1.5
-      - name: Build real archived WDI evidence
-        run: python scripts/build-real-wdi-evidence.py
+      - name: Build and normalize real archived WDI evidence
+        run: |
+          python scripts/build-real-wdi-evidence.py
+          node scripts/normalize-evidence-release-surface.mjs
       - name: Verify generated evidence contract
         run: |
           python - <<'PY'
@@ -55,6 +58,8 @@ jobs:
               assert item['finding']==d['finding']
               assert f'Finding type: {expected_type}' in html
               assert f'Archived country identity verified in both releases: {d["entity"]["name"]} ({d["entity"]["code"]})' in html
+              assert 'World Discovery Engine' not in html and 'World Discovery Data' not in html
+              assert 'https://gunflo1011-debug.github.io/world-discovery-engine' not in html
               for key,a in zip(('first','latest'),manifest['archives']):
                   x=d[key]
                   assert x['vintage']==a['vintage'] and x['sourceUrl']==a['url']
