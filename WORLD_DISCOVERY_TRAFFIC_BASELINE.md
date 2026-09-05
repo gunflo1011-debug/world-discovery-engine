@@ -57,3 +57,12 @@ Purpose: observe Search Console, indexing, live-site and repository evidence bef
 4. **Legacy `/indicators/` vs `/data/` consolidation — strengthened technical concern.** Both GDP URLs continue to receive impressions.
 5. **`/index.html` evidence duplication — new technical watch item.** Confirm recurrence and canonical behavior before deciding whether a redirect/canonical cleanup qualifies as necessary.
 6. **Sitemap health — currently healthy.** No P0 sitemap action indicated.
+
+## Baseline refresh — 2026-09-06 00:00 CEST
+
+- Fresh daily KPIs are unchanged from the prior pull: **2026-09-04: 477 impressions / 0 clicks / avg position 39.52**; **2026-09-05: 163 impressions / 1 click / avg position 24.84**. No new finalized day is available.
+- Query-level decomposition adds useful evidence despite unchanged totals. Examples already ranking on the first page include `vanuatu population growth rate 2023 under 25` → `/countries/vut/` at positions **3 and 5** in two countries; `papua new guinea population growth rate 2023 under 25` → `/countries/png/` at position **8**; and several exact World Bank indicator-code queries (`SP.POP.0014.TO.ZS`, `SH.XPD.CHEX.GD.ZS`) → matching `/data/` pages at positions **4–10**.
+- These are all visible as **non-branded** rows. Current evidence therefore favors a hypothesis that World Discovery is first earning visibility on highly specific factual/source-oriented queries before broad head terms.
+- Sitemap remains unchanged and healthy: **1,500 submitted, 0 errors, 0 warnings; last downloaded 2026-09-05 17:55:45 UTC**.
+- Repository has no newer product/code change after the baseline documentation refresh; no P0/P1 production issue was identified in this run.
+- **Public website changes:** none. **Measurement-only change:** this baseline refresh appended.
