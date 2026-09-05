@@ -14,11 +14,22 @@ async function pages(locale) {
   return entries.filter((entry) => entry.isDirectory()).map((entry) => new URL(`${entry.name}/index.html`, dir));
 }
 
-test('released country profiles use localized indicator names and units', async () => {
-  await import('../scripts/finalize-localized-country-copy.mjs');
-  // The pass is intentionally idempotent.
-  await import(`../scripts/finalize-localized-country-copy.mjs?again=${Date.now()}`);
+test('localized country generator consumes the shared hydrated translation source', async () => {
+  const hydrate = await readFile(new URL('scripts/hydrate-localizations.mjs', root), 'utf8');
+  const generator = await readFile(new URL('scripts/build-localized-country-hubs.mjs', root), 'utf8');
+  const pkg = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
+  const build = pkg.scripts.build;
 
+  assert.match(hydrate, /catalog-translations\.json/);
+  assert.match(hydrate, /indicatorNames/);
+  assert.match(hydrate, /unitNames/);
+  assert.match(generator, /cfg\.indicatorNames\?\.\[m\.slug\]/);
+  assert.match(generator, /cfg\.unitNames\?\.\[m\.unit\]/);
+  assert.ok(build.indexOf('hydrate-localizations.mjs') < build.indexOf('build-localized-country-hubs.mjs'));
+  assert.ok(!build.includes('finalize-localized-country-copy.mjs'));
+});
+
+test('released country profiles use localized indicator names and units without a repair pass', async () => {
   for (const locale of ['de', 'es', 'fr', 'zh-Hans']) {
     const t = translations[locale];
     const files = await pages(locale);
