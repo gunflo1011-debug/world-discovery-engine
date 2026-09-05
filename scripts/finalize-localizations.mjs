@@ -37,10 +37,6 @@ for (const [locale, cfg] of Object.entries(config.locales)) {
     html = html.replace(/<p class="muted">[^<]*:\s*([^<]+?)\s*·\s*([^<]+)<\/p>/g, (_match, _label, unit) => `<p class="muted">${cfg.ui?.officialCode || cfg.officialLabel}: <code>${extractCode(html)}</code> · ${unit}</p>`);
     html = html.replace(/<strong>([^<]+)<\/strong><br><span class="muted">([A-Z]{2})\s*·\s*[^<]*<\/span>/g, (_m, country, code) => `<strong>${countryDisplayName(code, cfg.htmlLang, country)}</strong><br><span class="muted">${code}</span>`);
 
-    if (file.href === homeUrl.href && cfg.fullSiteReady !== true) {
-      html = html.replaceAll(`>${cfg.browseCountries} →</a>`, `>${cfg.browseCountries} · ${cfg.openInEnglish} →</a>`);
-    }
-
     await writeFile(file, html, 'utf8');
   }
 }
