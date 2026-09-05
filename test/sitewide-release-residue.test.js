@@ -44,7 +44,9 @@ test('fresh production build has no legacy brand/domain residue and localized pa
     const html = await readFile(file, 'utf8');
     const relative = rel(file);
 
-    if (/World Discovery (?:Engine|Data)/i.test(html)) failures.push(`${relative}: legacy World Discovery branding`);
+    // Legacy product names were proper-cased brands. Keep this case-sensitive so
+    // ordinary prose such as "World Discovery data" is not misclassified.
+    if (/World Discovery (?:Engine|Data)/.test(html)) failures.push(`${relative}: legacy World Discovery branding`);
     if (/gunflo1011-debug\.github\.io\/world-discovery-engine/i.test(html)) failures.push(`${relative}: legacy GitHub Pages origin`);
 
     const first = relative.split('/')[0].toLowerCase();
