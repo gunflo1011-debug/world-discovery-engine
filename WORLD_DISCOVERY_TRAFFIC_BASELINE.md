@@ -66,3 +66,12 @@ Purpose: observe Search Console, indexing, live-site and repository evidence bef
 - Sitemap remains unchanged and healthy: **1,500 submitted, 0 errors, 0 warnings; last downloaded 2026-09-05 17:55:45 UTC**.
 - Repository has no newer product/code change after the baseline documentation refresh; no P0/P1 production issue was identified in this run.
 - **Public website changes:** none. **Measurement-only change:** this baseline refresh appended.
+
+## Baseline refresh — 2026-09-06 00:58 CEST
+
+- Fresh Search Console daily KPIs are still unchanged: **2026-09-04: 477 impressions / 0 clicks / avg position 39.52**; **2026-09-05: 163 impressions / 1 click / avg position 24.84**. Finalized Search Analytics still ends at **2026-09-03**.
+- Sitemap signal remains healthy and unchanged when queried on its actual submission date: **1,500 submitted URLs, 0 errors, 0 warnings; last downloaded 2026-09-05 17:55:45 UTC**. A multi-day sitemap query can sum repeated sitemap rows, so sitemap counts must be read from the submission row rather than treated as a time-series total.
+- No open pull requests are present. No new product/code commit has landed since the measurement-only baseline refresh.
+- New repository health evidence: scheduled **Search Console connectivity** and **Cloudflare analytics** workflows on main both completed successfully shortly before this check. This reduces concern about telemetry/connectivity failure but is not user-traffic evidence.
+- Live home and `/data/gdp-per-capita/` remained reachable through the external web check. No confirmed P0/P1 live-site failure was observed. Direct low-level HTTP probing from the execution container was unavailable because that environment could not resolve the domain; this is an execution-environment limitation, not evidence of a production DNS outage.
+- **Public website changes:** none. **Measurement-only change:** this baseline health-check note appended.
