@@ -39,7 +39,7 @@
     ],
     "note": "Newest same-year non-aggregate country snapshot meeting the coverage threshold; no country is backfilled from another year."
   },
-  "retrievedAt": "2026-09-04",
+  "retrievedAt": "2026-09-05",
   "retrievalUrl": "https://api.worldbank.org/v2/country/all/indicator/EG.FEC.RNEW.ZS?date=2021&format=json&per_page=400&source=2",
   "countryMetadataUrl": "https://api.worldbank.org/v2/country?format=json&per_page=400",
   "source": {
