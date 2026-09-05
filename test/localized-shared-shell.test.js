@@ -27,6 +27,7 @@ test('shared shell keeps localized entrypoints and completed country/compare sec
       assert.ok(html.includes(`>${countryLabel}</a>`), `${locale} shell should localize Countries`);
       assert.ok(html.includes(`>${compareLabel}</a>`), `${locale} shell should localize Compare`);
       assert.ok(html.includes(`>${skipLabel}</a>`), `${locale} skip link should be localized`);
+      assert.ok(html.includes('white-space:normal;overflow-wrap:anywhere'), `${locale} shell must allow long localized nav labels to wrap on mobile`);
       assert.ok(!html.includes('>Home</a>'), `${locale} shell must not leave English Home`);
       assert.ok(!html.includes('>Countries</a>'), `${locale} shell must not leave English Countries`);
       assert.ok(!html.includes('>Compare</a>'), `${locale} shell must not leave English Compare`);
