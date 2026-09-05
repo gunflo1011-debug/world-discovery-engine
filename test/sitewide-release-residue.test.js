@@ -118,10 +118,12 @@ test('fresh production build has no legacy brand/domain residue and localized pa
 
       // Localized core sections already exist for every published locale. Internal links
       // from a localized page must therefore stay in that locale instead of silently
-      // dropping visitors onto the English equivalent. Language-switch links to `/` are
-      // intentionally outside this check.
+      // dropping visitors onto the English equivalent. Explicitly marked language-menu
+      // links are the one intentional cross-locale navigation surface.
       for (const match of html.matchAll(/<a\b[^>]*\bhref=["']([^"']+)["'][^>]*>/gi)) {
+        const anchor = match[0];
         const href = match[1];
+        if (/\bdata-wd-language-link\b/i.test(anchor)) continue;
         if (localizedCorePrefixes.some((prefix) => href.toLowerCase().startsWith(prefix))) {
           failures.push(`${relative}: localized core link escapes /${first}/ (${href})`);
         }
