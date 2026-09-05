@@ -19,6 +19,17 @@ test('evidence release pages use current branding and canonical origin', async (
   }
 });
 
+test('evidence internal navigation only advertises canonical clean URLs', async () => {
+  for (const page of pages) {
+    const html = await readFile(new URL(page, siteRoot), 'utf8');
+    assert.doesNotMatch(html, /href=(["'])[^"']*index\.html(?:[?#][^"']*)?\1/i, `${page}: internal index.html URL is crawlable`);
+  }
+
+  const index = await readFile(new URL('evidence/index.html', siteRoot), 'utf8');
+  assert.match(index, /href="\.\/germany-population-revision-2025\/"/);
+  assert.match(index, /href="\.\.\/methodology\/"/);
+});
+
 test('evidence human surfaces never collapse negative revisions into negative zero', async () => {
   for (const page of pages) {
     const html = await readFile(new URL(page, siteRoot), 'utf8');
