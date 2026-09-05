@@ -1,5 +1,5 @@
 import { access, readFile, readdir, writeFile } from 'node:fs/promises';
-import { dirname, relative, sep } from 'node:path';
+import { relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const siteRoot = new URL('../site/', import.meta.url);
@@ -7,12 +7,16 @@ const sitePath = fileURLToPath(siteRoot);
 const config = JSON.parse(await readFile(new URL('i18n/locales.json', siteRoot), 'utf8'));
 const locales = config.locales;
 const entries = Object.entries(locales);
+const sitemapUrl = new URL('sitemap.xml', siteRoot);
+let sitemap = await readFile(sitemapUrl, 'utf8');
 
 const esc = (value) => String(value ?? '')
   .replaceAll('&', '&amp;')
   .replaceAll('<', '&lt;')
   .replaceAll('>', '&gt;')
   .replaceAll('"', '&quot;');
+
+const escRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const localeUrl = (locale, suffix = '') => {
   const path = locales[locale].path;
@@ -67,10 +71,17 @@ async function setAlternates(file, links) {
   return html !== before;
 }
 
+const sitemapHas = (url) => new RegExp(`<loc>${escRegex(url)}</loc>`).test(sitemap);
+const ensureSitemap = (url) => {
+  if (sitemapHas(url)) return false;
+  sitemap = sitemap.replace('</urlset>', `<url><loc>${url}</loc></url>\n</urlset>`);
+  return true;
+};
+
 // Discover route equivalence from the localized trees themselves. A route is only
 // advertised when the English page and the corresponding localized file both exist.
-// This keeps hreflang aligned with the central generators instead of maintaining a
-// second, fragile list of page families here.
+// This keeps hreflang and sitemap parity aligned with the central generators instead
+// of maintaining a second, fragile list of page families here.
 const localizedRoutes = new Set();
 for (const [locale, cfg] of entries) {
   if (locale === config.defaultLocale || !cfg.path) continue;
@@ -80,6 +91,7 @@ for (const [locale, cfg] of entries) {
 
 let routeCount = 0;
 let changed = 0;
+let sitemapAdded = 0;
 for (const relativeHtml of [...localizedRoutes].sort()) {
   const englishFile = fileFor(config.defaultLocale, relativeHtml);
   if (!await exists(englishFile)) continue;
@@ -97,7 +109,15 @@ for (const relativeHtml of [...localizedRoutes].sort()) {
   for (const [locale] of supportedEntries) {
     if (await setAlternates(fileFor(locale, relativeHtml), links)) changed += 1;
   }
+
+  const englishUrl = localeUrl(config.defaultLocale, suffix);
+  if (sitemapHas(englishUrl)) {
+    for (const [locale] of supportedEntries) {
+      if (locale !== config.defaultLocale && ensureSitemap(localeUrl(locale, suffix))) sitemapAdded += 1;
+    }
+  }
   routeCount += 1;
 }
 
-console.log(`Aligned reciprocal hreflang across ${routeCount} equivalent routes (${changed} HTML files updated).`);
+await writeFile(sitemapUrl, `${sitemap.trim()}\n`, 'utf8');
+console.log(`Aligned reciprocal hreflang across ${routeCount} equivalent routes (${changed} HTML files updated; ${sitemapAdded} localized sitemap URLs mirrored).`);
