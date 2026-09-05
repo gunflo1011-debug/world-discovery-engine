@@ -21,4 +21,7 @@ test('localized status generator derives coverage counts from current generated 
     assert.match(html, new RegExp(`<div class="value">${verifiedCount}</div>`), `${locale} should use the live verified indicator count`);
     assert.match(html, new RegExp(`<div class="value">${directoryCount}</div>`), `${locale} should use the live country-directory count`);
   }
+
+  // Restore the post-build shell because later tests validate the deployable state.
+  execFileSync(process.execPath, ['scripts/apply-shared-site-shell.mjs'], { cwd: root, stdio: 'pipe' });
 });
