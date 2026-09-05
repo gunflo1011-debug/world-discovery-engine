@@ -18,7 +18,7 @@ test('English methodology uses production wording without MVP/demo or legacy-dom
   assert.doesNotMatch(html, /World Discovery Engine/);
 });
 
-test('localized methodology pages are language-specific preview equivalents with locale-internal shell links', async () => {
+test('localized methodology pages are language-specific preview equivalents with locale-internal shell and trust links', async () => {
   run('scripts/build-localized-methodology.mjs');
   run('scripts/apply-shared-site-shell.mjs');
 
@@ -36,6 +36,9 @@ test('localized methodology pages are language-specific preview equivalents with
     assert.ok(html.includes(headline), `${path} methodology headline should be localized`);
     assert.ok(html.includes(`https://worlddiscoverydata.com/${path}/methodology/`));
     assert.match(html, new RegExp(`href="\\./"[^>]*>${navLabel}</a>`), `${path} shared shell should keep Methodology inside locale`);
+    assert.ok(html.includes('href="../sources/"'), `${path} methodology should keep Sources inside locale`);
+    assert.ok(html.includes('href="../status/"'), `${path} methodology should keep Status inside locale`);
+    assert.doesNotMatch(html, /Auf Englisch öffnen|Abrir en inglés|Ouvrir en anglais|用英语打开/);
     assert.doesNotMatch(html, /Every claim should be reproducible|MVP rule|demo values|World Discovery Engine/);
   }
 });
