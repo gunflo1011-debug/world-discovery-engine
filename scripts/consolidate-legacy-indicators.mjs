@@ -46,22 +46,37 @@ function escapeRegex(value) {
 }
 
 function consolidateHtml(html, item) {
-  let next = html;
+  let next = html
+    .replaceAll('World Discovery Engine', 'World Discovery')
+    .replaceAll('World Discovery Data', 'World Discovery');
   if (/<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i.test(next)) {
     next = next.replace(/<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i, '<meta name="robots" content="noindex,follow">');
   } else {
     next = next.replace(/<head>/i, '<head><meta name="robots" content="noindex,follow">');
   }
-  if (item.canonical) {
-    if (/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i.test(next)) {
-      next = next.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${item.canonical}">`);
-    } else {
-      next = next.replace(/<\/head>/i, `<link rel="canonical" href="${item.canonical}"></head>`);
-    }
+
+  // Real GDP remains a fail-closed screening/trust surface because there is no
+  // maintained replacement page yet. Keep its methodology evidence intact.
+  if (!item.canonical) return next;
+
+  if (/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i.test(next)) {
+    next = next.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${item.canonical}">`);
+  } else {
+    next = next.replace(/<\/head>/i, `<link rel="canonical" href="${item.canonical}"></head>`);
   }
-  if (!next.includes('data-legacy-indicator-notice')) {
-    const notice = `<section class="section section-soft" data-legacy-indicator-notice><div class="wrap"><strong>Current ${item.label}:</strong> this older URL is retained for existing links, but maintained World Discovery data now live at <a href="${item.currentHref}">${item.currentHref}</a>.</div></section>`;
-    next = next.replace(/<main>/i, `<main>${notice}`);
+
+  const title = `Moved ${item.label} — World Discovery`;
+  const description = `This older World Discovery URL is retained for existing links. Use the maintained ${item.label} page for current data.`;
+  next = next.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
+  if (/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i.test(next)) {
+    next = next.replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${description}">`);
+  } else {
+    next = next.replace(/<\/head>/i, `<meta name="description" content="${description}"></head>`);
+  }
+
+  const retiredMain = `<main><section class="hero hero-compact" data-legacy-indicator-notice><div class="wrap"><div class="eyebrow">Older URL retained for existing links</div><h1>This indicator page has moved.</h1><p>The maintained World Discovery ${item.label} is available on the current data surface. This older URL is no longer maintained as a separate product page.</p><p><a class="button" href="${item.currentHref}">Open current ${item.label} →</a></p></div></section></main>`;
+  if (/<main\b[^>]*>[\s\S]*?<\/main>/i.test(next)) {
+    next = next.replace(/<main\b[^>]*>[\s\S]*?<\/main>/i, retiredMain);
   }
   return next;
 }
