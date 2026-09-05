@@ -32,11 +32,23 @@ export function snapshotFromHistoryIndex(index, localeName = 'en-US') {
 }
 
 export function updateHomepageHtml(html, { count, note }) {
-  let next = html.replace(/<p class="muted home-data-snapshot" data-wd-history-snapshot>[\s\S]*?<\/p>/, '');
-  const factsPattern = /(<div class="facts">[\s\S]*?<div class="fact"><div class="value">)(?:153k\+|[\d.,\s\u00a0\u202f]+)(<\/div><div class="label">[^<]*(?:country-year|Länder-Jahr|país-año|pays-année|国家-年份)[^<]*<\/div><\/div>[\s\S]*?<\/div>)(<p class="home-cta">)/i;
-  if (!factsPattern.test(next)) throw new Error('homepage observation fact not found');
-  next = next.replace(factsPattern, `$1${count}$2<p class="muted home-data-snapshot" data-wd-history-snapshot>${note}</p>$3`);
-  return next;
+  const withoutNote = html.replace(/<p class="muted home-data-snapshot" data-wd-history-snapshot>[\s\S]*?<\/p>/, '');
+  const factsPattern = /(<div class="facts">)([\s\S]*?)(<\/div>)(<p class="home-cta">)/;
+  const match = withoutNote.match(factsPattern);
+  if (!match) throw new Error('homepage facts block not found');
+
+  let factIndex = 0;
+  const updatedFacts = match[2].replace(
+    /(<div class="fact"><div class="value">)([^<]+)(<\/div><div class="label">[\s\S]*?<\/div><\/div>)/g,
+    (whole, open, value, close) => {
+      factIndex += 1;
+      return factIndex === 2 ? `${open}${count}${close}` : whole;
+    }
+  );
+  if (factIndex < 2) throw new Error('homepage observation fact not found');
+
+  const replacement = `${match[1]}${updatedFacts}${match[3]}<p class="muted home-data-snapshot" data-wd-history-snapshot>${note}</p>${match[4]}`;
+  return withoutNote.replace(factsPattern, replacement);
 }
 
 export async function syncHomeHistorySnapshot() {
