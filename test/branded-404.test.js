@@ -19,6 +19,28 @@ test('build emits a branded, non-indexed 404 with path-safe recovery links', asy
   assert.doesNotMatch(html, /href="\.\.?\//);
 });
 
+test('404 localizes the full error and recovery surface from the requested locale path', async () => {
+  const html = await readFile(resolve(root, '404.html'), 'utf8');
+
+  for (const [path, lang, title, data, countries, compare] of [
+    ['de', 'de', 'Seite nicht gefunden', 'Datenkatalog', 'Länder', 'Vergleichen'],
+    ['es', 'es', 'Página no encontrada', 'Catálogo de datos', 'Países', 'Comparar'],
+    ['fr', 'fr', 'Page introuvable', 'Catalogue de données', 'Pays', 'Comparer'],
+    ['zh-hans', 'zh-Hans', '未找到页面', '数据目录', '国家', '比较']
+  ]) {
+    assert.ok(html.includes(`${path}:{lang:'${lang}'`), `${path}: missing runtime locale definition`);
+    assert.ok(html.includes(title), `${path}: missing localized 404 title`);
+    assert.ok(html.includes(data), `${path}: missing localized data recovery label`);
+    assert.ok(html.includes(countries), `${path}: missing localized countries recovery label`);
+    assert.ok(html.includes(compare), `${path}: missing localized compare recovery label`);
+  }
+
+  assert.match(html, /location\.pathname\.split\('\/'\)\.filter\(Boolean\)\[0\]\?\.toLowerCase\(\)/);
+  assert.match(html, /document\.documentElement\.lang=c\.lang/);
+  assert.match(html, /const prefix=key==='en'\?'':\('\/'\+key\)/);
+  assert.match(html, /a\.href=prefix\+\(route\?\('\/'\+route\+'\/'\):'\/'\)/);
+});
+
 test('404 remains outside the sitemap', async () => {
   const sitemap = await readFile(resolve(root, 'sitemap.xml'), 'utf8');
   assert.doesNotMatch(sitemap, /\/404(?:\.html)?(?:<|\/)/);
