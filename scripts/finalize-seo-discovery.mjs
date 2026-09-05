@@ -61,6 +61,8 @@ function ensureSocialMetadata(html) {
   if (!/<meta\s+property=["']og:description["']/i.test(html)) tags.push(`<meta property="og:description" content="${description}">`);
   if (!/<meta\s+property=["']og:url["']/i.test(html)) tags.push(`<meta property="og:url" content="${canonical}">`);
   if (!/<meta\s+name=["']twitter:card["']/i.test(html)) tags.push('<meta name="twitter:card" content="summary">');
+  if (!/<meta\s+name=["']twitter:title["']/i.test(html)) tags.push(`<meta name="twitter:title" content="${title}">`);
+  if (!/<meta\s+name=["']twitter:description["']/i.test(html)) tags.push(`<meta name="twitter:description" content="${description}">`);
   if (!tags.length) return html;
   return html.replace(/<\/head>/i, `${tags.join('\n')}\n</head>`);
 }
