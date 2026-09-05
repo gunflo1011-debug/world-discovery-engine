@@ -1,21 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
-
-const site = fileURLToPath(new URL('../site/', import.meta.url));
 
 async function read(relativePath) {
   return readFile(new URL(`../site/${relativePath}`, import.meta.url), 'utf8');
 }
 
+const origin = 'https://worlddiscoverydata.com';
+
 test('released entrypoints advertise one clear primary favicon and ICO fallback', async () => {
   for (const page of ['index.html', 'de/index.html', 'es/index.html', 'fr/index.html', 'zh-hans/index.html', '404.html']) {
     const html = await read(page);
-    assert.equal((html.match(/href="\/favicon\.svg"/g) || []).length, 1, `${page} primary favicon`);
-    assert.equal((html.match(/href="\/favicon\.ico"/g) || []).length, 1, `${page} ICO fallback`);
-    assert.match(html, /rel="icon" href="\/favicon\.svg" type="image\/svg\+xml" data-wd-search-branding="primary"/);
-    assert.match(html, /rel="alternate icon" href="\/favicon\.ico" sizes="any" data-wd-search-branding="fallback"/);
+    assert.equal((html.match(/href="https:\/\/worlddiscoverydata\.com\/favicon\.svg"/g) || []).length, 1, `${page} primary favicon`);
+    assert.equal((html.match(/href="https:\/\/worlddiscoverydata\.com\/favicon\.ico"/g) || []).length, 1, `${page} ICO fallback`);
+    assert.match(html, new RegExp(`rel="icon" href="${origin.replaceAll('.', '\\.')}/favicon\\.svg" type="image/svg\\+xml" data-wd-search-branding="primary"`));
+    assert.match(html, new RegExp(`rel="alternate icon" href="${origin.replaceAll('.', '\\.')}/favicon\\.ico" sizes="any" data-wd-search-branding="fallback"`));
   }
 });
 
