@@ -16,7 +16,8 @@ const urls = [
   ...(catalog.indicators ?? []).filter((x) => x.status === 'CURRENT_VERIFIED').map((x) => `/data/${x.slug}/`),
   '/countries/',
   ...(countries.countries ?? []).map((x) => x.url),
-  '/compare/'
+  '/compare/',
+  '/trends/'
 ];
 
 function escapeRegExp(value) {

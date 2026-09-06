@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "snapshotDate": "2026-09-06",
+  "status": "CURATED_GOOGLE_TRENDS_SNAPSHOT",
+  "source": {
+    "name": "Google Trends — Trending Now",
+    "scope": "Past 24 hours",
+    "note": "Search volumes are Google Trends threshold buckets, not exact query counts. Growth is relative to the normal search baseline shown by Google Trends."
+  },
+  "methodology": {
+    "purpose": "Surface fast-rising search demand across major markets as a discovery layer, not as a complete ranking of all Google searches.",
+    "wdScore": "Reserved for future World Discovery scoring using momentum, cross-country spread, informational intent, longevity, data fit and competition."
+  },
+  "markets": ["United States", "India", "United Kingdom", "Brazil", "Germany"],
+  "trends": [
+    {
+      "id": "what-does-a-mistrial-mean",
+      "query": "what does a mistrial mean",
+      "market": "United States",
+      "searchVolumeBucket": "2M+",
+      "growth": "+1,000%",
+      "status": "active",
+      "intent": "informational",
+      "sourceUrl": "https://trends.google.com/trending?geo=US"
+    },
+    {
+      "id": "pakistan-vs-india",
+      "query": "pakistan vs india",
+      "market": "India",
+      "searchVolumeBucket": "2M+",
+      "growth": "+1,000%",
+      "status": "active",
+      "intent": "live-event",
+      "sourceUrl": "https://trends.google.com/trending?geo=IN"
+    },
+    {
+      "id": "newcastle-vs-bournemouth",
+      "query": "newcastle vs bournemouth",
+      "market": "United Kingdom",
+      "searchVolumeBucket": "200K+",
+      "growth": "+1,000%",
+      "status": "active",
+      "intent": "live-event",
+      "sourceUrl": "https://trends.google.com/trending?geo=GB"
+    },
+    {
+      "id": "fluminense-x-vasco-da-gama",
+      "query": "fluminense x vasco da gama",
+      "market": "Brazil",
+      "searchVolumeBucket": "500K+",
+      "growth": "+1,000%",
+      "status": "active",
+      "intent": "live-event",
+      "sourceUrl": "https://trends.google.com/trending?geo=BR"
+    },
+    {
+      "id": "schalke-bayern",
+      "query": "schalke – bayern",
+      "market": "Germany",
+      "searchVolumeBucket": "500K+",
+      "growth": "+1,000%",
+      "status": "active",
+      "intent": "live-event",
+      "sourceUrl": "https://trends.google.com/trending?geo=DE"
+    }
+  ]
+}
