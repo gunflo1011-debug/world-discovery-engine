@@ -75,3 +75,11 @@ Purpose: observe Search Console, indexing, live-site and repository evidence bef
 - New repository health evidence: scheduled **Search Console connectivity** and **Cloudflare analytics** workflows on main both completed successfully shortly before this check. This reduces concern about telemetry/connectivity failure but is not user-traffic evidence.
 - Live home and `/data/gdp-per-capita/` remained reachable through the external web check. No confirmed P0/P1 live-site failure was observed. Direct low-level HTTP probing from the execution container was unavailable because that environment could not resolve the domain; this is an execution-environment limitation, not evidence of a production DNS outage.
 - **Public website changes:** none. **Measurement-only change:** this baseline health-check note appended.
+
+## Baseline refresh — 2026-09-06 02:00 CEST
+
+- Fresh Search Console daily KPIs remain unchanged: **2026-09-04: 477 impressions / 0 clicks / avg position 39.52**; **2026-09-05: 163 impressions / 1 click / avg position 24.84**. No 2026-09-06 row is available yet, so no intraday movement is inferred.
+- Sitemap remains healthy and unchanged: **1,500 submitted URLs, 0 errors, 0 warnings; last downloaded 2026-09-05 17:55:45 UTC**.
+- No open pull requests and no new product/code commit were observed; only measurement-documentation commits have landed since the last product refresh.
+- Rotating live check: home, `/countries/`, `/data/gdp-per-capita/` and `/compare/` are reachable. An initial direct external open of `/compare/` returned an extraction error, but following the live homepage's Compare link rendered the page successfully; treat this as a tooling/rendering artifact, not a production failure.
+- No confirmed P0/P1 issue. **Public website changes:** none. **Measurement-only change:** this baseline refresh appended.
