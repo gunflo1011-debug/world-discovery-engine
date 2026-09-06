@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../site/', import.meta.url));
+const baseUrl = 'https://worlddiscoverydata.com';
 
 async function walk(dir) {
   const files = [];
@@ -50,4 +51,22 @@ for (const file of await walk(root)) {
   }
 }
 
-console.log('Ensured Trends and Fun Facts are present in the primary navigation.');
+const trendsRoot = path.join(root, 'trends');
+const trendIndexFiles = (await walk(trendsRoot)).filter(file => path.basename(file) === 'index.html');
+const trendUrls = trendIndexFiles
+  .map(file => path.relative(root, path.dirname(file)).replaceAll(path.sep, '/'))
+  .map(relativeDir => `${baseUrl}/${relativeDir}/`)
+  .sort();
+
+const sitemapPath = path.join(root, 'sitemap.xml');
+let sitemap = await readFile(sitemapPath, 'utf8');
+const sitemapLocations = new Set([...sitemap.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map(match => match[1]));
+const missingTrendUrls = trendUrls.filter(url => !sitemapLocations.has(url));
+
+if (missingTrendUrls.length > 0) {
+  const entries = missingTrendUrls.map(url => `<url><loc>${url}</loc></url>`).join('\n');
+  sitemap = sitemap.replace(/\s*<\/urlset>\s*$/i, `\n${entries}\n</urlset>\n`);
+  await writeFile(sitemapPath, sitemap, 'utf8');
+}
+
+console.log(`Ensured Trends and Fun Facts are present in the primary navigation; ${trendUrls.length} trend routes are present in the sitemap.`);
