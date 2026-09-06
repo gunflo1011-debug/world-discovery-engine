@@ -17,7 +17,8 @@ const urls = [
   '/countries/',
   ...(countries.countries ?? []).map((x) => x.url),
   '/compare/',
-  '/trends/'
+  '/trends/',
+  '/fun-facts/'
 ];
 
 function escapeRegExp(value) {
