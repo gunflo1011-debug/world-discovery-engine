@@ -1,0 +1,18 @@
+{
+  "timezone": "Europe/Berlin",
+  "facts": [
+    {
+      "date": "2026-09-06",
+      "slug": "horned-lizard-shoots-blood-from-eyes",
+      "emoji": "🦎",
+      "title": "This lizard can shoot blood from its eyes — up to about a metre",
+      "dek": "When threatened, some horned lizards can raise pressure around the eyes and eject blood from ducts near the eyelids. National Park Service pages report distances up to three feet (about one metre).",
+      "why": "It sounds like a cartoon superpower, but it is a real last-resort defence. The spray can startle predators, and NPS sources report that the blood is especially unpleasant to canine predators such as coyotes.",
+      "context": "Horned lizards have several defensive layers before blood-squirting: camouflage, flattening or inflating the body, and presenting their horns. The eye-blood defence is not a trick every lizard uses; it is documented in horned lizards (genus Phrynosoma), with variation among species.",
+      "sourceLabel": "U.S. National Park Service — Greater Short-horned Lizard",
+      "sourceUrl": "https://www.nps.gov/para/learn/nature/greater-short-horned-lizard.htm",
+      "source2Label": "U.S. National Park Service — Grand Canyon Short-Horned Lizard",
+      "source2Url": "https://www.nps.gov/grca/learn/nature/short-horned-lizard.htm"
+    }
+  ]
+}
