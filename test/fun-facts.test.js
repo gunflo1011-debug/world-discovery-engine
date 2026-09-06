@@ -13,6 +13,11 @@ const locales = [
 ];
 
 test('fun facts are generated, localized, indexable and wired to navigation', async () => {
+  // Some earlier tests intentionally regenerate the shared sitemap. Re-run the
+  // Fun Facts generator here so this contract validates its own final output
+  // instead of depending on test ordering.
+  await import(`../scripts/build-fun-facts.mjs?test=${Date.now()}`);
+
   const [explore, navScript, sitemapScript, sitemap] = await Promise.all([
     readFile(new URL('explore/index.html', siteRoot), 'utf8'),
     readFile(new URL('../scripts/add-trends-navigation.mjs', import.meta.url), 'utf8'),
