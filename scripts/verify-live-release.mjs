@@ -28,19 +28,35 @@ async function get(path, type = 'text') {
   throw last;
 }
 
+const trendRoutes = [
+  '/trends/',
+  '/trends/us/', '/trends/us/what-does-a-mistrial-mean/',
+  '/trends/in/', '/trends/in/pakistan-vs-india/',
+  '/trends/uk/', '/trends/uk/newcastle-vs-bournemouth/',
+  '/trends/br/', '/trends/br/fluminense-vasco-da-gama/',
+  '/trends/de/', '/trends/de/schalke-bayern/'
+];
+const funFactRoutes = [
+  '/fun-facts/', '/fun-facts/horned-lizard-shoots-blood-from-eyes/',
+  '/de/fun-facts/', '/de/fun-facts/horned-lizard-shoots-blood-from-eyes/',
+  '/es/fun-facts/', '/es/fun-facts/horned-lizard-shoots-blood-from-eyes/',
+  '/fr/fun-facts/', '/fr/fun-facts/horned-lizard-shoots-blood-from-eyes/',
+  '/zh-hans/fun-facts/', '/zh-hans/fun-facts/horned-lizard-shoots-blood-from-eyes/'
+];
 const critical = [
   '/', '/index.html', '/countries/', '/countries/deu/', '/data/', '/data/population/', '/data/gdp-per-capita/',
   '/data/life-expectancy/', '/data/internet-use/', '/compare/', '/indicators/', '/indicators/internet-use/',
   '/indicators/internet-use/data.json', '/indicators/internet-use/data.csv', '/indicators/internet-use/history.json',
   '/indicators/internet-use/country/index.json', '/indicators/internet-use/country/deu/', '/build.json',
-  '/evidence/', '/evidence/index.json', '/sitemap.xml', '/robots.txt'
+  '/evidence/', '/evidence/index.json', '/sitemap.xml', '/robots.txt', ...trendRoutes, ...funFactRoutes
 ];
 await Promise.all(critical.map(path => get(path)));
 
-const [home, countries, robots, sitemap, source, history, index, build, parent, evidence] = await Promise.all([
+const [home, countries, robots, sitemap, source, history, index, build, parent, evidence, funFacts, trends, trendSnapshot] = await Promise.all([
   get('/index.html'), get('/countries/'), get('/robots.txt'), get('/sitemap.xml'), get('/indicators/internet-use/data.json', 'json'),
   get('/indicators/internet-use/history.json', 'json'), get('/indicators/internet-use/country/index.json', 'json'),
-  get('/build.json', 'json'), get('/indicators/internet-use/'), get('/evidence/')
+  get('/build.json', 'json'), get('/indicators/internet-use/'), get('/evidence/'), get('/fun-facts/'), get('/trends/'),
+  get('/data/trends/latest.json', 'json')
 ]);
 
 if (!/rel="canonical"/i.test(home)) throw new Error('home canonical missing');
@@ -54,9 +70,18 @@ if (build.internetUseCountryProfiles !== index.countries.length) throw new Error
 if (parent.includes('id="country-profiles"')) throw new Error('duplicate country-card directory returned to parent page');
 if (/[−-]0(?:\.0+)?%/.test(evidence)) throw new Error('evidence contains a negative-zero percentage');
 
+if (!funFacts.includes('horned-lizard-shoots-blood-from-eyes')) throw new Error('curated horned-lizard fun fact missing from live hub');
+for (const legacy of ['POPULATION HEAVYWEIGHT', 'A LIFETIME APART', 'BASICALLY A FOREST', 'ALMOST EVERYONE IS ONLINE', 'BIG-FAMILY OUTLIER', 'TINY PLACE, HUGE NUMBER']) {
+  if (funFacts.includes(legacy)) throw new Error(`legacy fun-fact residue still live: ${legacy}`);
+}
+if (!Array.isArray(trendSnapshot?.trends) || trendSnapshot.trends.length === 0) throw new Error('trend snapshot missing active trends');
+for (const trend of trendSnapshot.trends.filter(item => item.status === 'active')) {
+  if (!trends.includes(trend.query)) throw new Error(`active trend missing from live trends hub: ${trend.query}`);
+}
+
 const sitemapLocations = new Set([...sitemap.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map(match => match[1]));
-for (const expected of [`${base}/countries/`, `${base}/data/`, `${base}/data/population/`, `${base}/compare/`]) {
+for (const expected of [`${base}/countries/`, `${base}/data/`, `${base}/data/population/`, `${base}/compare/`, ...trendRoutes.map(path => `${base}${path}`), ...funFactRoutes.map(path => `${base}${path}`)]) {
   if (!sitemapLocations.has(expected)) throw new Error(`sitemap missing ${expected}`);
 }
 
-console.log(`LIVE RELEASE CONTRACT VERIFIED: critical discovery routes reachable, precise country/territory wording, ${index.countries.length} internet-use country profiles, no negative-zero evidence percentages`);
+console.log(`LIVE RELEASE CONTRACT VERIFIED: critical discovery routes reachable, precise country/territory wording, ${index.countries.length} internet-use country profiles, curated fun facts clean, ${trendSnapshot.trends.filter(item => item.status === 'active').length} active trends covered, no negative-zero evidence percentages`);
