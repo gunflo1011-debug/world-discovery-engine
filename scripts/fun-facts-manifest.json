@@ -12,7 +12,33 @@
       "sourceLabel": "U.S. National Park Service — Greater Short-horned Lizard",
       "sourceUrl": "https://www.nps.gov/para/learn/nature/greater-short-horned-lizard.htm",
       "source2Label": "U.S. National Park Service — Grand Canyon Short-Horned Lizard",
-      "source2Url": "https://www.nps.gov/grca/learn/nature/short-horned-lizard.htm"
+      "source2Url": "https://www.nps.gov/grca/learn/nature/short-horned-lizard.htm",
+      "translations": {
+        "de": {
+          "title": "Diese Echse kann Blut aus ihren Augen schießen — fast einen Meter weit",
+          "dek": "Wenn sie bedroht werden, können manche Krötenechsen den Druck rund um die Augen erhöhen und Blut aus Bereichen nahe den Augenlidern herausspritzen. Seiten des U.S. National Park Service nennen Reichweiten von bis zu drei Fuß, also ungefähr einem Meter.",
+          "why": "Es klingt wie eine Cartoon-Superkraft, ist aber eine echte Verteidigungsstrategie für den Ernstfall. Der Blutstrahl kann Fressfeinde erschrecken; laut National Park Service ist das Blut für hundeartige Räuber wie Kojoten besonders unangenehm.",
+          "context": "Krötenechsen setzen vorher mehrere andere Schutzmechanismen ein: Tarnung, Abflachen oder Aufblähen des Körpers und das Präsentieren ihrer Hörner. Die Blutabwehr am Auge kommt nicht bei jeder Echse vor; sie ist für Krötenechsen der Gattung Phrynosoma dokumentiert und unterscheidet sich je nach Art."
+        },
+        "es": {
+          "title": "Este lagarto puede lanzar sangre desde los ojos — hasta casi un metro",
+          "dek": "Cuando se sienten amenazados, algunos lagartos cornudos pueden aumentar la presión alrededor de los ojos y expulsar sangre por conductos cercanos a los párpados. El Servicio de Parques Nacionales de EE. UU. documenta distancias de hasta tres pies, aproximadamente un metro.",
+          "why": "Parece un superpoder de dibujos animados, pero es una defensa real de último recurso. El chorro puede sorprender a los depredadores y, según el Servicio de Parques Nacionales, la sangre resulta especialmente desagradable para cánidos como los coyotes.",
+          "context": "Antes de recurrir a esta defensa, los lagartos cornudos disponen de varias capas de protección: camuflaje, aplanar o inflar el cuerpo y presentar sus cuernos. Lanzar sangre desde la zona ocular no es algo que hagan todos los lagartos; está documentado en los lagartos cornudos del género Phrynosoma, con diferencias entre especies."
+        },
+        "fr": {
+          "title": "Ce lézard peut projeter du sang depuis ses yeux — jusqu’à près d’un mètre",
+          "dek": "Lorsqu’ils sont menacés, certains lézards cornus peuvent augmenter la pression autour de leurs yeux et expulser du sang par des conduits proches des paupières. Le National Park Service américain mentionne des distances allant jusqu’à trois pieds, soit environ un mètre.",
+          "why": "Cela ressemble à un superpouvoir de dessin animé, mais c’est une véritable défense de dernier recours. Le jet peut surprendre les prédateurs et, selon le National Park Service, le sang est particulièrement désagréable pour les canidés comme les coyotes.",
+          "context": "Avant d’en arriver là, les lézards cornus disposent de plusieurs moyens de défense : camouflage, aplatissement ou gonflement du corps et présentation de leurs cornes. Cette défense par projection de sang autour des yeux n’existe pas chez tous les lézards ; elle est documentée chez les lézards cornus du genre Phrynosoma, avec des variations selon les espèces."
+        },
+        "zh-Hans": {
+          "title": "这种蜥蜴能从眼部喷出血液——最远接近一米",
+          "dek": "受到威胁时，一些角蜥会提高眼周压力，并从靠近眼睑的部位喷出血液。美国国家公园管理局的资料称，喷射距离可达三英尺，也就是大约一米。",
+          "why": "这听起来像动画里的超能力，但它确实是一种最后防线。喷出的血液能够惊吓捕食者；美国国家公园管理局还指出，这种血液对郊狼等犬科捕食者尤其令人反感。",
+          "context": "在使用这种防御方式之前，角蜥还有多层保护手段，包括伪装、压扁或鼓起身体，以及用角面对威胁。并不是所有蜥蜴都会从眼部喷血；这种行为记录于角蜥属（Phrynosoma），而且不同物种之间存在差异。"
+        }
+      }
     }
   ]
 }
