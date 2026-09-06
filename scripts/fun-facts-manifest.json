@@ -39,6 +39,45 @@
           "context": "在使用这种防御方式之前，角蜥还有多层保护手段，包括伪装、压扁或鼓起身体，以及用角面对威胁。并不是所有蜥蜴都会从眼部喷血；这种行为记录于角蜥属（Phrynosoma），而且不同物种之间存在差异。"
         }
       }
+    },
+    {
+      "date": "2026-09-07",
+      "slug": "venus-rotation-longer-than-year",
+      "emoji": "🪐",
+      "title": "Venus takes longer to rotate once than to orbit the Sun",
+      "dek": "Venus needs about 243 Earth days to complete one rotation on its axis, but only about 225 Earth days to complete one orbit around the Sun.",
+      "why": "That reverses the pattern we are used to on Earth: one full spin of Venus lasts longer than its entire year. NASA also notes an important distinction: sunrise to sunset on Venus takes about 117 Earth days because the planet rotates slowly and in the opposite direction to most planets.",
+      "context": "Calling this simply ‘a day longer than a year’ can be misleading because astronomers use more than one definition of a day. The 243-day figure is Venus’s rotation period (its sidereal day); its solar day — roughly noon to noon — is about 117 Earth days. The striking comparison is therefore precise when stated as one rotation versus one orbit.",
+      "sourceLabel": "NASA Science — Venus: Facts",
+      "sourceUrl": "https://science.nasa.gov/venus/venus-facts/",
+      "source2Label": "NASA Space Place — All About Venus",
+      "source2Url": "https://spaceplace.nasa.gov/all-about-venus/en/",
+      "translations": {
+        "de": {
+          "title": "Venus braucht für eine Rotation länger als für einen Umlauf um die Sonne",
+          "dek": "Venus benötigt rund 243 Erdtage für eine vollständige Rotation um die eigene Achse, aber nur rund 225 Erdtage für einen Umlauf um die Sonne.",
+          "why": "Damit ist das vertraute Verhältnis von Tag und Jahr auf den Kopf gestellt: Eine vollständige Drehung der Venus dauert länger als ihr ganzes Jahr. NASA weist außerdem auf einen wichtigen Unterschied hin: Von Sonnenaufgang zu Sonnenuntergang vergehen auf Venus etwa 117 Erdtage, weil der Planet sehr langsam und entgegen der Drehrichtung der meisten Planeten rotiert.",
+          "context": "Die verkürzte Aussage „Ein Tag auf Venus ist länger als ein Jahr“ kann missverständlich sein, weil Astronomen verschiedene Tagesdefinitionen verwenden. Die 243 Tage bezeichnen die Rotationsperiode beziehungsweise den siderischen Tag; der Sonnentag dauert etwa 117 Erdtage. Präzise ist daher der Vergleich einer vollständigen Rotation mit einem vollständigen Umlauf."
+        },
+        "es": {
+          "title": "Venus tarda más en girar una vez sobre sí mismo que en orbitar el Sol",
+          "dek": "Venus necesita unos 243 días terrestres para completar una rotación sobre su eje, pero solo unos 225 días terrestres para completar una órbita alrededor del Sol.",
+          "why": "Es justo lo contrario de lo que nos resulta familiar en la Tierra: un giro completo de Venus dura más que todo su año. La NASA también señala una distinción importante: de amanecer a atardecer pasan unos 117 días terrestres debido a su rotación extremadamente lenta y retrógrada.",
+          "context": "Decir simplemente que «un día en Venus dura más que un año» puede ser ambiguo porque en astronomía hay varias definiciones de día. Los 243 días corresponden al período de rotación o día sideral; el día solar dura unos 117 días terrestres. Por eso, la comparación precisa es entre una rotación completa y una órbita completa."
+        },
+        "fr": {
+          "title": "Vénus met plus de temps à tourner sur elle-même qu’à faire le tour du Soleil",
+          "dek": "Vénus met environ 243 jours terrestres pour effectuer une rotation complète sur son axe, mais seulement environ 225 jours terrestres pour accomplir une orbite autour du Soleil.",
+          "why": "C’est l’inverse de ce qui nous est familier sur Terre : une rotation complète de Vénus dure plus longtemps que toute son année. La NASA précise aussi un point important : du lever au coucher du Soleil, il s’écoule environ 117 jours terrestres en raison de sa rotation extrêmement lente et rétrograde.",
+          "context": "Dire simplement qu’« un jour sur Vénus est plus long qu’une année » peut prêter à confusion, car l’astronomie utilise plusieurs définitions du jour. Les 243 jours correspondent à la période de rotation, ou jour sidéral ; le jour solaire dure environ 117 jours terrestres. La comparaison exacte porte donc sur une rotation complète et une orbite complète."
+        },
+        "zh-Hans": {
+          "title": "金星自转一周所需的时间比绕太阳公转一周还长",
+          "dek": "金星绕自身轴完成一次自转大约需要243个地球日，而绕太阳完成一次公转只需要大约225个地球日。",
+          "why": "这与我们在地球上熟悉的情况完全相反：金星完整自转一周的时间竟然超过了它的一整年。NASA还指出一个重要区别：由于金星自转极慢且方向与大多数行星相反，从日出到日落大约要经历117个地球日。",
+          "context": "简单说“金星的一天比一年长”可能会引起误解，因为天文学中“天”有不同定义。243天指的是金星的自转周期，也就是恒星日；它的太阳日约为117个地球日。因此，更准确的说法是：金星完成一次自转所需的时间比完成一次公转更长。"
+        }
+      }
     }
   ]
 }
