@@ -17,7 +17,7 @@ test('global search trends hub is indexable, linked and machine-readable', async
   assert.match(html, /data\/trends\/latest\.json/);
   assert.match(explore, /href="\.\.\/trends\/"/);
   assert.equal(data.status, 'CURATED_GOOGLE_TRENDS_SNAPSHOT');
-  assert.equal(data.snapshotDate, '2026-09-06');
+  assert.equal(data.snapshotDate, '2026-09-07');
   assert.equal(data.trends.length, 5);
   assert.ok(data.trends.every((trend) => trend.query && trend.market && trend.searchVolumeBucket && trend.sourceUrl));
 });

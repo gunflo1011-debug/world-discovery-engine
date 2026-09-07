@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "snapshotDate": "2026-09-06",
+  "snapshotDate": "2026-09-07",
   "status": "CURATED_GOOGLE_TRENDS_SNAPSHOT",
   "source": {
     "name": "Google Trends — Trending Now",
@@ -14,28 +14,28 @@
   "markets": ["United States", "India", "United Kingdom", "Brazil", "Germany"],
   "trends": [
     {
-      "id": "what-does-a-mistrial-mean",
-      "query": "what does a mistrial mean",
+      "id": "wisconsin-vs-notre-dame",
+      "query": "wisconsin vs notre dame",
       "market": "United States",
-      "searchVolumeBucket": "2M+",
+      "searchVolumeBucket": "200K+",
       "growth": "+1,000%",
       "status": "active",
-      "intent": "informational",
+      "intent": "live-event",
       "sourceUrl": "https://trends.google.com/trending?geo=US"
     },
     {
-      "id": "pakistan-vs-india",
-      "query": "pakistan vs india",
+      "id": "valencia-vs-barcelona",
+      "query": "valencia vs barcelona",
       "market": "India",
-      "searchVolumeBucket": "2M+",
+      "searchVolumeBucket": "200K+",
       "growth": "+1,000%",
       "status": "active",
       "intent": "live-event",
       "sourceUrl": "https://trends.google.com/trending?geo=IN"
     },
     {
-      "id": "newcastle-vs-bournemouth",
-      "query": "newcastle vs bournemouth",
+      "id": "everton-vs-man-utd",
+      "query": "everton vs man utd",
       "market": "United Kingdom",
       "searchVolumeBucket": "200K+",
       "growth": "+1,000%",
@@ -44,20 +44,20 @@
       "sourceUrl": "https://trends.google.com/trending?geo=GB"
     },
     {
-      "id": "fluminense-x-vasco-da-gama",
-      "query": "fluminense x vasco da gama",
+      "id": "internacional-santos",
+      "query": "internacional x santos",
       "market": "Brazil",
-      "searchVolumeBucket": "500K+",
+      "searchVolumeBucket": "1M+",
       "growth": "+1,000%",
       "status": "active",
       "intent": "live-event",
       "sourceUrl": "https://trends.google.com/trending?geo=BR"
     },
     {
-      "id": "schalke-bayern",
-      "query": "schalke – bayern",
+      "id": "hsv-mainz",
+      "query": "hsv – mainz",
       "market": "Germany",
-      "searchVolumeBucket": "500K+",
+      "searchVolumeBucket": "100K+",
       "growth": "+1,000%",
       "status": "active",
       "intent": "live-event",
