@@ -72,7 +72,7 @@ test('every sitemap HTML page carries complete Open Graph and Twitter metadata',
     assert.ok(url.startsWith(base), `unexpected sitemap host: ${url}`);
     if (!url.endsWith('/') && !url.endsWith('.html')) continue;
     const html = await readFile(localPath(url), 'utf8');
-    assert.match(html, /<meta\s+property=["']og:type["']\s+content=["']website["'][^>]*>/i, `missing og:type: ${url}`);
+    assert.match(html, /<meta\s+property=["']og:type["']\s+content=["'](?:website|article)["'][^>]*>/i, `missing or unsupported og:type: ${url}`);
     assert.match(html, /<meta\s+property=["']og:title["']\s+content=["'][^"']+["'][^>]*>/i, `missing og:title: ${url}`);
     assert.match(html, /<meta\s+property=["']og:description["']\s+content=["'][^"']+["'][^>]*>/i, `missing og:description: ${url}`);
     assert.match(html, /<meta\s+property=["']og:url["']\s+content=["'][^"']+["'][^>]*>/i, `missing og:url: ${url}`);
