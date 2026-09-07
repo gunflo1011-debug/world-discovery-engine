@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "snapshotDate": "2026-09-07",
+  "snapshotDate": "2026-09-08",
   "status": "CURATED_GOOGLE_TRENDS_SNAPSHOT",
   "source": {
     "name": "Google Trends — Trending Now",
@@ -24,13 +24,13 @@
       "sourceUrl": "https://trends.google.com/trending?geo=US"
     },
     {
-      "id": "valencia-vs-barcelona",
-      "query": "valencia vs barcelona",
+      "id": "8th-pay-commission",
+      "query": "8th pay commission",
       "market": "India",
-      "searchVolumeBucket": "100K+",
-      "growth": "+1,000%",
+      "searchVolumeBucket": "5K+",
+      "growth": "+200%",
       "status": "active",
-      "intent": "live-event",
+      "intent": "pay-policy-explainer",
       "sourceUrl": "https://trends.google.com/trending?geo=IN"
     },
     {
