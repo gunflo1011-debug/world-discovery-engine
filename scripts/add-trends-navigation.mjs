@@ -22,22 +22,58 @@ function relativeHref(file, targetDir) {
   return href.endsWith('/') ? href : `${href}/`;
 }
 
+function localizeMarketShell(html, file, rel) {
+  const market = rel.startsWith('trends/de/') ? 'de' : rel.startsWith('trends/br/') ? 'br' : null;
+  if (!market) return html;
+
+  const copy = market === 'de'
+    ? {
+        nav: 'Hauptnavigation',
+        trends: 'Deutschland-Trends',
+        data: 'Daten',
+        countries: 'Länder',
+        footer: 'Suchtrends mit verifizierten Antworten.'
+      }
+    : {
+        nav: 'Navegação principal',
+        trends: 'Tendências do Brasil',
+        data: 'Dados',
+        countries: 'Países',
+        footer: 'Tendências de busca com respostas verificadas.'
+      };
+
+  const trendsHref = relativeHref(file, market === 'de' ? 'trends/de' : 'trends/br');
+  const dataHref = relativeHref(file, 'data');
+  const countriesHref = relativeHref(file, 'countries');
+  const homeHref = relativeHref(file, '');
+  const header = `<header class="topbar"><div class="wrap"><a class="brand" href="${homeHref}">World Discovery</a><nav class="nav" aria-label="${copy.nav}"><a href="${trendsHref}">${copy.trends}</a><a href="${dataHref}">${copy.data}</a><a href="${countriesHref}">${copy.countries}</a></nav></div></header>`;
+  const footer = `<footer class="footer"><div class="wrap">World Discovery · ${copy.footer}</div></footer>`;
+
+  return html
+    .replace(/<header\b[^>]*class="[^"]*topbar[^"]*"[^>]*>[\s\S]*?<\/header>/i, header)
+    .replace(/<footer\b[^>]*class="[^"]*footer[^"]*"[^>]*>[\s\S]*?<\/footer>/i, footer)
+    .replace(/<style\b[^>]*id="wd-language-menu-style"[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<style\b[^>]*id="wd-shared-shell-style"[^>]*>[\s\S]*?<\/style>/gi, '');
+}
+
 for (const file of await walk(root)) {
   if (path.basename(file) === '404.html') continue;
   let html = await readFile(file, 'utf8');
+  const rel = path.relative(root, file).replaceAll(path.sep, '/');
+  html = localizeMarketShell(html, file, rel);
+
   const navMatch = html.match(/<nav class="nav"[^>]*>[\s\S]*?<\/nav>/i);
   if (!navMatch) continue;
 
   let nav = navMatch[0];
-  const rel = path.relative(root, file).replaceAll(path.sep, '/');
 
-  if (!/href="[^"]*trends\/?"[^>]*>Trends<\/a>/i.test(nav)) {
+  if (!/^trends\/(?:de|br)\//.test(rel) && !/href="[^"]*trends\/?"[^>]*>Trends<\/a>/i.test(nav)) {
     const href = relativeHref(file, 'trends');
     const link = `<a href="${href}"${rel === 'trends/index.html' ? ' aria-current="page"' : ''}>Trends</a>`;
     nav = nav.replace(/(<a[^>]*>Data<\/a>)/i, `$1${link}`);
   }
 
-  if (!/href="[^"]*fun-facts\/?"[^>]*>Fun Facts<\/a>/i.test(nav)) {
+  if (!/^trends\/(?:de|br)\//.test(rel) && !/href="[^"]*fun-facts\/?"[^>]*>Fun Facts<\/a>/i.test(nav)) {
     const href = relativeHref(file, 'fun-facts');
     const link = `<a href="${href}"${rel === 'fun-facts/index.html' ? ' aria-current="page"' : ''}>Fun Facts</a>`;
     const trend = nav.match(/<a[^>]*>Trends<\/a>/i)?.[0];
@@ -47,8 +83,8 @@ for (const file of await walk(root)) {
 
   if (nav !== navMatch[0]) {
     html = html.replace(navMatch[0], nav);
-    await writeFile(file, html, 'utf8');
   }
+  await writeFile(file, html, 'utf8');
 }
 
 const trendsRoot = path.join(root, 'trends');
@@ -69,4 +105,4 @@ if (missingTrendUrls.length > 0) {
   await writeFile(sitemapPath, sitemap, 'utf8');
 }
 
-console.log(`Ensured Trends and Fun Facts are present in the primary navigation; ${trendUrls.length} trend routes are present in the sitemap.`);
+console.log(`Ensured Trends and Fun Facts are present in the primary navigation; localized DE/BR trend shells; ${trendUrls.length} trend routes are present in the sitemap.`);
