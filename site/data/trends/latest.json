@@ -8,8 +8,8 @@
     "note": "Search volumes are Google Trends threshold buckets, not exact query counts. Growth is relative to the normal search baseline shown by Google Trends."
   },
   "methodology": {
-    "purpose": "Surface fast-rising search demand across major markets as a discovery layer, not as a complete ranking of all Google searches.",
-    "wdScore": "Reserved for future World Discovery scoring using momentum, cross-country spread, informational intent, longevity, data fit and competition."
+    "purpose": "Surface fast-rising search demand across major markets as a discovery layer, prioritising queries where a sourced answer can realistically add informational value.",
+    "wdScore": "Reserved for future World Discovery scoring using momentum, informational intent, expected organic click opportunity, longevity, data fit and competition."
   },
   "markets": ["United States", "India", "United Kingdom", "Brazil", "Germany"],
   "trends": [
@@ -34,13 +34,13 @@
       "sourceUrl": "https://trends.google.com/trending?geo=IN"
     },
     {
-      "id": "everton-vs-man-utd",
-      "query": "everton vs man utd",
+      "id": "state-pension-triple-lock",
+      "query": "uk state pension triple lock policy",
       "market": "United Kingdom",
-      "searchVolumeBucket": "200K+",
+      "searchVolumeBucket": "10K+",
       "growth": "+1,000%",
       "status": "active",
-      "intent": "live-event",
+      "intent": "explainer-policy",
       "sourceUrl": "https://trends.google.com/trending?geo=GB"
     },
     {
