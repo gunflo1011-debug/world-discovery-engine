@@ -95,6 +95,19 @@ test.describe('primary internet-use country time-series live smoke', () => {
   });
 });
 
+test('PR 199 search-intent block remains live on Austria and Bangladesh', async ({ request }) => {
+  for (const code of ['aut', 'bgd']) {
+    const response = await request.get(releaseUrl(`/indicators/internet-use/country/${code}/`));
+    expect(response.ok()).toBeTruthy();
+    const html = await response.text();
+    expect(html).toContain('data-search-intent="internet-penetration"');
+    expect(html).toContain('href="/data/internet-use/"');
+    expect(html).toContain('href="../../"');
+    expect(html).toContain('Compare internet users by country and year');
+    expect(html).toContain('Explore the 2024 internet-use ranking');
+  }
+});
+
 test('AI discovery endpoints remain live and point to canonical country URLs', async ({ request }) => {
   const [manifestResponse, llmsResponse, historyResponse] = await Promise.all([
     request.get(releaseUrl('/ai-index.json')),
