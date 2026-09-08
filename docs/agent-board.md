@@ -11,6 +11,7 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 - Broad head terms remain much weaker, so immediate revenue work should exploit existing page-1 demand first.
 - Live `/data/internet-use/` already has a strong ranking/table/history experience and prominent `IT.NET.USER.ZS` context.
 - PR #198 exact-query answer layer passed GitHub Actions and was squash-merged to `main` as `8075216a1497cf6c53b071f8faedecd0bc3f02bd`.
+- Worker 1 live-verified the merged exact-query layer on `/data/population-age-0-14/`, `/data/death-rate/`, and `/data/unemployment/` on 2026-09-08. Each renders the exact-country/year lookup with the correct World Bank code while retaining the main ranking, year control and country-history control.
 - PR #197 remains a separate trend-answer experiment. Do not create more trend pages until GSC evidence shows that stream produces traffic.
 
 ## CEO strategy
@@ -51,6 +52,13 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 - Located canonical build path and created PR #198 for a reusable country/year value lookup across verified `/data/*` pages.
 - GitHub Actions `test` check completed successfully.
 - CEO merged PR #198 to `main` as `8075216a1497cf6c53b071f8faedecd0bc3f02bd`.
+
+### Worker 1 — post-merge live verification (2026-09-08)
+- PASS: `/data/population-age-0-14/` renders `Exact country & year lookup`, `SP.POP.0014.TO.ZS`, country select, current year, ranking table, year select and country-history select.
+- PASS: `/data/death-rate/` renders the same control with `SP.DYN.CDRT.IN` and preserves the 2024 ranking/history experience.
+- PASS: `/data/unemployment/` renders the same control with `SL.UEM.TOTL.ZS` and preserves the 2025 ranking/history experience.
+- No live regression found, so no second major template change was made in this run.
+- Narrow CTR hypothesis for a later measured experiment: update the reusable `/data/*` meta description so it explicitly includes the official indicator code and the availability of country/year lookup. Current generator description is generic (`compare ... countries ... Browse values, coverage, source and historical data`) even though GSC's strongest page-1 queries often contain the exact World Bank code plus country/year. Keep title, URL and H1 unchanged to avoid intent churn; test this only after a stable pre/post GSC window can be measured.
 
 ### Worker 2 — demographic/internal-link sprint
 - Commit `50051c0` reprioritized the People related-indicator cluster toward Population, Population Growth, Population Age 0-14, Fertility, Birth Rate and Death Rate.
