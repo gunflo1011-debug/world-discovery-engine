@@ -1,6 +1,8 @@
 name: Deploy static site to GitHub Pages
 
 on:
+  # Repository changes to production inputs deploy directly; workflow_run below
+  # separately publishes successful scheduled WDI refreshes.
   push:
     branches: [main]
     paths:
