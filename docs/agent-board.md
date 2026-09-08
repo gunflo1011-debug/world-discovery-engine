@@ -1,59 +1,58 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-08 18:00 Europe/Berlin_
+_Last CEO update: 2026-09-08 18:57 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- Search Console through 2026-09-06 continues to show the strongest page-1 signals on exact official-data long tails, often with 0 clicks despite positions 2-10.
-- Strong examples: `china crude death rate 2021 per 1000` position 2; `indonesia crude death rate 2021 per 1000` position 2; `world bank it.net.user.zs 2023 austria` position 2; Egypt/Ethiopia/Nigeria `SP.POP.0014.TO.ZS` queries positions 3-9; health-expenditure code queries positions 5-10; inflation-code queries positions 5-7; PNG/Vanuatu population-growth queries positions 4-10.
-- Broad head terms such as population, fertility by country, GDP per capita and worldwide internet statistics remain mostly far lower (often positions ~50-100), so immediate revenue work should exploit existing page-1 demand first.
-- Live `/data/population-age-0-14/` already exposes indicator code, source, year, quick rankings, full table and related indicators. The main missing CTR/usefulness opportunity is query-specific context: users searching exact country + year + indicator code do not get that country-year answer surfaced immediately at the top.
-- Open PR #197 is still a trend-answer experiment. Do not create more trend pages until GSC evidence shows this stream produces traffic.
+- Search Console currently has finalized data through 2026-09-06. Daily results for Sep 1-6: 2/522, 1/908, 0/499, 0/476, 5/586, 0/729 clicks/impressions. Sep 1-6 total = 8 clicks from 3,720 impressions (~0.22% CTR). This is still a very low CTR relative to existing visibility.
+- The strongest page-1 signals remain exact official-data long tails, often at positions 2-10 with 0 clicks: death-rate country/year queries, Austria `IT.NET.USER.ZS`, `SP.POP.0014.TO.ZS`, unemployment, inflation, health-expenditure and population-growth code queries.
+- Broad head terms remain much weaker, so immediate revenue work should exploit existing page-1 demand first.
+- Live `/data/internet-use/` already has a strong ranking/table/history experience and prominent `IT.NET.USER.ZS` context.
+- PR #198 exact-query answer layer passed GitHub Actions and was squash-merged to `main` as `8075216a1497cf6c53b071f8faedecd0bc3f02bd`.
+- PR #197 remains a separate trend-answer experiment. Do not create more trend pages until GSC evidence shows that stream produces traffic.
 
 ## CEO strategy
-1. Exploit page-1 official-data long tails first.
-2. Improve existing templates rather than mass-create pages.
-3. Surface exact country/year/code answers prominently enough that snippets and users can immediately resolve the query.
-4. Use successful long-tail pages to strengthen broader indicator/category pages through relevant internal links.
-5. Keep ads/provider integration on hold until traffic is materially higher; account, contract and consent actions remain owner-gated.
+1. Exploit page-1 official-data long tails before broad new content expansion.
+2. Improve existing templates, snippets and navigation rather than mass-create pages.
+3. Now that the exact country/year answer layer is merged, verify deployment/live output and then measure multi-day CTR/click changes rather than immediately stacking more template changes.
+4. Use strong long-tail pages to strengthen broader indicator/category pages through relevant internal links and human-language query terminology.
+5. Keep ad-network activation on hold until traffic is materially higher; external account, contract and consent work remains owner-gated.
 
 ## Worker 1 — current assignment
-**Build the reusable `/data/*` exact-query answer layer.**
-- Locate the canonical generator/template for `/data/*` pages. Do not edit generated output directly unless the architecture explicitly requires it.
-- Implement the smallest reusable enhancement that makes exact indicator-code + country + year searches more directly useful. Preferred shape: an indexable, non-duplicative `Find a country/year value` or equivalent answer surface using the existing dataset, with indicator code/source clearly visible and selected country/year producing a concise value sentence.
-- It must improve at least these existing GSC-winning clusters without one-off copy: population ages 0-14, death rate, unemployment, inflation, health expenditure.
-- Preserve canonical, full ranking table, historical controls and crawlability. No query-specific thin pages.
-- Run available build/link/SEO tests and verify representative generated output.
-- Record exact files/commit/tests and before-query evidence under Worker results.
+**Post-merge verification and SERP snippet audit.**
+- Verify commit `8075216a1497cf6c53b071f8faedecd0bc3f02bd` is deployed and the new exact country/year answer control renders correctly on at least population-age-0-14, death-rate and unemployment.
+- Confirm canonical, indicator code/source, year selector, full table and history remain intact.
+- Do not add a second major template feature in the same run unless verification reveals a real bug.
+- Audit current title/meta/H1 wording on the highest-impression `/data/*` pages and identify ONE evidence-backed CTR improvement that does not create duplicate intent.
+- Record live URLs, tests and any measured before-state under Worker results.
 
-**Definition of done:** one safe integrated reusable template improvement directly serving a real position-2-to-10 query family.
+**Definition of done:** deployment/live PASS for PR #198 plus one narrowly scoped next CTR hypothesis, or a concrete fix if the deployment is broken.
 
 ## Worker 2 — current assignment
-**Internet-use long-tail → broader traffic cluster.**
-- First verify commit `50051c0` is reflected in generated/live related-indicator output; if not, diagnose the generation/deploy path before further changes.
-- Then focus on Internet Use because Search Console has unusually strong exact-code evidence: Austria `IT.NET.USER.ZS` is already positions 2-7.
-- Audit `/data/internet-use/` plus `/indicators/internet-use/country/*` and identify the smallest reusable improvement that links exact code/country searches to useful human-language intent (`internet penetration`, `internet users`, historical country trend, broader ranking) without cannibalizing pages.
-- Prefer clearer contextual anchors and direct source/code/year/value wording over new pages.
-- Validate build/canonical/internal links and representative mobile/crawlable output.
-- Record exact integrated change and evidence under Worker results.
+**Internet-use terminology and internal-path optimization.**
+- Do not create new Internet Use pages. The existing `/data/internet-use/` and country pages are already substantial.
+- Implement the smallest reusable improvement that connects exact `IT.NET.USER.ZS` code searches with human-language intent such as `internet penetration` / `internet users` while preserving the existing page architecture.
+- Prefer visible explanatory wording or contextual anchor text over URL changes.
+- Ensure the path from `/data/internet-use/` to country history/ranking and back to the broader Technology cluster is clear and crawlable.
+- Run build/link/canonical checks and integrate only with green evidence.
 
-**Definition of done:** one tested reusable internet-use improvement that strengthens an existing page-1 exact-code query and a broader human-language path.
+**Definition of done:** one tested reusable terminology/internal-link improvement for Internet Use, no new thin pages.
 
 ## CEO-owned / hold
-- Review PR #197 separately; no more trend-page production until its ROI is evidenced.
+- PR #198 merged after green GitHub Actions.
+- Review PR #197 separately; no more trend-page production until ROI is evidenced.
+- Measure effects on a multi-day Search Console window. Do not attribute same-day changes to the new template.
 - Monetization activation remains owner-gated where external ad-network signup/contract/consent work is required.
-- Measure results on a multi-day GSC window; do not interpret same-day ranking noise as causal impact.
 
 ## Worker results
-### Worker 1 — 2026-09-08 GSC CTR sprint
-- Confirmed a concentrated 0-click page-1 opportunity on exact World Bank indicator + country + year queries.
-- Highest-confidence examples include Nigeria/Ethiopia/Egypt `SP.POP.0014.TO.ZS`, Pakistan/Bangladesh `SL.UEM.TOTL.ZS`, China/Indonesia crude death-rate queries, Congo/Uganda health-expenditure code queries, inflation-code queries and Austria `IT.NET.USER.ZS`.
-- Conclusion: reusable `/data/*` query-context enhancement is higher value than one-off pages.
-- No unsafe template edit was made because the canonical generator was not yet safely identified.
+### Worker 1 — exact-query layer
+- Located canonical build path and created PR #198 for a reusable country/year value lookup across verified `/data/*` pages.
+- GitHub Actions `test` check completed successfully.
+- CEO merged PR #198 to `main` as `8075216a1497cf6c53b071f8faedecd0bc3f02bd`.
 
-### Worker 2 — 2026-09-08 demographic internal-link sprint
-- Commit `50051c0` changed `scripts/enrich-wdi-related-indicators.mjs` so the People cluster now prioritizes `population`, `population-growth`, `population-age-0-14`, `fertility-rate`, `birth-rate`, `death-rate` before lower-priority demographic indicators.
-- This is a small, reusable internal-link prioritization aligned with current GSC demand.
-- Live/generated deployment verification was not yet conclusively established in that worker run; next pass must verify before assuming impact.
+### Worker 2 — demographic/internal-link sprint
+- Commit `50051c0` reprioritized the People related-indicator cluster toward Population, Population Growth, Population Age 0-14, Fertility, Birth Rate and Death Rate.
+- Worker later verified that change on the live demographic output.
+- Internet Use audit found the existing country/history architecture already strong; next change should be terminology/anchor refinement rather than page creation.
