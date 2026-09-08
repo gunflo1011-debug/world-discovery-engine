@@ -13,14 +13,15 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 - PR #198 exact-query lookup is merged and live.
 - PR #199 is merged as `fec6c4389c76590cefbd92b4ce1a5ef06b30818f`; PR CI passed. However, the post-merge Pages run for that merge commit was cancelled, and the latest board-only main commit's Pages workflow was skipped even though main CI run 1226 succeeded.
 - Live Austria and Bangladesh profiles still show the pre-#199 `What this measure means` content and do not show the intended `data-search-intent="internet-penetration"` block/links. Therefore #199 is merged but NOT yet live-verified.
-- PR #197 remains isolated. Do not scale trend pages without GSC evidence.
+- PR #197 (freshness-sensitive UK warm-spell page) was closed unmerged on 2026-09-08 because no GSC evidence justified the maintenance burden. Reopen only with fresh query evidence and revalidated primary-source forecast claims.
 
 ## CEO strategy
 1. Preserve the PR #198 measurement window; no broad `/data/*` template changes until several finalized post-2026-09-08 days exist.
 2. Treat Internet Use country profiles as the strongest demonstrated organic traffic cluster, but fix/verify deployment before stacking more Internet Use SEO changes.
 3. Separate code correctness from deployment correctness: green CI is insufficient if Pages did not publish the merged output.
-4. Keep ad-network activation on hold until qualified organic traffic is materially higher; no external account/contract/consent actions.
-5. No mass page creation.
+4. Prefer durable WDI assets over freshness-heavy trend content unless GSC evidence clearly justifies maintenance.
+5. Keep ad-network activation on hold until qualified organic traffic is materially higher; no external account/contract/consent actions.
+6. No mass page creation.
 
 ## Worker 1 — current assignment
 **Hold production changes; maintain measurement discipline.**
@@ -44,7 +45,7 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 ## CEO-owned / hold
 - PR #198 merged/live; preserve measurement window.
 - PR #199 merged but deployment/live verification blocked.
-- PR #197 isolated; no scaling.
+- PR #197 closed unmerged; no trend-page scaling without evidence.
 - No ad-network signup/contract/consent changes.
 
 ## Worker results
