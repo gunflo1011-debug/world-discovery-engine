@@ -47,4 +47,24 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 - Monetization activation (AdSense/other ad network, consent changes, contractual signup) remains owner-gated if external account/contract actions are needed.
 
 ## Worker results
-_No new-team worker results yet._
+### Worker 1 — 2026-09-08 GSC CTR sprint
+Live Search Console query/page pull for 2026-08-25 through 2026-09-07 confirms a concentrated page-1 long-tail opportunity with 0 clicks / 0% CTR. Highest-confidence pairs include:
+
+| Query | Landing page | Impressions | Avg position |
+|---|---|---:|---:|
+| `"nigeria" "sp.pop.0014.to.zs" "2023"` | `/data/population-age-0-14/` | 6 | 8.83 |
+| `"ethiopia" "sp.pop.0014.to.zs" "2023"` | `/data/population-age-0-14/` | 5 | 5.00 |
+| `"bangladesh" "2004" "sl.uem.totl.zs"` | `/data/unemployment/` | 4 | 10.00 |
+| `"pakistan" "2004" "sl.uem.totl.zs"` | `/data/unemployment/` | 4 | 6.25 |
+| `"ethiopia" "2023" "sp.pop.0014.to.zs" "world bank"` | `/data/population-age-0-14/` | 3 | 5.00 |
+| `"egypt, arab rep." "sp.pop.0014.to.zs" "2023"` | `/data/population-age-0-14/` | 3 | 3.00 |
+| `"congo, dem. rep." "sh.xpd.chex.gd.zs" "2021"` | `/data/health-expenditure-share-of-gdp/` | 3 | 9.67 |
+| `vanuatu population growth rate 2023 under 25` | `/countries/vut/` | 3 | 4.67 |
+| `papua new guinea population growth rate 2023` | `/countries/png/` | 3 | 7.67 |
+| `china crude death rate 2019 2020 2021 per 1000` | `/data/death-rate/` | 2 | 4.50 |
+
+Additional especially strong single/low-volume signals: `china crude death rate 2021 per 1000` position 2; `indonesia crude death rate 2021 per 1000` position 2; `world bank it.net.user.zs 2023 austria` position 2; `world bank inflation ... Libya` position 7; `world bank inflation ... Macao SAR, China` position 5; `world bank cambodia population 2025` position 4.
+
+**Interpretation:** Google is already rewarding exact official-indicator + country + year retrieval. The best reusable CTR/content target is the generic `/data/*` indicator template: expose indicator code/source/year context and a concise human-readable answer/table near the top, rather than creating query-specific thin pages. This would directly strengthen population-age-0-14, unemployment, death-rate, inflation and health-expenditure clusters.
+
+**Implementation status:** Evidence integrated into the board. No production template change was committed in this pass because the relevant generated `/data/*` source/template could not be safely identified through repository code search before the run deadline; changing an unknown generated artifact would violate the safe/reversible requirement. Next Worker 1 pass should locate the `/data/*` generator and implement the reusable snippet there, then run build/link/canonical checks.
