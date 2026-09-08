@@ -63,3 +63,51 @@ test('released non-English Fun Facts do not fall back to English body copy', asy
   assert.doesNotMatch(german, /Yes, really\.|Why this is so weird|What is actually happening\?|Claims checked against the sources above\.|← More Fun Facts/);
   assert.match(german, /Ja, wirklich\.|Warum das so erstaunlich ist|Was passiert dabei eigentlich\?|Die Aussagen wurden anhand der oben genannten Quellen geprüft\./);
 });
+
+test('curated Fun Facts meet the editorial quality baseline', async () => {
+  const manifest = JSON.parse(await readFile(new URL('../scripts/fun-facts-manifest.json', import.meta.url), 'utf8'));
+  assert.equal(manifest.timezone, 'Europe/Berlin');
+  assert.ok(Array.isArray(manifest.facts) && manifest.facts.length > 0);
+
+  const slugs = new Set();
+  const dailyCounts = new Map();
+  const translationLocales = ['de', 'es', 'fr', 'zh-Hans'];
+  const requiredEnglish = { title: 25, dek: 90, why: 120, context: 120, extra: 100 };
+  const requiredTranslation = { title: 8, dek: 35, why: 35, context: 45, extra: 30 };
+
+  for (const fact of manifest.facts) {
+    assert.match(fact.date, /^\d{4}-\d{2}-\d{2}$/);
+    assert.match(fact.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+    assert.ok(!slugs.has(fact.slug), `Duplicate Fun Fact slug: ${fact.slug}`);
+    slugs.add(fact.slug);
+
+    const count = (dailyCounts.get(fact.date) || 0) + 1;
+    dailyCounts.set(fact.date, count);
+    assert.ok(count <= 2, `More than two Fun Facts published on ${fact.date}`);
+
+    for (const [field, minimum] of Object.entries(requiredEnglish)) {
+      assert.equal(typeof fact[field], 'string', `${fact.slug}: missing ${field}`);
+      assert.ok(fact[field].trim().length >= minimum, `${fact.slug}: ${field} is too thin`);
+    }
+
+    const sources = [
+      [fact.sourceLabel, fact.sourceUrl],
+      [fact.source2Label, fact.source2Url],
+      [fact.source3Label, fact.source3Url]
+    ].filter(([, url]) => url);
+    assert.ok(sources.length >= 2, `${fact.slug}: extraordinary claims need at least two serious sources`);
+    for (const [label, url] of sources) {
+      assert.ok(label && label.trim().length >= 8, `${fact.slug}: source label is missing or vague`);
+      assert.match(url, /^https:\/\//, `${fact.slug}: source must use HTTPS`);
+    }
+
+    for (const locale of translationLocales) {
+      const translation = fact.translations?.[locale];
+      assert.ok(translation, `${fact.slug}: missing ${locale} translation`);
+      for (const [field, minimum] of Object.entries(requiredTranslation)) {
+        assert.equal(typeof translation[field], 'string', `${fact.slug}: ${locale}.${field} missing`);
+        assert.ok(translation[field].trim().length >= minimum, `${fact.slug}: ${locale}.${field} is too thin`);
+      }
+    }
+  }
+});
