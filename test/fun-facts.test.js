@@ -70,7 +70,7 @@ test('curated Fun Facts meet the editorial quality baseline', async () => {
   assert.ok(Array.isArray(manifest.facts) && manifest.facts.length > 0);
 
   const slugs = new Set();
-  const dailyCounts = new Map();
+  const publishedDates = new Set();
   const translationLocales = ['de', 'es', 'fr', 'zh-Hans'];
   const requiredEnglish = { title: 25, dek: 90, why: 120, context: 120, extra: 100 };
   const requiredTranslation = { title: 8, dek: 35, why: 35, context: 45, extra: 30 };
@@ -81,9 +81,8 @@ test('curated Fun Facts meet the editorial quality baseline', async () => {
     assert.ok(!slugs.has(fact.slug), `Duplicate Fun Fact slug: ${fact.slug}`);
     slugs.add(fact.slug);
 
-    const count = (dailyCounts.get(fact.date) || 0) + 1;
-    dailyCounts.set(fact.date, count);
-    assert.ok(count <= 2, `More than two Fun Facts published on ${fact.date}`);
+    assert.ok(!publishedDates.has(fact.date), `More than one Fun Fact published on ${fact.date}`);
+    publishedDates.add(fact.date);
 
     for (const [field, minimum] of Object.entries(requiredEnglish)) {
       assert.equal(typeof fact[field], 'string', `${fact.slug}: missing ${field}`);
