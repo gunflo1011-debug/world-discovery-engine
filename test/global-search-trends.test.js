@@ -26,3 +26,36 @@ test('generated sitemap enrichment keeps the trends route', async () => {
   const script = await readFile(new URL('../scripts/add-wdi-pages-to-sitemap.mjs', import.meta.url), 'utf8');
   assert.match(script, /['"]\/trends\/['"]/);
 });
+
+test('every globally visible current trend answer is listed in the sitemap', async () => {
+  const [snapshot, sitemap] = await Promise.all([
+    readFile(new URL('data/trends/latest.json', siteRoot), 'utf8'),
+    readFile(new URL('sitemap.xml', siteRoot), 'utf8')
+  ]);
+  const data = JSON.parse(snapshot);
+  const marketCodes = {
+    'United States': 'us',
+    India: 'in',
+    'United Kingdom': 'uk',
+    Brazil: 'br',
+    Germany: 'de'
+  };
+
+  for (const trend of data.trends) {
+    const market = marketCodes[trend.market];
+    assert.ok(market, `Unknown trend market: ${trend.market}`);
+    const url = `https://worlddiscoverydata.com/trends/${market}/${trend.id}/`;
+    assert.match(sitemap, new RegExp(`<loc>${url.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}<\\/loc>`), `${url} missing from sitemap`);
+  }
+});
+
+test('the newest visible market-hub answer is listed in the sitemap', async () => {
+  const sitemap = await readFile(new URL('sitemap.xml', siteRoot), 'utf8');
+  for (const market of ['us', 'in', 'uk', 'br', 'de']) {
+    const html = await readFile(new URL(`trends/${market}/index.html`, siteRoot), 'utf8');
+    const match = html.match(/<a class="card" href="([^"#?]+)\/">/);
+    assert.ok(match, `${market} hub has no visible trend card`);
+    const url = `https://worlddiscoverydata.com/trends/${market}/${match[1]}/`;
+    assert.ok(sitemap.includes(`<loc>${url}</loc>`), `${url} missing from sitemap`);
+  }
+});
