@@ -45,7 +45,7 @@ test('every globally visible current trend answer is listed in the sitemap', asy
     const market = marketCodes[trend.market];
     assert.ok(market, `Unknown trend market: ${trend.market}`);
     const url = `https://worlddiscoverydata.com/trends/${market}/${trend.id}/`;
-    assert.match(sitemap, new RegExp(`<loc>${url.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}<\\/loc>`), `${url} missing from sitemap`);
+    assert.ok(sitemap.includes(`<loc>${url}</loc>`), `${url} missing from sitemap`);
   }
 });
 
