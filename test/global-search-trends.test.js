@@ -1,8 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 
 const siteRoot = new URL('../site/', import.meta.url);
+const execFileAsync = promisify(execFile);
+
+async function refreshTrendDiscoverability() {
+  await execFileAsync(process.execPath, [new URL('../scripts/add-trends-navigation.mjs', import.meta.url).pathname]);
+}
 
 test('global search trends hub is indexable, linked and machine-readable', async () => {
   const [html, explore, snapshot] = await Promise.all([
@@ -28,6 +35,7 @@ test('generated sitemap enrichment keeps the trends route', async () => {
 });
 
 test('every globally visible current trend answer is listed in the sitemap', async () => {
+  await refreshTrendDiscoverability();
   const [snapshot, sitemap] = await Promise.all([
     readFile(new URL('data/trends/latest.json', siteRoot), 'utf8'),
     readFile(new URL('sitemap.xml', siteRoot), 'utf8')
@@ -50,6 +58,7 @@ test('every globally visible current trend answer is listed in the sitemap', asy
 });
 
 test('the newest visible market-hub answer is listed in the sitemap', async () => {
+  await refreshTrendDiscoverability();
   const sitemap = await readFile(new URL('sitemap.xml', siteRoot), 'utf8');
   for (const market of ['us', 'in', 'uk', 'br', 'de']) {
     const html = await readFile(new URL(`trends/${market}/index.html`, siteRoot), 'utf8');
