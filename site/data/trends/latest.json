@@ -14,21 +14,21 @@
   "markets": ["United States", "India", "United Kingdom", "Brazil", "Germany"],
   "trends": [
     {
-      "id": "labor-day",
-      "query": "labor day",
+      "id": "emmy-winners-2026",
+      "query": "emmy winners 2026",
       "market": "United States",
-      "searchVolumeBucket": "2M+",
-      "growth": "+1,000%",
+      "searchVolumeBucket": "20K+",
+      "growth": "+500%",
       "status": "active",
-      "intent": "service-explainer",
+      "intent": "entertainment-results",
       "sourceUrl": "https://trends.google.com/trending?geo=US"
     },
     {
       "id": "rrb-group-d-answer-key-2026",
       "query": "rrb group d answer key 2026",
       "market": "India",
-      "searchVolumeBucket": "20K+",
-      "growth": "+700%",
+      "searchVolumeBucket": "50K+",
+      "growth": "+900%",
       "status": "active",
       "intent": "exam-answer-key",
       "sourceUrl": "https://trends.google.com/trending?geo=IN"
