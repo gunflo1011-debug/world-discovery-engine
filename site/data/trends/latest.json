@@ -14,13 +14,13 @@
   "markets": ["United States", "India", "United Kingdom", "Brazil", "Germany"],
   "trends": [
     {
-      "id": "emmy-winners-2026",
-      "query": "emmy winners 2026",
+      "id": "2027-social-security-benefit-changes",
+      "query": "2027 social security benefit changes",
       "market": "United States",
       "searchVolumeBucket": "20K+",
-      "growth": "+500%",
+      "growth": "+1,000%",
       "status": "active",
-      "intent": "entertainment-results",
+      "intent": "benefits-policy-explainer",
       "sourceUrl": "https://trends.google.com/trending?geo=US"
     },
     {
