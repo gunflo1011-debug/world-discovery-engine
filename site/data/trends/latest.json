@@ -44,13 +44,13 @@
       "sourceUrl": "https://trends.google.com/trending?geo=GB"
     },
     {
-      "id": "dia-da-independencia-do-brasil",
-      "query": "dia da independência do brasil",
+      "id": "ciclone-extratropical",
+      "query": "ciclone extratropical",
       "market": "Brazil",
-      "searchVolumeBucket": "1M+",
+      "searchVolumeBucket": "500K+",
       "growth": "+1,000%",
       "status": "active",
-      "intent": "holiday-service",
+      "intent": "weather-safety-explainer",
       "sourceUrl": "https://trends.google.com/trending?geo=BR"
     },
     {
