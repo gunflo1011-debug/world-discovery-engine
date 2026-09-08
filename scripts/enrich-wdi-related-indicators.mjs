@@ -6,7 +6,7 @@ const catalog = JSON.parse(await readFile(new URL('index.json', dataRoot), 'utf8
 const indicators = Array.isArray(catalog?.indicators) ? catalog.indicators : [];
 
 const groups = [
-  ['People', ['population','population-growth','population-density','population-age-0-14','population-age-65-plus','urban-population-share','life-expectancy','fertility-rate','birth-rate','death-rate','infant-mortality']],
+  ['People', ['population','population-growth','population-age-0-14','fertility-rate','birth-rate','death-rate','population-density','population-age-65-plus','urban-population-share','life-expectancy','infant-mortality']],
   ['Economy & work', ['gdp','gdp-per-capita','gdp-growth','inflation','unemployment','labor-force-participation','employment-to-population','trade-share-of-gdp','exports-share-of-gdp','imports-share-of-gdp','fdi-net-inflows-share-of-gdp']],
   ['Technology & infrastructure', ['internet-use','mobile-subscriptions','electricity-access']],
   ['Health', ['life-expectancy','infant-mortality','health-expenditure-share-of-gdp']],
