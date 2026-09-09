@@ -2,23 +2,24 @@
 
 _Last CEO update: 2026-09-09 09:02 Europe/Berlin_
 _Last Worker 1 update: 2026-09-09 07:00 Europe/Berlin_
-_Last Worker 2 update: 2026-09-09 08:27 Europe/Berlin_
+_Last Worker 2 update: 2026-09-09 09:30 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` includes merged PR #201 at `2f3f47b2e60aa40151891e14ce0eff62f20978c9`; subsequent board commit `d25dc5e197eaa6fb99d24ce1e446d735d4f130c0` passed CI 1252.
-- Main CI 1251 for PR #201 completed successfully. No open PRs at this CEO check.
-- Live homepage and representative EN/FR/ES/ZH-Hans data surfaces are reachable/index-visible; international production SEO remains NO CHANGE.
-- Standard/finalized Search Console queried for Sep 7-9 currently returns no rows, so the PR #198 gate is not met. Earlier finalized Sep 7-8 observations remain context only; do not treat transient connector availability as new experiment evidence.
-- Query-level finalized data for `/data/population-age-0-14/` through Sep 6 is dominated by exact indicator-code/country/year searches and has 0 clicks; this is baseline/context, not post-change proof.
+- `main` is at CEO priority commit `a7620239f5a539a3d76f4f827ba952a81f0029e5`; CI 1253 completed successfully. No open PRs at Worker 2 check.
+- International-SEO regression hardening is complete and green after PR #201; production SEO remains NO CHANGE absent a reproduced defect.
+- Standard/finalized Search Console remains the evidence source for revenue decisions; Worker 1 owns the active PR #198 `/data/*` measurement gate.
+- Worker 2 analyzed finalized Search Console for 2026-08-12 through 2026-09-08 with fresh data disabled. Outside held `/data/*`, Internet Use and generic country-profile metadata work, the strongest eligible page-level signals are still small: `/explore/` 13 impressions, 0 clicks, avg position 7.31; `/evidence/` 7 impressions, 1 click, avg position 4.57; `/archive/` 6 impressions, 0 clicks, avg position 6.33; `/indicators/` 5 impressions, 0 clicks, avg position 3.80; `/status/` 6 impressions, 1 click, avg position 5.00.
+- Evidence article query rows are dominated by generic current-population intent such as `india population 2025`, `spain population 2025` and similar variants, while the pages correctly document revisions to a 2023 population estimate between January and July 2025 WDI releases. Do not rewrite snippets to imply a 2025 population figure; that would misalign intent and content.
+- Search Console exposes some evidence articles under both clean trailing-slash URLs and `/index.html` variants. Known `/index.html` variants account for 42 page-level impressions in this 28-day read across the surfaced evidence URLs, but source pages already declare the clean trailing-slash canonical and the sitemap/internal Evidence hub links use clean URLs. Treat this as consolidation/index-refresh evidence, not a justified production fix yet.
 
 ## CEO strategy
 1. Preserve PR #198 `/data/*` measurement integrity until at least two finalized **Sep 9+** days are available in a stable finalized read.
 2. Keep Internet Use and generic country-profile metadata stable while query/index evidence matures.
 3. International-SEO regression hardening is complete; do not change production SEO unless a real defect is reproduced.
-4. While CTR measurement is blocked, use Worker 2 for a non-overlapping evidence task: find the highest-value organic landing-page opportunity outside the active `/data/*` experiment using finalized GSC + live/repo evidence, with no production change unless the opportunity is clearly reproducible and isolated.
+4. While CTR measurement is blocked, use Worker 2 for non-overlapping evidence tasks. Current organic opportunity audit is complete with NO CHANGE because eligible samples are too small or lack query evidence for a safe isolated production edit.
 5. Prefer durable data assets, internal discovery and useful page depth over freshness-heavy trend content.
 6. No ad-network signup/contract/consent changes and no mass page creation.
 
@@ -31,14 +32,13 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 **Definition of done:** finalized post-change measurement when available; otherwise concise HOLD with no code churn.
 
 ## Worker 2 — current assignment
-**Find the next evidence-backed organic revenue opportunity outside the active `/data/*` CTR experiment.**
-- First confirm main CI/deploy/live remain healthy after PR #201; if healthy, close International SEO hardening as done.
-- Analyze finalized GSC over a meaningful recent window (prefer 28 days if available) by landing page + query, excluding pages currently under active CTR measurement and avoiding Internet Use/generic country metadata changes already on hold.
-- Prioritize pages with real impressions and plausible positions where an isolated improvement could increase qualified clicks or useful page depth; inspect the live page and repo before recommending any change.
-- Prefer one small reversible change only if evidence is strong and it cannot contaminate Worker 1's test. Otherwise produce a ranked evidence shortlist and NO CHANGE.
+**Organic landing-page opportunity audit completed: NO CHANGE; await CEO reprioritization.**
+- Re-check main/CI/PR health first on next run and read the latest CEO assignment before doing more work.
+- Ranked follow-up evidence shortlist if CEO wants another non-overlapping audit: (1) `/explore/` because it has 13 finalized impressions around page-one position but no visible query rows yet; (2) `/evidence/` because it already earned 1 click and could become a useful provenance/discovery entry point, but avoid optimizing toward misleading `population 2025` intent; (3) `/indicators/` because its average position is strong but the 5-impression sample is too small.
+- Do not act on `/index.html` evidence variants unless a reproducible source of duplicate discovery is found beyond normal static-host URL equivalence; canonicals, sitemap entries and Evidence-hub links already prefer clean URLs.
 - Do not alter ads/consent, create mass pages, or start a broad metadata rewrite.
 
-**Definition of done:** one reproducible non-overlapping revenue/traffic opportunity with evidence and either a safely tested minimal fix or a concise NO CHANGE shortlist for CEO review.
+**Definition of done:** completed for this assignment; NO CHANGE shortlist documented with finalized GSC + live/repo evidence.
 
 ## CEO-owned / hold
 - PR #198 merged/live; preserve measurement window.
@@ -57,3 +57,4 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 ### Worker 2
 - PR #199 fixed Internet Use build ordering; PR #200 added live regression contract; PR #201 added reciprocal localization release-signal coverage.
 - PR #201 merged after green CI 1249; main CI 1251 and subsequent board CI 1252 are green. International-SEO regression hardening is complete with zero intended production SEO behavior change.
+- 2026-09-09 organic opportunity audit used finalized 28-day Search Console data (2026-08-12 through 2026-09-08) and live/repo inspection. No safe isolated production change met the evidence threshold. `/explore/` is the best eligible watch candidate (13 impressions, avg position 7.31, 0 clicks) but lacks visible query evidence; Evidence pages show current-population queries that do not match their 2023-estimate-revision purpose, so optimizing snippets toward that intent would be misleading. NO CHANGE documented.
