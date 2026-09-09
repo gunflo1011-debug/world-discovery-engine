@@ -3,57 +3,54 @@
 _Date: 2026-09-09 · Owner: Worker 2_
 
 ## Decision
-Recommend **Travel Power / Plug / Voltage** as the first non-data MVP candidate, but **do not mass-generate route or country pages yet**. Build approval should be limited to one useful origin→destination checker plus a small pilot only after the factual dataset/licensing path is explicitly cleared.
+**HOLD Travel Power runtime build.** Demand/product fit remains attractive, but the source-provenance gate is not yet clean enough for a five-country production dataset. Authoritative public pages can verify several electrical facts, but this run did not establish a single clearly reusable/open source for plug-type + nominal-voltage + frequency coverage across US, UK, Germany, Japan and Australia. Do not copy IEC/competitor tables.
 
-This is an evidence-backed product recommendation, not a claim of keyword volume. Public SERPs were used as demand/competition signals because no reliable keyword-volume source was available in this run.
+## Provenance findings
+- **US voltage/frequency:** U.S. Department of Energy `Electricity 101` states 110–120 V / 60 Hz and explains standard 120 V plugs. Federal-government factual material is a strong primary verification path, but plug-type taxonomy still needs explicit reusable provenance.
+- **Japan:** Embassy of Japan / JNTO pages explicitly state 100 V AC, 50 Hz in eastern Japan and 60 Hz in western Japan; Embassy material also describes generally used two-flat-pin plugs. This confirms that frequency must be modeled as regional, not a single scalar.
+- **Australia:** Australian Department of Defence public handbook states 230 V / 50 Hz and describes Australian sockets as two diagonal flat pins, optionally a third earth pin. This is strong factual verification, but a reusable bulk-data license was not established.
+- **Europe/Germany:** EU material supports the 230 V / 50 Hz European baseline, but this run did not find a sufficiently explicit Germany-specific, openly licensed plug-type record to clear the complete pilot schema.
+- **UK:** no sufficiently explicit authoritative/open plug-type + voltage/frequency source was verified in this bounded pass.
 
-## `/compare/null` close-out
-Bounded final pass: no emitted internal `/compare/null` link/path or sitemap route has been found in prior tracing. The remaining hypothesis is an external crawler/static-parser misreading valid `history.replaceState(null, ...)`. No user-agent/referrer/request-sequence Cloudflare dimension was available to Worker 2 in this run, and no causal reproduction was established. **NO CHANGE. Downgrade to crawler noise unless new causal evidence appears.** Do not add redirects or `null` content.
+These sources are suitable for cross-checking facts; they do **not** by themselves establish permission to assemble and republish a systematic five-country plug database. Therefore the CEO's legal/reuse gate is not cleared.
 
-## SERP evidence
-Travel-power intent is visibly served by multiple independent specialist utilities rather than only giant publishers. Current examples include Plugsabroad (destination selector, plug/socket type, voltage, frequency, route links), CheckMyPlug (origin→destination compatibility checker, 197 countries, plug-type directory), Plug Type World (device voltage compatibility, country map and route guides), and AcrossKit (origin/destination plug + voltage checker). This supports recurring utility intent across country lookup, route compatibility and device-safety questions.
+## Safety/data model learned from the check
+A future schema must support arrays/ranges and notes rather than one forced value:
 
-Observed intent surfaces:
-- `plug type [country]` / `[country] voltage`: country-reference pages and tables are common.
-- `do I need an adapter [origin] to [destination]`: specialist sites expose explicit origin→destination tools/routes.
-- `travel adapter [country]`: both specialist utilities and travel publishers compete.
-- Device input range (`100–240V`) adds genuine utility beyond a static plug table, but safety wording must remain conservative.
+```text
+country_code
+nominal_voltage_v[]
+frequency_hz[]
+frequency_regions[] { region, hz }
+plug_types[]
+source_records[] { field, publisher, url, checked_at, reuse_basis }
+notes[]
+```
 
-## Source strategy and factual risk
-The IEC World Plugs classification is repeatedly cited by industry/travel references, but a directly reusable IEC bulk dataset/license was **not verified in this run**. Therefore IEC-derived facts must not simply be copied from competitors.
+Compatibility output must separate **physical plug fit** from **voltage compatibility**. Never infer device safety from country voltage. The UI must tell users to read the device input label and explain adapter vs voltage converter/transformer.
 
-Safe implementation gate:
-1. establish a documented reusable dataset/license or compile a small pilot from authoritative national/standards/public sources with provenance;
-2. cross-check each pilot country against at least one independent reputable reference;
-3. model multi-voltage/multi-frequency and regional exceptions explicitly rather than forcing one value;
-4. never state that a device is electrically safe solely from country voltage — ask users to check the device input label and distinguish plug-shape adapters from voltage conversion.
-
-This source/licensing gate is the main blocker to full-scale Travel Power rollout.
+## Build acceptance criteria if provenance later clears
+1. One canonical `/travel/power/` hub; origin/destination query state canonicalizes to the hub initially.
+2. Five-country dataset only; no generated route-page explosion.
+3. Every displayed electrical field has a source record and documented reuse basis.
+4. Regional exceptions render explicitly (Japan 50/60 Hz is the regression fixture).
+5. Core result is server-rendered/non-JS accessible, mobile-first and source-visible.
+6. No absolute safety guarantee; device-label check is prominent.
+7. Scale/index route pages only after GSC and usage evidence.
 
 ## Opportunity scorecard
-Scores are directional 1–5 based on public SERP evidence and implementation characteristics, not fabricated traffic volumes.
+Directional only; no keyword-volume claims.
 
-| Candidate | Demand signal | Competition/rankability | Source quality/path | Build effort | International scale | Page-depth potential | Ad suitability | Total /35 |
+| Candidate | Demand signal | Competition/rankability | Source quality/path | Build effort | International scale | Page-depth | Ad suitability | Total /35 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Travel Power / Plug / Voltage | 4 | 4 | 3 | 4 | 5 | 5 | 4 | **29** |
+| Travel Power | 4 | 4 | 2 | 4 | 5 | 5 | 4 | **28** |
+| Destination Climate / best-time planner | 4 | 3 | 5 | 2 | 5 | 5 | 4 | **28** |
 | Calling codes + time difference | 4 | 3 | 4 | 4 | 5 | 4 | 3 | **27** |
-| Destination climate / best-time planner | 4 | 3 | 5 | 2 | 5 | 5 | 4 | **28** |
 
-### Calling codes + time difference
-Strong evergreen lookup intent and excellent international scale. Current SERPs contain many dedicated directories/tools. ITU is authoritative for E.164 numbering, but its INR database is restricted; public operational bulletins and carefully licensed libraries would be needed for maintainable coverage. Time-zone logic has a strong source path through IANA/tzdata, but the combined niche is crowded and less naturally aligned with travel-ad revenue than power or destination planning.
+Travel Power's source score is reduced from 3→2 because the five-country reuse gate failed. It remains attractive, but no longer deserves implementation priority merely because it is cheap.
 
-### Destination climate / best-time planner
-Potentially the highest long-term product ceiling. Existing tools use NOAA/ERA5 and offer climate, crowding and trip-type matching. Source quality is excellent and the experience can create deep destination exploration. It loses the first-MVP decision because ingestion/aggregation, city resolution, seasonality scoring and UX are materially more complex than a plug checker; it deserves a later dedicated validation rather than a rushed build.
-
-## Recommended MVP
-**One hub/tool:** `/travel/power/` with two searchable selectors: “My plugs are from” and “I’m travelling to”. Result should show source/destination plug types, nominal household voltage/frequency, whether physical plug compatibility exists, whether voltage bands differ, and a prominent device-label check. No shopping/affiliate claims are required for validation.
-
-**Pilot content only:** 5–10 routes chosen from obvious international travel combinations and contrasting electrical systems (for example US→UK, US→Germany, UK→US, Germany→US, US→Japan), but only after source provenance is complete. Route state should preferably remain canonical to the hub during initial product validation unless Search Console demonstrates enough distinct demand and content substance to justify indexable route pages.
-
-**Quality requirements:** accessible without JS for core facts; mobile-first; source/provenance panel; clear adapter-vs-converter explanation; no absolute safety guarantee; no copied competitor prose/data tables; no mass route generation.
-
-## MVP success gate
-Before scaling beyond the pilot, require evidence from Search Console and analytics: indexation of intended pilot surfaces, impressions for relevant plug/adapter/voltage intents, non-trivial engagement with the origin/destination interaction, and no crawl explosion from query-state combinations. Scale only the content architecture that earns real impressions/usage.
+## Replacement direction
+**Destination Climate now deserves the next validation pass.** Its ingestion/UX cost is higher, but NOAA/ERA5 provide a materially cleaner authoritative-data path and the product can support richer destination exploration and page depth. The next comparison should benchmark it against a completely different non-data utility vertical before committing engineering effort.
 
 ## CEO recommendation
-Approve Travel Power as the **first bounded non-data MVP** if Worker/CEO can verify a legally reusable factual source strategy. Keep Destination Climate as the stronger second-stage research candidate because its ceiling may be larger, but do not delay a cheap Travel Power validation to build the more complex climate stack.
+Do **not** build Travel Power runtime UI yet. Keep the schema/acceptance criteria above ready, but shift Worker 2 research to Destination Climate plus one unrelated evergreen utility. Re-open Travel Power only when a clearly reusable/open plug taxonomy and country electrical dataset (or explicit per-source reuse basis for the pilot) is documented.
