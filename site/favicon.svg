@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="World Discovery">
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="World Discovery">
   <defs>
     <radialGradient id="ocean" cx="38%" cy="30%" r="72%">
       <stop offset="0" stop-color="#38bdf8"/>
@@ -10,9 +10,9 @@
       <stop offset="1" stop-color="#22d3ee"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="108" fill="#061427"/>
-  <circle cx="256" cy="256" r="142" fill="url(#ocean)" stroke="#67e8f9" stroke-width="10"/>
-  <path d="M184 159c24-22 57-34 91-31l31 20 36 3 22 28-18 25-37 4-21 31-30-8-24-30-36-6-27-20zM156 248l34-20 30 17 8 33 31 20-7 52-31 32-34-15-7-45-29-23zM300 291l34-23 42 12 18 35-24 47-45 28-23-29 10-36z" fill="#8bd36b" opacity=".96"/>
-  <ellipse cx="256" cy="256" rx="204" ry="78" fill="none" stroke="url(#orbit)" stroke-width="18" transform="rotate(-18 256 256)"/>
-  <path d="M402 88l9 24 24 9-24 9-9 24-9-24-24-9 24-9z" fill="#e0f2fe"/>
+  <rect width="48" height="48" rx="10" fill="#061427"/>
+  <circle cx="24" cy="24" r="13.3" fill="url(#ocean)" stroke="#67e8f9" stroke-width="1"/>
+  <path d="M17.3 14.9c2.3-2.1 5.3-3.2 8.5-2.9l2.9 1.9 3.4.3 2.1 2.6-1.7 2.4-3.5.4-2 2.9-2.8-.8-2.3-2.8-3.4-.6-2.5-1.9zM14.6 23.3l3.2-1.9 2.8 1.6.8 3.1 2.9 1.9-.7 4.9-2.9 3-3.2-1.4-.7-4.2-2.7-2.2zM28.1 27.3l3.2-2.2 3.9 1.1 1.7 3.3-2.2 4.4-4.2 2.6-2.2-2.7.9-3.4z" fill="#8bd36b"/>
+  <ellipse cx="24" cy="24" rx="19.1" ry="7.3" fill="none" stroke="url(#orbit)" stroke-width="1.7" transform="rotate(-18 24 24)"/>
+  <path d="M37.7 8.3l.8 2.2 2.3.8-2.3.9-.8 2.2-.9-2.2-2.2-.9 2.2-.8z" fill="#e0f2fe"/>
 </svg>
