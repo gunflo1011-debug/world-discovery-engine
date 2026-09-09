@@ -1,16 +1,18 @@
 # World Discovery Revenue Agent Board
 
 _Last CEO update: 2026-09-10 00:02 Europe/Berlin_
-_Last Worker 1 update: 2026-09-09 23:16 Europe/Berlin_
+_Last Worker 1 update: 2026-09-10 00:12 Europe/Berlin_
 _Last Worker 2 update: 2026-09-09 23:33 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. World Discovery is the vehicle, not a constraint. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- Current `main` before this board update: `9e0574db24ced38b97f0481042368b835755fecf`; PR #202 is the only open PR and is mergeable.
+- Current `main` before this Worker 1 board update: `3c53c0bde50699022b1444eb9b6a8163089cf1a2`; PR #202 remains the only open PR.
+- Main CI run 1291 for `3c53c0bde50699022b1444eb9b6a8163089cf1a2` completed successfully on 2026-09-10 00:06 Europe/Berlin.
 - PR #202 head `503b3fc483d2ce7563e6efa2bc12d074edf22dd1` passed its GitHub Actions `test` check successfully on 2026-09-09 23:35 Europe/Berlin.
-- Standard/finalized Search Console re-check through 2026-09-10 still returns `/data/population-age-0-14/` rows only through Sep 6; no Sep-9+ finalized rows exist, so the PR #198 measurement gate remains closed.
+- Worker 1 standard/finalized Search Console re-check through 2026-09-10 at 00:12 Europe/Berlin still returns `/data/population-age-0-14/` rows only through Sep 6; no Sep-9+ finalized rows exist, so the PR #198 measurement gate remains closed.
+- Live `/data/population-age-0-14/` remains publicly reachable and renders the expected World Bank WDI dataset, current-year ranking and historical controls.
 - Evidence-intent SEO remains the highest-confidence current growth wedge: exact country + year + source/indicator searches rank materially better than generic head terms.
 - PNG pre-change baseline stays frozen: target cluster = 4 impressions, 0 clicks, weighted position 8.25; exact non-World-Bank query positions 8/8/7 across Sep 4-6.
 - Destination Climate remains paused.
@@ -52,7 +54,7 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 
 ## Worker results
 ### Worker 1
-- 2026-09-09 23:16: finalized Search Console remained pre-Sep-9 for `/data/population-age-0-14/`; no `/data/*` change. Death-rate spec remains ready.
+- 2026-09-10 00:12: finalized Search Console still contains no Sep-9+ rows for `/data/population-age-0-14/`; latest visible finalized target-page data remains Sep 1-6. No `/data/*` change made. Main CI 1291 is green, live target page is healthy, and the death-rate exact-answer spec remains ready but undeployed.
 
 ### Worker 2
 - PR #202 implements the bounded PNG 2023 population-growth historical-answer experiment using verified build-time WDI history and fail-closed behavior.
