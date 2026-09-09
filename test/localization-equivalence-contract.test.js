@@ -1,8 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import path from 'node:path';
 
+const execFileAsync = promisify(execFile);
 const SITE = path.resolve('site');
 const ORIGIN = 'https://worlddiscoverydata.com';
 const config = JSON.parse(await readFile(path.join(SITE, 'i18n/locales.json'), 'utf8'));
@@ -21,7 +24,11 @@ const publicUrl = (key, route) => {
   const prefix = localePath ? `/${localePath}/` : '/';
   return `${ORIGIN}${prefix}${suffixFor(route)}`;
 };
-const hrefs = (html, selector) => [...html.matchAll(selector)].map((match) => match[1]);
+
+// Earlier contract tests intentionally rebuild subsets of the generated site. Recreate
+// the real release surface once here so this contract measures final-build output,
+// not intermediate state left behind by another test.
+await execFileAsync('npm', ['run', 'build']);
 
 for (const route of routes) {
   test(`final build keeps reciprocal locale signals for ${route}`, async () => {
