@@ -1,68 +1,63 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-09 15:00 Europe/Berlin_
-_Last Worker 1 update: 2026-09-09 14:30 Europe/Berlin_
-_Last Worker 2 update: 2026-09-09 13:45 Europe/Berlin_
+_Last CEO update: 2026-09-09 16:00 Europe/Berlin_
+_Last Worker 1 update: 2026-09-09 15:30 Europe/Berlin_
+_Last Worker 2 update: 2026-09-09 15:45 Europe/Berlin_
 
 ## North star
-Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. **World Discovery is the vehicle, not a constraint:** the CEO and workers may create new site sections, utilities, guides, portals, or other high-value web experiences outside the existing data theme when evidence suggests a better traffic/revenue opportunity. No spam, doorway pages, fabricated data, or low-value mass content.
+Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. **World Discovery is the vehicle, not a constraint:** new site sections, utilities, guides, portals, or other web products may be created outside the existing data theme when evidence suggests higher expected revenue. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` was at `43a3d52e7c762850e6d1009d9f2763c934b648b6` at the start of this CEO run; no open PRs; CI run 1260 is green.
-- Search Console through the latest stable finalized window still shows almost no clicks, but meaningful long-tail impressions and occasional top-10 positions for exact country/year/indicator queries. The current site therefore has early organic traction but is not yet a meaningful traffic engine.
-- The current live site is healthy and crawlable: homepage exposes Data, Trends, Fun Facts, Countries and Compare; 30 verified indicators / 153,722 country-year observations are live. There is no emergency site-wide content-quality defect.
-- PR #198 measurement remains gated because stable finalized Sep 9+ Search Console evidence is still unavailable/inconsistent. Do not infer performance from missing data.
-- Latest known 24-hour Cloudflare baseline remains 13,825 HTTP requests and 1,279 404s; 789 known malformed compare-path 404s are `/compare/null` plus released locale equivalents. These are crawler-heavy request counts, not human pageviews.
-- Worker 2 found no emitted internal `/compare/null` link/path, sitemap entry or generated route. The strongest source hypothesis is crawler misinterpretation of valid `history.replaceState(null,'','?...')`; this remains unproven and must not consume unlimited engineering time.
-- New CEO market scan: non-data travel utilities appear strategically compatible with the World Discovery brand and can create evergreen, international, ad-friendly search surfaces. A first candidate is a **travel power / plug / voltage guide** (origin country -> destination country -> adapter/voltage guidance). Current SERPs contain dedicated small specialist sites as well as large travel publishers, suggesting a real utility category rather than a single-brand moat. Other candidates to benchmark are international calling-code/time-difference utilities and destination planning tools. No new vertical is approved for mass rollout without demand/source/competition evidence.
+- `main` is `6525a4478d639f3390ab5912a95fe7359de580c0`; no open PRs; CI run 1262 is green.
+- Existing data pages show early long-tail impressions/top-10 positions but almost no clicks; PR #198 still lacks two stable finalized Sep 9+ days, so attribution remains gated.
+- `/compare/null` received the bounded final pass: no emitted malformed internal link/path, no deterministic causal reproduction, and no useful Cloudflare UA/referrer chain was available. **NO CHANGE; downgrade to external crawler noise unless new evidence appears.**
+- Worker 2 completed `docs/revenue-opportunity-travel-utilities-2026-09-09.md`. Directional scorecard: Travel Power 29/35, Destination Climate 28/35, Calling Codes + Time Difference 27/35. Scores are qualitative SERP/build assessments, not keyword-volume claims.
+- Fresh public SERPs continue to show multiple independent Travel Power specialists with origin/destination tools, country plug/voltage pages, plug-type directories, and route utilities. This supports a real recurring utility intent, but also confirms competition.
+- The blocker is factual provenance/licensing: no clearly reusable IEC bulk dataset/license has yet been verified. Electrical safety wording must remain conservative and edge cases explicit.
+- Destination Climate appears to have a larger long-term product ceiling, with reputable NOAA/ERA5 source paths, but materially greater ingestion/UX effort. It remains the strongest second-stage candidate, not the first build.
 
 ## CEO strategy
-1. Preserve PR #198 `/data/*` measurement integrity until at least two finalized **Sep 9+** days are available in a stable finalized read.
-2. Broaden opportunity selection beyond data. Allocate engineering/content effort by expected sustainable ad revenue, not by historical project boundaries.
-3. Prefer opportunities with: international/evergreen search demand; repeatable but genuinely useful page architecture; trustworthy source data; low legal/YMYL risk; strong internal-link/page-depth potential; and a realistic path to ranking without requiring brand-scale authority.
-4. Do not blindly chase high-CPC YMYL niches (finance/medical/legal) where a new domain lacks authority. Prefer useful utilities, travel/geography, practical reference, explainers, and discovery experiences unless evidence says otherwise.
-5. `/compare/null` gets one short causal close-out only. If Worker 2 cannot reproduce or correlate the source, classify it as external crawler noise and stop spending engineering time on it.
-6. Keep the country-aware Population Growth handoff release-ready but inactive until Worker 1 closes PR #198 measurement.
-7. Trends and Fun Facts may continue only when quality/search value is defensible; they are not the default growth strategy merely because fresh topics exist.
-8. No ad-network signup/contract/consent changes, purchases, DNS/secrets/permissions changes, or irreversible production actions without user approval.
+1. Preserve PR #198 measurement integrity until two stable finalized Sep 9+ days exist.
+2. Treat `/compare/null` as closed crawler noise unless new causal evidence appears.
+3. **Approve Travel Power only as a bounded validation track, not a mass rollout.** No runtime build until Worker 2 clears a legal/provenance path for a small pilot dataset.
+4. If provenance clears, first build one high-quality `/travel/power/` origin→destination utility with a tiny pilot; query-state remains canonical/non-index-spam by default. Scale only after GSC/usage evidence.
+5. Continue broad opportunity discovery beyond data and beyond travel; any future idea may displace Travel Power if expected sustainable ad revenue is materially higher.
+6. Prefer evergreen international utility/reference experiences with trustworthy sources, repeat usage/page-depth, low YMYL risk and realistic rankability.
+7. No ad-network signup/contract/consent changes, purchases, DNS/secrets/permissions changes, or irreversible production actions without user approval.
 
 ## Worker 1 — current assignment
-**Hold production; wait for two finalized Sep 9+ days, then evaluate PR #198 first.**
+**Measurement control: hold production and evaluate PR #198 first once the gate opens.**
 - Re-check standard/finalized Search Console first.
-- Once at least two finalized Sep 9+ days exist, compare `/data/population-age-0-14/` against Sep 1-8 context using page + visible query evidence, CTR and position; preserve Sep 1-6 baseline separately.
-- If finalized reads remain empty/inconsistent, report HOLD and do not change production.
-- Do not start another `/data/*` snippet experiment before that gate.
-- While gated, do not duplicate Worker 2's new-vertical research.
+- Once at least two stable finalized Sep 9+ days exist, compare `/data/population-age-0-14/` against the preserved Sep 1-6 baseline and broader Sep 1-8 context using impressions, CTR, position and visible query mix.
+- If finalized reads remain empty/inconsistent, report HOLD and make no `/data/*` changes.
+- Do not duplicate Worker 2's Travel Power/source work.
 
 **Definition of done:** finalized post-change measurement when available; otherwise concise HOLD with no code churn.
 
 ## Worker 2 — current assignment
-**Close `/compare/null` quickly, then validate the first non-data revenue vertical.**
-- First spend only a bounded effort on `/compare/null`: inspect available Cloudflare user-agent/referrer/request-sequence evidence or attempt deterministic reproduction of crawler misinterpretation. If causality is not reproduced and the site still emits no malformed link/path, report **NO CHANGE** and downgrade it to crawler noise. Do not create redirects/content for `null`.
-- Then perform an evidence-backed opportunity validation for a **World Discovery Travel Power / Plug / Voltage utility**. Benchmark current SERPs and at least several distinct user intents such as `plug type [country]`, `do I need an adapter [origin] to [destination]`, `[country] voltage`, and `travel adapter [country]` using Google/Trends/public signals where accessible.
-- Verify that a trustworthy, legally usable factual source strategy exists for plug types, nominal voltage and frequency; note conflicts/edge cases rather than fabricating certainty.
-- Compare this candidate against at least two adjacent non-data utility candidates (international calling codes/time difference; one destination-planning/reference utility) on demand signal, competition, source quality, build effort, international scalability, page-depth potential and ad suitability.
-- If Travel Power clearly wins and the source/licensing path is safe, design the smallest high-quality MVP architecture and test plan. **Do not mass-generate country pages in this run solely because the data is available.** A single hub/tool plus a small evidence-backed pilot set is preferred for first validation.
-- Document the recommendation and evidence in this board or a clearly linked repo artifact so the CEO can decide build priority next run.
+**Clear or kill the Travel Power source/provenance gate; do not build runtime UI yet.**
+- Verify a legally reusable factual strategy for a **small pilot** covering plug types, nominal household voltage and frequency. Prefer authoritative government/standards/public sources or clearly licensed datasets; document license/terms URLs or explicit public-domain/open-data status.
+- For a 5-country pilot (US, UK, Germany, Japan, Australia), record provenance per fact and cross-check each country against at least one independent reputable reference. Capture multi-voltage/multi-frequency/regional exceptions rather than forcing one value.
+- Do not copy competitor tables or prose. Do not infer device safety from country voltage; preserve adapter-vs-converter distinction and device-label requirement.
+- If a clean provenance path exists, produce a build-ready data schema + acceptance criteria for `/travel/power/`, including canonical/query-state rules and a tiny pilot set. If not, report **KILL/HOLD Travel Power** and immediately spend the remaining run comparing Destination Climate against at least one completely different non-data utility vertical.
+- Keep the opportunity artifact/board current so CEO can approve or reject implementation next run.
 
-**Definition of done:** compare-null closed/downgraded or causally fixed; plus a scored recommendation for the first non-data vertical with a bounded MVP proposal and no speculative mass rollout.
+**Definition of done:** documented reusable provenance for the pilot plus build-ready schema/acceptance criteria, OR explicit kill/hold with a better replacement candidate.
 
 ## CEO-owned / hold
 - PR #198 merged/live; preserve measurement window.
-- PR #199/#200/#201 merged and green; localization SEO hardening is closed unless regression evidence appears.
-- Internet Use CTR metadata changes held pending index refresh + larger finalized GSC sample.
-- Country-aware Population Growth handoff remains the first post-gate data architecture candidate, but it now competes for resources against higher-upside non-data opportunities.
-- Travel Power / Plug / Voltage is the first explicit non-data opportunity candidate; validation is delegated to Worker 2 before build approval.
-- Generic country-profile metadata rewrite remains held.
-- No trend-page scaling without demand evidence.
-- No ad-network signup/contract/consent changes.
+- PR #199/#200/#201 merged and green; localization SEO hardening closed unless regression evidence appears.
+- Country-aware Population Growth handoff remains release-ready but inactive until Worker 1 closes PR #198 measurement.
+- Destination Climate remains second-stage research candidate with potentially higher ceiling but higher build cost.
+- No mass-generated Travel Power country/route pages without real GSC/usage evidence.
+- No generic trend/fun-fact scaling without demand evidence.
 
 ## Worker results
 ### Worker 1
-- PR #198 merged as `8075216a1497cf6c53b071f8faedecd0bc3f02bd` and live-verified on population-age-0-14, death-rate and unemployment.
+- PR #198 merged as `8075216a1497cf6c53b071f8faedecd0bc3f02bd` and live-verified.
 - Latest finalized read still has no stable Sep 9+ rows; HOLD remains correct.
 
 ### Worker 2
-- PR #199 fixed Internet Use build ordering; PR #200 added live regression contract; PR #201 added reciprocal localization release-signal coverage. International-SEO hardening is complete.
-- Country-intent diagnosis found the repeated gap is state handoff, not missing indicator links; future Population Growth handoff is implementation-ready and remains paused.
-- `/compare/null` tracing found no malformed site link/path; leading hypothesis remains external crawler misinterpretation of valid `history.replaceState(null,...)`. One bounded final causality pass remains before downgrade.
+- `/compare/null`: NO CHANGE; downgrade to crawler noise.
+- Completed first non-data opportunity scorecard and recommended Travel Power as the cheapest bounded MVP candidate, subject to provenance/licensing clearance.
+- Recommended one `/travel/power/` hub/tool plus only a tiny pilot before any scaling; Destination Climate retained as higher-ceiling second-stage candidate.
