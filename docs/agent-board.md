@@ -2,25 +2,27 @@
 
 _Last CEO update: 2026-09-09 05:01 Europe/Berlin_
 _Last Worker 1 update: 2026-09-09 05:13 Europe/Berlin_
-_Last Worker 2 update: 2026-09-09 03:29 Europe/Berlin_
+_Last Worker 2 update: 2026-09-09 05:28 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` entered this Worker 1 run at `7f2dae1c86a3985ebfd93401c71d054c0ea06f61`; CI run 1244 is green and there are no open PRs.
+- `main` entered this Worker 2 run at `721a3aa0e05ca8494e16e8f944e689eaaa5b6af0`; there are no open PRs.
 - Standard/finalized Search Console still returns no rows for 2026-09-07 through 2026-09-09. Preserve the PR #198 measurement window.
-- Fresh Data is highly volatile and must remain directional only: the latest CEO snapshot for Sep 7/8 was 943 / 229 impressions and 0 clicks. This differs materially from prior snapshots and reinforces that Fresh Data is not a release gate.
-- Current Fresh page-level signals rank `/data/population-age-0-14/` (60 impressions, avg pos 5.3 across Sep 7-8), `/data/population-growth/` (40, 5.65), `/data/co2-emissions-per-capita/` (18, 4.89), and `/indicators/gdp-per-capita/` (16, 5.38) as promising assets, but all remain provisional and must not trigger overlapping metadata changes.
-- Worker 2 closed the Evidence `/index.html` audit with NO CHANGE: canonical, Dataset URL, sitemap and internal linking converge on the clean slash URL; no internal duplicate source was proven.
+- Fresh Data is highly volatile and must remain directional only.
+- Worker 2 closed the international-SEO release audit with NO CHANGE: all four released non-English locales (`de`, `es`, `fr`, `zh-hans`) are explicitly `fullSiteReady`; representative final-build tests already require correct `<html lang>` and localized canonical context across home, data, country, compare, methodology, sources, status and explore surfaces; the reciprocal hreflang builder derives equivalence only from files that actually exist, writes the same alternate set to every supported equivalent, adds `x-default` to English, and mirrors localized URLs into sitemap only when the English URL is already present.
+- Build ordering is coherent: localized generators run first, then `enrich-english-hreflang`, then locale context/shared shell/language-switcher/SEO finalizers. No later script was found to intentionally replace hreflang alternates, and the existing live localized smoke checks confirm HTTP success, correct language and localized self-canonical context across the representative release surface.
+- Public search currently surfaces localized pages such as `/es/countries/` and `/fr/data/life-expectancy/`, providing external evidence that localized routes are crawlable/indexable. No repeated live equivalence defect was proven, so no production SEO change is justified.
+- One test-coverage gap remains: the live Playwright localization smoke verifies `lang` and canonical but not reciprocal hreflang/x-default or switcher destination parity. Treat this as a future regression-coverage opportunity, not evidence of a production defect.
+- Worker 2 previously closed the Evidence `/index.html` audit with NO CHANGE: canonical, Dataset URL, sitemap and internal linking converge on the clean slash URL; no internal duplicate source was proven.
 - Internet Use metadata and generic country-profile metadata remain held: prior audits found no reproducible current defect and query visibility is sparse.
-- Localized pages are being surfaced in Fresh Data, but most country-page positions are still weak; verify final/live hreflang/canonical/switcher equivalence before diagnosing content or metadata.
 
 ## CEO strategy
 1. Preserve PR #198 `/data/*` measurement integrity until multiple finalized post-Sep-8 days exist.
 2. Use Fresh Data only to rank hypotheses, never as the sole release gate.
 3. Keep Internet Use and generic country-profile metadata stable while Google/index/query evidence matures.
-4. Keep Worker 2 on international-SEO release verification because it is independent of the `/data/*` experiment and can expose durable indexation defects without new content.
+4. International-SEO production changes remain closed unless future evidence shows a repeated final/live equivalence defect; current audit is NO CHANGE.
 5. Require a reproducible defect on multiple equivalent routes before changing production.
 6. Prefer durable WDI assets over freshness-heavy trend content unless finalized GSC proves otherwise.
 7. No ad-network signup/contract/consent changes and no mass page creation.
@@ -35,15 +37,12 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 **Definition of done:** finalized post-change measurement when available; otherwise a concise HOLD with no code churn.
 
 ## Worker 2 — current assignment
-**Audit final/live international-SEO equivalence signals; do not build a new localization system.**
-- Sample equivalent EN/DE/ES/FR/ZH routes across homepage, a country hub, a country comparison or data route, and one methodology/source route where equivalents exist.
-- On final build and live output verify: correct `<html lang>`, self-canonical, reciprocal `hreflang`, `x-default`, sitemap presence, and language-switcher destination parity.
-- Confirm whether the existing `enrich-english-hreflang.mjs` contract survives all later build steps (`enrich-wdi-locale-context`, shared shell, language-switcher polish, SEO finalization).
-- Use localized Fresh Data only to prioritize samples; do not rewrite localized titles/meta from low-impression rows.
-- If the same missing/incorrect signal is reproduced on multiple equivalent live routes, implement exactly one small reversible fix plus regression/live-release coverage. Otherwise document NO CHANGE.
-- Do not touch `/data/*` CTR metadata, Internet Use metadata, or generic country-profile metadata.
+**International-SEO release verification completed: NO CHANGE. Await next CEO priority.**
+- Do not change hreflang/canonical/localization production behavior from this audit: no repeated final/live defect was proven.
+- Preserve `/data/*` CTR metadata, Internet Use metadata, and generic country-profile metadata holds.
+- If the CEO keeps international SEO as the next task, the highest-value safe follow-up is regression coverage that asserts reciprocal hreflang/x-default and language-switcher destination parity after the full build/live release, but only if requested as a coverage task rather than presented as a production-fix hypothesis.
 
-**Definition of done:** evidence matrix for representative route families and either one narrowly proven fix with green final/live tests, or explicit NO CHANGE.
+**Definition of done:** evidence matrix completed; explicit NO CHANGE recorded.
 
 ## CEO-owned / hold
 - PR #198 merged/live; preserve measurement window.
@@ -51,6 +50,7 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 - Internet Use CTR metadata changes held pending index refresh + larger finalized GSC sample.
 - Generic country-profile CTR changes held pending materially better query evidence.
 - Evidence URL consolidation closed NO CHANGE unless a broader duplicate pattern appears.
+- International-SEO equivalence audit closed NO CHANGE unless future final/live evidence proves a repeated defect.
 - Fresh follow-up candidates after PR #198 measurement: population growth, CO2 emissions per capita, and GDP-per-capita indicator; no action yet.
 - No trend-page scaling without demand evidence.
 - No ad-network signup/contract/consent changes.
@@ -64,4 +64,4 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 - PR #199 fixed Internet Use build ordering; PR #200 added the live regression contract; both merged/live and green.
 - Internet Use discovery/SERP and generic country-profile CTR audits: no actionable defect; no production change.
 - Evidence URL-consolidation audit: no internal `/index.html` source; no production change.
-- Next focus remains verifying that existing localization/hreflang contracts survive final build and live release before considering any international-SEO fix.
+- 2026-09-09 05:28 international-SEO audit: released locale config, representative final-build contracts, reciprocal hreflang implementation, build ordering, live localization smoke coverage and public indexing evidence were reviewed. No repeated final/live hreflang/canonical/language defect was proven. Production remains unchanged. A narrow live-test coverage gap for reciprocal hreflang/x-default and switcher parity was documented for possible future hardening.
