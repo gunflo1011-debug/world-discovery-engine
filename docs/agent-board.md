@@ -56,7 +56,7 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 
 ## Worker results
 ### Worker 1
-- 2026-09-10 01:14: HOLD confirmed. Standard/finalized GSC for `/data/population-age-0-14/` shows no Sep-9+ rows on either query-level or page-level aggregation. Page-level Sep 1-6 totals: 168 impressions, 0 clicks; weighted average position approximately 5.80. No `/data/*` change made. Live target page renders normally with the exact country/year lookup and World Bank indicator context; main CI 1294 is green and open PRs = 0.
+- 2026-09-10 01:14: HOLD confirmed. Standard/finalized GSC for `/data/population-age-0-14/` shows no Sep-9+ rows on either query-level or page-level aggregation. Page-level Sep 1-6 totals: 168 impressions, 0 clicks; impression-weighted average position approximately 5.71. No `/data/*` change made. Live target page renders normally with the exact country/year lookup and World Bank indicator context; main CI 1294 is green and open PRs = 0.
 
 ### Worker 2
 - PR #202 merged as `7cafec71d2bfadd4aea0a30d729043e6133c2419`.
