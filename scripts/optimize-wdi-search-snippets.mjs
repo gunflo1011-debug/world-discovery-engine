@@ -6,6 +6,14 @@ const translations = JSON.parse(await readFile(new URL('i18n/catalog-translation
 const indicators = Array.isArray(catalog?.indicators) ? catalog.indicators : [];
 const MAX_DESCRIPTION_LENGTH = 160;
 
+const searchExperimentOverrides = {
+  en: {
+    'gdp-per-capita': {
+      title: (_name, year) => `GDP per Capita by Country (${year} Ranking) | World Discovery`,
+    },
+  },
+};
+
 const releasedLocales = [
   {
     key: 'en',
@@ -87,7 +95,10 @@ for (const item of indicators) {
     const countText = Number.isFinite(countryCount) && countryCount > 0
       ? locale.count(countryCount)
       : locale.fallbackCount;
-    const title = locale.title(localizedName, item.year);
+    const experiment = searchExperimentOverrides?.[locale.key]?.[item.slug];
+    const title = experiment?.title
+      ? experiment.title(localizedName, item.year)
+      : locale.title(localizedName, item.year);
     const description = conciseDescription(locale.description(localizedName, item.year, countText));
 
     if (!/<title>[^<]*<\/title>/i.test(html)) throw new Error(`Missing title on /${locale.path}data/${item.slug}/`);
