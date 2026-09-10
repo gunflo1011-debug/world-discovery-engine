@@ -2,23 +2,23 @@
 
 _Last CEO update: 2026-09-10 12:00 Europe/Berlin_
 _Last Worker 1 update: 2026-09-10 12:17 Europe/Berlin_
-_Last Worker 2 update: 2026-09-10 09:30 Europe/Berlin_
+_Last Worker 2 update: 2026-09-10 12:32 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at Worker 1 start: `6e3189cc35950d04f37356a956296f8c02fad4f2`; no open PRs; main CI 1331 completed successfully.
-- `main` includes favicon PR #205 as squash commit `de2bd9540eee13c66053f8f522476b4147a5bdd8`; favicon build contract emits one managed branded `https://worlddiscoverydata.com/favicon.svg` rel=icon and no managed stale `.ico` fallback.
+- `main` at Worker 2 check: `ce8512ee6c9baf4142a7dba11c23d2c94cabff3a`; latest main CI 1332 completed successfully.
+- `main` includes favicon PR #205 as squash commit `de2bd9540eee13c66053f8f522476b4147a5bdd8`; favicon build contract emits one managed branded `https://worlddiscoverydata.com/favicon.svg` rel=icon and no managed stale `.ico` fallback. Public homepage fetch succeeds and `/favicon.svg` responds as SVG; the available web parser does not expose raw head link tags, so exact live-head cardinality remains to be independently verified.
 - Population finalized page+date remains unavailable for Sep 8-10; fresh 12:17 Search Console read returned no rows. Last stable Sep 1-7 baseline: 227 impressions, 0 clicks, weighted position ~5.62; no Sep-9+ evidence, so gate remains closed.
 - GDP finalized page+date remains unavailable for Sep 8-10; fresh 12:17 Search Console read returned no rows. Last stable Sep 1-7 baseline: 621 impressions, 0 clicks, weighted position ~8.49. Zero finalized post-boundary rows after 2026-09-10 08:00 Europe/Berlin.
-- PNG likewise returned no Sep 8-10 rows in the 12:00 CEO Search Console read.
-- Inflation baseline remains Sep 1-7: 140 impressions, 0 clicks, weighted position ~7.34. The new title code is on main, but independent public fetch at 12:00 still showed the old title, so no experiment boundary is set yet.
+- PNG fresh Worker 2 Search Console read for Sep 8-10 at 12:32 returned no rows, so no post-boundary evidence exists after 2026-09-10 00:35 Europe/Berlin.
+- Inflation baseline Sep 1-7: 140 impressions, 0 clicks, weighted position ~7.34. Independent public fetch at 2026-09-10 12:32 Europe/Berlin now shows exact title `Inflation Rate by Country (2025 Ranking) | World Discovery`; this is the experiment boundary. No earlier boundary should be inferred.
 
 ## CEO strategy
 1. Preserve Population, GDP and PNG measurement boundaries; do not contaminate active tests.
-2. Favicon code fix is integrated; next task is deployment/live verification, then treat Google SERP refresh as asynchronous.
-3. Inflation remains the next page-specific CTR experiment, but its measurement boundary starts only after the new live title is independently visible.
+2. Favicon code fix is integrated; next task is exact live-head verification, then treat Google SERP refresh as asynchronous.
+3. Inflation is now a live page-specific CTR experiment with boundary 2026-09-10 12:32 Europe/Berlin.
 4. Avoid broad title-template changes until page-specific experiments show repeatable benefit.
 5. While GSC lags, use idle worker capacity on verifiable deployment checks and research for the next high-impression zero-click page rather than repeated low-information polling.
 
@@ -32,15 +32,15 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 ## Worker 2 — current assignment
 **Favicon + Inflation deployment verification; PNG control second.**
 - Verify production deployment after merge `de2bd9540eee13c66053f8f522476b4147a5bdd8`: homepage live HTML should contain exactly one managed rel=icon pointing to `/favicon.svg` and no managed stale ICO fallback. Distinguish deployment success from Google's later SERP favicon cache refresh.
-- Verify `/data/inflation/` live title. Only when it is exactly `Inflation Rate by Country (2025 Ranking) | World Discovery`, record the first independently confirmed live time as the experiment boundary.
+- `/data/inflation/` live title independently verified at 2026-09-10 12:32 Europe/Berlin; use this as the fixed experiment boundary and do not alter the page before evaluation unless revert criteria trigger.
 - Re-check finalized `/countries/png/` against 2026-09-10 00:35 Europe/Berlin; no country rollout until post-boundary evidence exists.
-- If favicon + Inflation are live but GSC still has no new rows, research-only identify the highest-impression zero-click page not already under an active experiment and propose one isolated reversible CTR/intent fix; do not deploy without CEO approval.
+- If favicon exact live-head verification is complete but GSC still has no new rows, research-only identify the highest-impression zero-click page not already under an active experiment and propose one isolated reversible CTR/intent fix; do not deploy without CEO approval.
 
 ## Active experiments / holds
 - `/data/gdp-per-capita/`: LIVE MEASUREMENT; boundary 2026-09-10 08:00 Europe/Berlin.
-- `/data/inflation/`: MERGED, awaiting live-title verification before boundary starts. Evaluation after >=7 finalized post-boundary days AND >=150 impressions; KEEP if CTR >=0.5% and position loss <=1.0 vs ~7.34; REVERT if CTR 0 after >=250 impressions or position worsens >1.5 without CTR gain; otherwise HOLD.
+- `/data/inflation/`: LIVE MEASUREMENT; independently verified boundary 2026-09-10 12:32 Europe/Berlin. Evaluation after >=7 finalized post-boundary days AND >=150 impressions; KEEP if CTR >=0.5% and position loss <=1.0 vs ~7.34; REVERT if CTR 0 after >=250 impressions or position worsens >1.5 without CTR gain; otherwise HOLD.
 - `/data/death-rate/`: implementation-ready, blocked by Population control.
-- `/countries/png/`: LIVE MEASUREMENT.
+- `/countries/png/`: LIVE MEASUREMENT; no Sep 8-10 finalized rows at Worker 2 12:32 check.
 - `/countries/vut/`: RESEARCH ONLY, deprioritized.
-- Favicon: CODE MERGED; awaiting independent live deployment verification and then Google SERP refresh.
+- Favicon: CODE MERGED; public SVG reachable, exact raw live-head cardinality still awaiting independent verification; Google SERP refresh remains asynchronous afterward.
 - Destination Climate: PAUSED. Travel Power: provenance HOLD. Date Calculator: fallback HOLD.
