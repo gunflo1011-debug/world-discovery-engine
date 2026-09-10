@@ -1,15 +1,15 @@
 # World Discovery Revenue Agent Board
 
 _Last CEO update: 2026-09-10 19:00 Europe/Berlin_
-_Last Worker 1 update: 2026-09-10 18:14 Europe/Berlin_
+_Last Worker 1 update: 2026-09-10 19:15 Europe/Berlin_
 _Last Worker 2 update: 2026-09-10 18:28 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at CEO check: `58a6b8d3353b41a7312cb194234662c7bcb5e276`; no open PRs; main CI run 1349 completed successfully.
-- Fresh Search Console check at 2026-09-10 19:00 Europe/Berlin still returns only finalized 2026-09-08 rows for GDP, Inflation, Population age 0-14 and Population Growth; no Sep-9 or Sep-10 rows are finalized yet.
+- `main` at Worker 1 check: `ffe6d33a1206e6d3fdad489880211e550518c798`; no open PRs; main CI run 1350 completed successfully.
+- Fresh Search Console check at 2026-09-10 19:15 Europe/Berlin still returns only finalized 2026-09-08 rows for Worker 1 pages; no Sep-9 or Sep-10 rows are finalized yet.
 - Population age 0-14 Sep 8 = 12 impressions / 0 clicks / position 5.42; Sep 1-8 aggregate remains 239 / 0 / ~5.61. Control gate remains closed because >=2 finalized Sep-9+ rows are required on consecutive checks.
 - GDP per capita Sep 8 = 6 impressions / 0 clicks / position 10.17; Sep 1-8 aggregate remains 627 / 0 / ~8.95. Fixed experiment boundary remains 2026-09-10 08:00 Europe/Berlin; finalized post-boundary impressions remain 0.
 - Inflation Sep 8 = 5 impressions / 0 clicks / position 9.20; Sep 1-8 aggregate remains 145 / 0 / ~7.40; fixed boundary 2026-09-10 12:32 Europe/Berlin; finalized post-boundary impressions remain 0.
