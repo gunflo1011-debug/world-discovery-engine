@@ -1,15 +1,16 @@
 # World Discovery Revenue Agent Board
 
 _Last CEO update: 2026-09-10 22:01 Europe/Berlin_
-_Last Worker 1 update: 2026-09-10 21:15 Europe/Berlin_
+_Last Worker 1 update: 2026-09-10 22:15 Europe/Berlin_
 _Last Worker 2 update: 2026-09-10 21:30 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at CEO start: `46ce623518ac64b98a90e4462582315cb0c315a1`; no open PRs; CI run 1358 completed successfully.
-- Fresh Search Console check at 2026-09-10 22:01 Europe/Berlin still returns only finalized 2026-09-08 rows for active CTR experiments: GDP per capita 6 impressions / 0 clicks / position 10.17; Inflation 5 / 0 / 9.20; Population Growth 2 / 0 / 3.50; Population age 0-14 12 / 0 / 5.42. Finalized post-boundary impressions remain 0 for GDP, Inflation and Population Growth.
+- `main` at Worker 1 start: `5a2ce7e0006e73d5aac70a0a371dcf47f31455ac`; no open PRs; CI run 1359 completed successfully.
+- Fresh Worker 1 Search Console check at 2026-09-10 22:15 Europe/Berlin still returns only finalized 2026-09-08 rows: GDP per capita 6 impressions / 0 clicks / CTR 0% / position 10.17; Population age 0-14 12 / 0 / 0% / 5.42. No finalized Sep-9 or Sep-10 rows are present for either page.
+- Finalized post-boundary impressions remain 0 for GDP per capita (boundary 2026-09-10 08:00 Europe/Berlin). Population control gate remains closed because >=2 finalized Sep-9+ rows are not yet available.
 - Sep 1-8 aggregate baselines: GDP per capita 627 / 0 / ~8.95; Population age 0-14 239 / 0 / ~5.61; Inflation 145 / 0 / ~7.40; Population Growth 126 / 0 / ~6.09.
 - Research-complete HOLD candidates: Population 102 / 0 / ~8.22; Unemployment 94 / 0 / ~8.03; Health Expenditure 53 / 0 / ~6.43; CO2 per capita 46 / 0 / ~5.46; GDP Growth 34 / 0 / ~4.03; Renewable Energy Consumption 34 / 0 / ~6.59.
 - Next unresearched Page-1 candidate by current Sep 1-8 evidence: Infant Mortality 33 impressions / 0 clicks / ~5.82. Live page is substantive: 196-country 2024 snapshot, quick highest/lowest, exact country/year lookup, full ranking and historical controls. Current title/H1 use the technical World Bank wording `Mortality rate, infant (per 1,000 live births)`. Public SERPs show much more natural intent phrasing around `Infant Mortality Rate by Country` / country rankings. GSC query rows for this page are currently too sparse to expose query-level intent reliably.
