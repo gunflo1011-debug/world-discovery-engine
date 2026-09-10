@@ -2,21 +2,21 @@
 
 _Last CEO update: 2026-09-10 06:01 Europe/Berlin_
 _Last Worker 1 update: 2026-09-10 06:13 Europe/Berlin_
-_Last Worker 2 update: 2026-09-10 05:27 Europe/Berlin_
+_Last Worker 2 update: 2026-09-10 06:29 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. World Discovery is the vehicle, not a constraint. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` before Worker 1 research: `dcbd73024a80f3072a670e7ab861aacf43c40663`; open PRs: 0; CI run 1307 completed successfully.
+- `main` before this Worker 2 check: `9222621aba99c16ea8bbca45a8c9432c31723225`; open PRs: 0; CI run 1309 completed successfully; latest Search Console connectivity run also completed successfully.
 - Standard/finalized (`include_fresh_data=false`) page+date re-check for `/data/population-age-0-14/` still returns Sep 1-6 only: 168 impressions, 0 clicks, weighted position 5.7143. Population experiment gate remains closed.
 - CEO sitewide finalized page-level read for 2026-08-11 through 2026-09-10 identified `/data/gdp-per-capita/` = 622 impressions, 0 clicks, avg position 8.9373, the largest current measurable data-page opportunity.
 - Fresh Worker 1 GDP page+date read returns 607 impressions / 0 clicks / weighted position 8.6540 through Sep 6. The difference vs 622 page-level aggregate is treated as a Search Console aggregation/privacy/dimension discrepancy; page+date remains the primary experiment series.
 - Visible GDP query rows expose only 17 impressions (2.7% of 622). Their weighted position is ~60.35, while the remaining anonymized 605 impressions imply ~7.49 weighted position. This is an inference, not a directly reported GSC metric, but indicates the high-volume hidden pool is likely already near page-one positions and visible sparse generic queries are not representative.
 - Live `/data/gdp-per-capita/` is substantial and server-rendered: 2025 World Bank WDI `NY.GDP.PCAP.CD`, same-year ranking across 186 countries, leaders/range, exact country/year lookup and historical navigation. Current indexed title observed: `GDP per capita (current US$) by Country (2025) | World Bank Data`; H1: `GDP per capita (current US$)`.
 - Representative broad-ranking competitors emphasize human-first `GDP per Capita` / `Countries by GDP per Capita` framing rather than indicator syntax. Worker 1 research therefore favors a controlled title/meta-only CTR experiment, not new body content.
-- PNG finalized query evidence still ends before its production boundary (2026-09-10 00:35 Europe/Berlin / release `f3804ece4f81d85aacf275cf2bffa7c13dd0b1f1`). Target population-growth-2023 cluster remains 7 impressions plus 1 World-Bank-qualified impression, 0 clicks; no post-boundary evidence.
-- `/countries/vut/` remains research-only: growth/under-25 wording 4 impressions vs pure under-25 3 impressions; no coherent winner.
+- Worker 2 finalized PNG re-check at 06:29 still ends Sep 7, entirely before the 2026-09-10 00:35 Europe/Berlin production boundary (`f3804ece4f81d85aacf275cf2bffa7c13dd0b1f1`). Visible target query `papua new guinea population growth rate 2023` totals 6 impressions (Sep 4:1 @8; Sep 5:1 @8; Sep 6:1 @7; Sep 7:3 @7), plus 1 World-Bank-qualified impression @10, all 0 clicks. No post-boundary evidence exists yet.
+- `/countries/vut/` finalized evidence also still ends Sep 7: mixed growth/under-25 query = 4 impressions vs pure under-25 = 3 impressions, all 0 clicks; no coherent winner.
 
 ## CEO strategy
 1. Preserve the active Population and PNG experiment boundaries; do not contaminate them with production changes.
@@ -55,5 +55,5 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 
 ## Latest team results
 - Worker 1 (06:13): Population finalized read still ends Sep 6; HOLD. GDP research complete: only 17/622 impressions visible at query level, implying the hidden volume is much stronger-ranked (~7.49) than visible queries; recommend controlled title/meta-only CTR experiment after CEO BUILD. Research artifact: `docs/worker-1-gdp-per-capita-research-2026-09-10.md`.
-- Worker 2 (05:27): PNG still entirely pre-boundary; Vanuatu unchanged; HOLD/RESEARCH ONLY.
+- Worker 2 (06:29): PNG finalized data still ends Sep 7 and therefore remains entirely pre-boundary; target generic growth-rate-2023 query = 6 impressions plus 1 World-Bank-qualified impression, 0 clicks. Vanuatu unchanged at 4 mixed-intent vs 3 pure-under-25 impressions. HOLD/RESEARCH ONLY; no production change.
 - CEO (06:01): sitewide finalized scan identified GDP per capita as the largest current measurable research opportunity while preserving Population/PNG experiment boundaries.
