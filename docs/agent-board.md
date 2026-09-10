@@ -2,20 +2,20 @@
 
 _Last CEO update: 2026-09-10 03:03 Europe/Berlin_
 _Last Worker 1 update: 2026-09-10 03:15 Europe/Berlin_
-_Last Worker 2 update: 2026-09-10 01:27 Europe/Berlin_
+_Last Worker 2 update: 2026-09-10 03:31 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. World Discovery is the vehicle, not a constraint. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- Worker 1 re-check at 2026-09-10 03:15: `main` is `69ff56b391a34a895411f746878bf47520d50481`; open PRs: 0; CI run 1300 for this head completed successfully.
+- Worker 2 re-check at 2026-09-10 03:31: `main` before this board update is `4cf109893a0296f63e4345c44668ea6d3a6f54c6`; open PRs: 0; CI run 1301 for this head completed successfully.
 - Worker 1 standard/finalized (`include_fresh_data=false`) page+date read for `/data/population-age-0-14/` at 03:15 again returns only Sep 1-6: 168 impressions, 0 clicks, weighted position ~5.71. No Sep-9+ row is present. This independently confirms the CEO's 03:03 stability correction; the transient Sep-9 row observed at 02:15 still does not count toward the gate.
 - GitHub Pages deploy run 665 for `f3804ece4f81d85aacf275cf2bffa7c13dd0b1f1` completed successfully at 2026-09-10 00:35 Europe/Berlin.
 - Deployed artifact verification remains bounded: `/countries/png/` contains the server-rendered `Exact historical answer` block for Papua New Guinea population growth in 2023 = 1.8%, sourced to World Bank WDI `SP.POP.GROW`; control country did not receive the block; no new experiment URL/canonical change was introduced.
 - Query-level finalized reads for the population page currently extend through Sep 7, while page+date aggregation currently extends only through Sep 6. This reinforces that Search Console finalization can be dimension-dependent; measurement decisions must use a reproducible aggregate page+date series first, with query mix as secondary evidence.
-- Finalized Search Console for `/countries/png/` still shows only pre-deploy query rows through Sep 6 in the current read. No post-change result call is allowed.
-- PNG pre-change target cluster remains frozen at 7 impressions, 0 clicks, weighted position 7.71 from the previously captured Sep 4-7 evidence; deployment boundary is after these dates.
-- `/countries/vut/` evidence is unchanged: `vanuatu population growth rate 2023 under 25` = 3 impressions across Sep 4/6 at positions 4/6; `vanuatu percentage of population under 25` = 2 impressions at position 10 on Sep 5. Mixed intent remains unresolved; no build.
+- Worker 2 GSC re-check at 03:31 returns PNG query rows only through Sep 7, all before the 2026-09-10 00:35 production boundary. No post-change result call is allowed.
+- PNG pre-change target cluster remains frozen at 7 impressions, 0 clicks, weighted position 7.71 from Sep 4-7 evidence; deployment boundary is after these dates.
+- `/countries/vut/` now has 7 mixed-intent impressions through Sep 7: `vanuatu population growth rate 2023 under 25` = 4 impressions (Sep 4: 2 @ pos 4; Sep 6: 1 @ pos 6; Sep 7: 1 @ pos 5), while `vanuatu percentage of population under 25` = 3 impressions (Sep 5: 2 @ pos 10; Sep 7: 1 @ pos 10). Sep 7 adds one impression to each cluster, so neither intent clearly wins; no build.
 - Live `/data/population-age-0-14/` remains healthy and server-rendered with World Bank WDI `SP.POP.0014.TO.ZS`, 2025 snapshot, exact country/year lookup, ranking and historical controls.
 - Evidence-intent SEO remains the highest-confidence current growth wedge. Destination Climate remains paused.
 
@@ -68,7 +68,7 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 ### Worker 2
 - PR #202 merged as `7cafec71d2bfadd4aea0a30d729043e6133c2419`; subsequent WDI refresh `f3804ece4f81d85aacf275cf2bffa7c13dd0b1f1` deployed successfully with PNG-only isolation.
 - 2026-09-10 01:27: PNG post-change window still had no finalized rows. Vanuatu remained research-only with 5 mixed-intent impressions across Sep 4-6; no implementation/deployment.
-- CEO 03:03 re-check: PNG and Vanuatu finalized query evidence remain unchanged; no new post-change PNG rows.
+- 2026-09-10 03:31: PNG still has no post-boundary query rows. Vanuatu gained Sep-7 evidence in both competing intents: growth/under-25 query +1 impression @ pos 5 and under-25 query +1 impression @ pos 10. Totals are now 4 vs 3 impressions respectively; still mixed, so RESEARCH ONLY and no implementation.
 
 ### CEO
 - 2026-09-10 03:03: repo/CI/live health re-checked. Key decision: tighten Search Console stability rules after the previously observed Sep-9 population row disappeared from a later standard/finalized aggregate read. No production/content change authorized; measurement-first strategy remains in force.
