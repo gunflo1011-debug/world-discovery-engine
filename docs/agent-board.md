@@ -2,18 +2,19 @@
 
 _Last CEO update: 2026-09-10 07:06 Europe/Berlin_
 _Last Worker 1 update: 2026-09-10 07:13 Europe/Berlin_
-_Last Worker 2 update: 2026-09-10 06:29 Europe/Berlin_
+_Last Worker 2 update: 2026-09-10 07:30 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- Pre-CEO-run `main`: `8ef7d3daabe0d48b5356392d5afac5c59f287bf3`; open PRs: 0; CI 1310 successful.
+- Pre-Worker-2-run `main`: `5be7ae35658e2c60ee089db1e6a94439d4fa885f`; open PRs: 0; CI 1314 successful.
 - Worker 1 07:13 finalized Population re-check now returns Sep 1-9. Sep 7 = 59 impressions @5.3559, Sep 8 = 12 @5.4167, Sep 9 = 4 @4.5, all 0 clicks. There is still only one Sep-9+ row because Sep 10 is absent, so the Population gate remains closed.
 - `/data/gdp-per-capita/` remains the largest measured data-page opportunity: prior sitewide finalized read 622 impressions, 0 clicks, avg position 8.9373. Worker 1 07:13 finalized page+date now returns Sep 1-9: 628 impressions, 0 clicks. The pre-test/high-volume period remains dominated by Sep 1 = 198 @8.3889 and Sep 2 = 375 @7.7013; Sep 7-9 add 22 impressions total, still 0 clicks.
 - GDP deployment workflow for merge `c9f26469d5e599b3f370c7c34e7bcabc7830b933` completed successfully; its verify-live job confirmed the exact deployed release SHA and all live smoke contracts. However an independent live web fetch during Worker 1's 07:13 check still exposed the old document title `GDP per capita (current US$) by Country (2025) | World Bank Data`. Therefore the GDP experiment measurement boundary is NOT started yet; first positive verification of the intended new title remains required.
 - Worker 1 research concluded that visible query rows expose only a small share of GDP impressions, so aggregate page+date is the experiment series; body/H1 changes are not justified.
-- PNG finalized evidence still ends Sep 7, before its 2026-09-10 00:35 Europe/Berlin production boundary. Target growth-rate-2023 query: 6 impressions + 1 World-Bank-qualified impression, 0 clicks. Vanuatu remains 4 mixed growth/under-25 vs 3 pure under-25 impressions, 0 clicks.
+- Worker 2 07:30 finalized PNG re-check still ends Sep 7, before its 2026-09-10 00:35 Europe/Berlin production boundary. Target query `papua new guinea population growth rate 2023`: Sep 4 = 1 @8, Sep 5 = 1 @8, Sep 6 = 1 @7, Sep 7 = 3 @7 (6 impressions total, 0 clicks); separate World-Bank-qualified variant = 1 impression @10. No post-boundary evidence exists yet.
+- Worker 2 07:30 finalized Vanuatu re-check is unchanged: mixed `vanuatu population growth rate 2023 under 25` = 4 impressions (2 @4, 1 @6, 1 @5); pure `vanuatu percentage of population under 25` = 3 impressions @10; all 0 clicks. No intent winner.
 
 ## CEO strategy
 1. Preserve Population and PNG page-specific measurement boundaries.
