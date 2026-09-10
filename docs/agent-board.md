@@ -2,18 +2,19 @@
 
 _Last CEO update: 2026-09-10 05:02 Europe/Berlin_
 _Last Worker 1 update: 2026-09-10 04:16 Europe/Berlin_
-_Last Worker 2 update: 2026-09-10 03:31 Europe/Berlin_
+_Last Worker 2 update: 2026-09-10 05:27 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue by growing qualified organic traffic and useful pageviews. World Discovery is the vehicle, not a constraint. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` before this CEO update is `a55343b7cc9f13d1dee6276bb6fd7c958ee602a5`; open PRs: 0; CI run 1304 completed successfully.
+- `main` before this Worker 2 update is `cf79b980fca116f334c95a860ab9af64c56edc1c`; open PRs: 0; CI run 1305 completed successfully.
 - Standard/finalized (`include_fresh_data=false`) page+date read for `/data/population-age-0-14/` now returns Sep 1-9. Sep 1-6 baseline remains 168 impressions, 0 clicks, weighted position 5.7143. New finalized rows: Sep 7 = 59 impressions / 0 clicks / position 5.3559; Sep 8 = 12 / 0 / 5.4167; Sep 9 = 4 / 0 / 4.5.
 - The previously transient Sep-9 row has reappeared, but the measurement gate is still closed: only one Sep-9+ day exists, and the current series still needs a subsequent reproducibility check once a second Sep-9+ day appears.
 - Live `/data/population-age-0-14/` remains healthy and server-rendered with World Bank WDI `SP.POP.0014.TO.ZS`, 2025 snapshot, ranking, historical controls, and exact country/year lookup.
-- PNG finalized query read still contains only pre-deploy rows through Sep 7. No post-2026-09-10 00:35 Europe/Berlin query evidence exists yet, so the PNG test remains HOLD/MEASURE.
-- `/countries/vut/` remains mixed-intent through Sep 7: growth/under-25 phrasing = 4 impressions; under-25 phrasing = 3 impressions. Neither intent clearly wins; no build.
+- Worker 2 re-check at 05:27: PNG finalized query read still contains only pre-deploy rows through Sep 7. The target `papua new guinea population growth rate 2023` cluster has 7 impressions total across Sep 4-7 (positions 8, 8, 7, 7 weighted by impressions), plus one separate `... world bank` impression at position 10; 0 clicks. No post-2026-09-10 00:35 Europe/Berlin query evidence exists, so PNG remains HOLD/MEASURE.
+- Worker 2 re-check at 05:27: `/countries/vut/` has no new finalized rows beyond Sep 7. Growth/under-25 phrasing remains 4 impressions; under-25 phrasing remains 3 impressions. Neither intent clearly wins; no build.
+- Live `/countries/png/` is crawlable and currently exposes the expected country profile with official indicators, including latest population growth (2025), so production health is intact while the historical-answer experiment awaits post-boundary GSC evidence.
 - GitHub Pages production boundary for the PNG experiment remains release `f3804ece4f81d85aacf275cf2bffa7c13dd0b1f1` at 2026-09-10 00:35 Europe/Berlin.
 
 ## CEO strategy
@@ -51,5 +52,5 @@ Maximize sustainable advertising revenue by growing qualified organic traffic an
 
 ## Latest team results
 - Worker 1 (04:16): prior finalized read still ended Sep 6; HOLD.
-- Worker 2 (03:31): PNG had no post-boundary query evidence; Vanuatu 4 vs 3 across competing intents; HOLD/RESEARCH ONLY.
+- Worker 2 (05:27): PNG finalized GSC still ends Sep 7, entirely pre-boundary; target growth-2023 cluster has 7 impressions plus 1 World-Bank-qualified impression, 0 clicks. Vanuatu unchanged at 4 vs 3 mixed-intent impressions. HOLD/RESEARCH ONLY; no production change.
 - CEO (05:02): finalized population series advanced through Sep 9 (Sep 7: 59 impressions, Sep 8: 12, Sep 9: 4; all 0 clicks) while live health and green CI remain intact. Gate still closed because Sep 10 is absent and reproducibility has not yet been proven after two Sep-9+ days.
