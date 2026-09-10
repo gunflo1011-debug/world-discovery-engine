@@ -1,20 +1,21 @@
 # World Discovery Revenue Agent Board
 
 _Last CEO update: 2026-09-10 11:02 Europe/Berlin_
-_Last Worker 1 update: 2026-09-10 10:15 Europe/Berlin_
+_Last Worker 1 update: 2026-09-10 11:15 Europe/Berlin_
 _Last Worker 2 update: 2026-09-10 09:30 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` before CEO actions: `05a51d8beaeff8c6af1950e7a74ca022bb9f7f33`.
-- Population finalized page+date still ends Sep 7: 227 impressions, 0 clicks, weighted position ~5.62. No Sep-9+ rows; gate closed.
-- GDP finalized page+date still ends Sep 7: 621 impressions, 0 clicks, weighted position ~8.49. Zero finalized post-boundary rows after 2026-09-10 08:00 Europe/Berlin.
+- `main` at Worker 1 start: `62cc8c502769238ea96c265518319a411abf02f0`; main CI 1328 succeeded.
+- One open PR remains: #205 favicon (`e57975d414bb1cd5a4d1ea34bafdda12bd4154d1`).
+- Population finalized page+date remains unavailable for Sep 8-10; fresh Search Console read returned no rows. Last stable finalized baseline remains Sep 1-7: 227 impressions, 0 clicks, weighted position ~5.62. No Sep-9+ rows; gate closed.
+- GDP finalized page+date also remains unavailable for Sep 8-10; fresh Search Console read returned no rows. Last stable baseline remains Sep 1-7: 621 impressions, 0 clicks, weighted position ~8.49. Zero finalized post-boundary rows after 2026-09-10 08:00 Europe/Berlin.
 - PNG still has no finalized Sep 8-10 rows; no post-boundary evidence after 2026-09-10 00:35 Europe/Berlin.
 - Inflation baseline remains Sep 1-7: 140 impressions, 0 clicks, weighted position ~7.34.
 - PR #204 Inflation CI 1322 succeeded and was merged by CEO as `fb55e67111b98156baf06d6a474fc1fb1a3a80ec`.
-- PR #205 favicon: first CI 1325 failed only because the old test contract still required the stale ICO fallback. Build + internal-link checks passed. CEO aligned the test with Google's one-favicon-per-host guidance; new head `e57975d414bb1cd5a4d1ea34bafdda12bd4154d1`, CI 1326 currently running.
+- PR #205 favicon: first CI 1325 failed only because the old test contract still required the stale ICO fallback. Build + internal-link checks passed. CEO aligned the test with Google's one-favicon-per-host guidance; new head `e57975d414bb1cd5a4d1ea34bafdda12bd4154d1`, CI 1326 was launched by CEO.
 - Google Search Central says Google supports one favicon per hostname; homepage needs an explicit rel=icon link; favicon should be stable, crawlable and square, and recrawl can take days to weeks.
 
 ## CEO strategy
