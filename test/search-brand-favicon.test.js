@@ -8,13 +8,13 @@ async function read(relativePath) {
 
 const origin = 'https://worlddiscoverydata.com';
 
-test('released locale entrypoints advertise one clear primary favicon and ICO fallback', async () => {
+test('released locale entrypoints advertise one clear branded favicon without stale ICO fallback', async () => {
   for (const page of ['index.html', 'de/index.html', 'es/index.html', 'fr/index.html', 'zh-hans/index.html']) {
     const html = await read(page);
     assert.equal((html.match(/href="https:\/\/worlddiscoverydata\.com\/favicon\.svg"/g) || []).length, 1, `${page} primary favicon`);
-    assert.equal((html.match(/href="https:\/\/worlddiscoverydata\.com\/favicon\.ico"/g) || []).length, 1, `${page} ICO fallback`);
+    assert.equal((html.match(/href="https:\/\/worlddiscoverydata\.com\/favicon\.ico"/g) || []).length, 0, `${page} stale ICO fallback`);
     assert.match(html, new RegExp(`rel="icon" href="${origin.replaceAll('.', '\\.')}/favicon\\.svg" type="image/svg\\+xml" data-wd-search-branding="primary"`));
-    assert.match(html, new RegExp(`rel="alternate icon" href="${origin.replaceAll('.', '\\.')}/favicon\\.ico" sizes="any" data-wd-search-branding="fallback"`));
+    assert.doesNotMatch(html, /rel="alternate icon"[^>]*favicon\.ico/i);
   }
 });
 
