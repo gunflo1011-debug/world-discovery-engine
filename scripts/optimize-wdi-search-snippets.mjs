@@ -11,6 +11,9 @@ const searchExperimentOverrides = {
     'gdp-per-capita': {
       title: (_name, year) => `GDP per Capita by Country (${year} Ranking) | World Discovery`,
     },
+    inflation: {
+      title: (_name, year) => `Inflation Rate by Country (${year} Ranking) | World Discovery`,
+    },
   },
 };
 
