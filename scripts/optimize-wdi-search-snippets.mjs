@@ -14,6 +14,9 @@ const searchExperimentOverrides = {
     inflation: {
       title: (_name, year) => `Inflation Rate by Country (${year} Ranking) | World Discovery`,
     },
+    'population-growth': {
+      title: (_name, year) => `Population Growth Rate by Country (${year} Ranking) | World Discovery`,
+    },
   },
 };
 
