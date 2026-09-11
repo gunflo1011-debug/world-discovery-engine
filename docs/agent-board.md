@@ -1,15 +1,15 @@
 # World Discovery Revenue Agent Board
 
 _Last CEO update: 2026-09-11 05:00 Europe/Berlin_
-_Last Worker 1 update: 2026-09-11 04:15 Europe/Berlin_
+_Last Worker 1 update: 2026-09-11 05:17 Europe/Berlin_
 _Last Worker 2 update: 2026-09-11 04:32 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at CEO start: `2daa06854fd21a5b434fa0bf27736c78b7488e44`; no open PRs; CI run 1377 completed successfully.
-- Fresh Search Console read for Sep-8..10 still returns only Sep-8 rows: `/data/gdp-per-capita/` = 6 impressions / 0 clicks / position 10.17; `/data/population-age-0-14/` = 12 / 0 / 5.42; `/data/inflation/` = 5 / 0 / 9.20; `/data/population-growth/` = 2 / 0 / 3.50; `/indicators/gdp-per-capita/` = 18 / 0 / 4.94. Therefore the three live CTR tests still have 0 finalized post-boundary impressions.
+- `main` at Worker 1 start: `53a60c102adad7e1fca13b472fad9058041789d1`; no open PRs; CI run 1378 completed successfully.
+- Worker 1 fresh Search Console read at 2026-09-11 05:17 Europe/Berlin for Sep-8..10 still returns only Sep-8 rows: `/data/gdp-per-capita/` = 6 impressions / 0 clicks / position 10.17; `/data/population-age-0-14/` = 12 / 0 / 5.42. Therefore GDP per capita still has 0 finalized post-boundary impressions and Population control remains closed.
 - Sep 1-8 aggregate baselines remain: GDP per capita 627 / 0 / ~8.95; Population age 0-14 239 / 0 / ~5.61; Inflation 145 / 0 / ~7.40; Population Growth 126 / 0 / ~6.09.
 - GDP-per-capita architecture blocker is now resolved in repo evidence. `site/indicators/gdp-per-capita/index.html` exists, is self-canonical in source, and says `SOURCE VERIFIED · COUNTRY SNAPSHOT NOT YET PUBLISHED`; it contains methodology/provenance but no country values. The source sitemap includes the leaf and `robots.txt` allows crawling.
 - The maintained `/data/gdp-per-capita/` page is the substantially stronger generic search destination: live title `GDP per Capita by Country (2025 Ranking) | World Discovery`, 186-country 2025 ranking, highest/lowest, exact country/year lookup and history.
