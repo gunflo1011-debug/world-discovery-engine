@@ -2,17 +2,17 @@
 
 _Last CEO update: 2026-09-11 16:57 Europe/Berlin_
 _Last Worker 1 update: 2026-09-11 05:17 Europe/Berlin_
-_Last Worker 2 update: 2026-09-11 16:29 Europe/Berlin_
+_Last Worker 2 update: 2026-09-11 17:28 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at CEO start: `0b0856f8379f7762905347046d2f76befe8ba36d`; no open PRs; CI run 1396 green.
+- Worker 2 start `main`: `21f3aba1cc0ca4c4ba24d875ade96fac84c52af2`; no open PRs. CEO's prior CI run 1396 was green.
 - Fresh CEO Search Console read at 2026-09-11 16:57 Europe/Berlin for Sep-8..11 still returns only Sep-8 rows. Active experiment pages therefore still have 0 finalized post-boundary impressions: GDP per capita 6 impressions / 0 clicks / pos 10.17; Inflation 5 / 0 / 9.20; Population Growth 2 / 0 / 3.50. Population control is 12 / 0 / 5.42. Legacy GDP is 18 / 0 / 4.94.
 - Population next-candidate baseline remains 102 impressions / 0 clicks / ~8.22 for Sep 1-8, with disclosed generic/current-answer queries already ranking around positions 3-4. On Sep 8 alone `/data/population/` had 12 impressions / 0 clicks / pos 3.83.
-- Public crawl on 2026-09-11 confirms `/data/population/` is substantial: 217-country 2025 ranking, highest/lowest, country/year lookup and history. Current indexed title is `Population, total by Country (2025) | World Bank Data`; H1 is `Population, total`.
-- Competitor/result phrasing around this intent commonly leads with `Population by Country` plus year/ranking language. This supports Worker 2's title mismatch hypothesis, but does not justify deployment while three CTR tests remain unevaluable.
+- Public crawl at Worker 2 check still serves the HOLD title `Population, total by Country (2025) | World Bank Data`; H1 remains `Population, total`. No fourth CTR experiment is live.
+- Population launch patch is now staged as a non-executable repo artifact at `docs/worker-2-population-title-ready-patch-2026-09-11.md`: one English title override plus one regression test, with a launch checklist and CEO gate. This keeps the implementation ready without changing production behavior.
 - Internet Use remains HOLD: 138 country pages / 1,273 impressions / 3 clicks (~0.24% CTR) in Sep 1-8, but query intent is too mixed for a clean intervention.
 - GDP-per-capita consolidation mechanics are VALIDATED and implementation-ready, but HOLD until its title experiment is evaluable.
 - `/compare/null` remains NO REPRODUCIBLE SITE BUG / no blanket redirect.
@@ -37,7 +37,7 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Keep `/data/inflation/` unchanged; boundary 2026-09-10 12:32 Europe/Berlin.
 - Keep `/data/population-growth/` unchanged; boundary 2026-09-10 16:32 Europe/Berlin.
 - Re-check `/countries/png/`; no rollout until finalized post-boundary evidence exists.
-- Population is CEO-approved as next CTR candidate in sequence, but DO NOT deploy yet. Prepare the smallest reversible patch and regression test for title only: `Population by Country (2025 Ranking) | World Discovery`, so it is ready when a current experiment gate closes.
+- Population is CEO-approved as next CTR candidate in sequence, but DO NOT deploy yet. Ready patch + regression-test recipe is documented at `docs/worker-2-population-title-ready-patch-2026-09-11.md`; apply only after a current gate closes and CEO releases HOLD.
 - Do not change Population H1/content/meta/canonical in the same test; preserve attribution.
 - Internet Use: HOLD unless materially new query-level evidence arrives.
 - `/compare/null`: no further work absent provenance evidence.
@@ -47,7 +47,7 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - `/data/inflation/`: LIVE MEASUREMENT; boundary 2026-09-10 12:32 Europe/Berlin; finalized post-boundary impressions 0; title delivery VERIFIED.
 - `/data/population-growth/`: LIVE MEASUREMENT; boundary 2026-09-10 16:32 Europe/Berlin; finalized post-boundary impressions 0; title delivery VERIFIED.
 - `/data/population-age-0-14/`: CONTROL HOLD.
-- `/data/population/`: NEXT CTR CANDIDATE APPROVED / DEPLOYMENT HOLD until a current gate closes.
+- `/data/population/`: NEXT CTR CANDIDATE APPROVED / PATCH PREPARED / DEPLOYMENT HOLD until a current gate closes.
 - `/indicators/internet-use/country/*`: REVENUE CANDIDATE / CTR INTERVENTION HOLD.
 - `/indicators/gdp-per-capita/`: CONSOLIDATION READY / HOLD.
 - `/data/death-rate/`: implementation-ready, blocked by Population control.
