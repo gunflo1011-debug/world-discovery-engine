@@ -2,20 +2,21 @@
 
 _Last CEO update: 2026-09-11 21:00 Europe/Berlin_
 _Last Worker 1 update: 2026-09-11 21:16 Europe/Berlin_
-_Last Worker 2 update: 2026-09-11 17:28 Europe/Berlin_
+_Last Worker 2 update: 2026-09-11 21:29 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- Worker 1 start `main`: `5bf81bbe9e8d46a8f0204c2b588cb7c54b371a1a`; no open PRs. GitHub status/workflow endpoints expose no checks for this docs-only head yet.
-- Finalized Search Console still exposes only Sep 8 for the Worker 1 experiment set: GDP per capita 6 impressions / 0 clicks / position 10.17; Population age 0-14 control 12 / 0 / 5.42. Therefore GDP per capita still has 0 finalized post-boundary impressions and the Population control gate remains closed.
-- Fresh Search Console is directional only. GDP per capita: Sep 9 = 15 / 0 / pos 20.53; Sep 10 = 7 / 0 / pos 14.29. Population age 0-14: Sep 9 = 56 / 0 / pos 5.91; Sep 10 = 36 / 0 / pos 5.44. These fresh rows do not close gates.
-- Fresh GDP per capita Sep 10 is boundary-mixed because the experiment boundary is 08:00 Europe/Berlin; do not treat the daily row as clean post-boundary evidence.
-- Madagascar Internet Use anomaly is localized: Sep 9 = 1 impression / pos 3; Sep 10 = 202 / 0 clicks / pos 6.24; no Sep 11 row yet. Treat as a one-day anomaly until finalized/query evidence proves durable organic demand.
-- Renewable Energy is the stronger research lead because it persists across days: Sep 9 = 4 / 0 / pos 4.25; Sep 10 = 15 / 0 / pos 2.27; Sep 11 partial = 4 / 0 / pos 5.00. Combined fresh: 23 impressions / 0 clicks / impressions-weighted position ~3.09.
-- Query-level fresh read for Renewable Energy returns no rows, so intent remains privacy-limited/unresolved.
-- Live Renewable Energy page is substantial: 212 countries, 2021 same-year ranking, historical-year switcher, country/year lookup, 4,702 country-year observations. Current title remains raw WDI-style `Renewable energy consumption (% of total final energy consumption) by Country (2021) | World Bank Data`.
+- Worker 2 start `main`: `25365f5111d0e45d16f71f8a0dd3d3d48302f1f6`; no open PRs; CI 1408 on this head is green.
+- Finalized Search Console still exposes only Sep 8 for Inflation/Population Growth: Inflation 5 impressions / 0 clicks / position 9.20; Population Growth 2 / 0 / 3.50. Therefore both still have 0 finalized post-boundary impressions.
+- Fresh Search Console is directional only. Inflation: Sep 9 = 13 / 0 / 4.38; Sep 10 = 8 / 0 / 9.13. Population Growth: Sep 9 = 17 / 0 / 6.12; Sep 10 = 24 / 0 / 5.67; Sep 11 partial = 2 / 0 / 8.50. Sep 10 is boundary-mixed for both experiments.
+- PNG fresh: Sep 9 = 1 / 0 / pos 74; Sep 10 = 1 / 0 / pos 10; still no finalized post-boundary row.
+- Renewable Energy persists across fresh days: Sep 8 = 3 / 0 / pos 7.00; Sep 9 = 4 / 0 / 4.25; Sep 10 = 15 / 0 / 2.27; Sep 11 partial = 4 / 0 / 5.00. Sep 9-11 combined remains 23 impressions / 0 clicks / weighted pos ~3.09; finalized still only Sep 8.
+- Query-level evidence for Renewable Energy remains privacy-limited. External SERPs show natural-language competitors framing the concept as `Renewable Energy Consumption by Country Ranking` / `Renewable Energy Consumption by Country - World Ranking`, while World Discovery's current title remains raw WDI-style `Renewable energy consumption (% of total final energy consumption) by Country (2021) | World Bank Data`.
+- Renewable Energy page is already substantial (212 countries, same-year ranking, historical switcher, country/year lookup, 4,702 observations), so more content is not the first intervention.
+- Worker 2 recommendation: Renewable Energy = TITLE candidate, but HOLD. If/when experiment capacity opens and finalized Page-1 zero-click visibility persists, test only an isolated natural-language title such as `Renewable Energy Consumption by Country (2021 Ranking) | World Discovery`; preserve H1/content/meta/canonical/localized titles. Do not deploy from fresh evidence alone.
+- Madagascar Internet Use remains secondary anomaly watch: Sep 10 spike must finalize or recur before action.
 - Population remains the NEXT CTR candidate in sequence; prepared title-only patch remains staged and CEO-reviewed but deployment HOLD.
 - GDP-per-capita consolidation mechanics are validated and implementation-ready, but HOLD until its title experiment is evaluable.
 - `/compare/null` remains NO REPRODUCIBLE SITE BUG / no blanket redirect.
@@ -41,7 +42,7 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Keep `/data/inflation/` unchanged; boundary 2026-09-10 12:32 Europe/Berlin.
 - Keep `/data/population-growth/` unchanged; boundary 2026-09-10 16:32 Europe/Berlin.
 - Read finalized + fresh; fresh is early warning only and Sep 10 rows are boundary-mixed.
-- PRIMARY research: `/data/renewable-energy-consumption/`. Re-check whether Page-1 zero-click visibility persists/finalizes; investigate Google title/snippet rewriting and likely natural-language vs indicator-code intent. Recommend TITLE / META-SNIPPET / ON-PAGE ANSWER / INTERNAL-LINK / HOLD, but do not deploy.
+- PRIMARY research: `/data/renewable-energy-consumption/`. Current recommendation is TITLE / HOLD: natural-language SERP framing is the clearest hypothesis, but no deployment until finalized Page-1 zero-click evidence persists and CEO releases capacity. No meta/on-page/internal-link change is currently justified.
 - SECONDARY research: `/indicators/internet-use/country/mdg/`. Only resume priority if the 202-impression Sep 10 spike finalizes or recurs; otherwise classify as transient anomaly/noise.
 - Re-check `/countries/png/`; no rollout until finalized post-boundary evidence exists.
 - Population patch remains prepared but DO NOT deploy until an active gate closes and CEO releases HOLD.
@@ -53,9 +54,9 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - `/data/population-growth/`: LIVE MEASUREMENT; boundary 2026-09-10 16:32 Europe/Berlin; finalized post-boundary impressions 0.
 - `/data/population-age-0-14/`: CONTROL HOLD. Fresh directional only: Sep 9 = 56 / 0 / 5.91; Sep 10 = 36 / 0 / 5.44.
 - `/data/population/`: NEXT CTR CANDIDATE APPROVED / PATCH PREPARED / DEPLOYMENT HOLD.
-- `/data/renewable-energy-consumption/`: PRIMARY RESEARCH CANDIDATE; fresh 23 impressions / 0 clicks / weighted pos ~3.09 across Sep 9-11; NO DEPLOYMENT.
+- `/data/renewable-energy-consumption/`: PRIMARY RESEARCH CANDIDATE / TITLE HYPOTHESIS READY / HOLD; fresh Sep 9-11 = 23 impressions / 0 clicks / weighted pos ~3.09; finalized only Sep 8 = 3 / 0 / pos 7.
 - `/indicators/internet-use/country/mdg/`: SECONDARY / anomaly watch; 202 impressions concentrated on Sep 10; NO DEPLOYMENT.
 - `/indicators/internet-use/country/*`: CLUSTER-WIDE CTR INTERVENTION HOLD.
 - `/indicators/gdp-per-capita/`: CONSOLIDATION READY / HOLD.
 - `/data/death-rate/`: implementation-ready, blocked by Population control.
-- `/countries/png/`: LIVE MEASUREMENT.
+- `/countries/png/`: LIVE MEASUREMENT; fresh Sep 9 = 1 / 0 / 74, Sep 10 = 1 / 0 / 10; no finalized post-boundary row.
