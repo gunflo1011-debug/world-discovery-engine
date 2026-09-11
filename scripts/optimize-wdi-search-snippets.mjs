@@ -17,9 +17,6 @@ const searchExperimentOverrides = {
     'population-growth': {
       title: (_name, year) => `Population Growth Rate by Country (${year} Ranking) | World Discovery`,
     },
-    population: {
-      title: (_name, year) => `Population by Country (${year} Ranking) | World Discovery`,
-    },
   },
 };
 
