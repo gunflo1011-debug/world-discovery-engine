@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const sourceUrl = new URL('../scripts/build-wdi-country-compare.mjs', import.meta.url);
+const localizedSourceUrl = new URL('../scripts/build-localized-country-compare.mjs', import.meta.url);
+const countryActionsUrl = new URL('../scripts/enrich-wdi-country-actions.mjs', import.meta.url);
+const countryHubLinkerUrl = new URL('../scripts/link-country-hubs-to-compare.mjs', import.meta.url);
 const builtUrl = new URL('../site/compare/index.html', import.meta.url);
 
 test('country compare keeps swapped country metadata in sync', async () => {
@@ -40,4 +43,26 @@ test('country compare formats negative US dollar differences with the sign befor
   assert.equal(fmt(-57794, 'current US$'), '-$57,794');
   assert.equal(fmt(57794, 'current US$'), '$57,794');
   assert.equal(fmt(-1200000, 'current US$'), '-$1.20M');
+});
+
+test('compare URL producers never encode missing state as a /compare/null path segment', async () => {
+  const files = await Promise.all([
+    readFile(sourceUrl, 'utf8'),
+    readFile(localizedSourceUrl, 'utf8'),
+    readFile(countryActionsUrl, 'utf8'),
+    readFile(countryHubLinkerUrl, 'utf8'),
+    readFile(builtUrl, 'utf8'),
+  ]);
+
+  for (const source of files) {
+    assert.doesNotMatch(source, /(?:^|["'`])(?:\.\.\/|\.\.\/\.\.\/|\/)?(?:[a-z-]+\/)?compare\/null(?:[/?#"'`]|$)/i);
+  }
+
+  const english = files[0];
+  const actions = files[2];
+  const linker = files[3];
+  assert.match(english, /new URLSearchParams\(\{a:codeA,b:codeB\}\)/);
+  assert.match(actions, /new URLSearchParams\(\{a:code\}\)/);
+  assert.match(linker, /if \(!code\) continue;/);
+  assert.match(linker, /compare\/\?a=\$\{encodeURIComponent\(code\)\}/);
 });
