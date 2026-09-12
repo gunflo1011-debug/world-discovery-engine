@@ -21,6 +21,11 @@ test('released WDI indicator pages expose localized high-intent search snippets'
   }
 });
 
+test('renewable energy English page keeps the isolated CTR title experiment', async () => {
+  const html = await readFile(new URL('data/renewable-energy-consumption/index.html', site), 'utf8');
+  assert.match(html, /<title>Renewable Energy Consumption by Country \(2021 Ranking\) \| World Discovery<\/title>/i);
+});
+
 test('all released verified WDI meta descriptions stay within 160 characters', async () => {
   const catalog = JSON.parse(await readFile(new URL('data/wdi/index.json', site), 'utf8'));
   const verified = (catalog.indicators ?? []).filter((item) => item.status === 'CURRENT_VERIFIED');
