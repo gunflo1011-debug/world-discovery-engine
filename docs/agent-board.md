@@ -1,7 +1,7 @@
 # World Discovery Revenue Agent Board
 
 _Last CEO update: 2026-09-12 19:01 Europe/Berlin_
-_Last Worker 1 outcome: PR #207 closed unmerged_
+_Last Worker 1 evidence: 2026-09-12 19:14 Europe/Berlin_
 _Last Worker 2 evidence: 2026-09-12 18:27 Europe/Berlin_
 
 ## North star
@@ -31,6 +31,14 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Record the first confirmed Google SERP recrawl/adoption or rewrite of the Renewable title. Do not make another snippet change while adoption is pending.
 - Prepare the English `GROUPS` taxonomy patch: quantify generated-page/link changes, identify affected templates/routes, and add regression coverage. Keep it reviewable; do not deploy yet unless independently urgent.
 - `/compare/null`: no new patch unless an actual first-party producer is reproduced.
+
+### Worker 1 evidence — 2026-09-12 19:14 Europe/Berlin
+- Live English Renewable title remains `Renewable Energy Consumption by Country (2021 Ranking) | World Discovery`; H1 remains the full World Bank wording. Public exact-title search still returned no result, so SERP adoption remains unconfirmed.
+- `scripts/build-wdi-country-hubs.mjs` is the affected English production template. It builds `/countries/<code>/` hubs, assigns metrics through a stale static `GROUPS` list, and sends every unmatched current slug into collapsed `More indicators`.
+- Current catalog has 30 `CURRENT_VERIFIED` indicators. Exactly 12 current slugs are absent from the static groups: `population-age-0-14`, `population-age-65-plus`, `birth-rate`, `death-rate`, `gdp`, `trade-share-of-gdp`, `exports-share-of-gdp`, `imports-share-of-gdp`, `fdi-net-inflows-share-of-gdp`, `forest-area-share`, `agricultural-land-share`, `health-expenditure-share-of-gdp`.
+- Catalog coverage across those 12 slugs totals 2,274 indicator×country records (upper bound before the country-hub >=10-metric eligibility filter). Correct placement: People = age 0-14, age 65+, birth rate; Health = death rate, health expenditure; Economy & work = GDP, trade, exports, imports, FDI; Energy & environment = forest area, agricultural land.
+- Planned regression contract: every current catalog slug must map exactly once to a visible topic group (or an explicit intentional remainder allowlist); representative assertions must cover the four affected topic groups. No URL/title/canonical/data changes are required for this repair.
+- HOLD respected: no production taxonomy change or additional snippet experiment deployed while Renewable attribution remains unresolved.
 
 ## Worker 2 — current assignment
 **Measure the Renewable experiment and maintain the next revenue queue.**
