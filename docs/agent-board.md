@@ -2,7 +2,7 @@
 
 _Last CEO update: 2026-09-12 21:01 Europe/Berlin_
 _Last Worker 1 evidence: 2026-09-12 19:14 Europe/Berlin_
-_Last Worker 2 evidence: 2026-09-12 20:28 Europe/Berlin_
+_Last Worker 2 evidence: 2026-09-12 21:28 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -47,10 +47,11 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Continue the Internet-Use country cohort scan, but rank opportunities on repeated multi-day non-Madagascar Page-1 volume rather than one-day spikes.
 - Do not declare winners/losses on tiny samples; watch CTR and position together.
 
-### Worker 2 evidence — 2026-09-12 20:28 Europe/Berlin
-- Renewable unchanged: finalized Sep10 = 15 / 0 / 2.2667; fresh Sep11 = 23 / 0 / 2.7391; no English Sep12 row.
-- Madagascar Internet-Use is not repeated: Sep9 = 1 / 0 / 3.0; Sep10 = 202 / 0 / 6.2376; no Sep11/Sep12 row.
-- Repeated smaller patterns: Solomon Islands Sep9-11 = 6@4.83, 5@8.4, 8@5.38; Andorra = 5@4.2, 1@1.0, 7@5.29; Mexico = 8@6.63, 2@6.0, 1@8.0 plus Sep12 1@7 fresh.
+### Worker 2 evidence — 2026-09-12 21:28 Europe/Berlin
+- Renewable unchanged: finalized Sep10 = 15 / 0 / 2.2667; fresh Sep11 = 23 / 0 / 2.7391; still no English Sep12 row.
+- Fresh Internet-Use Sep11 matured slightly since the prior read: Andorra = 9 / 0 / 5.4444, Solomon Islands = 8 / 0 / 5.375, Mexico = 2 / 0 / 7.0. Across Sep9-11 these repeated zero-click Page-1 cohorts total Andorra 15 impressions, Solomon Islands 19, Mexico 12. Madagascar still has no Sep11/Sep12 row after its 202-impression Sep10 anomaly.
+- Sep12 Internet-Use remains effectively empty so far: only Montenegro appears, 1 / 0 / 8.0. This is not enough to justify a template intervention.
+- Decision unchanged: Internet-Use country template = research/HOLD; Renewable attribution gate remains the governing constraint.
 
 ## Active experiments / holds
 - Renewable Energy: TITLE-ONLY CTR TEST LIVE ON SITE; public search still shows old title from yesterday's crawl, so SERP adoption = NOT YET CONFIRMED.
