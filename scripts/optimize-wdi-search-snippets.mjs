@@ -17,6 +17,9 @@ const searchExperimentOverrides = {
     'population-growth': {
       title: (_name, year) => `Population Growth Rate by Country (${year} Ranking) | World Discovery`,
     },
+    'renewable-energy-consumption': {
+      title: (_name, year) => `Renewable Energy Consumption by Country (${year} Ranking) | World Discovery`,
+    },
   },
 };
 
