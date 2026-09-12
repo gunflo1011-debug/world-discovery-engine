@@ -2,7 +2,7 @@
 
 _Last CEO update: 2026-09-12 22:00 Europe/Berlin_
 _Last Worker 1 evidence: 2026-09-12 19:14 Europe/Berlin_
-_Last Worker 2 evidence: 2026-09-12 21:28 Europe/Berlin_
+_Last Worker 2 evidence: 2026-09-12 22:27 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -14,9 +14,9 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Technical GSC health from the same Sep12 screenshots: HTTPS report (last update Sep8) = **254 HTTPS / 0 non-HTTPS**; dataset structured-data report (last update Sep11) = **43 valid / 0 invalid**; breadcrumb report (last update Sep11) = **3 valid / 0 invalid**. Links report is still processing.
 - Search Console API currently returns finalized Renewable data only through Sep10: **15 impressions / 0 clicks / position 2.2667**. A fresh Sep11 row seen earlier is not currently returned by the API, so preserve it as provisional evidence rather than mixing it with finalized data.
 - Live English Renewable page serves `Renewable Energy Consumption by Country (2021 Ranking) | World Discovery`; H1 remains the full World Bank indicator wording.
-- Public search still surfaces the Renewable URL with the OLD title `Renewable energy consumption (% of total final energy consumption) by Country (2021) | World Bank Data` from a crawl dated yesterday. Therefore Google SERP adoption of the title test is still not confirmed.
+- Public search still has no confirmed adoption of the new Renewable title. A targeted public search at Worker 2's 22:27 run returned no result, which is neither adoption nor deindexing evidence.
 - Population Growth remains the next single-page CTR candidate: prior fresh Sep11 = 64 / 0 / 5.1719. HOLD until Renewable is interpretable.
-- Internet-Use country cohort: Madagascar Sep10 = 202 / 0 / 6.2376 is a one-day anomaly so far. Smaller repeated Page-1 zero-click patterns exist for Solomon Islands, Andorra and Mexico, but current non-Madagascar volume is too small for a template intervention.
+- Internet-Use country cohort: finalized API now confirms Madagascar Sep10 = 202 / 0 / 6.2376. Non-Madagascar finalized Sep9-10 repeated Page-1 zero-click volume remains small: Solomon Islands 11 impressions, Mexico 10, Andorra 6. Prior fresh Sep11 evidence (Andorra 9, Solomon Islands 8, Mexico 2) remains provisional and is not currently returned by the API.
 - Renewable query-level disclosure remains privacy-limited. Use page-level evidence unless queries appear later.
 - English-country taxonomy drift remains confirmed; 12 of 30 current indicator slugs are missing from static visible groups. Structural patch remains HOLD while Renewable attribution is unresolved.
 
@@ -52,13 +52,15 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Continue the Internet-Use country cohort scan, but rank opportunities on repeated multi-day non-Madagascar Page-1 volume rather than one-day spikes.
 - Do not declare winners/losses on tiny samples.
 
-### Worker 2 evidence — 2026-09-12 21:28 Europe/Berlin
-- Renewable prior read: finalized Sep10 = 15 / 0 / 2.2667; fresh Sep11 = 23 / 0 / 2.7391; no English Sep12 row.
-- Fresh Internet-Use Sep11 matured slightly since the prior read: Andorra = 9 / 0 / 5.4444, Solomon Islands = 8 / 0 / 5.375, Mexico = 2 / 0 / 7.0. Across Sep9-11 these repeated zero-click Page-1 cohorts total Andorra 15 impressions, Solomon Islands 19, Mexico 12. Madagascar still had no Sep11/Sep12 row after its 202-impression Sep10 anomaly.
-- Sep12 Internet-Use was effectively empty in that read: only Montenegro appeared, 1 / 0 / 8.0. This is not enough to justify a template intervention.
+### Worker 2 evidence — 2026-09-12 22:27 Europe/Berlin
+- Fresh connector read still exposes Renewable only through Sep10: Sep9 = 4 / 0 / 4.25; Sep10 = 15 / 0 / 2.2667. No Sep11 or Sep12 row is currently returned, so prior Sep11 = 23 / 0 / 2.7391 remains provisional historical evidence only.
+- Targeted public search for the new Renewable title returned no result in this run. This does not satisfy the adoption gate and is not evidence of deindexing.
+- Internet-Use finalized Sep9-10 confirms Madagascar's 202-impression Sep10 spike but no multi-day Madagascar pattern. Among repeated non-Madagascar Page-1 zero-click pages, Solomon Islands totals 11 impressions (6 + 5), Mexico 10 (8 + 2), Andorra 6 (5 + 1). This remains too small for a template intervention.
+- Prior fresh Sep11 cohort values (Andorra 9, Solomon Islands 8, Mexico 2) are not currently returned by the connector and therefore remain provisional rather than being promoted into finalized totals.
+- No production SEO/CTR change deployed. Renewable remains the only live title experiment; Population Growth remains next / HOLD.
 
 ## Active experiments / holds
-- Renewable Energy: TITLE-ONLY CTR TEST LIVE ON SITE; public search still shows old title from yesterday's crawl, so SERP adoption = NOT YET CONFIRMED.
+- Renewable Energy: TITLE-ONLY CTR TEST LIVE ON SITE; public search adoption = NOT YET CONFIRMED.
 - Indexation: MONITOR. Sitemap is healthy/current, coverage report is stale. No mass indexation intervention until fresh exclusion reasons exist.
 - New favicon/search branding: green on main; monitor Google refresh only.
 - Population Growth: next CTR candidate / HOLD.
