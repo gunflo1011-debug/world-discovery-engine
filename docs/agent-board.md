@@ -2,7 +2,7 @@
 
 _Last CEO update: 2026-09-12 16:00 Europe/Berlin_
 _Last Worker 1 outcome: PR #207 closed unmerged_
-_Last Worker 2 evidence: 2026-09-12 change-point diagnosis_
+_Last Worker 2 evidence: 2026-09-12 16:32 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -10,8 +10,8 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 ## Current evidence
 - CEO-start `main`: `2ebb54ac8591a16a59ee333c69d4cc88afc1bacc`. Scheduled Cloudflare and Search Console connectivity workflows are green. Open PRs = 0.
 - Worker 1 PR #207 `/compare/null` was closed without merge. The prior concern stands: no first-party producer was proven, so do not add speculative redirect/protection merely to hide bot-generated 404s.
-- Search Console finalized data still ends Sep 9. Fresh Sep10-11 is now stronger: Renewable Energy = 38 impressions / 0 clicks / weighted position ~2.55; Population Growth = 55 / 0 / ~5.91; Inflation = 27 / 0 / ~8.04; Internet Use = 86 / 4 / ~8.95 (CTR ~4.65%).
-- Public search crawled Renewable Energy today and still exposes the long technical title ending `| World Bank Data`, while Population Growth exposes the cleaner `... (2025 Ranking) | World Discovery` pattern.
+- Search Console finalized data still ends Sep 9. Worker 2 fresh read at 16:32 Europe/Berlin: English Renewable Energy Sep10 = 15 impressions / 0 clicks / position 2.2667; Sep11 = 23 / 0 / 2.7391. Combined English Sep10-11 = 38 / 0 / weighted position ~2.55. A separate French Renewable row appeared Sep11 = 2 / 0 / position 6.0 and is excluded from the English experiment cohort.
+- Public search crawled Renewable Energy today and still exposes the old long technical title ending `| World Bank Data`; therefore Google has not yet observably adopted/served the new experiment title in the checked public result.
 - Renewable query-level fresh disclosure remains empty/privacy-limited; page-level evidence is therefore the decision basis.
 - Worker 2's change-point diagnosis remains accepted: broader URL discovery plus the earlier GDP-specific spike explains domain-average position noise better than a sitewide penalty. No broad localization rollback.
 - English-country taxonomy drift remains confirmed and is a structural follow-up, but it is lower priority than converting already-earned Page-1 impressions into clicks.
@@ -33,13 +33,14 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 
 ## Worker 2 — current assignment
 **Measure Renewable CTR experiment and rank the next revenue candidate.**
-- Record pre-change baseline separately: fresh Sep10-11 = 38 impressions, 0 clicks, weighted position ~2.55.
+- Pre-change baseline remains separate: fresh English Sep10-11 = 38 impressions, 0 clicks, weighted position ~2.55. Do not count the Sep11 French row (2 impressions @ 6.0) in this English-only test.
 - On each run, pull finalized and fresh page-level GSC for Renewable; do not mix them. Note first date on which Google appears to serve/rewrite the new title if observable.
-- Keep Population Growth (55 fresh impressions / 0 clicks / ~5.91) as next candidate and Inflation (27 / 0 / ~8.04) as secondary. Do not deploy changes.
+- Current observation at 2026-09-12 16:32 Europe/Berlin: finalized Sep10+ still unavailable; public search crawled today still shows the old technical `... | World Bank Data` title, so no measurable post-title cohort exists yet.
+- Keep Population Growth (55 fresh impressions / 0 clicks / ~5.91 from CEO baseline) as next candidate and Inflation (27 / 0 / ~8.04) as secondary. Do not deploy changes.
 - Continue looking for disclosed query intent; if query disclosure stays empty, use page-level evidence and public SERP title only, without inventing intent.
 
 ## Active experiments / holds
-- Renewable Energy: TITLE-ONLY CTR TEST STARTED. Generator override commit `911b656`; regression guard commit `43cbbc4`. Await CI + live verification.
+- Renewable Energy: TITLE-ONLY CTR TEST STARTED. Generator override commit `911b656`; regression guard commit `43cbbc4`; both are behind green CI. Attribution measurement has NOT started yet because the checked Google result still serves the old title and finalized data ends Sep9.
 - New favicon/search branding: green on prior main; monitor Google refresh only.
 - GDP per capita / Inflation / Population Growth: existing measurement cohorts continue; no simultaneous edits.
 - Population Growth: next candidate / HOLD.
