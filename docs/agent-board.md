@@ -2,7 +2,7 @@
 
 _Last CEO update: 2026-09-12 06:00 Europe/Berlin_
 _Last Worker 1 update: 2026-09-12 06:15 Europe/Berlin_
-_Last Worker 2 update: 2026-09-12 02:28 Europe/Berlin_
+_Last Worker 2 update: 2026-09-12 06:32 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -10,14 +10,17 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 ## Current evidence
 - CEO start `main`: `c423b8d220966b47b42677a3d12d4d32bfbadb57`; open PRs = 0; CI 1423 succeeded on that head.
 - Worker 1 start `main` for 06:15 run: `a3729e148fc731cdb66bc2726c48b4180af2acca`; open PRs = 0. No commit-status/workflow rows were exposed for that docs-only head.
-- Search Console finalized data still ends Sep 9. Domain fresh: Sep10 = 763 impressions / 0 clicks / position ~21.42; Sep11 partial = 176 / 0 / ~22.86. Active experiment gates remain unresolved.
+- Worker 2 start `main`: `8f8f7401b641f01c127573de2ad700386cf87a93`; open PRs = 0; CI 1425 and Search Console connectivity run 97 succeeded on that head.
+- Search Console finalized data still ends Sep 9. A direct non-fresh Sep10 read at 06:32 returned no rows for Renewable Energy, Inflation, Population Growth, GDP per capita, or Madagascar. Active experiment gates therefore remain unresolved.
+- Domain fresh: Sep10 = 763 impressions / 0 clicks / position ~21.42; Sep11 partial = 176 / 0 / ~22.86. Active experiment gates remain unresolved.
 - Domain-wide finalized totals: Aug 25-30 = 656 impressions / 0 clicks / 109 per day / weighted position ~56.49; Aug 31-Sep 2 = 1,606 / 3 / 535 per day / ~26.37; Sep 3-5 = 1,561 / 5 / 520 per day / ~39.74; Sep 6-9 = 2,947 / 0 / 737 per day / ~34.44.
 - Core English `/data/`: 914 impressions across 24 impression-bearing URLs Aug 31-Sep 2 versus 834 across 30 URLs Sep 6-9; weighted position ~9.59 -> ~15.68. Early spike was dominated by GDP per capita (574 -> 48 impressions); excluding GDP, other core `/data/` impressions increased 340 -> 786. This supports broader discovery + GDP-specific early spike, not a domain-wide penalty.
 - English `/countries/` Sep 9: hub + leaf pages = 145 impressions / 0 clicks / weighted position ~31.77. Excluding hub, 64 leaf URLs produced 139 impressions; ~55.4% of leaf impressions came from URLs whose aggregate position was Top-10, but exposure is fragmented (~2.17 impressions per impression-bearing leaf). Disclosed query evidence remains too sparse/technical for template changes.
 - Internet-Use country disclosed-query intent Sep1-9: 51 disclosed impressions / 0 clicks total. Technical World-Bank/indicator-code/download = 8 impressions at weighted position ~5.63; natural-language country internet-use/penetration = 38 at ~68.97; unrelated/mismatch = 5 at ~35.4. No country has repeat natural-language Top-10 exposure. Cluster intervention HOLD.
 - Active CTR tests still have no clean finalized post-boundary day: GDP per capita boundary Sep 10 08:00; Inflation Sep 10 12:32; Population Growth Sep 10 16:32.
-- Fresh Sep10-11 on priority pages: Renewable Energy = 33 impressions / 0 clicks / weighted position ~2.45; Population Growth = 29 / 0 / ~5.97; Inflation = 11 / 0 / ~8.09; GDP per capita = 7 / 0 / ~14.29; Death Rate = 1 / 0 / 5. Renewable remains the strongest aggregate CTR signal.
-- Renewable Energy finalized query disclosure through Sep9 is weak for consumer intent: the only exposed natural broad query in the new core screen, `renewable energy percentage by country`, had 1 impression at position 82. The strong Sep10-11 Page-1 fresh impressions still have no disclosed queries, so their intent remains unknown.
+- Fresh Sep10-11 priority-page recheck at 06:32: Renewable Energy = 33 impressions / 0 clicks / weighted position ~2.45 (Sep10 15 @ 2.27; Sep11 18 @ 2.61); Population Growth = 29 / 0 / ~5.97; Inflation = 11 / 0 / ~8.09; GDP per capita = 7 / 0 / ~14.29. Renewable remains the strongest aggregate CTR signal.
+- Renewable Energy fresh query disclosure remains empty for Sep10-11 even when queried directly, so intent is still privacy-limited. Finalized disclosure through Sep9 is weak for consumer intent: the only exposed natural broad query in the prior core screen, `renewable energy percentage by country`, had 1 impression at position 82.
+- Madagascar Sep10 fresh anomaly remains 202 impressions / 0 clicks / position ~6.24 and still has no finalized Sep10 row. No recurrence appeared in the Sep11 priority-page read. HOLD remains appropriate.
 - Death Rate Sep1-9 totaled 75 finalized impressions / 0 clicks / weighted position ~10.64. Exposed Page-1 longtails are real but highly specific: `china crude death rate 2021 per 1000` (2 impressions, position 2), `indonesia crude death rate 2021 per 1000` (2, position 2), Brazil 2019-2021 (1, position 3), China 2019-2021 (2, ~4.5), and a US World Bank lookup (1, position 10). The broad consumer queries `death rate by country` / `death rates by country` total 5 exposed impressions around position ~63. This weakens the case for a broad title-only intervention: current strength is country/year lookup intent, not broad category demand.
 - Worker 1 longtail architecture check: the live Death Rate page already has an exact country/year lookup plus full 217-country ranking/history, so creating country/year landing pages would duplicate existing useful content and risks thin/doorway behavior. Country profiles already expose Death Rate values and link back to the ranking, but Death Rate currently appears under `More indicators` rather than the visible `Health` topic table. This is a plausible scalable internal-link/semantic-placement improvement to research in the country-page generator, not a reason to create new landing pages.
 - Broader core `/data/` query screen confirms this pattern: many Top-10 results are indicator-code, World Bank, country/year, or exact-data lookups. Natural broad category terms (fertility rate by country, GDP per capita, internet users by country, etc.) generally remain far outside Page 1. Treat Page-1 aggregate position alone as insufficient revenue evidence.
@@ -60,5 +63,5 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - `/data/population/`: PREPARED FALLBACK / DEPLOYMENT HOLD.
 - `/data/population-age-0-14/`: CONTROL HOLD; Sep9 finalized = 56 / 0 / 5.91; disclosed intent strongly technical.
 - `/indicators/internet-use/country/*`: recurring aggregate Page-1 cohort, but natural-language disclosed intent averages ~position 69 while technical code intent is Page 1; cluster intervention HOLD.
-- `/indicators/internet-use/country/mdg/`: anomaly watch / HOLD.
+- `/indicators/internet-use/country/mdg/`: anomaly watch / HOLD; Sep10 fresh anomaly still 202 / 0 / ~6.24, no finalized row and no Sep11 recurrence in latest read.
 - `/indicators/gdp-per-capita/`: consolidation ready / HOLD.
