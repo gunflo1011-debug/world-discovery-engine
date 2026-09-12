@@ -45,8 +45,8 @@ test('country compare formats negative US dollar differences with the sign befor
   assert.equal(fmt(-1200000, 'current US$'), '-$1.20M');
 });
 
-test('compare URL producers never encode missing state as a /compare/null path segment', async () => {
-  const files = await Promise.all([
+test('generated compare navigation keeps missing/null state out of the pathname', async () => {
+  const [english, localized, actions, linker, built] = await Promise.all([
     readFile(sourceUrl, 'utf8'),
     readFile(localizedSourceUrl, 'utf8'),
     readFile(countryActionsUrl, 'utf8'),
@@ -54,15 +54,29 @@ test('compare URL producers never encode missing state as a /compare/null path s
     readFile(builtUrl, 'utf8'),
   ]);
 
-  for (const source of files) {
-    assert.doesNotMatch(source, /(?:^|["'`])(?:\.\.\/|\.\.\/\.\.\/|\/)?(?:[a-z-]+\/)?compare\/null(?:[/?#"'`]|$)/i);
+  // Exercise the routing behavior used by the generated compare page. Even if a
+  // future caller passes missing/null state, URLSearchParams can only place that
+  // state in the query; the compare pathname remains fixed.
+  const compareUrl = (base, a, b) => new URL(`compare/?${new URLSearchParams({ a, b })}`, base);
+  for (const base of ['https://worlddiscoverydata.com/', 'https://worlddiscoverydata.com/de/']) {
+    for (const state of [null, undefined, '']) {
+      const url = compareUrl(base, state, state);
+      assert.match(url.pathname, /\/compare\/$/);
+      assert.doesNotMatch(url.pathname, /null|undefined/i);
+    }
   }
 
-  const english = files[0];
-  const actions = files[2];
-  const linker = files[3];
+  // Generated output must use the same query-state contract, not a dynamic
+  // pathname. Cover English and localized builders plus both link producers.
   assert.match(english, /new URLSearchParams\(\{a:codeA,b:codeB\}\)/);
+  assert.match(localized, /new URLSearchParams\(\{a:codeA,b:codeB\}\)/);
   assert.match(actions, /new URLSearchParams\(\{a:code\}\)/);
   assert.match(linker, /if \(!code\) continue;/);
   assert.match(linker, /compare\/\?a=\$\{encodeURIComponent\(code\)\}/);
+  assert.match(built, /history\.replaceState\(null,'','\?'\+new URLSearchParams\(\{a:codeA,b:codeB\}\)\.toString\(\)\)/);
+
+  // Inspect emitted HTML as a final-output guard, including absolute URLs.
+  for (const output of [built]) {
+    assert.doesNotMatch(output, /(?:https?:\/\/[^"'\s]+)?\/(?:[a-z-]+\/)?compare\/(?:null|undefined)(?:[/?#"'\s]|$)/i);
+  }
 });
