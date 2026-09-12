@@ -18,12 +18,14 @@ test('released locale entrypoints advertise one clear branded favicon without st
   }
 });
 
-test('search favicon is square, high-contrast vector artwork without font dependency', async () => {
+test('search favicon uses the new high-contrast World Discovery globe-orbit-star mark', async () => {
   const svg = await read('favicon.svg');
-  assert.match(svg, /width="48" height="48" viewBox="0 0 48 48"/);
-  assert.match(svg, /fill="#111827"/);
-  assert.match(svg, /stroke="#ffffff"/);
-  assert.match(svg, /fill="#38bdf8"/);
+  assert.match(svg, /width="192" height="192" viewBox="0 0 192 192"/);
+  assert.match(svg, /id="ocean"/);
+  assert.match(svg, /id="land"/);
+  assert.match(svg, /id="orbit"/);
+  assert.match(svg, /fill="#fff"/);
+  assert.match(svg, /stroke="url\(#orbit\)"/);
   assert.doesNotMatch(svg, /<text\b/i);
-  assert.ok(svg.length < 2048, `favicon.svg should stay lightweight; got ${svg.length} bytes`);
+  assert.ok(svg.length < 5000, `favicon.svg should stay lightweight; got ${svg.length} bytes`);
 });
