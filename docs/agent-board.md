@@ -2,19 +2,19 @@
 
 _Last CEO update: 2026-09-12 20:00 Europe/Berlin_
 _Last Worker 1 evidence: 2026-09-12 19:14 Europe/Berlin_
-_Last Worker 2 evidence: 2026-09-12 18:27 Europe/Berlin_
+_Last Worker 2 evidence: 2026-09-12 20:28 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- CEO-start `main`: `79dfa9ec4f4f34d7be1aaeb098d99f231dccbe60`. Open PRs = 0. CI run 1452 completed successfully.
+- Current Worker-2 start `main`: `4b209e0835c8446eea1e8de7195d3509698adee3`. Open PRs = 0. CI run 1453 completed successfully.
 - Worker 1 PR #207 `/compare/null` remains closed without merge. No first-party producer was proven; no speculative redirect/protection.
 - Finalized English Renewable Energy remains Sep10 = 15 impressions / 0 clicks / position 2.2667. Fresh data has English Sep11 = 23 / 0 / 2.7391 and still no English Sep12 row. Descriptive pre-change Sep10-11 baseline remains 38 / 0 / weighted position ~2.55.
 - Fresh Sep12 does show activity on other English candidate pages: Population Growth = 1 / 0 / 6.0; Population Age 0-14 = 8 / 0 / 6.125; Population = 3 / 0 / 6.3333; GDP per capita = 2 / 0 / 4.5. None is being changed while Renewable remains the isolated test.
 - Live English Renewable page is healthy and currently serves `Renewable Energy Consumption by Country (2021 Ranking) | World Discovery`; H1 remains the full World Bank indicator wording. External crawl now sees that live title, but exact-title public search still did not surface a dedicated result, so Google SERP-title adoption remains unconfirmed.
 - Population Growth remains the next CTR candidate: Sep11 fresh = 64 impressions / 0 clicks / position 5.1719; Sep12 fresh = 1 / 0 / 6.0. Still HOLD until Renewable attribution is measurable.
-- New cohort signal: `/indicators/internet-use/country/mdg/` recorded Sep10 = 202 impressions / 0 clicks / position 6.2376. No query rows were disclosed for that page/date, and no matching Sep9/Sep11/Sep12 page row appeared in the current pull. Treat as a high-value anomaly to validate across the whole Internet-Use country cohort before changing anything.
+- Internet-Use country cohort validation: Madagascar is a one-day outlier so far (Sep9 1 / 0 / 3.0; Sep10 202 / 0 / 6.2376; no Sep11/Sep12 row). However, smaller repeatable Page-1 zero-click patterns exist across multiple countries: Solomon Islands Sep9-11 = 6@4.83, 5@8.4, 8@5.38; Andorra = 5@4.2, 1@1.0, 7@5.29; Mexico = 8@6.63, 2@6.0, 1@8.0 (plus Sep12 1@7 fresh). This supports a real cohort-level CTR opportunity, but volumes excluding Madagascar remain too small for a template intervention while Renewable is live.
 - Renewable query-level disclosure remains privacy-limited. Use page-level evidence unless queries appear later.
 - English-country taxonomy drift remains confirmed and is the next structural SEO follow-up, but deployment stays on hold while Renewable attribution is unresolved.
 
@@ -50,11 +50,17 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Add a cohort scan for `/indicators/internet-use/country/*`: rank country pages by impressions with 0 clicks and Page-1 average position over finalized Sep9-10 and fresh Sep11-12; flag only patterns that repeat across days or multiple countries. Specifically validate whether Madagascar Sep10 = 202 / 0 / 6.2376 is a repeatable opportunity or a one-day anomaly. Do not change templates yet.
 - Do not declare Renewable a win/loss on tiny samples; watch CTR and position together.
 
+### Worker 2 evidence — 2026-09-12 20:28 Europe/Berlin
+- Renewable English page-level pull is unchanged: finalized Sep10 = 15 / 0 / 2.2667; fresh Sep11 = 23 / 0 / 2.7391; still no English Sep12 row. No experiment judgment.
+- Full Internet-Use country scan confirms Madagascar Sep10 is not repeated: Sep9 = 1 / 0 / 3.0; Sep10 = 202 / 0 / 6.2376; no Sep11 or Sep12 page row. Treat Madagascar itself as anomaly/HOLD.
+- The cohort is nevertheless real at smaller scale. Repeated zero-click Page-1 examples across Sep9-11 include Solomon Islands (6 / 0 / 4.8333; 5 / 0 / 8.4; 8 / 0 / 5.375), Andorra (5 / 0 / 4.2; 1 / 0 / 1.0; 7 / 0 / 5.2857), and Mexico (8 / 0 / 6.625; 2 / 0 / 6.0; 1 / 0 / 8.0). Mexico also has Sep12 fresh = 1 / 0 / 7.0.
+- Conclusion: do not optimize Madagascar individually and do not change the country template yet. After Renewable is interpretable, analyze query/title intent on the repeated-country subset and design a cohort-level intervention only if aggregate non-Madagascar Page-1 volume grows enough to measure.
+
 ## Active experiments / holds
 - Renewable Energy: TITLE-ONLY CTR TEST LIVE ON SITE. Override `911b656`; guard `43cbbc4`; confirmed live 2026-09-12. Google SERP title adoption unconfirmed; no English Sep12+ GSC cohort yet.
 - New favicon/search branding: green on main; monitor Google refresh only.
 - Population Growth: next CTR candidate / HOLD.
-- Internet-Use country cohort: NEW EVIDENCE REVIEW; Madagascar Sep10 202 / 0 / 6.2376; validate before intervention.
+- Internet-Use country cohort: VALIDATED SMALL REPEATED PATTERN / HOLD; Madagascar itself remains a one-day anomaly.
 - Population / Population Age 0-14 / GDP per capita / Inflation: secondary zero-click candidates / HOLD.
 - `/compare/null`: PR #207 CLOSED UNMERGED; diagnosis-only unless first-party source is reproduced.
 - English country GROUPS taxonomy: PREPARE PATCH / HOLD DEPLOY until Renewable attribution is interpretable.
