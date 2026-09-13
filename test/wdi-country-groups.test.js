@@ -16,6 +16,21 @@ const LEGACY_GROUPS = [
   ['Energy & environment', ['co2-emissions-per-capita','renewable-energy-consumption','forest-area','electric-power-consumption']]
 ];
 
+const EXPECTED_MOVED_SLUGS = [
+  'agricultural-land-share',
+  'birth-rate',
+  'death-rate',
+  'exports-share-of-gdp',
+  'fdi-net-inflows-share-of-gdp',
+  'forest-area-share',
+  'gdp',
+  'health-expenditure-share-of-gdp',
+  'imports-share-of-gdp',
+  'population-age-0-14',
+  'population-age-65-plus',
+  'trade-share-of-gdp'
+].sort();
+
 const topicMap = groups => new Map(groups.flatMap(([topic, slugs]) => slugs.map(slug => [slug, topic])));
 const legacyTopic = topicMap(LEGACY_GROUPS);
 const nextTopic = topicMap(WDI_COUNTRY_GROUPS);
@@ -67,6 +82,15 @@ test('every current WDI indicator belongs to exactly one visible country topic',
   assert.deepEqual([...new Set(assigned)].sort(), current);
 });
 
+test('taxonomy changes are limited to the 12 intended formerly-collapsed indicators', () => {
+  const movedSlugs = current.filter(slug => (legacyTopic.get(slug) ?? 'More indicators') !== (nextTopic.get(slug) ?? 'More indicators')).sort();
+  assert.deepEqual(movedSlugs, EXPECTED_MOVED_SLUGS);
+  for (const slug of EXPECTED_MOVED_SLUGS) {
+    assert.equal(legacyTopic.get(slug) ?? 'More indicators', 'More indicators');
+    assert.notEqual(nextTopic.get(slug) ?? 'More indicators', 'More indicators');
+  }
+});
+
 test('representative formerly-collapsed indicators have the intended visible topic', () => {
   const topic = slug => nextTopic.get(slug);
   assert.equal(topic('population-age-0-14'), 'People');
@@ -84,6 +108,7 @@ test('review-only impact audit quantifies grouping changes without changing hub 
   assert.ok(evidence.affectedHubs > 0);
   assert.ok(evidence.movedLinks > 0);
   assert.ok(evidence.affectedHubs <= evidence.eligibleHubs);
+  assert.deepEqual(Object.keys(evidence.movedByIndicator).sort(), EXPECTED_MOVED_SLUGS);
   assert.equal(Object.values(evidence.movedByIndicator).reduce((a, b) => a + b, 0), evidence.movedLinks);
   assert.equal(Object.values(evidence.movedByTargetGroup).reduce((a, b) => a + b, 0), evidence.movedLinks);
   console.log(`WDI_COUNTRY_TAXONOMY_IMPACT ${JSON.stringify(evidence)}`);
