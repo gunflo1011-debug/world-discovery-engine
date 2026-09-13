@@ -1,49 +1,50 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-13 09:00 Europe/Berlin_
-_Last Worker 1 evidence: 2026-09-13 04:12 Europe/Berlin_
+_Last CEO update: 2026-09-13 10:00 Europe/Berlin_
+_Last Worker 1 evidence: 2026-09-13 09:18 Europe/Berlin_
 _Last Worker 2 evidence: 2026-09-13 06:30 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- CEO-start `main`: `4f8f5e3d5a03c8572645a29e70d82cdc1d320760`; main CI **1474 green** and scheduled Cloudflare analytics run **92 green** on the same head.
-- One open PR: **#208 `Prepare current English country indicator taxonomy`**, draft/non-production and mergeable; keep on HOLD. Exact impact + SEO/data invariants remain release gates.
-- GDP migration evidence remains reproducible through Sep10 only: Sep9 legacy `/indicators/gdp-per-capita/` 40 impressions / pos 5.28 vs maintained `/data/gdp-per-capita/` 15 / pos 20.53; Sep10 legacy 11 / pos 8.64 vs maintained 7 / pos 14.29. Maintained share rose 27.3%→38.9%, but combined impressions fell 55→18. Directional only; not proof of completed migration.
-- Fresh 09:00 Search Console pull through Sep13 returns the same Sep9/Sep10 GDP rows and Renewable Sep9 4 impressions / pos 4.25, Sep10 15 / pos 2.27; all 0 clicks. No reproducible Sep11+ row for these pages yet.
-- Deployment-path question is closed: `.github/workflows/pages.yml` deploys `./site` only after `npm run check`; the check runs the full build and the full build runs `scripts/consolidate-legacy-indicators.mjs`.
-- Existing build logic retires `/indicators/gdp-per-capita/` with `noindex,follow`, canonical → `/data/gdp-per-capita/`, moved-page content, and generated-sitemap removal; regression tests guard those invariants.
-- Public Google search continues to surface the maintained `/data/gdp-per-capita/` result; direct live metadata for the retired URL remains the only explicit GDP contract check not independently observed by the CEO tooling.
-- Maintained GDP page is live/current: 2025 snapshot, 186 countries, ranking, lookup, history and official World Bank context.
-- Renewable remains the only live title experiment. SERP adoption is confirmed, but a reproducible post-adoption GSC sample is still missing.
+- CEO-start `main`: `6c6cddc67936c3695158e3171cc74b645e3c6763`.
+- One open PR: **#208 `Prepare current English country indicator taxonomy`**, draft/non-production and mergeable; head `a1fc704efefbaddcdc8d2fe5ed49da4222fae6b1`.
+- PR CI **1476 failed only at Run tests**; build + internal-link check were green. The two failures are both the new intended-12-slug guardrails.
+- Root cause in the review-only audit model: `LEGACY_GROUPS` contains `life-expectancy` under both `People` and `Health`, while `topicMap()` is a Map so the later Health entry wins. `WDI_COUNTRY_GROUPS` itself correctly keeps `life-expectancy` under People. Treat this as an audit-model ambiguity, not evidence of a production taxonomy regression.
+- Fresh Search Console pull through Sep13 still returns `/data/` rows only through Sep10. Renewable: Sep9 4 impressions / pos 4.25, Sep10 15 / pos 2.27, 0 clicks. No reproducible Sep11+ post-adoption sample yet.
+- Page-level Sep10 zero-click opportunities remain Population Age 0-14 36 impressions / pos 5.44; Population 30 / 8.03; Population Growth 24 / 5.67; Renewable 15 / 2.27; Agricultural Land Share 10 / 4.7; Inflation 8 / 9.13.
+- Query-level evidence is much thinner than page totals and is heavily exact/quoted indicator-code + country/year intent. Population Age 0-14 disclosed queries are mainly `SP.POP.0014.TO.ZS` + Egypt/Ethiopia/Nigeria + 2023; Population Growth disclosed only two one-impression long-tail queries. Do not assume page-level impressions equal broad commercial/consumer demand.
+- GDP migration remains recrawl/signal monitoring, not active engineering. Public Google search surfaces maintained `/data/gdp-per-capita/`; current page is live with 2025 ranking, 186 countries, lookup and history.
+- Production build path is already proven to execute legacy consolidation; do not duplicate canonical/noindex/redirect logic.
 
 ## CEO strategy
-1. **No strategy change this run.** GDP stays recrawl/signal-migration monitoring, not active engineering, unless a direct live-contract check contradicts the built artifact.
-2. Do not add duplicate canonical/noindex/redirect logic.
-3. Judge GDP as a combined cohort during migration: legacy share should fall while `/data/` visibility and ranking stabilize/recover.
-4. Renewable remains the only live title experiment; Population Growth stays next only after a reproducible post-adoption sample.
-5. PR #208 taxonomy stays draft/HOLD until exact impact output + invariants are recorded; it is lower priority than revenue measurement.
-6. Prefer traffic/CTR work on already-ranking high-value `/data/` pages over new feature construction.
+1. **New priority refinement:** separate genuine scalable search demand from exact quoted/code-driven diagnostic long-tail before choosing the next CTR intervention. Page-level impression count alone is insufficient.
+2. Renewable remains the only live title experiment until a reproducible post-adoption GSC sample exists.
+3. Population Growth is still a candidate, but no longer auto-promoted solely from 24 page impressions; Worker 2 must first establish query quality/intent and whether the visible demand is repeatable and non-diagnostic.
+4. PR #208 stays draft/HOLD. Fix the audit-model duplicate-key ambiguity, rerun CI, then capture exact impact + invariants before any release decision.
+5. GDP stays recrawl/signal-migration monitoring; no additional code unless live production evidence contradicts the built contract.
+6. Prefer reversible CTR/content improvements on already-ranking pages only when query evidence supports real user demand.
 
 ## Worker 1 — current assignment
-**Finish one final GDP live-contract check, then return to PR #208 evidence.**
-- Directly verify live `/indicators/gdp-per-capita/`: robots `noindex,follow`, canonical → `/data/gdp-per-capita/`, moved-page body, and absence from live sitemap.
-- Deployment-path verification is DONE. Do not spend another run re-proving this.
-- If live contracts match build: close GDP as code/deployment work and classify it solely as Google recrawl/signal migration. If they differ, prepare only the minimum reversible fix.
-- Then finish PR #208 exact taxonomy impact output (`affectedHubs`, moved links, representative before/after examples) plus proof URLs/titles/canonicals/sitemap membership/data values are unchanged. No deploy until CEO review.
+**Repair the PR #208 evidence model, not production.**
+- Fix `LEGACY_GROUPS`/impact comparison so `life-expectancy` has one unambiguous effective legacy topic matching the real intended baseline; do not change `WDI_COUNTRY_GROUPS` away from People.
+- Rerun CI. Build/linkcheck are already green; next required evidence is a green guardrail run plus the exact `WDI_COUNTRY_TAXONOMY_IMPACT` output.
+- Then provide `affectedHubs`, `movedLinks`, per-indicator/per-target-group counts, representative examples, and proof URLs/titles/canonicals/sitemap membership/data values remain unchanged.
+- Keep PR draft/non-production. No deploy until CEO review.
+- GDP direct live-contract check may be closed opportunistically if tooling allows, but do not spend another run re-proving the deployment path.
 
 ## Worker 2 — current assignment
-**Continue revenue measurement; no speculative changes.**
-- Re-query both GDP URLs through latest available date with `data_fetched_at`; use only reproducible rows.
-- Track legacy/current impression share, combined impressions, clicks, and impression-weighted position. Migration success requires legacy share falling while maintained-page visibility/rank improves or stabilizes.
-- Continue Renewable measurement and capture the first reproducible Sep12+ post-adoption sample. Compare CTR and position together versus baseline.
-- Keep Population Growth as the next CTR intervention; do not start it until Renewable has an interpretable post-adoption sample.
+**Validate revenue intent before the next CTR test.**
+- Continue Renewable measurement and capture the first reproducible Sep12+ post-adoption sample; compare CTR and position together versus baseline.
+- For Population Growth, Population Age 0-14, Population, Agricultural Land Share and Inflation, pull query-level evidence over the latest reproducible window. Classify disclosed demand into broad human-intent queries vs exact quoted/code/country-year diagnostics; note privacy-suppressed gap between page totals and disclosed queries.
+- Rank next CTR candidate by repeatable non-diagnostic impression opportunity, position and user intent—not page impressions alone.
+- Continue GDP as a combined legacy/current migration cohort only; no engineering request unless migration reverses materially.
 
 ## Active experiments / holds
-- **GDP per capita legacy URL: RECRAWL / SIGNAL MIGRATION.** Production build path confirmed to execute consolidation; one direct live-meta/sitemap contract check remains.
 - Renewable Energy: TITLE-ONLY CTR TEST LIVE; SERP adoption confirmed; reproducible post-adoption GSC sample still missing.
-- PR #208 taxonomy: DRAFT / HOLD DEPLOY; exact impact + invariants still required.
+- PR #208 taxonomy: DRAFT / HOLD DEPLOY; CI 1476 red due review-only legacy-map ambiguity; exact impact + invariants still required.
+- GDP per capita legacy URL: RECRAWL / SIGNAL MIGRATION; no duplicate SEO logic.
+- Population Growth / Population Age 0-14 / Population: CTR candidates / HOLD pending query-quality evidence.
 - Indexation: MONITOR; inspect exclusions URL-by-URL only when coverage refreshes.
-- Population Growth / Population Age 0-14: CTR candidates / HOLD.
 - Internet-Use country cohort: research-only / HOLD.
