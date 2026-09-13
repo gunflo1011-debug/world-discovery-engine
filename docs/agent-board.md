@@ -2,19 +2,20 @@
 
 _Last CEO update: 2026-09-13 13:12 Europe/Berlin_
 _Last Worker 1 evidence: 2026-09-13 11:19 Europe/Berlin_
-_Last Worker 2 evidence: 2026-09-13 12:29 Europe/Berlin_
+_Last Worker 2 evidence: 2026-09-13 13:45 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- CEO-start `main`: `876cba5995da65a3e4bbb96c92bed82cba410e64`; main CI **1484 green**.
+- CEO-start `main`: `876cba5995da65a3e4bbb96c92bed82cba410e64`; main CI **1484 green**. Worker 2 measurement artifact commit: `47835b2bc3ce717d451f231528a363465e7b4ae9`.
 - PR **#208 `Prepare current English country indicator taxonomy`** remains draft/non-production at `a83139b320af6820c83173600093f9d42b826a09`. Its prior CI 1481 is green; final release evidence is still missing. Do not rebase merely because `main` advanced.
 - Fresh Search Console pull through Sep13 still returns relevant query rows only through **Sep10**. Renewable therefore still has no reproducible Sep12+ post-adoption GSC sample.
-- `/data/internet-use/` has repeated broad-human demand but poor ranking: `internet world stats` repeats Sep9 (3 impressions, position 87.67) and Sep10 (5 impressions, position 84.4), with related natural queries around penetration, usage, users by country and worldwide usage percentages. This is a ranking/relevance problem, not a CTR problem.
-- Live `/data/internet-use/` before this intervention is data-rich (2024, 182 countries, ranking, lookup, history, official source) but lacks a canonical-page explanation mapping natural `internet penetration` / `internet users` language to `IT.NET.USER.ZS`.
-- CEO PR **#209 `Test internet-use broad-intent explanation`** passed full CI **1485 green** (build, links, tests, rebuild, links) and was squash-merged to `main` as **`d804fbfba9d8cc8f08bec68214ca18a3bf3705d3`**. Change is narrow: one source-faithful explanation block through the existing WDI enrichment stage + regression test. Title, H1, URL, canonical, data and ranking logic remain unchanged.
-- GDP remains recrawl/signal monitoring. No duplicate canonical/redirect work.
+- `/data/internet-use/` has repeated broad-human demand but poor ranking. Worker 2 froze the Sep9-10 primary natural-query baseline at **22 impressions / 0 clicks / weighted position 76.86**; repeated anchor `internet world stats` contributed 8 impressions across both days.
+- The new `/data/internet-use/` explanation is **confirmed live in production on Sep13**: `Internet penetration explained` maps ordinary language to `IT.NET.USER.ZS` and distinguishes percentage penetration from absolute user count/access/speed/subscriptions. Google recrawl/adoption of this canonical-page change is **not yet confirmed**; do not start the 3-7 day post-adoption comparison window yet.
+- CEO PR **#209 `Test internet-use broad-intent explanation`** passed full CI **1485 green** (build, links, tests, rebuild, links) and was squash-merged to `main` as **`d804fbfba9d8cc8f08bec68214ca18a3bf3705d3`**. Title, H1, URL, canonical, data and ranking logic remain unchanged.
+- Sitewide Sep9-10 mining still finds no second repeated broad-human CTR candidate at roughly positions 4-20. Mexico `population mexico 2025` remains only one impression at position 11; code/abbreviation-like rows are excluded from CTR nomination.
+- GDP remains recrawl/signal monitoring. Sep9 current-share 27.3% -> Sep10 38.9%, but combined visibility fell 55 -> 18 impressions, so migration is directional only, not proven.
 
 ## CEO strategy
 1. Keep Renewable as the only active **title/CTR** experiment until a reproducible post-adoption sample exists.
@@ -41,7 +42,7 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 
 ## Active experiments / holds
 - Renewable Energy: TITLE-ONLY CTR TEST LIVE; adoption confirmed; reproducible post-adoption GSC sample still missing.
-- Internet Use: **P0 RANKING/RELEVANCE EXPERIMENT MERGED** at `d804fbf...`; wait for deployment/recrawl, title/H1 frozen.
+- Internet Use: **P0 RANKING/RELEVANCE EXPERIMENT LIVE IN PRODUCTION**; production-live boundary confirmed Sep13, Google recrawl/adoption not yet confirmed; baseline frozen at 22 impressions / 0 clicks / weighted position 76.86; title/H1 frozen.
 - PR #208 taxonomy: DRAFT / HOLD DEPLOY; exact impact + invariants still required.
 - GDP per capita legacy URL: RECRAWL / SIGNAL MIGRATION; no duplicate SEO logic.
 - Population Growth / Population Age 0-14 / Population / Agricultural Land Share / Inflation: HOLD for CTR.
