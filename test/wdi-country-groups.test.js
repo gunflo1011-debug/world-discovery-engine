@@ -8,10 +8,12 @@ const currentIndicators = (catalog.indicators ?? []).filter(x => x.status === 'C
 const current = currentIndicators.map(x => x.slug).sort();
 const assigned = WDI_COUNTRY_GROUPS.flatMap(([, slugs]) => slugs);
 
+// Review-only baseline for the effective legacy country-hub grouping. Keep each
+// slug unique so the audit cannot silently depend on Map last-write-wins.
 const LEGACY_GROUPS = [
   ['People', ['population','population-growth','urban-population','urban-population-share','population-density','fertility-rate','age-dependency-ratio','life-expectancy']],
   ['Economy & work', ['gdp-current-usd','gdp-per-capita','gdp-growth','inflation','unemployment','employment-to-population','labor-force-participation','exports','imports']],
-  ['Health', ['life-expectancy','health-expenditure','health-expenditure-per-capita','infant-mortality','maternal-mortality','physicians','hospital-beds']],
+  ['Health', ['health-expenditure','health-expenditure-per-capita','infant-mortality','maternal-mortality','physicians','hospital-beds']],
   ['Technology & infrastructure', ['internet-use','mobile-subscriptions','fixed-broadband','electricity-access','renewable-electricity']],
   ['Energy & environment', ['co2-emissions-per-capita','renewable-energy-consumption','forest-area','electric-power-consumption']]
 ];
@@ -30,6 +32,19 @@ const EXPECTED_MOVED_SLUGS = [
   'population-age-65-plus',
   'trade-share-of-gdp'
 ].sort();
+
+const assertUniqueGroupSlugs = (groups, label) => {
+  const seen = new Map();
+  for (const [topic, slugs] of groups) {
+    for (const slug of slugs) {
+      assert.ok(!seen.has(slug), `${label} duplicates ${slug} in ${seen.get(slug)} and ${topic}`);
+      seen.set(slug, topic);
+    }
+  }
+};
+
+assertUniqueGroupSlugs(LEGACY_GROUPS, 'LEGACY_GROUPS');
+assertUniqueGroupSlugs(WDI_COUNTRY_GROUPS, 'WDI_COUNTRY_GROUPS');
 
 const topicMap = groups => new Map(groups.flatMap(([topic, slugs]) => slugs.map(slug => [slug, topic])));
 const legacyTopic = topicMap(LEGACY_GROUPS);
