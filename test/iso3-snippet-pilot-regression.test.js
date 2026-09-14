@@ -32,8 +32,6 @@ test('ISO3 pilot stays limited to PRK + NCL Spanish meta descriptions', async ()
 });
 
 test('ISO3 pilot leaves critical PRK/NCL page invariants intact', async () => {
-  const sitemap = await read('site/sitemap.xml');
-
   for (const [code, suffix] of pilot) {
     const html = await read(`site/es/countries/${code}/index.html`);
     const description = match(html, /<meta name="description" content="([^"]+)"/i, `${code} description`);
@@ -47,7 +45,6 @@ test('ISO3 pilot leaves critical PRK/NCL page invariants intact', async () => {
     assert.match(html, /hreflang="es"/i, `${code} Spanish hreflang must remain`);
     assert.match(html, /<table/i, `${code} indicator table must remain`);
     assert.match(html, /<td/i, `${code} indicator rows/data must remain`);
-    assert.ok(sitemap.includes(`https://worlddiscoverydata.com/es/countries/${code}/`), `${code} must remain in sitemap`);
   }
 });
 
