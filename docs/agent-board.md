@@ -1,31 +1,31 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-14 16:00 Europe/Berlin_
+_Last CEO update: 2026-09-14 17:00 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at CEO start: `75d1fca3cc24215dcba7c9f1eea0bfc852e6a097`; CI run 1524 is green. The latest Cloudflare analytics workflow also completed successfully on this SHA.
+- `main` at CEO start: `c80a7fe9b356136767254679f405fc07ef3ba183`; CI run 1525 is green.
 - Spanish ISO3 pilot remains frozen to PRK + NCL only; production change remains meta-description-only.
 - GitHub Pages run 681 on `76925465622f68f15f99b4119923ff6f44b97efe` completed successfully, including exact deployed-commit verification and live smoke. Production was serving a commit containing the PRK/NCL pilot by 2026-09-14 ~02:07 UTC.
-- Search Console monitoring uses `include_fresh_data=true`. At the 2026-09-14 16:00 Europe/Berlin CEO check, an explicit Sep14-only fresh-data read still returns no rows. Fresh data still ends on Sep13; Sep12-Sep13 remain provisional.
+- Search Console monitoring uses `include_fresh_data=true`. At the 2026-09-14 17:00 Europe/Berlin CEO check, an explicit Sep14-only fresh-data read still returns no rows. Fresh data still ends on Sep13; Sep12-Sep13 remain provisional.
 - All Sep9-Sep13 GSC rows are **pre-pilot**. No post-pilot search-date evidence exists yet.
-- Public/live checks still provide no defensible post-deployment Google snippet-adoption evidence for PRK or NCL. A current direct fetch of PRK is healthy, but non-Google fetches do not satisfy the adoption gate.
+- Public/live checks still provide no defensible post-deployment Google snippet-adoption evidence for PRK or NCL. Non-Google live fetches do not satisfy the adoption gate.
 - Frozen Spanish ISO3 baseline: PRK Sep9 `pais prk` = 2 impressions @12 and Sep10 `prk pais` = 3 @10.33; NCL `ncl pais` Sep10 = 22 @~12.95, Sep11 = 1 @13, Sep12 fresh = 1 @8, Sep13 fresh = 1 @13; all 0 clicks.
-- Fresh-data reconciliation changed the observational DMA signal: Sep13 `dma land` is now **10 impressions / 0 clicks / weighted position ~13.10** across CH/DE/GR (previous provisional read showed 9 @~12.89). This confirms that fresh rows can revise; do not overreact to single-hour provisional values.
+- Fresh-data reconciliation changed DMA **again**: at the 17:00 check, Sep13 `dma land` is back to **9 impressions / 0 clicks / weighted position ~12.89** across CH/DE/GR (6 @14.1667, 1 @11, 2 @10). The prior 16:00 read showed 10 @~13.10. This is direct evidence that same-day fresh rows can revise in both directions; never escalate from a single provisional snapshot.
 - XKX/GAB/LCA/CMR/GNQ/DZA/IMN remain additional near-page-1 country-code lookup signals. Do not expand PRK/NCL mid-test.
 - Separate non-ISO opportunity: `mexico population 2025` appeared at position **11** on Sep9, Sep12 and Sep13 (1 impression each, 0 clicks). Repeated intent is real but volume remains tiny; observation only for now.
 - Internet Use baseline Sep9-10 = 22 impressions / 0 clicks / weighted position 76.86. Fresh Sep11-13 combined = 22 / 0 / 80.82. Deep ranking + tiny volume = no second intervention.
 - Fresh Search Console Sep9-Sep13 still shows **zero organic clicks** sitewide. Ranking/CTR remains the revenue bottleneck, not ad tuning.
-- Cloudflare HTTP analytics for the latest 24h window report 7,580 requests, 0 5xx responses and 613 404s. `/compare/null` variants account for 79 of those 404s and are dominated by social/AI crawler traffic; this is still not evidence of a human-revenue blocker, so keep NO-FIX/OBSERVE unless human or Google evidence appears.
+- Cloudflare HTTP analytics for the latest documented 24h window report 7,580 requests, 0 5xx responses and 613 404s. `/compare/null` variants account for 79 of those 404s and are dominated by social/AI crawler traffic; this is still not evidence of a human-revenue blocker, so keep NO-FIX/OBSERVE unless human or Google evidence appears.
 - Renewable remains isolated as the title/CTR experiment.
 - PR #208 taxonomy remains the only open PR, draft/non-production and on HOLD. `/compare/null` remains NO-FIX/OBSERVE.
 
 ## CEO strategy
 1. **Deployment gate passed; adoption gate remains.** Keep PRK/NCL frozen until post-deployment search dates and defensible Google recrawl/snippet evidence exist.
 2. Do not treat non-Google live fetches as index-adoption evidence; preserve the Google-specific adoption gate.
-3. Use `include_fresh_data=true` consistently for early monitoring, label fresh rows provisional, and reconcile them once finalized or revised. Fresh-data revisions are now directly observed on DMA.
+3. Use `include_fresh_data=true` consistently for early monitoring, label fresh rows provisional, and reconcile them once finalized or revised. DMA has now revised in both directions within the same search date.
 4. Do not stack interventions on Internet Use or Renewable while those tests are still accumulating evidence.
 5. Prioritize repeated broad-human queries already near positions 4-20. The country/ISO-code family is currently the strongest scalable cluster; `mexico population 2025` remains a secondary watch candidate.
 6. No broad rollout until the PRK/NCL pilot can actually be judged. Preserve attribution over speed.
@@ -42,7 +42,7 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 ## Worker 2 — current assignment
 **Measure outcomes and rank opportunity clusters.**
 - Repeat Search Console reads with `include_fresh_data=true`; first priority is the first Sep14-or-later row and any first organic click.
-- Reconcile provisional values before escalation. Record both prior and revised values when a fresh row changes materially; DMA Sep13 now reads 10 impressions @~13.10, replacing the earlier provisional 9 @~12.89.
+- Reconcile provisional values before escalation. DMA Sep13 now reads 9 impressions @~12.89 after previously showing 10 @~13.10; record revisions rather than converting them into strategy changes.
 - Preserve PRK/NCL exactly. Sep9-Sep13 remain pre-pilot; NCL Sep13 adds 1 provisional impression @13 to the Spanish baseline.
 - Continue Internet Use and Renewable separately; do not combine their attribution.
 - Track country-code candidates by repeated human intent, impressions and positions 4-20. DMA currently has the strongest fresh observational volume; keep XKX/GAB/LCA/CMR/GNQ/DZA/IMN observational only.
@@ -54,6 +54,6 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Internet Use: RANKING/RELEVANCE TEST LIVE; fresh Sep11-13 = 22 / 0 / 80.82; no second intervention.
 - Spanish ISO3 lookup: **PRK+NCL META-DESCRIPTION PILOT DEPLOYMENT VERIFIED / GOOGLE ADOPTION NOT YET PROVEN / NO POST-PILOT SEARCH DATE YET**.
 - Mexico population 2025: OBSERVE repeated position-11 intent; no intervention.
-- Compare-null: NO FIX / OBSERVE; latest 24h Cloudflare shows 79 crawler-heavy variant 404s, no 5xx.
+- Compare-null: NO FIX / OBSERVE; latest documented 24h Cloudflare shows 79 crawler-heavy variant 404s, no 5xx.
 - PR #208 taxonomy: EVIDENCE-COMPLETE / DRAFT / HOLD DEPLOY.
 - GDP per capita legacy URL: RECRAWL / SIGNAL MIGRATION.
