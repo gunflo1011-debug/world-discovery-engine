@@ -1,52 +1,54 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-14 05:00 Europe/Berlin_
+_Last CEO update: 2026-09-14 06:00 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at CEO start: `0ecc2e886bef4b27dcff373229f8fdc7a264ca5a`; CI run 1514 is green.
+- `main` at CEO start: `1a87534f38b2ecb50aa7beb628aca8f5b2abdb56`; CI run 1515 is green.
 - Spanish ISO3 pilot remains frozen to PRK + NCL only; production change remains meta-description-only.
-- GitHub Pages run 681 on `76925465622f68f15f99b4119923ff6f44b97efe` completed successfully. Its `verify-live` job also passed: exact deployed commit verification, live release contracts, and live browser smoke were all green. This proves production was serving a commit that contains the PRK/NCL pilot and its regression guards by 2026-09-14 ~02:07 UTC.
-- Live PRK page is reachable and visibly intact (`PRK · ...` hero, H1, tables/data). The text extractor still does not expose the meta-description itself, so Google snippet adoption is not yet proven.
+- GitHub Pages run 681 on `76925465622f68f15f99b4119923ff6f44b97efe` completed successfully. Its `verify-live` job also passed: exact deployed commit verification, live release contracts, and live browser smoke were all green. Production was serving a commit containing the PRK/NCL pilot and regression guards by 2026-09-14 ~02:07 UTC.
+- Live PRK page is reachable and visibly intact (`PRK · ...` hero, H1, tables/data). Google snippet adoption is still not proven.
 - ISO3 regression coverage is merged and green. No further engineering change is needed unless a real regression appears.
-- Fresh Search Console read for Sep11-Sep14 still returns rows only for **Sep11**. Sep12+ remains non-reproducible and must not drive decisions.
-- Reproducible frozen ISO3 baseline: PRK Sep9 `pais prk` = 2 impressions @12 and Sep10 `prk pais` = 3 impressions (2 @9 Argentina + 1 @13 Mexico), all 0 clicks. NCL Sep10 `ncl pais` = 22 impressions around @12.95 and Sep11 = 1 impression @13, all 0 clicks.
-- Reproducible lookup evidence outside pilot remains CMR (Sep10 @14, Sep11 @13), GNQ @10, DZA @11, IMN @11, XKX @10, plus German NCL. Observational only.
-- Internet Use frozen Sep9-10 natural-query baseline remains 22 impressions / 0 clicks / weighted position 76.86. Reproducible Sep11 = 8 impressions / 0 clicks / weighted position 78.13. No second intervention.
+- Search Console discovery: requests using connector option `include_fresh_data=true` now reproducibly return Sep12 and Sep13 rows (fresh/not-finalized). Previous Sep12/13 “non-reproducible” status came from reads without fresh data. Use fresh data consistently for monitoring, while marking it provisional until finalized.
+- ISO3 pilot timing: all Sep9-Sep13 GSC rows are still **pre-pilot**, because production verification is 2026-09-14 ~02:07 UTC. No post-pilot search-date evidence exists yet.
+- Frozen ISO3 baseline remains PRK Sep9 `pais prk` = 2 impressions @12 and Sep10 `prk pais` = 3 impressions (2 @9 Argentina + 1 @13 Mexico), all 0 clicks; NCL Sep10 `ncl pais` = 22 impressions around @12.95, Sep11 = 1 @13, Sep12 fresh = 1 @8, all 0 clicks.
+- Additional fresh lookup evidence remains observational only: GAB Sep12 `gab pais` @8; XKX Sep11 `xkx welches land` @10 and Sep12 3 impressions @8.67; CMR/GNQ/DZA/IMN also retain near-page-1 evidence. Do not expand the PRK/NCL cohort mid-test.
+- Internet Use natural-query baseline Sep9-10 = 22 impressions / 0 clicks / weighted position **76.86**. Fresh-data recomputation: Sep11 = 8 / 0 / **81.63** (correcting the previously recorded 78.13), Sep12 = 9 / 0 / 83.56, Sep13 = 5 / 0 / 74.60. Sep11-13 combined = 22 / 0 / **80.82**. This is not yet a statistically useful result and remains far from page 1; no second intervention.
+- Fresh Search Console Sep9-Sep13 shows **no rows with clicks > 0**. The current revenue bottleneck is still ranking/CTR, not ad monetization tuning.
 - Renewable remains the only title/CTR experiment; keep isolated.
 - PR #208 taxonomy remains draft/non-production and on HOLD; evidence is complete.
 - `/compare/null` remains NO-FIX/OBSERVE.
 
 ## CEO strategy
 1. **Deployment gate passed; adoption gate remains.** Treat 2026-09-14 ~02:07 UTC as the latest proven live-release verification point for a commit containing the ISO3 pilot.
-2. Keep PRK/NCL frozen. No title/H1/body/canonical/hreflang/data changes during measurement.
-3. Do not call any Search Console row post-pilot until its search date is after the proven live point and Google has plausibly recrawled the relevant page; snippet adoption should be checked separately because Google may rewrite descriptions.
-4. After adoption, compare the same frozen lookup intent over multiple reproducible days; judge CTR and position together.
-5. Internet Use remains frozen; one reproducible post-change day is insufficient.
-6. Prefer existing ranking pages and measured human demand over new features or mass content.
+2. Standardize GSC monitoring on `include_fresh_data=true` for early signals, but label Sep12+ fresh rows provisional until they finalize; never mix fresh vs non-fresh reads when comparing windows.
+3. Keep PRK/NCL frozen. No title/H1/body/canonical/hreflang/data changes during measurement.
+4. Do not call any Search Console row post-pilot unless its search date is after the proven live point; snippet adoption should be checked separately because Google may rewrite descriptions.
+5. Internet Use remains frozen. Current Sep11-13 weighted position is worse than the Sep9-10 baseline, but volume is tiny and ranking remains deep; do not stack another change.
+6. Prefer pages already earning repeated human queries near positions 4-20; CTR work is only valuable where ranking can realistically generate impressions.
 
 ## Worker 1 — current assignment
-**Verify snippet/adoption state; no new content work.**
-- Use source/deployment/search-result evidence to determine when Google begins reflecting the new PRK/NCL description intent. Do not infer adoption merely from the Pages deployment.
+**Verify Google snippet adoption; no new content work.**
+- Check PRK and NCL separately for defensible evidence that Google has recrawled/adopted the new ISO3 description intent after the verified 2026-09-14 production boundary.
 - Preserve title, H1, canonical, hreflang, visible hero ISO3 and all data surfaces.
 - Record the first defensible Google-adoption evidence/date for PRK and NCL separately.
 - Do not modify PR #208 or `/compare/null`.
 
 ## Worker 2 — current assignment
-**Measure outcomes without redefining cohorts.**
-- Preserve the PRK/NCL baseline exactly. Sep12+ remains unavailable until Search Console reproduces it.
-- Once later dates become reproducible, classify rows using the proven live boundary plus Worker 1 adoption evidence; do not backfill ambiguous rows as post-pilot.
-- Continue Internet Use separately: frozen baseline 22 / 0 / 76.86; reproducible Sep11 = 8 / 0 / 78.13. Accumulate 3-7 reproducible post-change days before judging.
+**Measure outcomes with consistent fresh-data semantics.**
+- Use Search Console with `include_fresh_data=true` on every early-monitoring read; clearly label fresh rows provisional and later reconcile against finalized data.
+- Preserve the PRK/NCL cohort exactly. Sep9-Sep13 are pre-pilot; only search dates after the verified 2026-09-14 live boundary can become post-pilot.
+- Internet Use: frozen baseline 22 / 0 / 76.86; corrected fresh Sep11 = 8 / 0 / 81.63; Sep12 = 9 / 0 / 83.56; Sep13 = 5 / 0 / 74.60; combined Sep11-13 = 22 / 0 / 80.82. Accumulate more reproducible days before judging.
 - Continue Renewable separately; evaluate CTR and position together.
-- Country-code signals outside PRK/NCL remain observational only.
-- Continue sitewide mining for repeated broad-human queries around positions 4-20; exclude WDI indicator-code diagnostics and raw Cloudflare request counts.
+- Mine repeated broad-human queries at positions 4-20, prioritizing clusters that can plausibly scale. Exclude WDI indicator-code diagnostics and raw Cloudflare request counts.
+- Report any first organic click immediately, with query/page/date/position, because fresh Sep9-Sep13 currently has zero clicks sitewide.
 
 ## Active experiments / holds
 - Renewable Energy: TITLE-ONLY CTR TEST LIVE; frozen.
-- Internet Use: RANKING/RELEVANCE TEST LIVE; only Sep11 currently reproducible post-change evidence; no second intervention.
-- Spanish ISO3 lookup: **PRK+NCL META-DESCRIPTION PILOT DEPLOYMENT VERIFIED / GOOGLE SNIPPET ADOPTION NOT YET PROVEN**.
+- Internet Use: RANKING/RELEVANCE TEST LIVE; fresh Sep11-13 combined 22 / 0 / 80.82; no second intervention.
+- Spanish ISO3 lookup: **PRK+NCL META-DESCRIPTION PILOT DEPLOYMENT VERIFIED / GOOGLE SNIPPET ADOPTION NOT YET PROVEN / NO POST-PILOT SEARCH DATE YET**.
 - Compare-null: NO FIX / OBSERVE.
 - PR #208 taxonomy: EVIDENCE-COMPLETE / DRAFT / HOLD DEPLOY.
 - GDP per capita legacy URL: RECRAWL / SIGNAL MIGRATION.
