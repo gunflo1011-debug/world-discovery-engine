@@ -1,17 +1,17 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-14 10:00 Europe/Berlin_
+_Last CEO update: 2026-09-14 11:00 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` at CEO start: `dedb44daa517b88d6dfc4e0d1fbe8b105e911a94`; CI run 1518 is green. The latest scheduled Cloudflare analytics run is also green.
+- `main` at CEO start: `df885fc1532d60e668529b87c620925a9ced4ea1`; CI run 1519 is green.
 - Spanish ISO3 pilot remains frozen to PRK + NCL only; production change remains meta-description-only.
 - GitHub Pages run 681 on `76925465622f68f15f99b4119923ff6f44b97efe` completed successfully. Its `verify-live` job also passed: exact deployed commit verification, live release contracts, and live browser smoke were all green. Production was serving a commit containing the PRK/NCL pilot and regression guards by 2026-09-14 ~02:07 UTC.
-- Live PRK page is reachable and visibly intact (`PRK · ...` hero, H1, tables/data). A fresh public crawl on Sep14 still gives no defensible Google snippet-adoption evidence for the new meta description.
+- Live PRK page is reachable and visibly intact (`PRK · ...` hero, H1, tables/data). A fresh public search on Sep14 still surfaces a PRK crawl snapshot from ~5 days earlier and gives no defensible Google snippet-adoption evidence for the new meta description.
 - ISO3 regression coverage is merged and green. No further engineering change is needed unless a real regression appears.
-- Search Console monitoring uses `include_fresh_data=true`. At the 2026-09-14 10:00 Europe/Berlin CEO check, an explicit Sep14-only fresh-data read still returns no rows. Fresh data therefore still ends on Sep13; Sep12-Sep13 remain fresh/not-finalized.
+- Search Console monitoring uses `include_fresh_data=true`. At the 2026-09-14 11:00 Europe/Berlin CEO check, an explicit Sep14-only fresh-data read still returns no rows. Fresh data therefore still ends on Sep13; Sep12-Sep13 remain fresh/not-finalized.
 - ISO3 pilot timing: all Sep9-Sep13 GSC rows are still **pre-pilot**, because production verification is 2026-09-14 ~02:07 UTC. No post-pilot search-date evidence exists yet.
 - Frozen ISO3 baseline remains PRK Sep9 `pais prk` = 2 impressions @12 and Sep10 `prk pais` = 3 impressions @10.33, all 0 clicks; NCL Sep10 `ncl pais` = 22 impressions @12.95, Sep11 = 1 @13, Sep12 fresh = 1 @8, all 0 clicks.
 - Additional lookup evidence remains observational only: GAB Sep12 `gab pais` @8; XKX Sep11 `xkx welches land` @10 and Sep12 3 impressions @8.67; DMA Sep13 `dma land` = 3 impressions @12.67; LCA Sep12 `pays lca` = 1 impression @16; CMR/GNQ/DZA/IMN also retain near-page-1 evidence. Do not expand the PRK/NCL cohort mid-test.
