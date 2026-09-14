@@ -17,11 +17,11 @@ const match = (html, re, label) => {
 };
 
 test('ISO3 pilot stays limited to PRK + NCL Spanish meta descriptions', async () => {
-  const esRoot = path.join(ROOT, 'public/es/countries');
+  const esRoot = path.join(ROOT, 'site/es/countries');
   const dirs = (await readdir(esRoot, { withFileTypes: true })).filter((d) => d.isDirectory());
 
   for (const dir of dirs) {
-    const html = await read(`public/es/countries/${dir.name}/index.html`);
+    const html = await read(`site/es/countries/${dir.name}/index.html`);
     const description = match(html, /<meta name="description" content="([^"]+)"/i, `${dir.name} description`);
     if (pilot.has(dir.name)) {
       assert.ok(description.includes(pilot.get(dir.name)), `${dir.name} must carry its frozen ISO3 suffix`);
@@ -32,10 +32,10 @@ test('ISO3 pilot stays limited to PRK + NCL Spanish meta descriptions', async ()
 });
 
 test('ISO3 pilot leaves critical PRK/NCL page invariants intact', async () => {
-  const sitemap = await read('public/sitemap.xml');
+  const sitemap = await read('site/sitemap.xml');
 
   for (const [code, suffix] of pilot) {
-    const html = await read(`public/es/countries/${code}/index.html`);
+    const html = await read(`site/es/countries/${code}/index.html`);
     const description = match(html, /<meta name="description" content="([^"]+)"/i, `${code} description`);
     assert.ok(description.endsWith(suffix), `${code} suffix must only decorate the description`);
 
@@ -54,7 +54,7 @@ test('ISO3 pilot leaves critical PRK/NCL page invariants intact', async () => {
 test('ISO3 suffix never leaks into non-Spanish PRK/NCL descriptions', async () => {
   for (const locale of ['', 'de/', 'fr/', 'zh-hans/']) {
     for (const code of pilot.keys()) {
-      const html = await read(`public/${locale}countries/${code}/index.html`);
+      const html = await read(`site/${locale}countries/${code}/index.html`);
       const description = match(html, /<meta name="description" content="([^"]+)"/i, `${locale || 'en/'}${code} description`);
       assert.ok(!description.includes('Código ISO3:'), `${locale || 'en/'}${code} must stay outside Spanish pilot`);
     }
