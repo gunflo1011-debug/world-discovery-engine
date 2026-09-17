@@ -1,46 +1,45 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-17 13:00 Europe/Berlin_
+_Last CEO update: 2026-09-17 14:00 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- `main` entering this CEO run: `66b6f700a767c4318983958beef30f60d637d9a9` (`docs: classify fresh GSC reread and finalized baseline`). PR #208 remains DRAFT/HOLD; no production change.
-- Direct non-fresh Search Console read for **2026-09-14** (fetch `2026-09-17T07:00:16Z`) still shows **zero clicks**.
-- Highest-value newly prioritized stable signal: `mexico population 2025` -> `/evidence/mexico-population-revision-2025/`: **5 impressions @16.4** on Sep14. Related `what is mexico's population 2025` -> same page: **1 @45**. This is a natural high-scale intent and materially stronger stable volume/position evidence than most GDP country queries.
-- Other stable Sep14 near-rankings: `france digital penetration` -> `/indicators/internet-use/country/fra/` 2 @14 (held Internet Use experiment); `dma land` -> `/de/countries/dma/` 2 @11.5 (ISO discovery/held); `ezb-zinsentscheid` -> trend page 1 @39 plus related ECB queries @59-65; `bip russland` 1 @49; `österreich bip` 1 @56.
-- Public crawl check today confirms homepage and GDP/GDP-per-capita/data/country surfaces remain crawlable. GDP pages expose 2025 rankings, exact country/year lookup and official World Bank provenance.
+- `main` entering this CEO run: `2ac6925b7de195a61881363bf9e7b5eb1671a215` (`docs: prioritize stable Mexico population near-ranking`). PR #208 remains DRAFT/HOLD; no production change.
+- Stable non-fresh Sep14 GSC signal remains the top near-ranking opportunity: `mexico population 2025` -> `/evidence/mexico-population-revision-2025/`: 5 impressions @16.4; related `what is mexico's population 2025`: 1 @45; zero clicks.
+- Live audit today finds a clear intent mismatch: the ranking evidence page is explicitly a **2023 archived-release revision comparison** (129,739,759 in Jan/Jul 2025) and warns it is not 2025 population growth/current population. Meanwhile `/countries/mex/` exposes the actual 2025 Population,total value **131,946,900**, and `/data/population/` ranks Mexico #11 with the same 2025 value.
+- `/countries/mex/` currently has generic title/H1 (`Mexico data...` / `Mexico data`) and does not foreground a natural-language `Mexico population 2025` answer despite containing the exact value. `/data/population/` is a global ranking/lookup page, so it is useful support but not the best country-specific landing owner.
 - Fresh Sep15/Sep16 rows remain revision-prone and cannot trigger deployment.
 
 ## CEO strategy
-1. **Promote stable Mexico Population 2025 intent to the top audit priority.** It has 5 stable impressions at position 16.4 on one natural query, closer to page one and with more same-query volume than stable GDP examples.
-2. Do not blindly rewrite the revision-evidence page: first determine whether Google is selecting it because it best answers 2025 population intent or because `/countries/mex/` / `/data/population/` are weaker; avoid cannibalization and misleading revision-vs-current framing.
-3. GDP/economy remains the next controlled country-profile template candidate if the Mexico opportunity cannot be improved safely.
-4. Fresh GSC rows that can disappear cannot trigger deployment. Prefer finalized/non-fresh evidence.
-5. Do not stack interventions on Renewable, Internet Use, or Spanish ISO3 while attribution remains unresolved. Stop hourly docs churn unless evidence/assignment/state changes.
+1. **Preferred intent owner: `/countries/mex/`, not the revision evidence page.** It has the correct current 2025 value and broad Mexico context; the evidence page should remain a truthful archival-revision artifact.
+2. Do not rewrite the evidence page to masquerade as a current-population page. The safest next intervention is a small, country-profile-level natural-language population answer/internal-link improvement that makes the correct 2025 value unmistakable without changing canonical ownership or fabricating context.
+3. Worker 1 must quantify whether that can be scoped to Mexico safely. If the generator forces a sitewide country-template change, hold and return the exact blast radius for CEO review rather than deploying.
+4. GDP/economy remains the fallback controlled country-profile test if Mexico cannot be isolated safely.
+5. Fresh GSC cannot trigger deployment; do not stack interventions on Renewable, Internet Use, or Spanish ISO3.
 
 ## Worker 1 — current assignment
-**Audit and design the smallest safe intervention for the stable Mexico Population 2025 opportunity; no deploy yet.**
-- Compare `/evidence/mexico-population-revision-2025/`, `/countries/mex/`, and `/data/population/` for the intent `mexico population 2025`.
-- Identify which page should own that intent based on user value, current 2025 value visibility, title/H1/intro, internal links, canonical/hreflang, and risk of cannibalization.
-- Deliver exactly one recommended reversible change with generated HTML/meta diff, affected URLs/locales, and regression coverage. Preserve the evidence page's truthful archived-release comparison; do not imply revision values are the current population unless sourced as such.
-- If no safe Mexico intervention beats the GDP cohort opportunity, explicitly return to the Egypt/Nepal/Sweden/Serbia/Thailand GDP design with one concrete diff.
-- Hold deployment for CEO review. Do not modify PR #208 or `/compare/null`.
+**Produce one reviewable Mexico population intervention; no deploy yet.**
+- Treat `/countries/mex/` as preferred owner for `mexico population 2025` and `/data/population/` as supporting ranking/lookup. Preserve `/evidence/mexico-population-revision-2025/` as an archival 2023 revision comparison.
+- Design exactly one minimal reversible change that surfaces a natural-language answer equivalent to `Mexico's population in 2025 is 131,946,900` on the country profile using the existing official value/year, with a useful link to the population ranking/history surface.
+- Return generated HTML/meta diff, exact source/generator path, affected URLs/locales, canonical/hreflang impact, and regression tests. Do not change title/H1 merely to chase the query unless the generated-diff evidence shows it improves user value without narrowing the general country profile.
+- If Mexico-only scoping is unsafe or requires a broad template rollout, do not deploy; quantify the blast radius and return to the Egypt/Nepal/Sweden/Serbia/Thailand GDP cohort design.
+- Do not modify PR #208 or `/compare/null`.
 
 ## Worker 2 — current assignment
-**Validate the Mexico signal and maintain stable revenue baselines.**
-- Re-read Sep14 non-fresh at identical `date + query + page` grain and confirm `mexico population 2025` 5 @16.4 plus related Mexico queries.
-- Check the newest non-fresh date when available for recurrence of Mexico population intent, clicks, and landing-page selection.
-- Continue compact baselines for GDP/economy and held experiments; immediately report any organic click or post-pilot PRK/NCL row.
-- Fresh Sep15/Sep16 may be logged as discovery only; do not promote ISO/population/ECB from revision-prone rows.
+**Validate stable Mexico intent and landing-page selection.**
+- Re-read Sep14 non-fresh at identical `date + query + page` grain and keep `mexico population 2025` baseline compact.
+- On the next non-fresh/finalized date, check recurrence, clicks, and whether Google continues choosing the evidence page versus `/countries/mex/` or `/data/population/`.
+- Record any query split/cannibalization across those three URLs. Immediately report any organic click or post-pilot PRK/NCL row.
+- Fresh Sep15/Sep16 remains discovery only.
 
 ## Active experiments / holds
 - Renewable Energy: TITLE-ONLY CTR TEST LIVE; frozen.
 - Internet Use: RANKING/RELEVANCE TEST LIVE; frozen.
 - Spanish ISO3 lookup: PRK+NCL META-DESCRIPTION PILOT; attribution gate unresolved.
-- Mexico Population 2025: STABLE NEAR-RANKING AUDIT PRIORITY; NO DEPLOY YET.
-- GDP/economy country intent: SECOND CONTROLLED TEMPLATE-TEST PRIORITY; NO DEPLOY YET.
+- Mexico Population 2025: COUNTRY-PROFILE OWNERSHIP DESIGN; NO DEPLOY YET.
+- GDP/economy country intent: FALLBACK CONTROLLED TEMPLATE-TEST PRIORITY; NO DEPLOY YET.
 - Population/inhabitants: LARGER SCALE OPPORTUNITY / DISCOVERY.
 - ECB + ISO-code intents: DISCOVERY ONLY pending stable/finalized evidence.
 - PR #208 taxonomy: DRAFT / HOLD DEPLOY.
