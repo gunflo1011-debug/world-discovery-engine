@@ -17,14 +17,13 @@
 <main class="dashboard-shell">
   <aside class="filter-panel">
     <div class="filter-title"><span>Filters</span><span class="filter-count" id="filter-count">0</span></div>
-    <label>Year<select id="year"><option>Latest available</option></select></label>
     <label>Region<select id="region"><option value="all">All regions</option></select></label>
     <div class="filter-section"><span>Countries</span><input id="country-search" type="search" placeholder="Search countries…"><div id="country-list" class="country-list"></div></div>
-    <div class="source-note"><span class="live-dot"></span><div><strong>Official data</strong><small>World Bank · WDI</small></div></div>
+    <div class="source-note"><span class="live-dot"></span><div><strong>Official observations</strong><small>World Bank · WDI · latest available by indicator</small></div></div>
     <div class="trust-links"><a href="../methodology/">Methodology</a><a href="../sources/">Sources</a><a href="../status/">Data status</a></div>
   </aside>
   <section class="workspace">
-    <div class="workspace-head"><div><span class="eyebrow">VISUAL ANALYTICS</span><h1>World Data Explorer</h1><p>Discover patterns across countries. Select, filter and compare — every view responds instantly.</p></div><div class="status-pill"><span></span> Live dataset</div></div>
+    <div class="workspace-head"><div><span class="eyebrow">VISUAL ANALYTICS</span><h1>World Data Explorer</h1><p>Discover patterns across countries. Select, filter and compare — every view responds instantly.</p></div><div class="status-pill"><span></span> Official WDI · latest observations</div></div>
     <div class="control-card">
       <div><label>X axis</label><select id="x-indicator"></select></div>
       <button id="swap" class="swap" title="Swap axes">⇄</button>
@@ -39,7 +38,7 @@
     </div>
     <div class="viz-grid">
       <article class="panel scatter-panel"><div class="panel-head"><div><h2 id="scatter-title">Relationship</h2><p id="scatter-subtitle">Loading official observations…</p></div><span class="panel-tag">SCATTER</span></div><div id="scatter" class="chart"></div><div class="legend"><span><i class="lg a"></i>Europe & Central Asia</span><span><i class="lg b"></i>East Asia & Pacific</span><span><i class="lg c"></i>Americas</span><span><i class="lg d"></i>Other</span></div></article>
-      <article class="panel ranking-panel"><div class="panel-head"><div><h2 id="ranking-title">Top countries</h2><p>Click a country to select it</p></div><span class="panel-tag">RANKING</span></div><div id="ranking" class="ranking"></div></article>
+      <article class="panel ranking-panel"><div class="panel-head"><div><h2 id="ranking-title">Top countries</h2><p>Choose a country to select it</p></div><span class="panel-tag">RANKING</span></div><div id="ranking" class="ranking"></div></article>
     </div>
     <article class="panel insight-panel"><div class="insight-icon">✦</div><div><span class="eyebrow">QUICK INSIGHT</span><strong id="insight">Loading the data story…</strong><p>Selections update every chart and metric in this workspace.</p></div></article>
   </section>
