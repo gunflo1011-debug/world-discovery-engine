@@ -17,7 +17,8 @@
 <main class="dashboard-shell">
   <aside class="filter-panel">
     <div class="filter-title"><span>Filters</span><span class="filter-count" id="filter-count">0</span></div>
-    <label>Year<select id="year"><option>Latest available</option></select></label>
+    <label>Data timing<select id="year" disabled aria-label="Data timing"><option>Latest official snapshot per indicator</option></select></label>
+    <small class="timing-note">Indicators can have different latest years. World Discovery uses each dataset's stated observation year and never backfills a country from another year.</small>
     <label>Region<select id="region"><option value="all">All regions</option></select></label>
     <div class="filter-section"><span>Countries</span><input id="country-search" type="search" placeholder="Search countries…"><div id="country-list" class="country-list"></div></div>
     <div class="source-note"><span class="live-dot"></span><div><strong>Official data</strong><small>World Bank · WDI</small></div></div>
