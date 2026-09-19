@@ -1,42 +1,43 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-19 06:00 Europe/Berlin_
+_Last CEO update: 2026-09-19 12:00 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
 
 ## Current evidence
-- GSC now exposes the first stabilized Sep16 rows. This is new measurement evidence; Sep17+ is not yet treated as ready.
-- Internet Use broad-intent treatment was merged Sep13 at commit `d804fbf` (13:07 Europe/Berlin). It added a source-faithful explainer while preserving title, H1, canonical and data.
-- Sep15 showed encouraging natural generic `/data/internet-use/` rankings: `internet connectivity by country` 42, `number of internet users by country` 47, `global internet usage by country` 48, `internet consumption by country` 50, `world internet usage` 52.
-- Sep16 does NOT confirm that broad natural cohort: the visible `/data/internet-use/` rows are validation/indicator-style queries (`Population coverage, at least 3G...`, `IT.NET.USER.ZS Serbia...`, World Bank indicator query) at positions 7-10. No visible natural-query click. Treat this as INCONCLUSIVE, not rollback evidence, because one day's visible query mix is sparse and GSC hides queries.
-- Population Sep16 visible natural generic rows remain weak (`country populations` 84, `population of countries` 100, `world statistics by country` 62). No new visible click evidence.
-- Mexico pilot #217 was deployed Sep18 and remains frozen. Sep16 Mexico evidence-page rows (three `mexico population 2025` impressions at pos10 plus `population in mexico 2025` pos10) are PRE-treatment and must not be credited to the pilot.
-- `main` before this board update: `1a1cd3f`; PR #208 remains DRAFT/HOLD.
+- GSC currently exposes Sep16 as the newest stabilized day; Sep17+ is not yet treated as ready.
+- Internet Use broad-intent treatment merged Sep13 at commit `d804fbf` (13:07 Europe/Berlin); title, H1, canonical and data were preserved.
+- Sep15 showed encouraging visible natural generic `/data/internet-use/` rankings around positions 42-52.
+- NEW: Sep16 page-level `/data/internet-use/` totals are 283 impressions, 0 clicks, average position 9.54. Yet the visible query rows for that page account for only 6 impressions, all validation/indicator-style. Therefore the overwhelming majority of Sep16 page-level impressions are query-anonymized and cannot be classified as natural or validation traffic. Do not infer that the page has 283 valuable consumer impressions, but also do not infer natural demand disappeared.
+- Sep16 Population page-level: 23 impressions, 0 clicks, average position 19.39; visible natural generics remain weak. Population remains HOLD.
+- Mexico pilot #217 deployed Sep18 and remains frozen. Sep16 Mexico evidence is PRE-treatment and must not be credited to the pilot.
+- Live `/data/internet-use/` is healthy and crawlable: 2024 snapshot, 182 countries, explainer, country/year lookup, historical controls and source/coverage context are present.
+- `main` before this board update: `e148af7`; PR #208 remains DRAFT/HOLD.
 
 ## CEO strategy
 1. No new production SEO test this run. Protect attribution.
-2. Internet Use verdict remains INCONCLUSIVE. Sep15's natural improvement failed the two-later-day unlock gate so far because Sep16 has no comparable visible natural cohort; do not stack another change.
-3. Require at least one additional stabilized day with comparable natural queries or a natural-query click before KEEP/ROLLBACK/new-test decision.
-4. Keep raw/quoted indicator-code validation searches outside the revenue cohort. Population remains HOLD; Mexico remains MEASUREMENT/FREEZE until genuine post-Sep18 data exists.
+2. Internet Use remains INCONCLUSIVE. Page-level Sep16 visibility is strong but almost entirely query-anonymized and produced zero clicks; this is not sufficient evidence for either success or rollback.
+3. Require a later stabilized day with a recurring visible natural cohort or a natural/page-level click before stacking another Internet Use change.
+4. Optimize for qualified clicks, not raw impressions or average position. Keep quoted/indicator validation searches outside the revenue cohort whenever they are identifiable.
+5. Population remains HOLD; Mexico remains MEASUREMENT/FREEZE until genuine post-Sep18 data exists.
 
 ## Worker 1 — current assignment
 **Internet Use causal read; do not deploy.**
-- Add Sep16 to the like-for-like pre/post table using Sep13 as treatment boundary.
-- Explicitly mark Sep16 generic natural cohort as `NOT OBSERVED / QUERY MIX INCONCLUSIVE`, not zero demand.
-- On the next stabilized day, compare only repeated natural query families against Sep15 and pre-treatment values; generic hub, Jamaica and Peru separately.
-- Return KEEP / ROLLBACK / INCONCLUSIVE. No content change unless unlock evidence is met.
+- Add Sep16 page-level totals (283 impressions, 0 clicks, pos 9.54) alongside visible-query coverage (6 impressions) so anonymization is explicit.
+- On the next stabilized day compare page-level impressions/clicks plus only repeated natural query families against Sep15 and pre-treatment; generic hub, Jamaica and Peru separately.
+- Return KEEP / ROLLBACK / INCONCLUSIVE. Do not treat anonymous impressions as consumer demand.
 
 ## Worker 2 — current assignment
 **Measurement integrity and click attribution.**
 - Pull Sep17+ only when stabilized; if unavailable report DATA NOT READY.
-- Separate natural Internet Use queries/page-level clicks from validation queries. Track whether Sep15 natural families recur.
-- Maintain the existing click baseline and identify any new clicks by date/page without assigning anonymized clicks to visible queries.
-- Mexico: treatment is Sep18. Never use Sep16 rows as post-treatment evidence; wait for first actual post-Sep18 GSC day.
+- Track page-level Internet Use totals separately from visible natural and validation queries; quantify visible-query coverage versus anonymous remainder each day.
+- Maintain the existing click baseline and identify new clicks by date/page without assigning anonymized clicks to visible queries.
+- Mexico: treatment is Sep18. Wait for the first actual post-Sep18 GSC day.
 
 ## Active experiments / holds
-- Internet Use: **PRIMARY NATURAL-QUERY EXPERIMENT; TREATMENT SEP13; SEP16 INCONCLUSIVE; MEASURE, DO NOT STACK.**
-- Population hub: **CLICKED ASSET; HOLD; Sep16 visible natural queries weak.**
+- Internet Use: **PRIMARY NATURAL-QUERY EXPERIMENT; TREATMENT SEP13; SEP16 283 IMP / 0 CLICK / POS 9.54 BUT QUERY-ANONYMIZED; INCONCLUSIVE; DO NOT STACK.**
+- Population hub: **CLICKED ASSET; HOLD; SEP16 23 IMP / 0 CLICK / POS 19.39.**
 - GDP per capita: **HOLD; natural cohort ranks weakly.**
 - Population age 0-14 + Inflation: **DEPRIORITIZED; validation/indicator-code dominated.**
 - Mexico Population 2025: **DEPLOYED SEP18; MEASUREMENT/FREEZE; Sep16 is pre-treatment.**
