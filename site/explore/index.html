@@ -1,31 +1,48 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Explore world data — World Discovery</title>
-  <meta name="description" content="Explore official global data by topic, country and comparison with explicit observation years, sources and methodology.">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Interactive Data Explorer — World Discovery</title>
+  <meta name="description" content="Explore and compare official World Bank indicators in an interactive visual analytics workspace.">
   <link rel="canonical" href="https://worlddiscoverydata.com/explore/">
-  <link rel="stylesheet" href="../styles.css">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Explore world data","url":"https://worlddiscoverydata.com/explore/","isPartOf":{"@type":"WebSite","name":"World Discovery","url":"https://worlddiscoverydata.com/"}}</script>
+  <link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="./dashboard.css">
 </head>
-<body>
-  <header class="topbar"><div class="wrap"><div class="brand">World Discovery</div></div></header>
-  <main>
-    <section class="hero hero-compact"><div class="wrap"><div class="eyebrow">Explore official world data</div><h1>Start with a question, not a database code.</h1><p>Browse maintained indicators by topic, open country and territory profiles, compare compatible observations, and follow the source and methodology behind the numbers.</p></div></section>
-    <section class="section"><div class="wrap"><h2>Ways to explore</h2><div class="grid">
-      <article class="card"><h3>Browse the data catalog</h3><p>Find maintained indicators by readable names, topics and source-backed metadata.</p><a href="../data/">Browse the data catalog →</a></article>
-      <article class="card"><h3>Explore countries and territories</h3><p>Open country and territory profiles across the maintained indicator catalog.</p><a href="../countries/">Explore countries and territories →</a></article>
-      <article class="card"><h3>Compare countries</h3><p>Compare two countries on compatible observations with years, units and provenance kept explicit.</p><a href="../compare/">Open country comparison →</a></article>
-      <article class="card"><span class="pill">NEW</span><h3>See what the world is searching for</h3><p>Explore fast-rising Google search topics across major international markets as a new global demand signal.</p><a href="../trends/">Open global search trends →</a></article>
-      <article class="card"><span class="pill">FUN</span><h3>Discover surprising world facts</h3><p>See playful, conversation-worthy facts generated directly from current World Discovery data.</p><a href="../fun-facts/">Open Fun Facts →</a></article>
-    </div></div></section>
-    <section class="section section-soft"><div class="wrap"><h2>Understand the data</h2><div class="grid">
-      <article class="card"><h3>Methodology</h3><p>See how observation years, compatibility, derived values and publication rules are handled.</p><a href="../methodology/">Read methodology →</a></article>
-      <article class="card"><h3>Sources and provenance</h3><p>Review official source families, machine-readable access and provenance rules.</p><a href="../sources/">Inspect sources and provenance →</a></article>
-      <article class="card"><h3>Current data status</h3><p>Check the current maintained-data coverage before interpreting a result.</p><a href="../status/">View current data status →</a></article>
-    </div></div></section>
-  </main>
-  <footer class="footer"><div class="wrap">World Discovery</div></footer>
-</body>
-</html>
+<body class="wd-app">
+<header class="appbar">
+  <a class="appbrand" href="../"><span class="brandmark">W</span><span>World Discovery</span></a>
+  <nav><a href="../data/">Data</a><a href="../countries/">Countries</a><a href="../compare/">Compare</a></nav>
+  <div class="app-actions"><button id="reset" class="ghost">Reset</button><a class="avatar" href="../methodology/" aria-label="Methodology">i</a></div>
+</header>
+<div class="selectionbar"><strong>Selections</strong><div id="selection-chips"></div><button id="clear-selections">Clear all</button></div>
+<main class="dashboard-shell">
+  <aside class="filter-panel">
+    <div class="filter-title"><span>Filters</span><span class="filter-count" id="filter-count">0</span></div>
+    <label>Year<select id="year"><option>Latest available</option></select></label>
+    <label>Region<select id="region"><option value="all">All regions</option></select></label>
+    <div class="filter-section"><span>Countries</span><input id="country-search" type="search" placeholder="Search countries…"><div id="country-list" class="country-list"></div></div>
+    <div class="source-note"><span class="live-dot"></span><div><strong>Official data</strong><small>World Bank · WDI</small></div></div>
+  </aside>
+  <section class="workspace">
+    <div class="workspace-head"><div><span class="eyebrow">VISUAL ANALYTICS</span><h1>World Data Explorer</h1><p>Discover patterns across countries. Select, filter and compare — every view responds instantly.</p></div><div class="status-pill"><span></span> Live dataset</div></div>
+    <div class="control-card">
+      <div><label>X axis</label><select id="x-indicator"></select></div>
+      <button id="swap" class="swap" title="Swap axes">⇄</button>
+      <div><label>Y axis</label><select id="y-indicator"></select></div>
+      <div><label>Bubble size</label><select id="size-indicator"></select></div>
+    </div>
+    <div class="kpi-grid">
+      <article><span>Countries shown</span><strong id="kpi-countries">—</strong><small id="kpi-coverage">Loading…</small></article>
+      <article><span>Median X</span><strong id="kpi-x">—</strong><small id="kpi-x-name">—</small></article>
+      <article><span>Median Y</span><strong id="kpi-y">—</strong><small id="kpi-y-name">—</small></article>
+      <article><span>Correlation</span><strong id="kpi-corr">—</strong><small>Pearson r</small></article>
+    </div>
+    <div class="viz-grid">
+      <article class="panel scatter-panel"><div class="panel-head"><div><h2 id="scatter-title">Relationship</h2><p id="scatter-subtitle">Loading official observations…</p></div><span class="panel-tag">SCATTER</span></div><div id="scatter" class="chart"></div><div class="legend"><span><i class="lg a"></i>Europe & Central Asia</span><span><i class="lg b"></i>East Asia & Pacific</span><span><i class="lg c"></i>Americas</span><span><i class="lg d"></i>Other</span></div></article>
+      <article class="panel ranking-panel"><div class="panel-head"><div><h2 id="ranking-title">Top countries</h2><p>Click a country to select it</p></div><span class="panel-tag">RANKING</span></div><div id="ranking" class="ranking"></div></article>
+    </div>
+    <article class="panel insight-panel"><div class="insight-icon">✦</div><div><span class="eyebrow">QUICK INSIGHT</span><strong id="insight">Loading the data story…</strong><p>Selections update every chart and metric in this workspace.</p></div></article>
+  </section>
+</main>
+<div id="tooltip" class="tooltip" hidden></div>
+<script src="./explorer.js"></script>
+</body></html>
