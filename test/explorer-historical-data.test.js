@@ -39,6 +39,16 @@ test('default Explorer trio has non-empty exact-year intersections', async () =>
   }
 });
 
+test('a genuinely missing observation stays absent from exact-year comparisons', async () => {
+  const [gdp, internet, population] = await Promise.all(slugs.map(history));
+  const maps = [gdp, internet, population].map(recordMap);
+  assert.ok(maps[0].has('NRU:2015'), 'expected Nauru GDP observation in 2015');
+  assert.equal(maps[1].has('NRU:2015'), false, 'Nauru must not gain a backfilled 2015 Internet-use observation');
+  assert.ok(maps[2].has('NRU:2015'), 'expected Nauru population observation in 2015');
+  const common2015 = intersection([gdp, internet, population].map((data) => codesForYear(data, 2015)));
+  assert.equal(common2015.has('NRU'), false, 'Nauru must be excluded from the 2015 three-way intersection');
+});
+
 test('concrete country/year values remain exact and unbackfilled', async () => {
   const [gdp, internet, population] = (await Promise.all(slugs.map(history))).map(recordMap);
   const expected = [
