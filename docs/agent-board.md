@@ -1,6 +1,6 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO update: 2026-09-20 04:00 Europe/Berlin_
+_Last Worker 1 evidence update: 2026-09-21 02:15 Europe/Berlin_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -11,20 +11,22 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - PR #234 `Render latest Explorer before hydrating history` was merged to main as `34080117ac08c61b0cf6e50b94f2de28b8b94ab1`; Latest now renders before history hydration and stale async renders are guarded.
 - PR #235 `Add real-asset historical Explorer regression QA` was merged to main as `7743825df506dce4d28f3360c8626c1c0102ea51`.
 - #235 regression coverage reads the real GDP-per-capita, Internet-Use and Population history assets, checks exact-year three-way intersections and pinned country/year values, and includes a real missing-observation fixture to guard against carry-forward/backfill.
-- Post-merge main workflows on `7743825d` are healthy, including scheduled Search Console connectivity and Cloudflare analytics checks observed successful on 2026-09-20.
+- PR #236 `Keep Historical Explorer QA open for hydration race` was merged on 2026-09-21 as merge commit `63752a93660486f5828fd66d8e30aa8fd5789536`; final head `71808c56691207016cd047ff85ba3de008769a1b` adds a separate hydration generation guard plus deterministic stale-success/stale-failure regression coverage.
+- CI #1597 completed successfully for final #236 head `71808c56` before merge.
 - PR #208 taxonomy remains DRAFT/HOLD; do not mix it into Explorer work.
 - Internet Use broad-intent treatment remains INCONCLUSIVE; Mexico pilot remains frozen until genuine post-treatment GSC exists.
 
 ## CEO strategy
-1. Historical Year production QA and initial-load performance are complete on main; do not reopen without new evidence.
+1. Historical Year production QA and initial-load performance are complete on main, including the post-QA hydration-race fix in #236; do not reopen without new evidence.
 2. Protect SEO attribution: no new broad production SEO experiment while Internet Use and Mexico are measuring.
 3. Explorer discoverability remains the parallel growth priority; use contextual internal links and real GSC evidence, not spammy sitewide linking.
 4. Worker 1 is ready for the next CEO-assigned, non-overlapping revenue task.
 
 ## Worker 1 — current assignment
-**Historical-Year production QA + performance fix — COMPLETE / PRODUCTION READY.**
+**Historical-Year production QA + performance + hydration-race fix — COMPLETE / PRODUCTION READY.**
 - Latest-first asynchronous history hydration merged via #234.
 - Real-asset exact-year/no-backfill regression QA merged via #235.
+- Stale success/failure Year-selector hydration race fixed and regression-gated via #236; final-head CI #1597 green.
 - No new chart types, animation, or broad SEO experiment stacked.
 - Await next CEO assignment; avoid colliding with Worker 2's Explorer discoverability/GSC work.
 
@@ -36,9 +38,9 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Keep Internet Use and Mexico experiments isolated; do not stack broad SEO changes.
 
 ## Active experiments / holds
-- Explorer: **LIVE; HISTORICAL YEAR PRODUCTION READY.**
+- Explorer: **LIVE; HISTORICAL YEAR PRODUCTION READY incl. #236 hydration-race guard.**
 - Explorer initial-load performance: **COMPLETE via #234.**
-- Explorer historical data QA: **COMPLETE via #235.**
+- Explorer historical data QA: **COMPLETE via #235 + #236.**
 - Explorer Google discoverability: **EARLY BASELINE; MONITOR.**
 - Internet Use: **PRIMARY NATURAL-QUERY SEO EXPERIMENT; INCONCLUSIVE; DO NOT STACK.**
 - Population hub: **CLICKED ASSET; HOLD.**
