@@ -21,6 +21,7 @@ for (const item of indicators) {
   let html;
   try { html = await readFile(path, 'utf8'); } catch { continue; }
   html = html.replace(/<section class="section section-related"[\s\S]*?<\/section>/, '');
+  html = html.replace(/<section class="section section-explorer-handoff"[\s\S]*?<\/section>/, '');
   const memberships = groups.filter(([, slugs]) => slugs.includes(item.slug));
   const candidates = [];
   for (const [group, slugs] of memberships) {
@@ -32,7 +33,10 @@ for (const item of indicators) {
   }
   if (!candidates.length) continue;
   const cards = candidates.slice(0, 4).map((related) => `<article class="card"><span class="pill">${esc(related.group)} · ${esc(related.year ?? 'latest')}</span><h3><a href="../${esc(related.slug)}/">${esc(related.name)}</a></h3><p>Compare ${esc(related.countries ?? '')} countries and explore the available historical years.</p><a href="../${esc(related.slug)}/">Explore ${esc(related.name)} →</a></article>`).join('');
-  const section = `<section class="section section-related"><div class="wrap"><div class="eyebrow">Keep exploring</div><h2>Related indicators</h2><p class="muted">Continue with closely related official World Bank data.</p><div class="grid">${cards}</div><p><a href="../">Browse all 30 indicators →</a></p></div></section>`;
+  const explorerHandoff = item.slug === 'gdp-per-capita'
+    ? `<section class="section section-explorer-handoff"><div class="wrap"><div class="eyebrow">Go beyond the ranking</div><h2>Compare GDP per capita with another indicator</h2><p>Use the World Data Explorer to put GDP per capita beside population, life expectancy, internet use and other official World Bank indicators, then inspect the relationship across countries.</p><p><a href="../../explore/">Open the World Data Explorer →</a></p></div></section>`
+    : '';
+  const section = `${explorerHandoff}<section class="section section-related"><div class="wrap"><div class="eyebrow">Keep exploring</div><h2>Related indicators</h2><p class="muted">Continue with closely related official World Bank data.</p><div class="grid">${cards}</div><p><a href="../">Browse all 30 indicators →</a></p></div></section>`;
   html = html.replace('<section class="section"><div class="wrap"><div class="eyebrow">Source & coverage</div>', `${section}<section class="section"><div class="wrap"><div class="eyebrow">Source & coverage</div>`);
   await writeFile(path, html, 'utf8');
 }
