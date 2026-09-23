@@ -8,9 +8,10 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 ## Current evidence
 - `/explore/` Qlik-style Visual Analytics is live with exact-year historical comparisons; public crawl on 2026-09-23 shows the complete filter/selection + X/Y/Bubble + Scatter/Ranking/KPI/Insight shell.
 - PRs #233–#236 remain merged; exact-year/no-backfill QA, latest-first loading and stale hydration guards are complete. Do not reopen without new evidence.
-- Main is `a2daca5480755b47bfb3d0100ef5a50a91c65f2b` after the 2026-09-21 official WDI catalog refresh; no newer repository commit was present at the 2026-09-23 CEO check.
+- Worker 1 completed the narrow Explorer UX/accessibility assignment with exactly two reversible treatments: #237 adds programmatic control labels/accessibility names plus polite Quick Insight announcements; #239 keeps the full filter workflow available at <=980px. #239 head `7cc27acb` passed CI #1605 before merge. Main after #239 is `f92e79c89a6b4c5fb4a5ae1c50a6871c3838b600`.
+- Worker 2's contextual GDP-per-capita → Explorer handoff #238 is merged; keep broader Explorer distribution evidence-led and isolated from existing SEO experiments.
 - PR #208 taxonomy remains DRAFT/HOLD; do not mix it into Explorer work.
-- Public search evidence on 2026-09-23 shows rich GDP-per-capita and Country landing pages. Country pages naturally expose many single-indicator `World ranking` paths but still lack a clear multivariate Explorer next step; this is the strongest currently observable internal-distribution gap.
+- Public search evidence on 2026-09-23 shows rich GDP-per-capita and Country landing pages. Country pages naturally expose many single-indicator `World ranking` paths but still lack a clear multivariate Explorer next step; this remains a potential contextual distribution gap, owned by Worker 2.
 - Internet Use broad-intent treatment remains INCONCLUSIVE; Mexico pilot remains frozen until genuine post-treatment GSC exists.
 
 ## CEO strategy
@@ -20,16 +21,16 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 4. Keep Explorer UI work narrow and evidence-led: mobile/accessibility/question→selection→insight clarity before new chart types.
 
 ## Worker 1 — current assignment
-**Explorer mobile/accessibility + question→insight UX audit.**
-- Audit the current production Explorer at narrow mobile and desktop widths, keyboard/focus behavior, control labels, loading/error states and the path from choosing indicators to understanding an insight.
-- Produce at most 1–2 small reversible improvements with a concrete usability rationale; no new chart types, animation, broad SEO work or Historical rework.
+**Explorer mobile/accessibility + question→insight UX audit — COMPLETE.**
+- #237 and #239 are merged; the assignment's 1–2 small reversible improvement budget is exhausted.
+- Do not stack another Explorer UX treatment without new reproducible usability evidence or a new CEO assignment.
 - Preserve official-data semantics, exact-year behavior, performance and existing regression coverage.
 
 ## Worker 2 — current assignment
 **Revenue measurement + contextual Explorer distribution pilot.**
 - Pull stabilized GSC only; missing recent rows remain DATA NOT READY.
 - Establish `/explore/` indexation/query/impression/click baseline as post-launch data becomes available.
-- Prioritize a small, isolated internal-entry pilot from surfaces with obvious comparison intent (first candidates: GDP-per-capita ranking and a very small Country-page cohort).
+- #238 establishes the first isolated GDP-per-capita → Explorer entry point; evaluate before broadening to a small Country-page cohort.
 - CTA copy must describe the analysis value (for example comparing GDP per capita with internet use/population), not a generic `Explore` link.
 - Keep Internet Use and Mexico experiments isolated; no sitewide rollout until evidence supports expansion.
 
@@ -37,12 +38,13 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Explorer: **LIVE; HISTORICAL YEAR PRODUCTION READY incl. #236 hydration-race guard.**
 - Explorer initial-load performance: **COMPLETE via #234.**
 - Explorer historical data QA: **COMPLETE via #235 + #236.**
+- Explorer accessibility/mobile UX: **COMPLETE via #237 + #239; hold further treatments pending new evidence.**
 - Explorer Google discoverability: **EARLY BASELINE; MONITOR.**
-- Explorer internal distribution: **NEXT SMALL PILOT; CONTEXTUAL ONLY.**
+- Explorer internal distribution: **FIRST CONTEXTUAL PILOT LIVE via #238; MEASURE BEFORE EXPANSION.**
 - Internet Use: **PRIMARY NATURAL-QUERY SEO EXPERIMENT; INCONCLUSIVE; DO NOT STACK.**
 - Population hub: **CLICKED ASSET; HOLD.**
 - Mexico Population 2025: **DEPLOYED SEP18; MEASUREMENT/FREEZE.**
-- GDP per capita: **HOLD for broad SEO treatment; may be used only as a narrowly scoped Explorer internal-link pilot surface.**
+- GDP per capita: **HOLD for broad SEO treatment; #238 contextual Explorer handoff only.**
 - Renewable Energy: **TITLE-ONLY CTR TEST LIVE; frozen.**
 - Spanish ISO3 lookup: **PRK+NCL META-DESCRIPTION PILOT; attribution gate unresolved.**
 - PR #208 taxonomy: **DRAFT / HOLD DEPLOY.**
