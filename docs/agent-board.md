@@ -21,14 +21,15 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 4. Keep Explorer UI work narrow and evidence-led: mobile/accessibility/question→selection→insight clarity before new chart types.
 
 ## Worker 1 — current assignment
-**Explorer mobile/accessibility + question→insight UX audit — COMPLETE.**
-- #237 and #239 are merged; the assignment's 1–2 small reversible improvement budget is exhausted.
-- Do not stack another Explorer UX treatment without new reproducible usability evidence or a new CEO assignment.
-- Preserve official-data semantics, exact-year behavior, performance and existing regression coverage.
+**Explorer first-session / handoff QA — ACTIVE.**
+- Reproduce the real first-use path starting from the live GDP-per-capita → Explorer handoff on desktop and 360–430px mobile.
+- Identify at most one concrete comprehension or interaction failure between landing, X/Y/Bubble selection, country/region selection, scatter/ranking reading and Quick Insight. Evidence must be reproducible; screenshots/test notes are preferred.
+- Open a code PR only if the failure is clear and the fix is small/reversible. Otherwise report NO TREATMENT; do not manufacture polish work.
+- Do not add chart types or alter official-data semantics, exact-year behavior, SEO metadata, or the GDP pilot scope.
 
 ## Worker 2 — current assignment
-**Revenue measurement + contextual Explorer distribution pilot.**
-- Pull stabilized GSC only; missing recent rows remain DATA NOT READY.
+**Revenue measurement + contextual Explorer distribution pilot — ACTIVE / NO EXPANSION.**
+- Pull stabilized GSC only; missing recent rows remain DATA NOT READY. Current CEO connector attempt on 2026-09-25 required interactive authorization, so do not infer metrics from absence.
 - Establish `/explore/` indexation/query/impression/click baseline as post-launch data becomes available.
 - #238 establishes the first isolated GDP-per-capita → Explorer entry point; evaluate before broadening to a small Country-page cohort.
 - CTA copy must describe the analysis value (for example comparing GDP per capita with internet use/population), not a generic `Explore` link.
