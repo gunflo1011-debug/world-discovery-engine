@@ -1,6 +1,6 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO evidence update: 2026-09-25_
+_Last CEO evidence update: 2026-09-28_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -12,6 +12,7 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 - Worker 2's contextual GDP-per-capita → Explorer handoff #238 is merged; keep broader Explorer distribution evidence-led and isolated from existing SEO experiments.
 - PR #208 taxonomy remains DRAFT/HOLD; do not mix it into Explorer work.
 - Public search evidence on 2026-09-25 now returns `/explore/` itself (`Explore world data — World Discovery`) and the live GDP-per-capita page exposes the contextual `Compare GDP per capita with another indicator` handoff. Treat Explorer discoverability as an early positive baseline, not proof of meaningful search demand. Country pages remain a potential second contextual distribution cohort only after #238 has measurable evidence.
+- Stabilized GSC through 2026-09-26: site total 15,959 impressions / 18 clicks / 0.113% CTR / avg position 25.52. /data/population-age-0-14/ is the clearest next non-frozen opportunity: 101 impressions / 0 clicks / avg position 6.52, concentrated on country + 2023 + SP.POP.0014.TO.ZS intent. Treat this as a CTR/direct-answer problem, not a mandate for new country doorway pages.
 - Internet Use broad-intent treatment remains INCONCLUSIVE; Mexico pilot remains frozen until genuine post-treatment GSC exists.
 
 ## CEO strategy
@@ -21,19 +22,18 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 4. Keep Explorer UI work narrow and evidence-led: mobile/accessibility/question→selection→insight clarity before new chart types.
 
 ## Worker 1 — current assignment
-**Explorer first-session / handoff QA — ACTIVE.**
-- Reproduce the real first-use path starting from the live GDP-per-capita → Explorer handoff on desktop and 360–430px mobile.
-- Identify at most one concrete comprehension or interaction failure between landing, X/Y/Bubble selection, country/region selection, scatter/ranking reading and Quick Insight. Evidence must be reproducible; screenshots/test notes are preferred.
-- Open a code PR only if the failure is clear and the fix is small/reversible. Otherwise report NO TREATMENT; do not manufacture polish work.
-- Do not add chart types or alter official-data semantics, exact-year behavior, SEO metadata, or the GDP pilot scope.
+**Explorer duplicate-navigation P2 — ACTIVE.**
+- Remove the redundant Explorer-local primary appbar so /explore/ has exactly one primary site navigation.
+- Preserve Reset, Clear all and Methodology access in the selection/control surface; do not remove functionality to fix duplication.
+- Verify desktop plus 360–430px mobile and keyboard accessibility. Keep official-data semantics, exact-year behavior, SEO metadata and chart functionality unchanged.
+- No extra polish or new chart types in this treatment; provide reproducible evidence and a small reversible PR.
 
 ## Worker 2 — current assignment
-**Revenue measurement + contextual Explorer distribution pilot — ACTIVE / NO EXPANSION.**
-- Pull stabilized GSC only; missing recent rows remain DATA NOT READY. CEO connector access on 2026-09-25 still requires interactive authorization in non-interactive runs, so do not infer impressions, clicks or CTR from absence. Public `site:` discovery may confirm crawl/index visibility but is not a substitute for GSC demand metrics.
-- Establish `/explore/` indexation/query/impression/click baseline as post-launch data becomes available.
-- #238 establishes the first isolated GDP-per-capita → Explorer entry point; evaluate before broadening to a small Country-page cohort.
-- CTA copy must describe the analysis value (for example comparing GDP per capita with internet use/population), not a generic `Explore` link.
-- Keep Internet Use and Mexico experiments isolated; no sitewide rollout until evidence supports expansion.
+**Population-age-0–14 CTR/direct-answer treatment — ACTIVE.**
+- Treat the observed country + 2023 + SP.POP.0014.TO.ZS queries as one intent cluster. Current stabilized baseline: 101 impressions, 0 clicks, avg position 6.52.
+- Compare the existing SERP/snippet and above-the-fold answer against direct-answer competitors; specify exactly one small reversible treatment (title/meta OR above-the-fold answer), not several simultaneous changes.
+- Do not create mass country landing pages. Preserve source/data accuracy and freeze Mexico, Internet Use, Renewable Energy and ISO3 experiments.
+- Record treatment date and measure only stabilized post-treatment GSC before another change.
 
 ## Active experiments / holds
 - Explorer: **LIVE; HISTORICAL YEAR PRODUCTION READY incl. #236 hydration-race guard.**
