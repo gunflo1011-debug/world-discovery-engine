@@ -17,6 +17,9 @@ const searchExperimentOverrides = {
     'population-growth': {
       title: (_name, year) => `Population Growth Rate by Country (${year} Ranking) | World Discovery`,
     },
+    'population-age-0-14': {
+      title: () => 'Population Ages 0-14 by Country & Year | World Bank Data',
+    },
     'renewable-energy-consumption': {
       title: (_name, year) => `Renewable Energy Consumption by Country (${year} Ranking) | World Discovery`,
     },
