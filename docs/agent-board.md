@@ -1,6 +1,6 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO evidence update: 2026-09-28_
+_Last CEO evidence update: 2026-10-04_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -22,18 +22,18 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 4. Keep Explorer UI work narrow and evidence-led: mobile/accessibility/question→selection→insight clarity before new chart types.
 
 ## Worker 1 — current assignment
-**Explorer duplicate-navigation P2 — ACTIVE.**
+**Explorer duplicate-navigation P2 — ACTIVE / FINAL QA.**
 - Remove the redundant Explorer-local primary appbar so /explore/ has exactly one primary site navigation.
 - Preserve Reset, Clear all and Methodology access in the selection/control surface; do not remove functionality to fix duplication.
 - Verify desktop plus 360–430px mobile and keyboard accessibility. Keep official-data semantics, exact-year behavior, SEO metadata and chart functionality unchanged.
 - No extra polish or new chart types in this treatment; provide reproducible evidence and a small reversible PR.
 
 ## Worker 2 — current assignment
-**Population-age-0–14 CTR/direct-answer treatment — ACTIVE.**
-- Treat the observed country + 2023 + SP.POP.0014.TO.ZS queries as one intent cluster. Current stabilized baseline: 101 impressions, 0 clicks, avg position 6.52.
-- Compare the existing SERP/snippet and above-the-fold answer against direct-answer competitors; specify exactly one small reversible treatment (title/meta OR above-the-fold answer), not several simultaneous changes.
+**Population-age-0–14 CTR/direct-answer treatment — PAUSE / MEASURE.**
+- Do not deploy PR #241 yet. The untreated page subsequently earned a click in the newer stabilized window; preserve attribution and collect more stabilized GSC before changing title/meta.
+- Compare the next stabilized GSC window against both the historical 101 impressions / 0 clicks / avg position 6.52 baseline and the newer untreated click-bearing window; close #241 if the natural improvement persists.
 - Do not create mass country landing pages. Preserve source/data accuracy and freeze Mexico, Internet Use, Renewable Energy and ISO3 experiments.
-- Record treatment date and measure only stabilized post-treatment GSC before another change.
+- Separately investigate recurring renewable-energy 404 intent and Compare → Explorer engagement; no redirect or new treatment without demand/referrer evidence.
 
 ## Active experiments / holds
 - Explorer: **LIVE; HISTORICAL YEAR PRODUCTION READY incl. #236 hydration-race guard.**
