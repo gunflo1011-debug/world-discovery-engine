@@ -1,6 +1,6 @@
 # World Discovery Revenue Agent Board
 
-_Last CEO evidence update: 2026-10-04_
+_Last CEO evidence update: 2026-10-06_
 
 ## North star
 Maximize sustainable advertising revenue through qualified organic traffic and useful pageviews. No spam, doorway pages, fabricated data, or low-value mass content.
@@ -23,9 +23,10 @@ Maximize sustainable advertising revenue through qualified organic traffic and u
 
 ## Worker 1 — current assignment
 **Explorer duplicate-navigation P2 — ACTIVE / FINAL QA.**
+- PR #240 is now 2 commits behind current `main` (`c23d1aed`, official WDI refresh). Sync/rebase onto current main before treating old CI as merge evidence.
 - Remove the redundant Explorer-local primary appbar so /explore/ has exactly one primary site navigation.
 - Preserve Reset, Clear all and Methodology access in the selection/control surface; do not remove functionality to fix duplication.
-- Verify desktop plus 360–430px mobile and keyboard accessibility. Keep official-data semantics, exact-year behavior, SEO metadata and chart functionality unchanged.
+- After main sync, rerun CI and verify desktop plus 360/390/430px mobile and keyboard accessibility. Keep official-data semantics, exact-year behavior, SEO metadata and chart functionality unchanged.
 - No extra polish or new chart types in this treatment; provide reproducible evidence and a small reversible PR.
 
 ## Worker 2 — current assignment
