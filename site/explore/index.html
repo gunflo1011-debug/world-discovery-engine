@@ -8,12 +8,7 @@
   <link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="./dashboard.css">
 </head>
 <body class="wd-app">
-<header class="appbar">
-  <a class="appbrand" href="../"><span class="brandmark">W</span><span>World Discovery</span></a>
-  <nav><a href="../data/">Data</a><a href="../countries/">Countries</a><a href="../compare/">Compare</a><a href="../trends/">Trends</a><a href="../fun-facts/">Fun Facts</a></nav>
-  <div class="app-actions"><button id="reset" class="ghost">Reset</button><a class="avatar" href="../methodology/" aria-label="Methodology">i</a></div>
-</header>
-<div class="selectionbar"><strong>Selections</strong><div id="selection-chips"></div><button id="clear-selections">Clear all</button></div>
+<div class="selectionbar"><strong>Selections</strong><div id="selection-chips"></div><div class="selection-actions"><button id="clear-selections">Clear all</button><button id="reset" class="ghost">Reset</button><a class="avatar" href="../methodology/" aria-label="Methodology">i</a></div></div>
 <main class="dashboard-shell">
   <aside class="filter-panel">
     <div class="filter-title"><span>Filters</span><span class="filter-count" id="filter-count">0</span></div>
@@ -43,6 +38,7 @@
       <article class="panel ranking-panel"><div class="panel-head"><div><h2 id="ranking-title">Top countries</h2><p>Click a country to select it</p></div><span class="panel-tag">RANKING</span></div><div id="ranking" class="ranking"></div></article>
     </div>
     <article class="panel insight-panel"><div class="insight-icon">✦</div><div><span class="eyebrow">QUICK INSIGHT</span><strong id="insight" aria-live="polite">Loading the data story…</strong><p>Selections update every chart and metric in this workspace.</p></div></article>
+    <nav class="explorer-discovery" aria-label="Discover more"><a href="../trends/">Explore trends</a><a href="../fun-facts/">Discover fun facts</a></nav>
   </section>
 </main>
 <div id="tooltip" class="tooltip" hidden></div>
